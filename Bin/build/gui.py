@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import csv
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System\Bin\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"Bin\build\assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
