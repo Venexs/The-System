@@ -37,8 +37,7 @@ def countdown_completed():
 subprocess.Popen(['python', 'sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"Penalty Quest\build\assets\frame0")
-
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
