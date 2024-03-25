@@ -13,7 +13,7 @@ import subprocess
 subprocess.Popen(['python', 'sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System\Completed Quest\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"Completed Quest\build\assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
