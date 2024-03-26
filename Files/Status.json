@@ -1,0 +1,38 @@
+{
+    "status": [
+        {
+            "hp":150,
+            "mp":0,
+            "level":1,
+            "str":0,
+            "int":0,
+            "agi":0,
+            "vit":0,
+            "per":0
+        },
+        {
+            "title":"None",
+            "job":"None"
+        }
+    ],
+
+    "avail_eq": [
+        {
+            "str":0,
+            "agi":0,
+            "int":0
+        }
+    ],
+
+    "equipment": [
+        {
+            "helm":"None",
+            "chest":"None",
+            "first_gaunt":"None",
+            "collar":"None",
+            "second_gaunt":"None",
+            "ring":"None",
+            "boot":"None"
+        }
+    ]
+}
