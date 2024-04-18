@@ -64,7 +64,7 @@ canvas.create_text(
     anchor="nw",
     text="You got rewards",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 18 * -1)
+    font=("Inter", 18 * -1)
 )
 
 canvas.create_text(
@@ -73,7 +73,7 @@ canvas.create_text(
     anchor="nw",
     text="Accept these rewards?",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 18 * -1)
+    font=("Inter", 18 * -1)
 )
 
 button_image_1 = PhotoImage(
@@ -114,7 +114,7 @@ canvas.create_text(
     anchor="nw",
     text="QUESTS REWARDS",
     fill="#FFFFFF",
-    font=("MontserratRoman Medium", 32 * -1)
+    font=("Montserrat Medium", 32 * -1)
 )
 
 canvas.create_rectangle(
@@ -139,7 +139,7 @@ canvas.create_text(
     anchor="nw",
     text="1: NO REWARDS",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 18 * -1)
+    font=("Inter", 18 * -1)
 )
 window.resizable(False, False)
 window.mainloop()
