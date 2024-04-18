@@ -23,6 +23,7 @@ window = Tk()
 window.geometry("957x555")
 window.configure(bg = "#FFFFFF")
 
+window.attributes('-alpha',0.8)
 
 canvas = Canvas(
     window,
