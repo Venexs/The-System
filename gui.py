@@ -7,16 +7,23 @@ from datetime import datetime, timedelta
 import csv
 import winsound
 import json
+import threading
+
 
 subprocess.Popen(['python', 'sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
 window = Tk()
+
+window.geometry("1264x73")
+window.configure(bg = "#FFFFFF")
+window.attributes('-alpha',0.8)
 
 def penalty_check():
     # Get today's date
@@ -34,14 +41,19 @@ def penalty_check():
     if yesterday!=p_date:
         subprocess.Popen(['python', 'Daily Quest/build/gui.py'])
 
-window.geometry("115x671")
-window.configure(bg = "#FFFFFF")
+
+def check_midnight():
+    while True:
+        now = datetime.now()
+        if now.hour == 0 and now.minute == 0:
+            penalty_check
+        time.sleep(1)
 
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 671,
-    width = 115,
+    height = 73,
+    width = 1264,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -51,25 +63,17 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    277.0,
-    478.0,
+    650.0000022053719,
+    279.0,
     image=image_image_1
 )
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    103.0,
-    378.0,
+    673.9999968409538,
+    280.0,
     image=image_image_2
-)
-
-image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
-image_3 = canvas.create_image(
-    285.0000000000001,
-    377.9999999999999,
-    image=image_image_3
 )
 
 button_image_1 = PhotoImage(
@@ -82,10 +86,10 @@ button_1 = Button(
     relief="flat"
 )
 button_1.place(
-    x=38.0,
-    y=135.0,
-    width=72.9000015258789,
-    height=74.4423828125
+    x=20.00010430812199,
+    y=8.0,
+    width=198.0000034570685,
+    height=50.000000834464856
 )
 
 button_image_2 = PhotoImage(
@@ -98,10 +102,10 @@ button_2 = Button(
     relief="flat"
 )
 button_2.place(
-    x=38.0,
-    y=219.0,
-    width=72.9000015258789,
-    height=74.4423828125
+    x=227.00009667872746,
+    y=8.0,
+    width=198.0000034570685,
+    height=50.000000834464856
 )
 
 button_image_3 = PhotoImage(
@@ -114,10 +118,10 @@ button_3 = Button(
     relief="flat"
 )
 button_3.place(
-    x=34.0,
-    y=301.0,
-    width=81.0,
-    height=82.71375274658203
+    x=434.0001348257001,
+    y=8.0,
+    width=198.0000034570685,
+    height=50.000000834464856
 )
 
 button_image_4 = PhotoImage(
@@ -130,10 +134,10 @@ button_4 = Button(
     relief="flat"
 )
 button_4.place(
-    x=38.0,
-    y=392.0,
-    width=72.9000015258789,
-    height=74.4423828125
+    x=641.0000432729657,
+    y=8.0,
+    width=198.0000034570685,
+    height=50.000000834464856
 )
 
 button_image_5 = PhotoImage(
@@ -146,10 +150,10 @@ button_5 = Button(
     relief="flat"
 )
 button_5.place(
-    x=38.0,
-    y=482.0,
-    width=72.9000015258789,
-    height=74.4423828125
+    x=848.0000432729657,
+    y=8.0,
+    width=198.0000034570685,
+    height=50.000000834464856
 )
 
 button_image_6 = PhotoImage(
@@ -162,11 +166,16 @@ button_6 = Button(
     relief="flat"
 )
 button_6.place(
-    x=38.0,
-    y=572.0,
-    width=72.9000015258789,
-    height=74.4423828125
+    x=1055.0000432729657,
+    y=8.0,
+    width=198.0000034570685,
+    height=50.000000834464856
 )
+
+subprocess.Popen(['python', 'Run Once/First Order Info/build/gui.py'])
+subprocess.Popen(['python', 'Run Once/Main Check/build/gui.py'])
+
+threading.Thread(target=check_midnight).start()
 
 window.resizable(False, False)
 window.mainloop()
