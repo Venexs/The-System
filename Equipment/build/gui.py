@@ -23,6 +23,7 @@ window = Tk()
 
 window.geometry("957x555")
 window.configure(bg = "#FFFFFF")
+window.attributes('-alpha',0.8)
 
 def open_select(cat):
     fout=open('Files/Temp Files/Equipment Temp.csv', 'w', newline='')
@@ -92,11 +93,11 @@ image_5 = canvas.create_image(
 
 canvas.create_text(
     136.0,
-    102.0,
+    98.0,
     anchor="nw",
     text="EQUIPMENT",
     fill="#FFFFFF",
-    font=("MontserratRoman SemiBold", 24 * -1)
+    font=("Montserrat SemiBold", 24 * -1)
 )
 
 with open('Files/Equipment.csv', 'r') as fout:
@@ -127,8 +128,12 @@ with open('Files/Equipment.csv', 'r') as fout:
 # ? Helmet Part
 # ? ====================================================================
 
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
+if helm=='None' or helm=='-':
+    image_image_6 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_6 = PhotoImage(
+        file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
     164.0,
     190.0,
@@ -141,7 +146,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{helm}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -150,7 +155,7 @@ canvas.create_text(
     anchor="nw",
     text=helm_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? Helmet Part Button
 button_image_1 = PhotoImage(
@@ -173,8 +178,12 @@ button_1.place(
 # ? Chestplate Part
 # ? ====================================================================
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
+if chest=='None' or chest=='-':
+    image_image_7 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_7 = PhotoImage(
+        file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
     262.0,
     285.0,
@@ -187,7 +196,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{chest}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -196,7 +205,7 @@ canvas.create_text(
     anchor="nw",
     text=chest_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? Chestplate Part Button
 button_image_2 = PhotoImage(
@@ -219,8 +228,12 @@ button_2.place(
 # ? First Gauntlet Part
 # ? ====================================================================
 
-image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
+if f_gaun=='None' or f_gaun=='-':
+    image_image_8 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_8 = PhotoImage(
+        file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
     164.0,
     381.0,
@@ -233,7 +246,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{f_gaun}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -242,7 +255,7 @@ canvas.create_text(
     anchor="nw",
     text=f_gaun_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? First Gauntlet Part Button
 button_image_3 = PhotoImage(
@@ -265,8 +278,12 @@ button_3.place(
 # ? Boots Part
 # ? ====================================================================
 
-image_image_9 = PhotoImage(
-    file=relative_to_assets("image_9.png"))
+if boot=='None' or boot=='-':
+    image_image_9 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_9 = PhotoImage(
+        file=relative_to_assets("image_9.png"))
 image_9 = canvas.create_image(
     807.0,
     418.0,
@@ -279,7 +296,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{boot}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -288,7 +305,7 @@ canvas.create_text(
     anchor="nw",
     text=boot_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? Boots Part Button
 button_image_4 = PhotoImage(
@@ -311,8 +328,12 @@ button_4.place(
 # ? Collar Part
 # ? ====================================================================
 
-image_image_10 = PhotoImage(
-    file=relative_to_assets("image_10.png"))
+if collar=='None' or collar=='-':
+    image_image_10 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_10 = PhotoImage(
+        file=relative_to_assets("image_10.png"))
 image_10 = canvas.create_image(
     806.0,
     126.0,
@@ -325,7 +346,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{collar}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -334,7 +355,7 @@ canvas.create_text(
     anchor="nw",
     text=collar_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? Collar Part Button
 button_image_5 = PhotoImage(
@@ -357,8 +378,12 @@ button_5.place(
 # ? Ring Part
 # ? ====================================================================
 
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_11.png"))
+if ring=='None' or ring=='-':
+    image_image_11 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_11 = PhotoImage(
+        file=relative_to_assets("image_11.png"))
 image_11 = canvas.create_image(
     684.0,
     318.0,
@@ -371,7 +396,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{ring}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -380,7 +405,7 @@ canvas.create_text(
     anchor="nw",
     text=ring_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? Ring Part Button
 button_image_6 = PhotoImage(
@@ -403,8 +428,12 @@ button_6.place(
 # ? Second Gauntlet Part
 # ? ====================================================================
 
-image_image_12 = PhotoImage(
-    file=relative_to_assets("image_12.png"))
+if s_gaun=='None' or s_gaun=='-':
+    image_image_12 = PhotoImage(
+        file=relative_to_assets("end.png"))
+else:
+    image_image_12 = PhotoImage(
+        file=relative_to_assets("image_12.png"))
 image_12 = canvas.create_image(
     684.0,
     226.0,
@@ -417,7 +446,7 @@ canvas.create_text(
     anchor="nw",
     text=f"[{s_gaun}]",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 11 * -1)
+    font=("Inter", 11 * -1)
 )
 
 canvas.create_text(
@@ -426,7 +455,7 @@ canvas.create_text(
     anchor="nw",
     text=s_gaun_buff,
     fill="#69FF44",
-    font=("MontserratRoman Regular", 12 * -1)
+    font=("Inter", 12 * -1)
 )
 # ? Second Gauntlet Part Button
 button_image_7 = PhotoImage(
