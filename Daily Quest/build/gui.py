@@ -38,6 +38,7 @@ end_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + t
 window = Tk()
 window.geometry("555x957")
 window.configure(bg="#FFFFFF")
+window.attributes('-alpha',0.8)
 
 # Global variables to hold player data
 pl_push = 0
