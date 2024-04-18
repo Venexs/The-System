@@ -1,0 +1,51 @@
+{
+    "Warlock Chestplate Blueprint": [
+        {
+            "desc":"A Blueprint design of The Warlock Armor Set",
+            "qty":1,
+            "cat":"PAPER",
+            "rank":"D",
+            "buff":"",
+            "debuff":""
+        }
+    ],
+
+    "Warlock Gauntlets Blueprint": [
+        {
+            "desc":"A Blueprint design of The Warlock Armor Set",
+            "qty":1,
+            "cat":"PAPER",
+            "rank":"D",
+            "buff":"",
+            "debuff":""
+        }
+    ],
+
+    "Warlock Boots Blueprint": [
+        {
+            "desc":"A Blueprint design of The Warlock Armor Set",
+            "qty":1,
+            "cat":"PAPER",
+            "rank":"D",
+            "buff":"",
+            "debuff":""
+        }
+    ],
+
+    "Assasin Helmet": [
+        {
+            "desc":"A helm from a fallen assasin",
+            "qty":1,
+            "cat":"HELM",
+            "rank":"D",
+            "buff":"AGI+10",
+            "debuff":"",
+
+            "strbuff":0,
+            "agibuff":10,
+            "intbuff":0,
+            "vitbuff":0,
+            "perbuff":0
+        }
+    ]
+}
