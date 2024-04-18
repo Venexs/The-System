@@ -4,15 +4,14 @@
 
 
 from pathlib import Path
-import csv
+
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import json
+import csv
 import subprocess
-import sys
-import winsound
 
-subprocess.Popen(['python', 'sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
@@ -23,58 +22,42 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
-window.geometry("957x555")
+window.geometry("1107x648")
 window.configure(bg = "#FFFFFF")
+subprocess.Popen(['python', 'sfx.py'])
+
+window.attributes('-alpha',0.8)
 
 def item_data(name,rank,category,desc,buff,debuff):
     try:
-        fout=open('Files/temp.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        try:
-            rec=[name,rank,category,desc]
-        except:
+        if name!='-' and rank!='-' and category!='-':
+            fout=open('Files/temp.csv', 'w', newline='')
+            fw=csv.writer(fout)
             rec=[name,rank,category,desc,buff,debuff]
-        fw.writerow(rec)
-        fout.close()
+            fw.writerow(rec)
+            fout.close()
 
-        subprocess.Popen(['python', 'Item Data/build/gui.py'])
+            subprocess.Popen(['python', 'Item Data/build/gui.py'])
 
-        window.quit()
+            window.quit()
     except:
         print()
 
-def item_del(name,rank,category,desc,buff,debuff):
-    try:
-        fout=open('Files/Inventory.csv', 'r')
-        fr=csv.reader(fout)
-        records=[]
-        for k in fr:
-            if k[0]==name and k[1]==rank and k[2]==category and k[3]==desc:
-                print()
-            else:
-                records.append(k)
-        fout.close()
-
-        fout=open('Files/Inventory.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        fw.writerows(records)
-        fout.close()
-
-        subprocess.Popen(['python', 'Inventory/build/gui.py'])
-
-        window.quit()
-    except:
-        print()
-
-def inv_add_proc():
-    subprocess.Popen(['python', 'Inventory Addition/build/gui.py'])
-    window.quit()
+def name_cut(name):
+    if len(name)>15:
+        s=''
+        for k in range(15):
+            s+=name[k]
+        s+='...'
+        return s
+    else:
+        return name
 
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 555,
-    width = 957,
+    height = 648,
+    width = 1107,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -84,1360 +67,2354 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    478.0,
-    277.0,
+    553.0,
+    324.0,
     image=image_image_1
 )
 
 canvas.create_rectangle(
-    72.0,
-    36.0,
-    898.0,
-    96.0,
+    379.0,
+    51.0,
+    760.0,
+    112.0,
     fill="#2C2C2C",
-    outline="")
-
-canvas.create_rectangle(
-    896.9756680068895,
-    23.0,
-    913.0,
-    501.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    58.9755100069342,
-    40.0,
-    72.0,
-    518.0,
-    fill="#FFFFFF",
     outline="")
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    486.0,
-    286.9999999999999,
+    563.0,
+    334.0,
     image=image_image_2
 )
 
-canvas.create_rectangle(
-    67.0,
-    92.0,
-    898.0,
-    96.0,
-    fill="#FFFFFF",
-    outline="")
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    181.47335815429688,
+    165.4432373046875,
+    image=image_image_3
+)
 
 canvas.create_rectangle(
-    573.0,
-    41.0,
-    577.0,
-    516.0,
-    fill="#FFFFFF",
+    158.0,
+    190.0,
+    967.0,
+    527.0,
+    fill="#2E2E2E",
     outline="")
 
-canvas.create_rectangle(
-    658.0,
-    42.0,
-    662.0,
-    516.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    470.0,
-    41.0,
-    474.0,
-    516.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    105.0,
-    41.0,
-    109.00000000000006,
-    516.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
+canvas.create_text(
+    456.0,
     68.0,
-    127.0,
-    898.0,
-    130.0,
+    anchor="nw",
+    text="INVENTORY",
     fill="#FFFFFF",
-    outline="")
+    font=("Montserrat Medium", 36 * -1)
+)
 
-canvas.create_rectangle(
-    68.0,
-    161.0,
-    898.0,
-    164.0,
-    fill="#FFFFFF",
-    outline="")
+with open("Files/Inventory.json", 'r') as fson:
+    data=json.load(fson)
 
-canvas.create_rectangle(
-    68.0,
-    195.0,
-    898.0,
-    198.0,
-    fill="#FFFFFF",
-    outline="")
+rol=list(data.keys())
 
-canvas.create_rectangle(
-    68.0,
-    229.0,
-    898.0,
-    232.0,
-    fill="#FFFFFF",
-    outline="")
+tr_n_1=tr_n_2=tr_n_3=tr_n_4=tr_n_5=tr_n_6=tr_n_7=tr_n_8='-'
+tr_n_9=tr_n_10=tr_n_11=tr_n_12=tr_n_13=tr_n_14=tr_n_15=tr_n_16='-'
+tr_n_17=tr_n_18=tr_n_19=tr_n_20=tr_n_21=tr_n_22=tr_n_23=tr_n_24='-'
 
-canvas.create_rectangle(
-    68.0,
-    263.0,
-    898.0,
-    266.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    68.0,
-    297.0,
-    898.0,
-    300.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    68.0,
-    331.0,
-    898.0,
-    334.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    68.0,
-    365.0,
-    898.0,
-    368.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    68.0,
-    399.0,
-    898.0,
-    402.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    68.0,
-    433.0,
-    898.0,
-    436.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    68.0,
-    467.0,
-    898.0,
-    470.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    61.0,
-    501.0,
-    913.0,
-    523.0,
-    fill="#FFFFFF",
-    outline="")
-
-
-# ! ===========================================================================================================================================
-# ! ===========================================================================================================================================
-# ! ===========================================================================================================================================
-
-n1=n2=n3=n4=n5=n6=n7=n8=n9=n10=n11=n12='-'
-q1=q2=q3=q4=q5=q6=q7=q8=q9=q10=q11=q12='-'
-r1=r2=r3=r4=r5=r6=r7=r8=r9=r10=r11=r12='X'
-c1=c2=c3=c4=c5=c6=c7=c8=c9=c10=c11=c12='-'
-b1=b2=b3=b4=b5=b6=b7=b8=b9=b10=b11=b12='-'
-db1=db2=db3=db4=db5=db6=db7=db8=db9=db10=db11=db12='-'
-
-fout=open('Files/Inventory.csv', 'r')
-fr=csv.reader(fout)
-num=0
-
+c=-1
 try:
-    for k in fr:
-        if num == 0:
-            n1 = k[0]
-            q1 = k[1]
-            r1 = k[2]
-            c1 = k[3]
-            d1 = k[4]
-            try:
-                b1 = k[5]
-                db1 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 1:
-            n2 = k[0]
-            q2 = k[1]
-            r2 = k[2]
-            c2 = k[3]
-            d2 = k[4]
-            try:
-                b2 = k[5]
-                db2 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 2:
-            n3 = k[0]
-            q3 = k[1]
-            r3 = k[2]
-            c3 = k[3]
-            d3 = k[4]
-            try:
-                b3 = k[5]
-                db3 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 3:
-            n4 = k[0]
-            q4 = k[1]
-            r4 = k[2]
-            c4 = k[3]
-            d4 = k[4]
-            try:
-                b4 = k[5]
-                db4 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 4:
-            n5 = k[0]
-            q5 = k[1]
-            r5 = k[2]
-            c5 = k[3]
-            d5 = k[4]
-            try:
-                b5 = k[5]
-                db5 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 5:
-            n6 = k[0]
-            q6 = k[1]
-            r6 = k[2]
-            c6 = k[3]
-            d6 = k[4]
-            try:
-                b6 = k[5]
-                db6 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 6:
-            n7 = k[0]
-            q7 = k[1]
-            r7 = k[2]
-            c7 = k[3]
-            d7 = k[4]
-            try:
-                b7 = k[5]
-                db7 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 7:
-            n8 = k[0]
-            q8 = k[1]
-            r8 = k[2]
-            c8 = k[3]
-            d8 = k[4]
-            try:
-                b8 = k[5]
-                db8 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 8:
-            n9 = k[0]
-            q9 = k[1]
-            r9 = k[2]
-            c9 = k[3]
-            d9 = k[4]
-            try:
-                b9 = k[5]
-                db9 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 9:
-            n10 = k[0]
-            q10 = k[1]
-            r10 = k[2]
-            c10 = k[3]
-            d10 = k[4]
-            try:
-                b10 = k[5]
-                db10 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 10:
-            n11 = k[0]
-            q11 = k[1]
-            r11 = k[2]
-            c11 = k[3]
-            d11 = k[4]
-            try:
-                b11 = k[5]
-                db11 = k[6]
-            except:
-                print()
-            num+=1
-
-        elif num == 11:
-            n12 = k[0]
-            q12 = k[1]
-            r12 = k[2]
-            c12 = k[3]
-            d12 = k[4]
-            try:
-                b12 = k[5]
-                db12 = k[6]
-            except:
-                print()
-            num+=1
-
+    name_1=name_cut(rol[c+1])
+    tr_n_1=rol[c+1]
+    qt_1=data[rol[c+1]][0]['qty']
+    cat_1=data[rol[c+1]][0]['cat']
+    r_1=data[rol[c+1]][0]['rank']
+    d_1=data[rol[c+1]][0]['desc']
+    b_1=data[rol[c+1]][0]['buff']
+    db_1=data[rol[c+1]][0]['debuff']
 except:
-    print()
+    name_1=qt_1=cat_1=r_1=d_1=b_1=db_1='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_1 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_1 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
 
-fout.close()
-
-# ? / / These are Main Upper Texts
-
-canvas.create_text(
-    128.0,
-    63.0,
-    anchor="nw",
-    text="Name of Item:",
-    fill="#FFFFFF",
-    font=("Inter Light", 20 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    63.0,
-    anchor="nw",
-    text="Rank:",
-    fill="#FFFFFF",
-    font=("Inter Light", 20 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    63.0,
-    anchor="nw",
-    text="Category:",
-    fill="#FFFFFF",
-    font=("Inter Light", 20 * -1)
-)
-
-canvas.create_text(
-    482.0,
-    63.0,
-    anchor="nw",
-    text="Quantity:",
-    fill="#FFFFFF",
-    font=("Inter Light", 20 * -1)
-)
-
-canvas.create_text(
-    74.0,
-    66.0,
-    anchor="nw",
-    text="Sno",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-# ? / / These are Serial no. Texts
-
-canvas.create_text(
-    84.0,
-    102.0,
-    anchor="nw",
-    text="1",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    138.0,
-    anchor="nw",
-    text="2",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    174.0,
-    anchor="nw",
-    text="3",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    204.0,
-    anchor="nw",
-    text="4",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    240.0,
-    anchor="nw",
-    text="5",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    276.0,
-    anchor="nw",
-    text="6",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    305.0,
-    anchor="nw",
-    text="7",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    341.0,
-    anchor="nw",
-    text="8",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    84.0,
-    377.0,
-    anchor="nw",
-    text="9",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    81.0,
-    407.0,
-    anchor="nw",
-    text="10",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    81.0,
-    443.0,
-    anchor="nw",
-    text="11",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    81.0,
-    479.0,
-    anchor="nw",
-    text="12",
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-# ? / / These are name of items
-
-canvas.create_text(
-    117.0,
-    102.0,
-    anchor="nw",
-    text=n1,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    136.0,
-    anchor="nw",
-    text=n2,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    170.0,
-    anchor="nw",
-    text=n3,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    204.0,
-    anchor="nw",
-    text=n4,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    238.0,
-    anchor="nw",
-    text=n5,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    272.0,
-    anchor="nw",
-    text=n6,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    307.0,
-    anchor="nw",
-    text=n7,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    341.0,
-    anchor="nw",
-    text=n8,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    375.0,
-    anchor="nw",
-    text=n9,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    409.0,
-    anchor="nw",
-    text=n10,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    443.0,
-    anchor="nw",
-    text=n11,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    117.0,
-    477.0,
-    anchor="nw",
-    text=n12,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-# ? / / These are the Quantity numbers
-
-canvas.create_text(
-    485.0,
-    102.0,
-    anchor="nw",
-    text=q1,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    136.0,
-    anchor="nw",
-    text=q2,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    170.0,
-    anchor="nw",
-    text=q3,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    204.0,
-    anchor="nw",
-    text=q4,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    485.0,
-    238.0,
-    anchor="nw",
-    text=q5,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    272.0,
-    anchor="nw",
-    text=q6,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    306.0,
-    anchor="nw",
-    text=q7,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    340.0,
-    anchor="nw",
-    text=q8,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    484.0,
-    374.0,
-    anchor="nw",
-    text=q9,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    483.0,
-    408.0,
-    anchor="nw",
-    text=q10,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    483.0,
-    442.0,
-    anchor="nw",
-    text=q11,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    483.0,
-    476.0,
-    anchor="nw",
-    text=q12,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-# ? / / These are Rank Texts
-
-canvas.create_text(
-    590.0,
-    102.0,
-    anchor="nw",
-    text=r1,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    136.0,
-    anchor="nw",
-    text=r2,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    170.0,
-    anchor="nw",
-    text=r3,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    204.0,
-    anchor="nw",
-    text=r4,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    238.0,
-    anchor="nw",
-    text=r5,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    272.0,
-    anchor="nw",
-    text=r6,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    306.0,
-    anchor="nw",
-    text=r7,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    340.0,
-    anchor="nw",
-    text=r8,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    375.0,
-    anchor="nw",
-    text=r9,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    409.0,
-    anchor="nw",
-    text=r10,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    443.0,
-    anchor="nw",
-    text=r11,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    590.0,
-    477.0,
-    anchor="nw",
-    text=r12,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-# ? / / These are Category Texts
-
-canvas.create_text(
-    672.0,
-    102.0,
-    anchor="nw",
-    text=c1,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    136.0,
-    anchor="nw",
-    text=c2,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    170.0,
-    anchor="nw",
-    text=c3,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    204.0,
-    anchor="nw",
-    text=c4,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    238.0,
-    anchor="nw",
-    text=c5,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    272.0,
-    anchor="nw",
-    text=c6,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    306.0,
-    anchor="nw",
-    text=c7,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    340.0,
-    anchor="nw",
-    text=c8,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    375.0,
-    anchor="nw",
-    text=c9,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    409.0,
-    anchor="nw",
-    text=c10,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    442.0,
-    anchor="nw",
-    text=c11,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-canvas.create_text(
-    672.0,
-    476.0,
-    anchor="nw",
-    text=c12,
-    fill="#FFFFFF",
-    font=("Inter Light", 16 * -1)
-)
-
-# ! / / These are Delete Buttons
-
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n1,r1,c1,d1,b1,db1),
+    command=lambda: item_data(tr_n_1,r_1,cat_1,d_1,b_1,db_1),
     relief="flat"
 )
 button_1.place(
-    x=867.0,
-    y=99.0,
-    width=24.0,
-    height=24.0
+    x=183.921630859375,
+    y=201.98919677734375,
+    width=68.078369140625,
+    height=82.01080322265625
 )
 
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    177.0,
+    243.0,
+    image=image_image_4
+)
+
+canvas.create_rectangle(
+    164.0,
+    285.0,
+    257.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    164.0,
+    286.0,
+    anchor="nw",
+    text=name_1,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    171.0,
+    269.0,
+    anchor="nw",
+    text=qt_1,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_2=name_cut(rol[c+1])
+    tr_n_2=rol[c+1]
+    qt_2=data[rol[c+1]][0]['qty']
+    cat_2=data[rol[c+1]][0]['cat']
+    r_2=data[rol[c+1]][0]['rank']
+    d_2=data[rol[c+1]][0]['desc']
+    b_2=data[rol[c+1]][0]['buff']
+    db_2=data[rol[c+1]][0]['debuff']
+except:
+    name_2=qt_2=cat_2=r_2=d_2=b_2=db_2='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_2 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_2 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+   
 button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: item_del(n2,r2,c2,d2,b2,db2),
-    relief="flat"
+image=button_image_2,
+borderwidth=0,
+highlightthickness=0,
+command=lambda: item_data(tr_n_2,r_2,cat_2,d_2,b_2,db_2),
+relief="flat"
 )
 button_2.place(
-    x=867.0,
-    y=133.0,
-    width=24.0,
-    height=24.0
+    x=284.5580139160156,
+    y=201.98919677734375,
+    width=67.44200134277344,
+    height=82.01080322265625
 )
 
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    277.0,
+    243.0,
+    image=image_image_5
+)
+
+canvas.create_rectangle(
+    265.0,
+    285.0,
+    357.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    265.0,
+    286.0,
+    anchor="nw",
+    text=name_2,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    272.0,
+    269.0,
+    anchor="nw",
+    text=qt_2,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_3=name_cut(rol[c+1])
+    tr_n_3=rol[c+1]
+    qt_3=data[rol[c+1]][0]['qty']
+    cat_3=data[rol[c+1]][0]['cat']
+    r_3=data[rol[c+1]][0]['rank']
+    d_3=data[rol[c+1]][0]['desc']
+    b_3=data[rol[c+1]][0]['buff']
+    db_3=data[rol[c+1]][0]['debuff']
+except:
+    name_3=qt_3=cat_3=r_3=d_3=b_3=db_3='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_3 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_3 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n3,r3,c3,d3,b3,db3),
+    command=lambda: item_data(tr_n_3,r_3,cat_3,d_3,b_3,db_3),
     relief="flat"
 )
 button_3.place(
-    x=867.0,
-    y=167.0,
-    width=24.0,
-    height=24.0
+    x=385.0,
+    y=202.0,
+    width=68.0,
+    height=82.0
 )
 
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    378.0,
+    243.0,
+    image=image_image_6
+)
+
+canvas.create_rectangle(
+    366.0,
+    285.0,
+    458.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    366.0,
+    286.0,
+    anchor="nw",
+    text=name_3,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    372.0,
+    269.0,
+    anchor="nw",
+    text=qt_3,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_4=name_cut(rol[c+1])
+    tr_n_4=rol[c+1]
+    qt_4=data[rol[c+1]][0]['qty']
+    cat_4=data[rol[c+1]][0]['cat']
+    r_4=data[rol[c+1]][0]['rank']
+    d_4=data[rol[c+1]][0]['desc']
+    b_4=data[rol[c+1]][0]['buff']
+    db_4=data[rol[c+1]][0]['debuff']
+except:
+    name_4=qt_4=cat_4=r_4=d_4=b_4=db_4='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_4 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_4 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n4,r4,c4,d4,b4,db4),
+    command=lambda: item_data(tr_n_4,r_4,cat_4,d_4,b_4,db_4),
     relief="flat"
 )
 button_4.place(
-    x=867.0,
-    y=201.0,
-    width=24.0,
-    height=24.0
+    x=485.8307189941406,
+    y=202.0,
+    width=68.16929626464844,
+    height=82.0
 )
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
+image_image_7 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_7 = canvas.create_image(
+    479.0,
+    243.0,
+    image=image_image_7
+)
+
+canvas.create_rectangle(
+    466.0,
+    285.0,
+    559.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    466.0,
+    286.0,
+    anchor="nw",
+    text=name_4,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    473.0,
+    269.0,
+    anchor="nw",
+    text=qt_4,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_5=name_cut(rol[c+1])
+    tr_n_5=rol[c+1]
+    qt_5=data[rol[c+1]][0]['qty']
+    cat_5=data[rol[c+1]][0]['cat']
+    r_5=data[rol[c+1]][0]['rank']
+    d_5=data[rol[c+1]][0]['desc']
+    b_5=data[rol[c+1]][0]['buff']
+    db_5=data[rol[c+1]][0]['debuff']
+except:
+    name_5=qt_5=cat_5=r_5=d_5=b_5=db_5='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_5 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_5 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n5,r5,c5,d5,b5,db5),
+    command=lambda: item_data(tr_n_5,r_5,cat_5,d_5,b_5,db_5),
     relief="flat"
 )
 button_5.place(
-    x=867.0,
-    y=235.0,
-    width=24.0,
-    height=24.0
+    x=586.467041015625,
+    y=202.0,
+    width=67.53294372558594,
+    height=82.0
 )
 
-button_image_6 = PhotoImage(
-    file=relative_to_assets("button_6.png"))
+image_image_8 = PhotoImage(
+    file=relative_to_assets("image_8.png"))
+image_8 = canvas.create_image(
+    579.0,
+    243.0,
+    image=image_image_8
+)
+
+canvas.create_rectangle(
+    567.0,
+    285.0,
+    659.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    567.0,
+    286.0,
+    anchor="nw",
+    text=name_5,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    574.0,
+    269.0,
+    anchor="nw",
+    text=qt_5,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_6=name_cut(rol[c+1])
+    tr_n_6=rol[c+1]
+    qt_6=data[rol[c+1]][0]['qty']
+    cat_6=data[rol[c+1]][0]['cat']
+    r_6=data[rol[c+1]][0]['rank']
+    d_6=data[rol[c+1]][0]['desc']
+    b_6=data[rol[c+1]][0]['buff']
+    db_6=data[rol[c+1]][0]['debuff']
+except:
+    name_6=qt_6=cat_6=r_6=d_6=b_6=db_6='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_6 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_6 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_6 = Button(
     image=button_image_6,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n6,r6,c6,d6,b6,db6),
+    command=lambda: item_data(tr_n_6,r_6,cat_6,d_6,b_6,db_6),
     relief="flat"
 )
 button_6.place(
-    x=867.0,
-    y=269.0,
-    width=24.0,
-    height=24.0
+    x=687.0,
+    y=202.0,
+    width=68.0,
+    height=82.0
 )
 
-button_image_7 = PhotoImage(
-    file=relative_to_assets("button_7.png"))
+image_image_9 = PhotoImage(
+    file=relative_to_assets("image_9.png"))
+image_9 = canvas.create_image(
+    680.0,
+    243.0,
+    image=image_image_9
+)
+
+canvas.create_rectangle(
+    667.0,
+    285.0,
+    760.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    667.0,
+    286.0,
+    anchor="nw",
+    text=name_6,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    674.0,
+    269.0,
+    anchor="nw",
+    text=qt_6,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_7=name_cut(rol[c+1])
+    tr_n_7=rol[c+1]
+    qt_7=data[rol[c+1]][0]['qty']
+    cat_7=data[rol[c+1]][0]['cat']
+    r_7=data[rol[c+1]][0]['rank']
+    d_7=data[rol[c+1]][0]['desc']
+    b_7=data[rol[c+1]][0]['buff']
+    db_7=data[rol[c+1]][0]['debuff']
+except:
+    name_7=qt_7=cat_7=r_7=d_7=b_7=db_7='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_7 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_7 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_7 = Button(
     image=button_image_7,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n7,r7,c7,d7,b7,db7),
+    command=lambda: item_data(tr_n_7,r_7,cat_7,d_7,b_7,db_7),
     relief="flat"
 )
 button_7.place(
-    x=867.0,
-    y=303.0,
-    width=24.0,
-    height=24.0
+    x=787.7398071289062,
+    y=201.98919677734375,
+    width=67.26017761230469,
+    height=82.01080322265625
 )
 
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    781.0,
+    243.0,
+    image=image_image_10
+)
+
+canvas.create_rectangle(
+    768.0,
+    285.0,
+    861.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    768.0,
+    286.0,
+    anchor="nw",
+    text=name_7,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    775.0,
+    269.0,
+    anchor="nw",
+    text=qt_7,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_8=name_cut(rol[c+1])
+    tr_n_8=rol[c+1]
+    qt_8=data[rol[c+1]][0]['qty']
+    cat_8=data[rol[c+1]][0]['cat']
+    r_8=data[rol[c+1]][0]['rank']
+    d_8=data[rol[c+1]][0]['desc']
+    b_8=data[rol[c+1]][0]['buff']
+    db_8=data[rol[c+1]][0]['debuff']
+except:
+    name_8=qt_8=cat_8=r_8=d_8=b_8=db_8='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_8 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_8 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_8 = Button(
     image=button_image_8,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n8,r8,c8,d8,b8,db8),
+    command=lambda: item_data(tr_n_8,r_8,cat_8,d_8,b_8,db_8),
     relief="flat"
 )
 button_8.place(
-    x=867.0,
-    y=338.0,
-    width=24.0,
-    height=24.0
+    x=889.0,
+    y=201.98919677734375,
+    width=67.0,
+    height=82.01080322265625
 )
 
-button_image_9 = PhotoImage(
-    file=relative_to_assets("button_9.png"))
+image_image_11 = PhotoImage(
+    file=relative_to_assets("image_11.png"))
+image_11 = canvas.create_image(
+    881.0,
+    243.0,
+    image=image_image_11
+)
+
+canvas.create_rectangle(
+    869.0,
+    285.0,
+    961.0,
+    299.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    869.0,
+    286.0,
+    anchor="nw",
+    text=name_8,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    876.0,
+    269.0,
+    anchor="nw",
+    text=qt_8,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_9=name_cut(rol[c+1])
+    tr_n_9=rol[c+1]
+    qt_9=data[rol[c+1]][0]['qty']
+    cat_9=data[rol[c+1]][0]['cat']
+    r_9=data[rol[c+1]][0]['rank']
+    d_9=data[rol[c+1]][0]['desc']
+    b_9=data[rol[c+1]][0]['buff']
+    db_9=data[rol[c+1]][0]['debuff']
+except:
+    name_9=qt_9=cat_9=r_9=d_9=b_9=db_9='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_9 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_9 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_9 = Button(
     image=button_image_9,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n9,r9,c9,d9,b9,db9),
+    command=lambda:item_data(tr_n_9,r_9,cat_9,d_9,b_9,db_9),
     relief="flat"
 )
 button_9.place(
-    x=867.0,
-    y=371.0,
-    width=24.0,
-    height=24.0
+    x=185.0,
+    y=311.0,
+    width=68.0,
+    height=82.0
 )
 
-button_image_10 = PhotoImage(
-    file=relative_to_assets("button_10.png"))
+image_image_12 = PhotoImage(
+    file=relative_to_assets("image_12.png"))
+image_12 = canvas.create_image(
+    178.0,
+    352.0,
+    image=image_image_12
+)
+
+canvas.create_rectangle(
+    164.0,
+    393.0,
+    257.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    164.0,
+    395.0,
+    anchor="nw",
+    text=name_9,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    171.0,
+    379.0,
+    anchor="nw",
+    text=qt_9,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_10=name_cut(rol[c+1])
+    tr_n_10=rol[c+1]
+    qt_10=data[rol[c+1]][0]['qty']
+    cat_10=data[rol[c+1]][0]['cat']
+    r_10=data[rol[c+1]][0]['rank']
+    d_10=data[rol[c+1]][0]['desc']
+    b_10=data[rol[c+1]][0]['buff']
+    db_10=data[rol[c+1]][0]['debuff']
+except:
+    name_10=qt_10=cat_10=r_10=d_10=b_10=db_10='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_10 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_10 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_10 = Button(
     image=button_image_10,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n10,r10,c10,d10,b10,db10),
+    command=lambda:item_data(tr_n_10,r_10,cat_10,d_10,b_10,db_10),
     relief="flat"
 )
 button_10.place(
-    x=867.0,
-    y=405.0,
-    width=24.0,
-    height=24.0
+    x=285.0,
+    y=311.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_11 = PhotoImage(
-    file=relative_to_assets("button_11.png"))
+image_image_13 = PhotoImage(
+    file=relative_to_assets("image_13.png"))
+image_13 = canvas.create_image(
+    277.0,
+    352.0,
+    image=image_image_13
+)
+
+canvas.create_rectangle(
+    265.0,
+    393.0,
+    357.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    265.0,
+    395.0,
+    anchor="nw",
+    text=name_10,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    272.0,
+    379.0,
+    anchor="nw",
+    text=qt_10,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_11=name_cut(rol[c+1])
+    tr_n_11=rol[c+1]
+    qt_11=data[rol[c+1]][0]['qty']
+    cat_11=data[rol[c+1]][0]['cat']
+    r_11=data[rol[c+1]][0]['rank']
+    d_11=data[rol[c+1]][0]['desc']
+    b_11=data[rol[c+1]][0]['buff']
+    db_11=data[rol[c+1]][0]['debuff']
+except:
+    name_11=qt_11=cat_11=r_11=d_11=b_11=db_11='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_11 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_11 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_11 = Button(
     image=button_image_11,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n11,r11,c11,d11,b11,db11),
+    command=lambda:item_data(tr_n_11,r_11,cat_11,d_11,b_11,db_11),
     relief="flat"
 )
 button_11.place(
-    x=867.0,
-    y=439.0,
-    width=24.0,
-    height=24.0
+    x=385.0,
+    y=311.0,
+    width=68.0,
+    height=82.0
 )
 
-button_image_12 = PhotoImage(
-    file=relative_to_assets("button_12.png"))
+image_image_14 = PhotoImage(
+    file=relative_to_assets("image_14.png"))
+image_14 = canvas.create_image(
+    378.0,
+    352.0,
+    image=image_image_14
+)
+
+canvas.create_rectangle(
+    366.0,
+    393.0,
+    458.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    366.0,
+    395.0,
+    anchor="nw",
+    text=name_11,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    372.0,
+    379.0,
+    anchor="nw",
+    text=qt_11,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_12=name_cut(rol[c+1])
+    tr_n_12=rol[c+1]
+    qt_12=data[rol[c+1]][0]['qty']
+    cat_12=data[rol[c+1]][0]['cat']
+    r_12=data[rol[c+1]][0]['rank']
+    d_12=data[rol[c+1]][0]['desc']
+    b_12=data[rol[c+1]][0]['buff']
+    db_12=data[rol[c+1]][0]['debuff']
+except:
+    name_12=qt_12=cat_12=r_12=d_12=b_12=db_12='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_12 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_12 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_12 = Button(
     image=button_image_12,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_del(n12,r12,c12,d12,b12,db12),
+    command=lambda: item_data(tr_n_12,r_12,cat_12,d_12,b_12,db_12),
     relief="flat"
 )
 button_12.place(
-    x=867.0,
-    y=474.0,
-    width=24.0,
-    height=24.0
+    x=486.0,
+    y=311.0,
+    width=67.0,
+    height=82.0
 )
 
-# ! / / This is the Item Adding Button
+image_image_15 = PhotoImage(
+    file=relative_to_assets("image_15.png"))
+image_15 = canvas.create_image(
+    479.0,
+    352.0,
+    image=image_image_15
+)
 
-button_image_13 = PhotoImage(
-    file=relative_to_assets("button_13.png"))
+canvas.create_rectangle(
+    466.0,
+    393.0,
+    559.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    466.0,
+    395.0,
+    anchor="nw",
+    text=name_12,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    473.0,
+    379.0,
+    anchor="nw",
+    text=qt_12,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_13=name_cut(rol[c+1])
+    tr_n_13=rol[c+1]
+    qt_13=data[rol[c+1]][0]['qty']
+    cat_13=data[rol[c+1]][0]['cat']
+    r_13=data[rol[c+1]][0]['rank']
+    d_13=data[rol[c+1]][0]['desc']
+    b_13=data[rol[c+1]][0]['buff']
+    db_13=data[rol[c+1]][0]['debuff']
+except:
+    name_13=qt_13=cat_13=r_13=d_13=b_13=db_13='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_13 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_13 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_13 = Button(
     image=button_image_13,
     borderwidth=0,
     highlightthickness=0,
-    command=inv_add_proc,
+    command=lambda: item_data(tr_n_13,r_13,cat_13,d_13,b_13,db_13),
     relief="flat"
 )
 button_13.place(
-    x=729.0,
-    y=526.0,
-    width=153.0,
-    height=25.0
+    x=587.0,
+    y=311.0,
+    width=67.0,
+    height=82.0
 )
 
-# ! / / These are Item Checking Buttons
+image_image_16 = PhotoImage(
+    file=relative_to_assets("image_16.png"))
+image_16 = canvas.create_image(
+    579.0,
+    352.0,
+    image=image_image_16
+)
 
-button_image_14 = PhotoImage(
-    file=relative_to_assets("button_14.png"))
+canvas.create_rectangle(
+    567.0,
+    393.0,
+    659.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    567.0,
+    395.0,
+    anchor="nw",
+    text=name_13,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    574.0,
+    379.0,
+    anchor="nw",
+    text=qt_13,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_14=name_cut(rol[c+1])
+    tr_n_14=rol[c+1]
+    qt_14=data[rol[c+1]][0]['qty']
+    cat_14=data[rol[c+1]][0]['cat']
+    r_14=data[rol[c+1]][0]['rank']
+    d_14=data[rol[c+1]][0]['desc']
+    b_14=data[rol[c+1]][0]['buff']
+    db_14=data[rol[c+1]][0]['debuff']
+except:
+    name_14=qt_14=cat_14=r_14=d_14=b_14=db_14='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_14 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_14 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_14 = Button(
     image=button_image_14,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n1,r1,c1,d1,b1,db1),
+    command=lambda: item_data(tr_n_14,r_14,cat_14,d_14,b_14,db_14),
     relief="flat"
 )
 button_14.place(
-    x=438.0,
-    y=99.0,
-    width=24.0,
-    height=24.0
+    x=688.0,
+    y=311.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_15 = PhotoImage(
-    file=relative_to_assets("button_15.png"))
+image_image_17 = PhotoImage(
+    file=relative_to_assets("image_17.png"))
+image_17 = canvas.create_image(
+    680.0,
+    352.0,
+    image=image_image_17
+)
+
+canvas.create_rectangle(
+    667.0,
+    393.0,
+    760.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    667.0,
+    395.0,
+    anchor="nw",
+    text=name_14,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    674.0,
+    379.0,
+    anchor="nw",
+    text=qt_14,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_15=name_cut(rol[c+1])
+    tr_n_15=rol[c+1]
+    qt_15=data[rol[c+1]][0]['qty']
+    cat_15=data[rol[c+1]][0]['cat']
+    r_15=data[rol[c+1]][0]['rank']
+    d_15=data[rol[c+1]][0]['desc']
+    b_15=data[rol[c+1]][0]['buff']
+    db_15=data[rol[c+1]][0]['debuff']
+except:
+    name_15=qt_15=cat_15=r_15=d_15=b_15=db_15='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_15 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_15 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_15 = Button(
     image=button_image_15,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n2,r2,c2,d2,b2,db2),
+    command=lambda: item_data(tr_n_15,r_15,cat_15,d_15,b_15,db_15),
     relief="flat"
 )
 button_15.place(
-    x=438.0,
-    y=133.0,
-    width=24.0,
-    height=24.0
+    x=788.0,
+    y=311.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_16 = PhotoImage(
-    file=relative_to_assets("button_16.png"))
+image_image_18 = PhotoImage(
+    file=relative_to_assets("image_18.png"))
+image_18 = canvas.create_image(
+    781.0,
+    352.0,
+    image=image_image_18
+)
+
+canvas.create_rectangle(
+    768.0,
+    393.0,
+    861.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    768.0,
+    395.0,
+    anchor="nw",
+    text=name_15,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    775.0,
+    379.0,
+    anchor="nw",
+    text=qt_15,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_16=name_cut(rol[c+1])
+    tr_n_16=rol[c+1]
+    qt_16=data[rol[c+1]][0]['qty']
+    cat_16=data[rol[c+1]][0]['cat']
+    r_16=data[rol[c+1]][0]['rank']
+    d_16=data[rol[c+1]][0]['desc']
+    b_16=data[rol[c+1]][0]['buff']
+    db_16=data[rol[c+1]][0]['debuff']
+except:
+    name_16=qt_16=cat_16=r_16=d_16=b_16=db_16='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_16 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_16 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_16 = Button(
     image=button_image_16,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n3,r3,c3,d3,b3,db3),
+    command=lambda:item_data(tr_n_16,r_16,cat_16,d_16,b_16,db_16),
     relief="flat"
 )
 button_16.place(
-    x=438.0,
-    y=167.0,
-    width=24.0,
-    height=24.0
+    x=889.0,
+    y=311.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_17 = PhotoImage(
-    file=relative_to_assets("button_17.png"))
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_19 = canvas.create_image(
+    881.0,
+    352.0,
+    image=image_image_19
+)
+
+canvas.create_rectangle(
+    869.0,
+    393.0,
+    961.0,
+    407.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    869.0,
+    395.0,
+    anchor="nw",
+    text=name_16,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    876.0,
+    379.0,
+    anchor="nw",
+    text=qt_16,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_17=name_cut(rol[c+1])
+    tr_n_17=rol[c+1]
+    qt_17=data[rol[c+1]][0]['qty']
+    cat_17=data[rol[c+1]][0]['cat']
+    r_17=data[rol[c+1]][0]['rank']
+    d_17=data[rol[c+1]][0]['desc']
+    b_17=data[rol[c+1]][0]['buff']
+    db_17=data[rol[c+1]][0]['debuff']
+except:
+    name_17=qt_17=cat_17=r_17=d_17=b_17=db_17='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_17 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_17 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_17 = Button(
     image=button_image_17,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n4,r4,c4,d4,b4,db4),
+    command=lambda: item_data(tr_n_17,r_17,cat_17,d_17,b_17,db_17),
     relief="flat"
 )
 button_17.place(
-    x=438.0,
-    y=201.0,
-    width=24.0,
-    height=24.0
+    x=183.0,
+    y=418.0,
+    width=69.0,
+    height=82.0
 )
 
-button_image_18 = PhotoImage(
-    file=relative_to_assets("button_18.png"))
+image_image_20 = PhotoImage(
+    file=relative_to_assets("image_20.png"))
+image_20 = canvas.create_image(
+    177.0,
+    459.0,
+    image=image_image_20
+)
+
+canvas.create_rectangle(
+    164.0,
+    501.0,
+    257.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    164.0,
+    502.0,
+    anchor="nw",
+    text=name_17,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    171.0,
+    487.0,
+    anchor="nw",
+    text=qt_17,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_18=name_cut(rol[c+1])
+    tr_n_18=rol[c+1]
+    qt_18=data[rol[c+1]][0]['qty']
+    cat_18=data[rol[c+1]][0]['cat']
+    r_18=data[rol[c+1]][0]['rank']
+    d_18=data[rol[c+1]][0]['desc']
+    b_18=data[rol[c+1]][0]['buff']
+    db_18=data[rol[c+1]][0]['debuff']
+except:
+    name_18=qt_18=cat_18=r_18=d_18=b_18=db_18='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_18 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_18 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_18 = Button(
     image=button_image_18,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n5,r5,c5,d5,b5,db5),
+    command=lambda: item_data(tr_n_18,r_18,cat_18,d_18,b_18,db_18),
     relief="flat"
 )
 button_18.place(
-    x=438.0,
-    y=235.0,
-    width=24.0,
-    height=24.0
+    x=285.0,
+    y=418.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_19 = PhotoImage(
-    file=relative_to_assets("button_19.png"))
+image_image_21 = PhotoImage(
+    file=relative_to_assets("image_21.png"))
+image_21 = canvas.create_image(
+    277.0,
+    459.0,
+    image=image_image_21
+)
+
+canvas.create_rectangle(
+    265.0,
+    501.0,
+    357.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    265.0,
+    502.0,
+    anchor="nw",
+    text=name_18,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    272.0,
+    487.0,
+    anchor="nw",
+    text=qt_18,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_19=name_cut(rol[c+1])
+    tr_n_19=rol[c+1]
+    qt_19=data[rol[c+1]][0]['qty']
+    cat_19=data[rol[c+1]][0]['cat']
+    r_19=data[rol[c+1]][0]['rank']
+    d_19=data[rol[c+1]][0]['desc']
+    b_19=data[rol[c+1]][0]['buff']
+    db_19=data[rol[c+1]][0]['debuff']
+except:
+    name_19=qt_19=cat_19=r_19=d_19=b_19=db_19='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_19 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_19 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_19 = Button(
     image=button_image_19,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n6,r6,c6,d6,b6,db6),
+    command=lambda: item_data(tr_n_19,r_19,cat_19,d_19,b_19,db_19),
     relief="flat"
 )
 button_19.place(
-    x=438.0,
-    y=269.0,
-    width=24.0,
-    height=24.0
+    x=385.0,
+    y=418.0,
+    width=68.0,
+    height=82.0
 )
 
-button_image_20 = PhotoImage(
-    file=relative_to_assets("button_20.png"))
+image_image_22 = PhotoImage(
+    file=relative_to_assets("image_22.png"))
+image_22 = canvas.create_image(
+    378.0,
+    459.0,
+    image=image_image_22
+)
+
+canvas.create_rectangle(
+    366.0,
+    501.0,
+    458.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    366.0,
+    502.0,
+    anchor="nw",
+    text=name_19,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    372.0,
+    487.0,
+    anchor="nw",
+    text=qt_19,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_20=name_cut(rol[c+1])
+    tr_n_20=rol[c+1]
+    qt_20=data[rol[c+1]][0]['qty']
+    cat_20=data[rol[c+1]][0]['cat']
+    r_20=data[rol[c+1]][0]['rank']
+    d_20=data[rol[c+1]][0]['desc']
+    b_20=data[rol[c+1]][0]['buff']
+    db_20=data[rol[c+1]][0]['debuff']
+except:
+    name_20=qt_20=cat_20=r_20=d_20=b_20=db_20='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_20 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_20 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_20 = Button(
     image=button_image_20,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n7,r7,c7,d7,b7,db7),
+    command=lambda: item_data(tr_n_20,r_20,cat_20,d_20,b_20,db_20),
     relief="flat"
 )
 button_20.place(
-    x=438.0,
-    y=303.0,
-    width=24.0,
-    height=24.0
+    x=485.0,
+    y=418.0,
+    width=68.0,
+    height=82.0
 )
 
-button_image_21 = PhotoImage(
-    file=relative_to_assets("button_21.png"))
+image_image_23 = PhotoImage(
+    file=relative_to_assets("image_23.png"))
+image_23 = canvas.create_image(
+    479.0,
+    459.0,
+    image=image_image_23
+)
+
+canvas.create_rectangle(
+    466.0,
+    501.0,
+    559.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    466.0,
+    502.0,
+    anchor="nw",
+    text=name_20,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    473.0,
+    487.0,
+    anchor="nw",
+    text=qt_20,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_21=name_cut(rol[c+1])
+    tr_n_21=rol[c+1]
+    qt_21=data[rol[c+1]][0]['qty']
+    cat_21=data[rol[c+1]][0]['cat']
+    r_21=data[rol[c+1]][0]['rank']
+    d_21=data[rol[c+1]][0]['desc']
+    b_21=data[rol[c+1]][0]['buff']
+    db_21=data[rol[c+1]][0]['debuff']
+except:
+    name_21=qt_21=cat_21=r_21=d_21=b_21=db_21='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_21 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_21 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_21 = Button(
     image=button_image_21,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n8,r8,c8,d8,b8,db8),
+    command=lambda: item_data(tr_n_21,r_21,cat_21,d_21,b_21,db_21),
     relief="flat"
 )
 button_21.place(
-    x=438.0,
-    y=337.0,
-    width=24.0,
-    height=24.0
+    x=587.0,
+    y=418.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_22 = PhotoImage(
-    file=relative_to_assets("button_22.png"))
+image_image_24 = PhotoImage(
+    file=relative_to_assets("image_24.png"))
+image_24 = canvas.create_image(
+    579.0,
+    459.0,
+    image=image_image_24
+)
+
+canvas.create_rectangle(
+    567.0,
+    501.0,
+    659.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    567.0,
+    502.0,
+    anchor="nw",
+    text=name_21,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    574.0,
+    487.0,
+    anchor="nw",
+    text=qt_21,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_22=name_cut(rol[c+1])
+    tr_n_22=rol[c+1]
+    qt_22=data[rol[c+1]][0]['qty']
+    cat_22=data[rol[c+1]][0]['cat']
+    r_22=data[rol[c+1]][0]['rank']
+    d_22=data[rol[c+1]][0]['desc']
+    b_22=data[rol[c+1]][0]['buff']
+    db_22=data[rol[c+1]][0]['debuff']
+except:
+    name_22=qt_22=cat_22=r_22=d_22=b_22=db_22='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_22 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_22 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_22 = Button(
     image=button_image_22,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n9,r9,c9,d9,b9,db9),
+    command=lambda: item_data(tr_n_22,r_22,cat_22,d_22,b_22,db_22),
     relief="flat"
 )
 button_22.place(
-    x=438.0,
-    y=371.0,
-    width=24.0,
-    height=24.0
+    x=688.0,
+    y=418.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_23 = PhotoImage(
-    file=relative_to_assets("button_23.png"))
+image_image_25 = PhotoImage(
+    file=relative_to_assets("image_25.png"))
+image_25 = canvas.create_image(
+    680.0,
+    459.0,
+    image=image_image_25
+)
+
+canvas.create_rectangle(
+    667.0,
+    501.0,
+    760.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    667.0,
+    502.0,
+    anchor="nw",
+    text=name_22,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    674.0,
+    487.0,
+    anchor="nw",
+    text=qt_22,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_23=name_cut(rol[c+1])
+    tr_n_23=rol[c+1]
+    qt_23=data[rol[c+1]][0]['qty']
+    cat_23=data[rol[c+1]][0]['cat']
+    r_23=data[rol[c+1]][0]['rank']
+    d_23=data[rol[c+1]][0]['desc']
+    b_23=data[rol[c+1]][0]['buff']
+    db_23=data[rol[c+1]][0]['debuff']
+except:
+    name_23=qt_23=cat_23=r_23=d_23=b_23=db_23='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_23 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_23 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_23 = Button(
     image=button_image_23,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n10,r10,c10,d10,b10,db10),
+    command=lambda: item_data(tr_n_23,r_23,cat_23,d_23,b_23,db_23),
     relief="flat"
 )
 button_23.place(
-    x=438.0,
-    y=405.0,
-    width=24.0,
-    height=24.0
+    x=788.0,
+    y=418.0,
+    width=67.0,
+    height=82.0
 )
 
-button_image_24 = PhotoImage(
-    file=relative_to_assets("button_24.png"))
+image_image_26 = PhotoImage(
+    file=relative_to_assets("image_26.png"))
+image_26 = canvas.create_image(
+    781.0,
+    459.0,
+    image=image_image_26
+)
+
+canvas.create_rectangle(
+    768.0,
+    501.0,
+    861.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    768.0,
+    502.0,
+    anchor="nw",
+    text=name_23,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    775.0,
+    487.0,
+    anchor="nw",
+    text=qt_23,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+c+=1
+try:
+    name_24=name_cut(rol[c+1])
+    tr_n_24=rol[c+1]
+    qt_24=data[rol[c+1]][0]['qty']
+    cat_24=data[rol[c+1]][0]['cat']
+    r_24=data[rol[c+1]][0]['rank']
+    d_24=data[rol[c+1]][0]['desc']
+    b_24=data[rol[c+1]][0]['buff']
+    db_24=data[rol[c+1]][0]['debuff']
+except:
+    name_24=qt_24=cat_24=r_24=d_24=b_24=db_24='-'
+try:
+    if data[rol[c+1]][0]['cat']=='HELM':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif data[rol[c+1]][0]['cat']=='CHESTPLATE':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif data[rol[c+1]][0]['cat']=='GAUNTLET':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif data[rol[c+1]][0]['cat']=='BOOTS':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif data[rol[c+1]][0]['cat']=='COLLAR':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif data[rol[c+1]][0]['cat']=='RING':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif data[rol[c+1]][0]['cat']=='WEAPON':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif data[rol[c+1]][0]['cat']=='MONEY':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif data[rol[c+1]][0]['cat']=='PAPER':
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        button_image_24 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
+except:
+    button_image_24 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+
 button_24 = Button(
     image=button_image_24,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n11,r11,c11,d11,b11,db11),
+    command=lambda: item_data(tr_n_24,r_24,cat_24,d_24,b_24,db_24),
     relief="flat"
 )
 button_24.place(
-    x=438.0,
-    y=439.0,
-    width=24.0,
-    height=24.0
+    x=889.0,
+    y=418.0,
+    width=67.0,
+    height=82.0
 )
 
+image_image_27 = PhotoImage(
+    file=relative_to_assets("image_27.png"))
+image_27 = canvas.create_image(
+    881.0,
+    459.0,
+    image=image_image_27
+)
+
+canvas.create_rectangle(
+    869.0,
+    501.0,
+    961.0,
+    515.0,
+    fill="#3B3B3B",
+    outline="")
+
+canvas.create_text(
+    869.0,
+    502.0,
+    anchor="nw",
+    text=name_24,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
+
+canvas.create_text(
+    876.0,
+    487.0,
+    anchor="nw",
+    text=qt_24,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 10 * -1)
+)
 button_image_25 = PhotoImage(
     file=relative_to_assets("button_25.png"))
 button_25 = Button(
     image=button_image_25,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: item_data(n12,r12,c12,d12,b12,db12),
+    command=lambda: subprocess.Popen(['python', 'Inventory Addition/build/gui.py']),
     relief="flat"
 )
 button_25.place(
-    x=438.0,
-    y=473.0,
-    width=24.0,
-    height=24.0
+    x=882.0,
+    y=552.0,
+    width=153.0,
+    height=25.0
 )
-
 window.resizable(False, False)
 window.mainloop()
