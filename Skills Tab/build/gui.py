@@ -23,19 +23,25 @@ window = Tk()
 window.geometry("555x957")
 window.configure(bg = "#FFFFFF")
 
+window.attributes('-alpha',0.8)
+
 pv_sk1=pv_sk2=pv_sk3=pv_sk4='-'
 pv_lv1=pv_lv2=pv_lv3=pv_lv4='-'
+pv_more_1=pv_more_2=pv_more_3=pv_more_4='-'
+pv_buff_1=pv_buff_2=pv_buff_3=pv_buff_4='-'
 pv_d1=pv_d2=pv_d3=pv_d4=''
 
 ac_sk1=ac_sk2=ac_sk3=ac_sk4='-'
 ac_lv1=ac_lv2=ac_lv3=ac_lv4='-'
+ac_more_1=ac_more_2=ac_more_3=ac_more_4='-'
+ac_buff_1=ac_buff_2=ac_buff_3=ac_buff_4='-'
 ac_d1=ac_d2=ac_d3=ac_d4=''
 
-def skill_data(name,lvl,desc):
+def skill_data(name,lvl,more,buff,desc):
     if name!='-' and lvl!='-':
         fout=open('Files/Temp Files/Skill Temp.csv', 'w', newline='')
         fr=csv.writer(fout)
-        rec=[name,lvl,desc]
+        rec=[name,lvl,more,buff,desc]
         fr.writerow(rec)
         fout.close()
 
@@ -51,22 +57,30 @@ with open('Files/Skills.csv', 'r') as fout:
             if num==0 and k[2].upper()=='ACTIVE':
                 ac_sk1=k[0]
                 ac_lv1=k[1]
-                ac_d1=k[3]
+                ac_more_1=k[2]
+                ac_buff_1=k[3]
+                ac_d1=k[4]
                 num+=1
             elif num==1 and k[2].upper()=='ACTIVE':
                 ac_sk2=k[0]
                 ac_lv2=k[1]
-                ac_d2=k[3]
+                ac_more_2=k[2]
+                ac_buff_2=k[3]
+                ac_d2=k[4]
                 num+=1
             elif num==2 and k[2].upper()=='ACTIVE':
                 ac_sk3=k[0]
                 ac_lv3=k[1]
-                ac_d3=k[3]
+                ac_more_3=k[2]
+                ac_buff_3=k[3]
+                ac_d3=k[4]
                 num+=1
             elif num==3 and k[2].upper()=='ACTIVE':
                 ac_sk4=k[0]
                 ac_lv4=k[1]
-                ac_d4=k[3]
+                ac_more_4=k[2]
+                ac_buff_4=k[3]
+                ac_d4=k[4]
                 num+=1
         except:
             print()
@@ -79,22 +93,30 @@ with open('Files/Skills.csv', 'r') as fout:
             if num==0 and k[2].upper()=='PASSIVE':
                 pv_sk1=k[0]
                 pv_lv1=k[1]
-                pv_d1=k[3]
+                pv_more_1=k[2]
+                pv_buff_1=k[3]
+                pv_d1=k[4]
                 num+=1
             elif num==1 and k[2].upper()=='PASSIVE':
                 pv_sk2=k[0]
                 pv_lv2=k[1]
-                pv_d2=k[3]
+                pv_more_2=k[2]
+                pv_buff_2=k[3]
+                pv_d2=k[4]
                 num+=1
             elif num==2 and k[2].upper()=='PASSIVE':
                 pv_sk3=k[0]
                 pv_lv3=k[1]
-                pv_d3=k[3]
+                pv_more_3=k[2]
+                pv_buff_3=k[3]
+                pv_d3=k[4]
                 num+=1
             elif num==3 and k[2].upper()=='PASSIVE':
                 pv_sk4=k[0]
                 pv_lv4=k[1]
-                pv_d4=k[3]
+                pv_more_4=k[2]
+                pv_buff_4=k[3]
+                pv_d4=k[4]
                 num+=1
         except:
             print()
@@ -499,7 +521,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(pv_sk1,pv_lv1,pv_d1),
+    command=lambda: skill_data(pv_sk1,pv_lv1,pv_more_1,pv_buff_1,pv_d1),
     relief="flat"
 )
 button_1.place(
@@ -515,7 +537,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(pv_sk2,pv_lv2,pv_d2),
+    command=lambda: skill_data(pv_sk2,pv_lv2,pv_more_2,pv_buff_2,pv_d2),
     relief="flat"
 )
 button_2.place(
@@ -531,7 +553,7 @@ button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(pv_sk3,pv_lv3,pv_d3),
+    command=lambda: skill_data(pv_sk3,pv_lv3,pv_more_3,pv_buff_3,pv_d3),
     relief="flat"
 )
 button_3.place(
@@ -547,7 +569,7 @@ button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(pv_sk4,pv_lv4,pv_d4),
+    command=lambda: skill_data(pv_sk4,pv_lv4,pv_more_4,pv_buff_4,pv_d4),
     relief="flat"
 )
 button_4.place(
@@ -565,7 +587,7 @@ button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(ac_sk1,ac_lv1,ac_d1),
+    command=lambda: skill_data(ac_sk1,ac_lv1,ac_more_1,ac_buff_1,ac_d1),
     relief="flat"
 )
 button_5.place(
@@ -581,7 +603,7 @@ button_6 = Button(
     image=button_image_6,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(ac_sk2,ac_lv2,ac_d2),
+    command=lambda: skill_data(ac_sk2,ac_lv2,ac_more_2,ac_buff_2,ac_d2),
     relief="flat"
 )
 button_6.place(
@@ -597,7 +619,7 @@ button_7 = Button(
     image=button_image_7,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(ac_sk3,ac_lv3,ac_d3),
+    command=lambda: skill_data(ac_sk3,ac_lv3,ac_more_3,ac_buff_3,ac_d3),
     relief="flat"
 )
 button_7.place(
@@ -613,7 +635,7 @@ button_8 = Button(
     image=button_image_8,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: skill_data(ac_sk4,ac_lv4,ac_d4),
+    command=lambda: skill_data(ac_sk4,ac_lv4,ac_more_4,ac_buff_4,ac_d4),
     relief="flat"
 )
 button_8.place(

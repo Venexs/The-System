@@ -8,12 +8,15 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import json
 import csv
 import subprocess
-import subprocess
+
 subprocess.Popen(['python', 'sfx.py'])
+
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System\Misc\New_Status Tab\build\assets\frame0")
+
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -24,7 +27,7 @@ window = Tk()
 window.geometry("957x555")
 window.configure(bg = "#FFFFFF")
 
-# ? =====================================================================
+window.attributes('-alpha',0.8)
 
 canvas = Canvas(
     window,
@@ -45,47 +48,55 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-canvas.create_rectangle(
-    52.976036673451745,
-    41.0,
-    69.0,
-    512.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    854.9753520069789,
-    24.0,
-    871.0,
-    508.0,
-    fill="#FFFFFF",
-    outline="")
-
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
     477.0,
-    287.9999999999999,
+    288.0,
     image=image_image_2
 )
 
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    483.0,
+    91.0,
+    image=image_image_3
+)
+
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    483.0,
+    234.0,
+    image=image_image_4
+)
+
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    483.0,
+    379.0,
+    image=image_image_5
+)
+
+
 # ? =====================================================================
 # ? =====================================================================
 
-fout=open('Files/Status.csv', 'r')
-fr=csv.reader(fout)
-for k in fr:
-    hp=k[0]
-    mp=k[1]
-    lvl=k[2]
-    tit=k[3]
-    job=k[4]
-    stre=k[5]
-    agi=k[6]
-    vit=k[7]
-    intel=k[8]
-    per=k[9]
-fout.close()
+with open("Files/status.json", 'r') as fson:
+    data=json.load(fson)
+    hp=data["status"][0]['hp']
+    mp=data["status"][0]['mp']
+    lvl=data["status"][0]['level']
+    stre=data["status"][0]['str']
+    intel=data["status"][0]['int']
+    agi=data["status"][0]['agi']
+    vit=data["status"][0]['vit']
+    per=data["status"][0]['per']
+
+    tit=data["status"][1]['title']
+    job=data["status"][1]['job']
 # ? =====================================================================
 fout=open('Files/Available Points.csv', 'r')
 fr=csv.reader(fout)
@@ -103,31 +114,15 @@ fout.close()
 def update_str():
     if int(av_str)!=0:
         global str_txt
-        current_text = canvas.itemcget(str_txt, "text")  # Get the current text
-        # ? ====================================================
-        fout=open('Files/Available Points.csv', 'r')
-        fr=csv.reader(fout)
-        for k in fr:
-            ol_agi=int(k[0])
-            ol_str=int(k[1])-1
-            ol_int=int(k[2])
-        fout.close()
-        # ? ====================================================
-        # ? ====================================================
-        fout=open('Files/Available Points.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=[ol_agi,ol_str,ol_int]
-        fw.writerow(rec)
-        fout.close()
+        current_text = canvas.itemcget(str_txt, "text")  # Get the current tex
         # ? ====================================================
         current_number = int(current_text)  # Convert the text to an integer
         new_number = current_number + 1  # Increment the number
         # ? ====================================================
-        fout=open('Files/Status.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=[hp,mp,lvl,tit,job,new_number,agi,vit,intel,per]
-        fw.writerow(rec)
-        fout.close()
+        with open("Files/status.json", 'w') as fson:
+            data["status"][0]['str']+=1
+            data["avail_eq"][0]['str']-=1
+            json.dump(data, fson, indent=4)
         # ? ====================================================
         new_text = f"{new_number:03d}"  # Format the new number with leading zeros
         canvas.itemconfig(str_txt, text=new_text)  # Update the text
@@ -138,30 +133,14 @@ def update_agi():
     if int(av_agi)!=0:
         global agi_text
         current_text = canvas.itemcget(agi_text, "text")  # Get the current text
-        # ? ====================================================
-        fout=open('Files/Available Points.csv', 'r')
-        fr=csv.reader(fout)
-        for k in fr:
-            ol_agi=int(k[0])-1
-            ol_str=int(k[1])
-            ol_int=int(k[2])
-        fout.close()
-        # ? ====================================================
-        # ? ====================================================
-        fout=open('Files/Available Points.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=[ol_agi,ol_str,ol_int]
-        fw.writerow(rec)
-        fout.close()
-        # ? ====================================================
+         # ? ====================================================
         current_number = int(current_text)  # Convert the text to an integer
         new_number = current_number + 1  # Increment the number
         # ? ====================================================
-        fout=open('Files/Status.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=[hp,mp,lvl,tit,job,stre,new_number,vit,intel,per]
-        fw.writerow(rec)
-        fout.close()
+        with open("Files/status.json", 'w') as fson:
+            data["status"][0]['agi']+=1
+            data["avail_eq"][0]['agi']-=1
+            json.dump(data, fson, indent=4)
         # ? ====================================================
         new_text = f"{new_number:03d}"  # Format the new number with leading zeros
         canvas.itemconfig(agi_text, text=new_text)  # Update the text
@@ -172,30 +151,14 @@ def update_int():
     if int(av_int)!=0:
         global int_text
         current_text = canvas.itemcget(int_text, "text")  # Get the current text
-        # ? ====================================================
-        fout=open('Files/Available Points.csv', 'r')
-        fr=csv.reader(fout)
-        for k in fr:
-            ol_agi=int(k[0])
-            ol_str=int(k[1])
-            ol_int=int(k[2])-1
-        fout.close()
-        # ? ====================================================
-        # ? ====================================================
-        fout=open('Files/Available Points.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=[ol_agi,ol_str,ol_int]
-        fw.writerow(rec)
-        fout.close()
-        # ? ====================================================
+         # ? ====================================================
         current_number = int(current_text)  # Convert the text to an integer
         new_number = current_number + 1  # Increment the number
         # ? ====================================================
-        fout=open('Files/Status.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=[hp,mp,lvl,tit,job,stre,agi,vit,new_number,per]
-        fw.writerow(rec)
-        fout.close()
+        with open("Files/status.json", 'w') as fson:
+            data["status"][0]['int']+=1
+            data["avail_eq"][0]['int']-=1
+            json.dump(data, fson, indent=4)
         # ? ====================================================
         new_text = f"{new_number:03d}"  # Format the new number with leading zeros
         canvas.itemconfig(int_text, text=new_text)  # Update the text
@@ -232,437 +195,381 @@ def de_update_int():
 # / =================================================
 # / =================================================
 
-canvas.create_text(
-    384.0,
-    68.0,
-    anchor="nw",
-    text="STATUS",
-    fill="#FFFFFF",
-    font=("Inter SemiBold", 48 * -1)
-)
-
-# ? Level 
-canvas.create_text(
-    367.0,
-    123.0,
-    anchor="nw",
-    text=lvl,
-    fill="#FFFFFF",
-    font=("Inter Bold", 55 * -1)
-)
 
 canvas.create_text(
-    373.0,
-    180.0,
+    395.0,
+    168.0,
     anchor="nw",
     text="LEVEL",
     fill="#FFFFFF",
-    font=("Inter", 18 * -1)
+    font=("Montserrat Regular", 18 * -1)
 )
 
-# ! =================================================
-# ! Available AGI POINTS 
-# ! =================================================
-av_agi_txt=canvas.create_text(
-    754.0,
-    408.0,
+canvas.create_text(
+    391.0,
+    111.0,
+    anchor="nw",
+    text=lvl,
+    fill="#FFFFFF",
+    font=("Montserrat Bold", 55 * -1)
+)
+
+canvas.create_text(
+    809.0,
+    179.0,
     anchor="nw",
     text=av_agi,
     fill="#FFFFFF",
-    font=("Inter Bold", 45 * -1)
-)
-
-canvas.create_text(
-    701.0,
-    412.0,
-    anchor="nw",
-    text="Available",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-canvas.create_text(
-    716.0,
-    425.0,
-    anchor="nw",
-    text="Agility",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-canvas.create_text(
-    713.0,
-    439.0,
-    anchor="nw",
-    text="Points:",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-# ! =================================================
-# ! Available STR Points
-# ! =================================================
-
-av_str_txt=canvas.create_text(
-    753.0,
-    354.0,
-    anchor="nw",
-    text=av_str,
-    fill="#FFFFFF",
-    font=("Inter Bold", 45 * -1)
-)
-
-canvas.create_text(
-    700.0,
-    358.0,
-    anchor="nw",
-    text="Available",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-canvas.create_text(
-    701.0,
-    371.0,
-    anchor="nw",
-    text="Strength\n",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-canvas.create_text(
-    712.0,
-    385.0,
-    anchor="nw",
-    text="Points:",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-# ! =================================================
-# ! Available INT Points
-# ! =================================================
-
-av_int_txt=canvas.create_text(
-    754.0,
-    303.0,
-    anchor="nw",
-    text=av_int,
-    fill="#FFFFFF",
-    font=("Inter Bold", 45 * -1)
-)
-
-canvas.create_text(
-    701.0,
-    307.0,
-    anchor="nw",
-    text="Available",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-canvas.create_text(
-    686.0,
-    320.0,
-    anchor="nw",
-    text="Intelligence",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-canvas.create_text(
-    713.0,
-    334.0,
-    anchor="nw",
-    text="Points:",
-    fill="#FFFFFF",
-    font=("Inter", 12 * -1)
-)
-
-# ! =================================================
-
-# ? ==========================================================
-# ? STR Ability points
-# ? ==========================================================
-canvas.create_text(
-    247.0,
-    250.0,
-    anchor="nw",
-    text="STR:",
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-str_txt=canvas.create_text(
-    303.0,
-    250.0,
-    anchor="nw",
-    text=str(stre),
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-# ? ==========================================================
-# ? INT Ability points
-# ? ==========================================================
-canvas.create_text(
-    247.0,
-    321.0,
-    anchor="nw",
-    text="INT:",
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-int_text=canvas.create_text(
-    302.0,
-    322.0,
-    anchor="nw",
-    text=intel,
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-# ? ==========================================================
-# ? AGI Ability points
-# ? ==========================================================
-canvas.create_text(
-    245.0,
-    392.0,
-    anchor="nw",
-    text="AGI:",
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-agi_text=canvas.create_text(
-    302.0,
-    392.0,
-    anchor="nw",
-    text=agi,
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-# ? ==========================================================
-# ? VIT Ability points
-# ? ==========================================================
-canvas.create_text(
-    487.0,
-    250.0,
-    anchor="nw",
-    text="VIT:",
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-vit_text=canvas.create_text(
-    540.0,
-    250.0,
-    anchor="nw",
-    text=vit,
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-# ? ==========================================================
-# ? PER Ability points
-# ? ==========================================================
-canvas.create_text(
-    487.0,
-    321.0,
-    anchor="nw",
-    text="PER:",
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-canvas.create_text(
-    542.0,
-    321.0,
-    anchor="nw",
-    text=per,
-    fill="#FFFFFF",
-    font=("Inter Medium", 24 * -1)
-)
-
-# ? ==========================================================
-# ? HP and MP points
-# ? ==========================================================
-canvas.create_text(
-    169.0,
-    119.0,
-    anchor="nw",
-    text=f"HP: {hp}",
-    fill="#FFFFFF",
-    font=("Inter Medium", 18 * -1)
-)
-
-canvas.create_text(
-    168.0,
-    168.0,
-    anchor="nw",
-    text=f"MP: {mp}",
-    fill="#FFFFFF",
-    font=("Inter Medium", 18 * -1)
-)
-
-# ? ==========================================================
-# ? JOB and TITLE Texts
-# ? ==========================================================
-
-canvas.create_text(
-    521.0,
-    175.0,
-    anchor="nw",
-    text="JOB:",
-    fill="#FFFFFF",
-    font=("Inter", 16 * -1)
-)
-
-canvas.create_text(
-    561.0,
-    173.0,
-    anchor="nw",
-    text=job,
-    fill="#FFFFFF",
-    font=("Inter SemiBold", 18 * -1)
-)
-
-canvas.create_text(
-    509.0,
-    148.0,
-    anchor="nw",
-    text="TITLE:",
-    fill="#FFFFFF",
-    font=("Inter", 16 * -1)
-)
-
-canvas.create_text(
-    561.0,
-    146.0,
-    anchor="nw",
-    text=tit,
-    fill="#FFFFFF",
-    font=("Inter SemiBold", 18 * -1)
-)
-
-# ? ==========================================================
-# ? All Ability Images
-# ? ==========================================================
-
-image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
-image_3 = canvas.create_image(
-    216.0,
-    264.0,
-    image=image_image_3
-)
-
-image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
-image_4 = canvas.create_image(
-    216.0,
-    336.0,
-    image=image_image_4
-)
-
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    216.0,
-    406.0,
-    image=image_image_5
+    font=("Montserrat Bold", 24 * -1)
 )
 
 image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
-    462.0,
-    264.0,
+    780.0,
+    185.0,
     image=image_image_6
+)
+
+canvas.create_text(
+    809.0,
+    125.0,
+    anchor="nw",
+    text=av_str,
+    fill="#FFFFFF",
+    font=("Montserrat Bold", 24 * -1)
 )
 
 image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
-    462.0,
-    335.0,
+    779.0,
+    131.0,
     image=image_image_7
+)
+
+canvas.create_text(
+    809.0,
+    74.0,
+    anchor="nw",
+    text=av_int,
+    fill="#FFFFFF",
+    font=("Montserrat Bold", 24 * -1)
 )
 
 image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
-    143.0,
-    130.0,
+    772.0,
+    80.0,
     image=image_image_8
 )
+
+# ? ==========================================================
+# ? STR Ability points
+# ? ==========================================================
+
+canvas.create_text(
+    366.0,
+    311.0,
+    anchor="nw",
+    text=stre,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
+)
+
+canvas.create_text(
+    409.0,
+    314.0,
+    anchor="nw",
+    text="(+20)",
+    fill="#34FF48",
+    font=("Montserrat Regular", 15 * -1)
+)
+
+# ? ==========================================================
+# ? INT Ability points
+# ? ==========================================================
+
+canvas.create_text(
+    366.0,
+    365.0,
+    anchor="nw",
+    text=intel,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
+)
+
+canvas.create_text(
+    409.0,
+    368.0,
+    anchor="nw",
+    text="(+20)",
+    fill="#34FF48",
+    font=("Montserrat Regular", 15 * -1)
+)
+
+# ? ==========================================================
+# ? AGI Ability points
+# ? ==========================================================
+
+canvas.create_text(
+    366.0,
+    417.0,
+    anchor="nw",
+    text=agi,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
+)
+
+canvas.create_text(
+    409.0,
+    420.0,
+    anchor="nw",
+    text="(+20)",
+    fill="#34FF48",
+    font=("Montserrat Regular", 15 * -1)
+)
+
+# ? ==========================================================
+# ? VIT Ability points
+# ? ==========================================================
+
+canvas.create_text(
+    603.0,
+    311.0,
+    anchor="nw",
+    text=vit,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
+)
+
+canvas.create_text(
+    647.0,
+    314.0,
+    anchor="nw",
+    text="(+20)",
+    fill="#34FF48",
+    font=("Montserrat Regular", 15 * -1)
+)
+
+# ? ==========================================================
+# ? PER Ability points
+# ? ==========================================================
+
+canvas.create_text(
+    609.0,
+    363.0,
+    anchor="nw",
+    text=per,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
+)
+
+canvas.create_text(
+    653.0,
+    366.0,
+    anchor="nw",
+    text="(+20)",
+    fill="#34FF48",
+    font=("Montserrat Regular", 15 * -1)
+)
+
+# ? ==========================================================
+# ? JOB and TITLE
+# ? ==========================================================
+
+canvas.create_text(
+    501.0,
+    140.0,
+    anchor="nw",
+    text="JOB:",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 14 * -1)
+)
+
+canvas.create_text(
+    546.0,
+    137.0,
+    anchor="nw",
+    text=job,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 18 * -1)
+)
+
+canvas.create_text(
+    501.0,
+    169.0,
+    anchor="nw",
+    text="TITLE:",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 14 * -1)
+)
+
+canvas.create_text(
+    546.0,
+    166.0,
+    anchor="nw",
+    text=tit,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 18 * -1)
+)
+
+# ! ==========================================================
 
 image_image_9 = PhotoImage(
     file=relative_to_assets("image_9.png"))
 image_9 = canvas.create_image(
-    143.0,
-    179.0,
+    332.0,
+    325.0,
     image=image_image_9
+)
+
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    330.0,
+    379.0,
+    image=image_image_10
+)
+
+image_image_11 = PhotoImage(
+    file=relative_to_assets("image_11.png"))
+image_11 = canvas.create_image(
+    331.0,
+    433.0,
+    image=image_image_11
+)
+
+image_image_12 = PhotoImage(
+    file=relative_to_assets("image_12.png"))
+image_12 = canvas.create_image(
+    562.0,
+    325.0,
+    image=image_image_12
+)
+
+image_image_13 = PhotoImage(
+    file=relative_to_assets("image_13.png"))
+image_13 = canvas.create_image(
+    567.0,
+    376.0,
+    image=image_image_13
+)
+
+# ? ==========================================================
+# ? HP and MP points
+# ? ==========================================================
+
+
+image_image_14 = PhotoImage(
+    file=relative_to_assets("image_14.png"))
+image_14 = canvas.create_image(
+    297.0,
+    232.0,
+    image=image_image_14
+)
+
+canvas.create_text(
+    317.0,
+    223.0,
+    anchor="nw",
+    text=f"{hp}/",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 18 * -1)
+)
+
+canvas.create_text(
+    366.0,
+    228.0,
+    anchor="nw",
+    text=f"{hp}",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 12 * -1)
+)
+
+image_image_15 = PhotoImage(
+    file=relative_to_assets("image_15.png"))
+image_15 = canvas.create_image(
+    575.0,
+    232.0,
+    image=image_image_15
+)
+
+canvas.create_text(
+    595.0,
+    223.0,
+    anchor="nw",
+    text=f"{mp}/",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 18 * -1)
+)
+
+canvas.create_text(
+    644.0,
+    228.0,
+    anchor="nw",
+    text=f"{mp}",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 12 * -1)
 )
 
 # ? ==========================================================
 # ? Ability Add Up Button
 # ? ==========================================================
 
-# ! STR +
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=update_str,
+    command=lambda: update_str,
     relief="flat"
 )
 button_1.place(
-    x=353.0,
-    y=254.0,
-    width=20.0,
+    x=456.0,
+    y=314.0,
+    width=20.954654693603516,
     height=20.0
 )
 
-# ! INT +
 button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=update_int,
+    command=lambda: update_int,
     relief="flat"
 )
 button_2.place(
-    x=353.0,
-    y=326.0,
-    width=20.0,
+    x=457.0,
+    y=368.0,
+    width=20.954654693603516,
     height=20.0
 )
 
-# ! AGI +
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
 button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=update_agi,
+    command=lambda: update_agi,
     relief="flat"
 )
 button_3.place(
-    x=353.0,
-    y=396.0,
-    width=20.0,
+    x=457.0,
+    y=420.0,
+    width=20.954654693603516,
     height=20.0
 )
 
-# ! AGI LEVEL UP
+# ? ==========================================================
+# ? Ability Level Up Button
+# ? ==========================================================
+
 button_image_4 = PhotoImage(
     file=relative_to_assets("button_4.png"))
 button_4 = Button(
@@ -673,13 +580,12 @@ button_4 = Button(
     relief="flat"
 )
 button_4.place(
-    x=167.0,
-    y=396.0,
-    width=20.000246047973633,
-    height=20.000001907348633
+    x=277.0,
+    y=315.0,
+    width=20.0,
+    height=20.000003814697266
 )
 
-# ! STR LEVEL UP
 button_image_5 = PhotoImage(
     file=relative_to_assets("button_5.png"))
 button_5 = Button(
@@ -690,13 +596,12 @@ button_5 = Button(
     relief="flat"
 )
 button_5.place(
-    x=167.0,
-    y=254.0,
-    width=20.000246047973633,
+    x=279.0,
+    y=370.0,
+    width=20.0,
     height=20.000001907348633
 )
 
-# ! PER LEVEL UP
 button_image_6 = PhotoImage(
     file=relative_to_assets("button_6.png"))
 button_6 = Button(
@@ -707,13 +612,12 @@ button_6 = Button(
     relief="flat"
 )
 button_6.place(
-    x=418.0,
-    y=326.0,
-    width=20.000246047973633,
+    x=278.0,
+    y=423.0,
+    width=20.0,
     height=20.000001907348633
 )
 
-# ! INT LEVEL UP
 button_image_7 = PhotoImage(
     file=relative_to_assets("button_7.png"))
 button_7 = Button(
@@ -724,14 +628,11 @@ button_7 = Button(
     relief="flat"
 )
 button_7.place(
-    x=167.0,
-    y=326.0,
-    width=20.000246047973633,
+    x=509.0,
+    y=368.0,
+    width=20.0,
     height=20.000001907348633
 )
-
-# ? =====================================================================
-# ? =====================================================================
 
 window.resizable(False, False)
 window.mainloop()

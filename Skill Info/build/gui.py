@@ -10,11 +10,11 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import subprocess
-import subprocess
-subprocess.Popen(['python', 'sfx.py'])
+
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
+subprocess.Popen(['python', 'sfx.py'])
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
@@ -23,6 +23,8 @@ window = Tk()
 
 window.geometry("957x555")
 window.configure(bg = "#FFFFFF")
+
+window.attributes('-alpha',0.8)
 
 def return_skill():
     subprocess.Popen(['python', 'Skills Tab/build/gui.py'])
@@ -33,7 +35,9 @@ fr=csv.reader(fout)
 for k in fr:
     name=k[0]
     lvl=k[1]
-    desc=k[2]
+    more=k[2]
+    buff=k[3]
+    desc=k[4]
 fout.close()
 
 canvas = Canvas(
@@ -55,130 +59,81 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-canvas.create_rectangle(
-    65.97630000671052,
-    40.0,
-    82.0,
-    506.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    218.98772867014122,
-    177.0,
-    225.0,
-    416.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    716.9877286701412,
-    177.0,
-    723.0,
-    416.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    851.9762473400588,
-    30.0,
-    868.0,
-    497.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    222.0,
-    247.0,
-    721.0,
-    251.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    222.0,
-    412.0,
-    721.0,
-    416.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    222.0,
-    182.0,
-    721.0,
-    186.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    367.0,
-    154.0,
-    587.0,
-    158.0,
-    fill="#FFFFFF",
-    outline="")
-
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    483.0,
-    282.9999999999999,
+    482.976318359375,
+    283.0,
     image=image_image_2
 )
 
-canvas.create_text(
-    371.0,
-    100.0,
-    anchor="nw",
-    text="SKILL INFO",
-    fill="#FFFFFF",
-    font=("Inter SemiBold", 40 * -1)
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    479.0,
+    116.0,
+    image=image_image_3
+)
+
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    484.0,
+    258.0,
+    image=image_image_4
 )
 
 canvas.create_text(
-    319.0,
-    204.0,
+    312.0,
+    249.0,
     anchor="nw",
     text=f"[{name}]",
     fill="#FFFFFF",
-    font=("Inter", 21 * -1)
+    font=("MontserratRoman Regular", 14 * -1)
 )
 
 canvas.create_text(
-    255.0,
-    204.0,
+    599.0,
+    249.0,
     anchor="nw",
-    text="Name:",
+    text=f"Lv.{lvl}",
     fill="#FFFFFF",
-    font=("Inter", 21 * -1)
+    font=("MontserratRoman Regular", 14 * -1)
+)
+
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    478.0,
+    329.0,
+    image=image_image_5
 )
 
 canvas.create_text(
-    655.0,
-    210.0,
+    387.0,
+    168.0,
     anchor="nw",
-    text=f'Lvl:{lvl}',
+    text=f"[{more}-Exclusive Skill]",
     fill="#FFFFFF",
-    font=("Inter", 15 * -1)
+    font=("MontserratRoman SemiBold", 18 * -1)
 )
 
 canvas.create_text(
-    240.0,
-    285.0,
+    271.0,
+    298.0,
     anchor="nw",
-    text=desc,
+    text=f"{buff}",
     fill="#FFFFFF",
-    font=("Inter", 15 * -1)
+    font=("MontserratRoman Regular", 15 * -1)
 )
 
 canvas.create_text(
-    240.0,
-    256.0,
+    318.0,
+    406.0,
     anchor="nw",
-    text="Description:",
+    text=f"{desc}",
     fill="#FFFFFF",
-    font=("Inter", 16 * -1)
+    font=("MontserratRoman Regular", 10 * -1)
 )
 
 button_image_1 = PhotoImage(
@@ -187,14 +142,14 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: return_skill,
+    command=lambda: return_skill(),
     relief="flat"
 )
 button_1.place(
-    x=762.0,
-    y=61.0,
-    width=96.0,
-    height=29.0
+    x=801.0,
+    y=63.0,
+    width=56.0,
+    height=15.0
 )
 window.resizable(False, False)
 window.mainloop()
