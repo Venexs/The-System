@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import subprocess
-import subprocess
+
 subprocess.Popen(['python', 'sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -44,6 +44,7 @@ def item_data_display(name,rank,category,desc,buff='-',debuff='-'):
     window.geometry("957x555")
     window.configure(bg = "#FFFFFF")
 
+    window.attributes('-alpha',0.8)
 
     canvas = Canvas(
         window,
@@ -212,15 +213,43 @@ def item_data_display(name,rank,category,desc,buff='-',debuff='-'):
         fill="#2E2E2E",
         outline="")
 
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("image_3.png"))
+    if cat=='HELM':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_2.png"))
+    elif cat=='CHESTPLATE':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+    elif cat=='GAUNTLET':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_4.png"))
+    elif cat=='BOOTS':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+    elif cat=='COLLAR':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_11.png"))
+    elif cat=='RING':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_10.png"))
+    elif cat=='WEAPON':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+    elif cat=='MONEY':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+    elif cat=='PAPER':
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_7.png"))
+    else:
+        image_image_3 = PhotoImage(
+            file=relative_to_assets("button_8.png"))
     image_3 = canvas.create_image(
         214.0,
         164.0,
         image=image_image_3
     )
     button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=relative_to_assets("ret_but.png"))
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,

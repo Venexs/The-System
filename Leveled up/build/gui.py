@@ -8,11 +8,11 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import subprocess
-subprocess.Popen(['python', 'sfx.py'])
+
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System\Leveled up\build\assets\frame0")
+
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -20,14 +20,14 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
-window.geometry("881x160")
+window.geometry("881x125")
 window.configure(bg = "#FFFFFF")
 
 
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 160,
+    height = 125,
     width = 881,
     bd = 0,
     highlightthickness = 0,
@@ -39,41 +39,49 @@ image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
     516.0,
-    277.0,
+    363.0,
     image=image_image_1
 )
 
-image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
-image_2 = canvas.create_image(
-    440.0,
-    88.99999999999991,
-    image=image_image_2
-)
-
 canvas.create_text(
-    307.0,
-    60.0,
+    300.0,
+    33.0,
     anchor="nw",
     text="Leveled Up!",
     fill="#FFFFFF",
-    font=("Inter", 48 * -1)
+    font=("MontserratRoman Regular", 48 * -1)
 )
 
 canvas.create_rectangle(
-    118.0,
-    142.0,
-    762.0,
-    147.0,
+    73.0,
+    106.0,
+    715.0,
+    109.0,
     fill="#FFFFFF",
     outline="")
 
 canvas.create_rectangle(
-    116.0,
-    31.0,
-    762.0,
-    36.0,
+    164.0,
+    15.0,
+    804.0,
+    18.0,
     fill="#FFFFFF",
+    outline="")
+
+canvas.create_rectangle(
+    76.99999857831881,
+    16.0,
+    168.65423583984375,
+    107.65423726152494,
+    fill="#000000",
+    outline="")
+
+canvas.create_rectangle(
+    713.3457627384751,
+    16.0,
+    805.0,
+    107.65423726152494,
+    fill="#000000",
     outline="")
 window.resizable(False, False)
 window.mainloop()

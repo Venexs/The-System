@@ -11,6 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import subprocess
 import winsound
+import json
 
 subprocess.Popen(['python', 'sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
@@ -43,11 +44,14 @@ def get_record():
     cat=entry_4.get()
     desc=entry_5.get()
 
-    fin=open('Files/Inventory.csv', 'a', newline='')
-    fw=csv.writer(fin)
-    rec=[name,qty,rank,cat,desc]
-    fw.writerow(rec)
-
+    with open('Files/Inventory.json', 'r') as fin:
+        data=json.load(fin)
+        data[name]["desc"]=desc
+        data[name]["qty"]=qty   
+        data[name]["cat"]=cat
+        data[name]["rank"]=rank
+    with open('Files/Inventory.json', 'w') as fin:
+        json.dump(data, fin, indent=4)
     fin.close()
 
     close()
