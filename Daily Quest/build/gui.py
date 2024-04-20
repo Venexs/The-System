@@ -365,12 +365,36 @@ if full_check==False:
 
     def checking():
         if pl_push>=gl_push and pl_run>=gl_run and pl_squat>=gl_squat and pl_sit>=gl_sit:
+            lvl_chk_bool=False
             with open('Files/Daily quest Final Num.csv', 'w', newline='') as fout:
                 fw = csv.writer(fout)
                 fw.writerow([10,10,10,5,today])
             with open('Files/Checks/Today_Quest', 'w', newline='') as fout:
                 fw = csv.writer(fout)
                 fw.writerow(['Complete',today])
+            
+            # Append today's date to the CSV file
+            with open('Files/Leveler_Chk.csv', 'a', newline='') as fout_lvler:
+                writer = csv.writer(fout_lvler)
+                writer.writerow([today_date_str])
+
+            with open('Files/Leveler_Chk.csv', 'r') as fout_lvler:
+                fr = csv.reader(fout_lvler)
+                c=0
+                for mrv in fr:
+                    c+=1
+                if c==3:
+                    print('Level up Available')
+                    lvl_chk_bool=True
+
+            if lvl_chk_bool==True:
+                fout=open('Files/Leveler_Chk.csv', 'w', newline='')
+                fout.truncate()
+                fout.close()
+
+            with open('Files/Leveler_Chk.csv', 'a', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([today_date_str])
 
             subprocess.Popen(['python', 'STR Daily Quest Rewards/build/gui.py'])
             window.quit()
