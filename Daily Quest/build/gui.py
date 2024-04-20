@@ -5,7 +5,8 @@ import sched
 import time
 from datetime import datetime, timedelta, date
 import subprocess
-import subprocess
+import json
+
 subprocess.Popen(['python', 'sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -392,9 +393,12 @@ if full_check==False:
                 fout.truncate()
                 fout.close()
 
-            with open('Files/Leveler_Chk.csv', 'a', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow([today_date_str])
+                with open("Files/status.json", 'r') as fson:
+                    data=json.load(fson)
+                    data["status"][0]['level']+=1
+
+                with open("Files/status.json", 'w') as fson:
+                    json.dump(data, fson, indent=4)
 
             subprocess.Popen(['python', 'STR Daily Quest Rewards/build/gui.py'])
             window.quit()
