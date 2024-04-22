@@ -15,7 +15,7 @@ import subprocess
 subprocess.Popen(['python', 'sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System\Misc\New_Status Tab\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -94,17 +94,13 @@ with open("Files/status.json", 'r') as fson:
     agi=data["status"][0]['agi']
     vit=data["status"][0]['vit']
     per=data["status"][0]['per']
+    man=data["status"][0]['man']
 
     tit=data["status"][1]['title']
     job=data["status"][1]['job']
-# ? =====================================================================
-fout=open('Files/Available Points.csv', 'r')
-fr=csv.reader(fout)
-for k in fr:
-    av_agi=k[0]
-    av_str=k[1]
-    av_int=k[2]
-fout.close()
+
+    av_str_based=data["avail_eq"][0]['str_based']
+    av_int_based=data["avail_eq"][0]['int_based']
 # ? =====================================================================
 # ? =====================================================================
 
@@ -112,56 +108,110 @@ fout.close()
 # / =================================================
 
 def update_str():
-    if int(av_str)!=0:
+    if int(av_str_based)!=0:
         global str_txt
-        current_text = canvas.itemcget(str_txt, "text")  # Get the current tex
+        current_text = canvas.itemcget(str_txt, "text")
         # ? ====================================================
-        current_number = int(current_text)  # Convert the text to an integer
-        new_number = current_number + 1  # Increment the number
+        current_number = int(current_text)
+        new_number = current_number + 1
         # ? ====================================================
         with open("Files/status.json", 'w') as fson:
             data["status"][0]['str']+=1
-            data["avail_eq"][0]['str']-=1
+            data["avail_eq"][0]['str_based']-=1
             json.dump(data, fson, indent=4)
         # ? ====================================================
-        new_text = f"{new_number:03d}"  # Format the new number with leading zeros
-        canvas.itemconfig(str_txt, text=new_text)  # Update the text
+        new_text = f"{new_number:03d}"
+        canvas.itemconfig(str_txt, text=new_text)
 
         de_update_str()
 
 def update_agi():
-    if int(av_agi)!=0:
-        global agi_text
-        current_text = canvas.itemcget(agi_text, "text")  # Get the current text
+    if int(av_str_based)!=0:
+        global agi_txt
+        current_text = canvas.itemcget(agi_txt, "text")
          # ? ====================================================
-        current_number = int(current_text)  # Convert the text to an integer
-        new_number = current_number + 1  # Increment the number
+        current_number = int(current_text)
+        new_number = current_number + 1
         # ? ====================================================
         with open("Files/status.json", 'w') as fson:
             data["status"][0]['agi']+=1
-            data["avail_eq"][0]['agi']-=1
+            data["avail_eq"][0]['str_based']-=1
             json.dump(data, fson, indent=4)
         # ? ====================================================
-        new_text = f"{new_number:03d}"  # Format the new number with leading zeros
-        canvas.itemconfig(agi_text, text=new_text)  # Update the text
+        new_text = f"{new_number:03d}"
+        canvas.itemconfig(agi_txt, text=new_text)
 
-        de_update_agi()
+        de_update_str()
+
+def update_vit():
+    if int(av_str_based)!=0:
+        global vit_txt
+        current_text = canvas.itemcget(vit_txt, "text")
+         # ? ====================================================
+        current_number = int(current_text)
+        new_number = current_number + 1
+        # ? ====================================================
+        with open("Files/status.json", 'w') as fson:
+            data["status"][0]['vit']+=1
+            data["avail_eq"][0]['str_based']-=1
+            json.dump(data, fson, indent=4)
+        # ? ====================================================
+        new_text = f"{new_number:03d}"
+        canvas.itemconfig(vit_txt, text=new_text)
+
+        de_update_str()
 
 def update_int():
-    if int(av_int)!=0:
-        global int_text
-        current_text = canvas.itemcget(int_text, "text")  # Get the current text
+    if int(av_int_based)!=0:
+        global int_txt
+        current_text = canvas.itemcget(int_txt, "text")
          # ? ====================================================
-        current_number = int(current_text)  # Convert the text to an integer
-        new_number = current_number + 1  # Increment the number
+        current_number = int(current_text)
+        new_number = current_number + 1
         # ? ====================================================
         with open("Files/status.json", 'w') as fson:
             data["status"][0]['int']+=1
-            data["avail_eq"][0]['int']-=1
+            data["avail_eq"][0]['int_based']-=1
             json.dump(data, fson, indent=4)
         # ? ====================================================
-        new_text = f"{new_number:03d}"  # Format the new number with leading zeros
-        canvas.itemconfig(int_text, text=new_text)  # Update the text
+        new_text = f"{new_number:03d}"
+        canvas.itemconfig(int_txt, text=new_text)
+
+        de_update_int()
+
+def update_per():
+    if int(av_int_based)!=0:
+        global per_txt
+        current_text = canvas.itemcget(per_txt, "text")
+         # ? ====================================================
+        current_number = int(current_text)
+        new_number = current_number + 1 
+        # ? ====================================================
+        with open("Files/status.json", 'w') as fson:
+            data["status"][0]['per']+=1
+            data["avail_eq"][0]['int_based']-=1
+            json.dump(data, fson, indent=4)
+        # ? ====================================================
+        new_text = f"{new_number:03d}"
+        canvas.itemconfig(per_txt, text=new_text)
+
+        de_update_int()
+
+def update_man():
+    if int(av_int_based)!=0:
+        global man_txt
+        current_text = canvas.itemcget(man_txt, "text")
+         # ? ====================================================
+        current_number = int(current_text)
+        new_number = current_number + 1
+        # ? ====================================================
+        with open("Files/status.json", 'w') as fson:
+            data["status"][0]['man']+=1
+            data["avail_eq"][0]['int_based']-=1
+            json.dump(data, fson, indent=4)
+        # ? ====================================================
+        new_text = f"{new_number:03d}"
+        canvas.itemconfig(man_txt, text=new_text)
 
         de_update_int()
 
@@ -169,28 +219,20 @@ def update_int():
 # / =================================================
 
 def de_update_str():
-    global av_str_txt
-    current_text = canvas.itemcget(av_str_txt, "text")  # Get the current text
-    current_number = int(current_text)  # Convert the text to an integer
-    new_number = current_number - 1  # Increment the number
-    new_text = f"{new_number:03d}"  # Format the new number with leading zeros
-    canvas.itemconfig(av_str_txt, text=new_text)  # Update the text
-
-def de_update_agi():
-    global av_agi_txt
-    current_text = canvas.itemcget(av_agi_txt, "text")  # Get the current text
-    current_number = int(current_text)  # Convert the text to an integer
-    new_number = current_number - 1  # Increment the number
-    new_text = f"{new_number:03d}"  # Format the new number with leading zeros
-    canvas.itemconfig(av_agi_txt, text=new_text)  # Update the text
+    global av_str_based_txt
+    current_text = canvas.itemcget(av_str_based_txt, "text")
+    current_number = int(current_text)
+    new_number = current_number - 1
+    new_text = f"{new_number:03d}"
+    canvas.itemconfig(av_str_based_txt, text=new_text)
 
 def de_update_int():
-    global av_int_txt
-    current_text = canvas.itemcget(av_int_txt, "text")  # Get the current text
-    current_number = int(current_text)  # Convert the text to an integer
-    new_number = current_number - 1  # Increment the number
-    new_text = f"{new_number:03d}"  # Format the new number with leading zeros
-    canvas.itemconfig(av_int_txt, text=new_text)  # Update the text
+    global av_int_based_txt
+    current_text = canvas.itemcget(av_int_based_txt, "text")
+    current_number = int(current_text)
+    new_number = current_number - 1
+    new_text = f"{new_number:03d}"
+    canvas.itemconfig(av_int_based_txt, text=new_text)
 
 # / =================================================
 # / =================================================
@@ -214,53 +256,36 @@ canvas.create_text(
     font=("Montserrat Bold", 55 * -1)
 )
 
-canvas.create_text(
-    809.0,
-    179.0,
+av_str_based_txt=canvas.create_text(
+    815.0,
+    61.0,
     anchor="nw",
-    text=av_agi,
-    fill="#FFFFFF",
-    font=("Montserrat Bold", 24 * -1)
-)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    780.0,
-    185.0,
-    image=image_image_6
-)
-
-canvas.create_text(
-    809.0,
-    125.0,
-    anchor="nw",
-    text=av_str,
+    text=av_str_based,
     fill="#FFFFFF",
     font=("Montserrat Bold", 24 * -1)
 )
 
 image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
+    file=relative_to_assets("Av1.png"))
 image_7 = canvas.create_image(
-    779.0,
-    131.0,
+    748.0,
+    150.0,
     image=image_image_7
 )
 
-canvas.create_text(
-    809.0,
-    74.0,
+av_int_based_txt=canvas.create_text(
+    815.0,
+    130.0,
     anchor="nw",
-    text=av_int,
+    text=av_int_based,
     fill="#FFFFFF",
     font=("Montserrat Bold", 24 * -1)
 )
 
 image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
+    file=relative_to_assets("Av2.png"))
 image_8 = canvas.create_image(
-    772.0,
+    748.0,
     80.0,
     image=image_image_8
 )
@@ -269,7 +294,7 @@ image_8 = canvas.create_image(
 # ? STR Ability points
 # ? ==========================================================
 
-canvas.create_text(
+str_txt=canvas.create_text(
     366.0,
     311.0,
     anchor="nw",
@@ -291,7 +316,7 @@ canvas.create_text(
 # ? INT Ability points
 # ? ==========================================================
 
-canvas.create_text(
+int_txt=canvas.create_text(
     366.0,
     365.0,
     anchor="nw",
@@ -313,7 +338,7 @@ canvas.create_text(
 # ? AGI Ability points
 # ? ==========================================================
 
-canvas.create_text(
+agi_txt=canvas.create_text(
     366.0,
     417.0,
     anchor="nw",
@@ -323,7 +348,7 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    409.0,
+    410.0,
     420.0,
     anchor="nw",
     text="(+20)",
@@ -335,7 +360,7 @@ canvas.create_text(
 # ? VIT Ability points
 # ? ==========================================================
 
-canvas.create_text(
+vit_txt=canvas.create_text(
     603.0,
     311.0,
     anchor="nw",
@@ -345,7 +370,7 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    647.0,
+    640.0,
     314.0,
     anchor="nw",
     text="(+20)",
@@ -357,7 +382,7 @@ canvas.create_text(
 # ? PER Ability points
 # ? ==========================================================
 
-canvas.create_text(
+per_txt=canvas.create_text(
     609.0,
     363.0,
     anchor="nw",
@@ -373,6 +398,19 @@ canvas.create_text(
     text="(+20)",
     fill="#34FF48",
     font=("Montserrat Regular", 15 * -1)
+)
+
+# ? ==========================================================
+# ? MAN Ability points
+# ? ==========================================================
+
+man_txt=canvas.create_text(
+    612.0,
+    419.0,
+    anchor="nw",
+    text=man,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
 )
 
 # ? ==========================================================
@@ -455,6 +493,14 @@ image_13 = canvas.create_image(
     567.0,
     376.0,
     image=image_image_13
+)
+
+image_image_16 = PhotoImage(
+    file=relative_to_assets("image_16.png"))
+image_16 = canvas.create_image(
+    571.0,
+    432.0,
+    image=image_image_16
 )
 
 # ? ==========================================================
@@ -633,6 +679,52 @@ button_7.place(
     width=20.0,
     height=20.000001907348633
 )
+button_image_8 = PhotoImage(
+    file=relative_to_assets("button_8.png"))
+button_8 = Button(
+    image=button_image_8,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_8 clicked"),
+    relief="flat"
+)
+button_8.place(
+    x=690.0,
+    y=313.0,
+    width=20.954654693603516,
+    height=20.0
+)
 
+button_image_9 = PhotoImage(
+    file=relative_to_assets("button_9.png"))
+button_9 = Button(
+    image=button_image_9,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_9 clicked"),
+    relief="flat"
+)
+button_9.place(
+    x=695.0,
+    y=365.0,
+    width=20.954654693603516,
+    height=20.0
+)
+
+button_image_10 = PhotoImage(
+    file=relative_to_assets("button_10.png"))
+button_10 = Button(
+    image=button_image_10,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_10 clicked"),
+    relief="flat"
+)
+button_10.place(
+    x=685.0,
+    y=421.0,
+    width=20.954654693603516,
+    height=20.0
+)
 window.resizable(False, False)
 window.mainloop()

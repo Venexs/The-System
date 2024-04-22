@@ -1,0 +1,69 @@
+{
+    "Shoulder Tap Pushups":[
+        {
+            "desc":"Tap the right Shoulder with your left hand and vice-versa after one pushup",
+            "time":45,
+            "amt":15
+        },
+        {
+            "STRBUFF":1,
+            "AGIBUFF":1
+        }
+    ],
+
+    "Lunge and Twist":[
+        {
+            "desc":"Step forward with your right foot, lowering your body into a basic lunge position. Twist your upper body to the right from your midsection. Keep your core engaged, squeeze your glutes, and be careful to not rotate your knee",
+            "time":45,
+            "amt":15
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+
+    "Mountain Climber":[
+        {
+            "desc":"Using your abdominals, bend your right knee in toward your chest, then step it back into the plank position. Repeat with your left leg, bringing it toward your chest and then stepping it back",
+            "time":45,
+            "amt":15
+        },
+        {
+            "STRBUFF":1,
+            "AGIBUFF":1
+        }
+    ],
+
+    "Leg Kickbacks":[
+        {
+            "desc":"Lay on your back with your knees bent and raise the straightened leg skyward while keeping contact with the ground",
+            "time":45,
+            "amt":15
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+
+    "Leg Lifts":[
+        {
+            "desc":"This exercise can be performed lying down or sitting up, and involves lifting the legs off the ground while keeping them straight.",
+            "time":45,
+            "amt":15
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+
+    "Planks":[
+        {
+            "desc":"The plank exercise is an isometric core exercise that involves maintaining a position similar to a push-up for the maximum possible time.",
+            "time":45,
+            "amt":15
+        },
+        {
+            "STRBUFF":1
+        }
+    ]
+}

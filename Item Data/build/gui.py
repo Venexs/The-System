@@ -17,7 +17,7 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 window = Tk()
 
-fout=open('Files/temp.csv', 'r')
+fout=open('Files/Equipment Temp.csv', 'r')
 fr=csv.reader(fout)
 for k in fr:
     name=k[0]

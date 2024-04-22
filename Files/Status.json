@@ -2,13 +2,14 @@
     "status": [
         {
             "hp":150,
-            "mp":100,
+            "mp":0,
             "level":1,
             "str":0,
             "int":0,
             "agi":0,
             "vit":0,
-            "per":0
+            "per":0,
+            "man":0
         },
         {
             "title":"None",
@@ -18,9 +19,8 @@
 
     "avail_eq": [
         {
-            "str":0,
-            "agi":0,
-            "int":0
+            "str_based":0,
+            "int_based":0
         }
     ],
 

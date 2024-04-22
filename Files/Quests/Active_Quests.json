@@ -1,0 +1,14 @@
+{
+    "Courage of the Weak":[
+        {
+            "Status":"Ongoing",
+            "desc":"Become a Player",
+            "type":"Active"
+        },
+        {
+            "Rewards":{
+                "LVLADD":10
+            }
+        }
+    ]
+}
