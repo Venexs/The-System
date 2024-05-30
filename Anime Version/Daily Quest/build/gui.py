@@ -190,7 +190,7 @@ def update_sleep():
     check_comp()
 
 def preview():
-    subprocess.Popen(['python', 'Anime Version/Daily Quest Preview/gui.py'])
+    subprocess.Popen(['python', 'Anime Version/Daily Quest Preview/build/gui.py'])
 
     window.quit()
 
