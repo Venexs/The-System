@@ -28,7 +28,7 @@ window.geometry("555x669")
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 
-with open("Files/status.json", 'r') as rank_check_file:
+with open("Files/Status.json", 'r') as rank_check_file:
     rank_check_data=json.load(rank_check_file)
     lvl=rank_check_data["status"][0]['level']
 
@@ -67,11 +67,11 @@ with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_ch
     fw.writerow([today_date_str, "False"])
 
 def get():
-    with open("Files/status.json", 'w') as status_import:
-        final_rank_check_data["status"][0]['coins']+=coins
-        final_rank_check_data["avail_eq"][0]['str_based']+=av_str
-        final_rank_check_data["avail_eq"][0]['int_based']+=av_int
-        json.dump(final_rank_check_data, status_import, indent=4)
+    with open("Files/Status.json", 'w') as status_import:
+        rank_check_data["status"][0]['coins']+=coins
+        rank_check_data["avail_eq"][0]['str_based']+=av_str
+        rank_check_data["avail_eq"][0]['int_based']+=av_int
+        json.dump(rank_check_data, status_import, indent=4)
 
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
         fw=csv.writer(Daily_date_check_file)
