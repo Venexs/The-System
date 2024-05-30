@@ -13,6 +13,8 @@ The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkin
 
 ## Installation
 
+Install [Python](https://www.python.org/downloads/)
+
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install these modules. Usually PIP is insatlled with Python
 
 Tkinter
