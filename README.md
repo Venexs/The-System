@@ -1,7 +1,7 @@
 # System_SL
 
 # The System (Solo Levelling)
-This is just a fun project I made, trying to emulate and fulfil the function that The 'System' in Solo Levelling had.
+This is just a fun project I made, trying to emulate and fulfil the function that The 'System' in Solo Levelling had. (THIS IS JUST A TESTING VERSION!)
 
 Context:
 
@@ -13,7 +13,7 @@ The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkin
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install these modules.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install these modules. Usually PIP is insatlled with Python
 
 Tkinter
 
@@ -26,6 +26,13 @@ PathLib
 pip install pathlib
 ```
 
+Psutil
+
+```bash
+pip install psutil
+```
+
+Also Install all the fonts in the fonts folder to get the best experience.
 
 ## Usage
 
