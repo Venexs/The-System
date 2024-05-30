@@ -32,6 +32,12 @@ Psutil
 pip install psutil
 ```
 
+Pillow
+
+```bash
+pip install Pillow
+```
+
 Also Install all the fonts in the fonts folder to get the best experience.
 
 ## Usage
