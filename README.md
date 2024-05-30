@@ -44,7 +44,8 @@ Also Install all the fonts in the fonts folder to get the best experience.
 
 ## Usage
 
-Run the The System Shortcut file (or The System.lnk) file in the main folder to start the program.
+Run the The System Shortcut file (or The System.lnk) file in the main folder to start the program. 
+If it doesn't work, please use the main.bat file
 
 
 ## Contributing
