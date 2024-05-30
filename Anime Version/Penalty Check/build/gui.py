@@ -57,7 +57,7 @@ def complete():
     with open("Files/Data/Penalty_Info.json", "w") as pen_info_file:
         data0["Penalty Info"]=[true_file1_name,true_file2_name]
         data0["Penalty Time"]=f"{hr}:{mn}"
-        json.dump(pen_info_file, data0, indent=4)
+        json.dump(data0, pen_info_file, indent=4)
 
     with open("Files/Data/First_open.csv", 'w', newline='') as first_open_check_file:
         fw=csv.writer(first_open_check_file)
