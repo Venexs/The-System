@@ -42,7 +42,7 @@ Also Install all the fonts in the fonts folder to get the best experience.
 
 ## Usage
 
-Run the gui.bat file in the main folder to start the program.
+Run the The System Shortcut file (or The System.lnk) file in the main folder to start the program.
 
 There is no help page or manual. Users are free to find things on their own
 
