@@ -1,1 +1,0 @@
-python gui_2.py
