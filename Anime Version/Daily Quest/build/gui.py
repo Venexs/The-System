@@ -540,7 +540,7 @@ else:
         subprocess.Popen(['python', 'Anime Version/Quest Complete/build/gui.py'])
         window.quit()
     else:
-        subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/gui.py'])
+        subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/build/gui.py'])
         window.quit()
 
 window.resizable(False, False)
