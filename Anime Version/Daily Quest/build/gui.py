@@ -224,6 +224,9 @@ elif date_from_string==today:
     if pl_push>=fl_push and pl_run>=fl_run and pl_sqat>=fl_sqat and pl_sit>=fl_sit and pl_int>=fl_int and pl_slp>=fl_slp:
         full_check=True
 
+else:
+    full_check=False
+
 if full_check==False:
 
     canvas = Canvas(
