@@ -41,6 +41,9 @@ item_full_data={}
 
 rank=data[name][0]["rank"]
 cat=data[name][0]["cat"]
+n_cat=cat
+if cat.upper()=="FIRST GAUNTLET" or cat.upper()=="SECOND GAUNTLET":
+    n_cat="GAUNTLET"
 qty=data[name][0]["qty"]
 desc=data[name][0]["desc"]
 val=data[name][0]['Value']
@@ -336,7 +339,7 @@ canvas.create_text(
     528.0,
     196.0,
     anchor="nw",
-    text=cat,
+    text=n_cat,
     fill="#FFFFFF",
     font=("Montserrat SemiBold", 15 * -1)
 )

@@ -1658,20 +1658,20 @@ canvas.create_text(
     font=("Montserrat Medium", 10 * -1)
 )
 
-button_image_25 = PhotoImage(
-    file=relative_to_assets("button_25.png"))
-button_25 = Button(
-    image=button_image_25,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', 'Inventory Addition/build/gui.py']),
-    relief="flat"
-)
-button_25.place(
-    x=793.0,
-    y=100.0,
-    width=33.0,
-    height=33.0
-)
+#button_image_25 = PhotoImage(
+#    file=relative_to_assets("button_25.png"))
+#button_25 = Button(
+#    image=button_image_25,
+#    borderwidth=0,
+#    highlightthickness=0,
+#    command=lambda: subprocess.Popen(['python', 'Inventory Addition/build/gui.py']),
+#    relief="flat"
+#)
+#button_25.place(
+#    x=793.0,
+#    y=100.0,
+#    width=33.0,
+#    height=33.0
+#)
 window.resizable(False, False)
 window.mainloop()
