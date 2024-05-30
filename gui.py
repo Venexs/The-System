@@ -564,7 +564,7 @@ button_2.place(
     height=64.0
 )
 
-quest_name=f"{theme} Version/'Quests/build/gui.py"
+quest_name=f"{theme} Version/Quests/build/gui.py"
 
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
