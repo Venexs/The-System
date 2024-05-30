@@ -237,7 +237,7 @@ entry_bg_1 = canvas.create_image(
     284.0,
     image=entry_image_1
 )
-entry_1 = Text(
+entry_1 = Entry(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
@@ -275,7 +275,7 @@ entry_bg_2 = canvas.create_image(
     284.0,
     image=entry_image_2
 )
-entry_2 = Text(
+entry_2 = Entry(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
