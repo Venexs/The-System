@@ -130,7 +130,7 @@ def check_comp():
                 fw1=csv.writer(fin_daily_date_check_file)
                 fw1.writerow([today_date_str,"DONE"])
         
-            subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/gui.py'])
+            subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/build/gui.py'])
             
             window.quit()
 
@@ -173,7 +173,7 @@ def update_run():
 
 def update_int():
     global int_txt
-    current_text=int((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
+    current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
     with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
         daily_quest_data["Player"]["Int_type"]+=0.5
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
