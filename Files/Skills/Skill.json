@@ -1,0 +1,28 @@
+{
+      "Dash": [
+            {
+                  "lvl": "MAX",
+                  "type": "Active",
+                  "desc": "Gives the User the ability to get a faster start in a sprint/run",
+                  "pl_point": 1,
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of Lightning": 1
+                  }
+            }
+      ],
+      "Iron Warrior": [
+            {
+            "lvl": 1,
+            "type": "Passive",
+            "desc": "Allows one to become slightly less pained while health is low",
+            "base": "STR",
+            "rewards": {
+                  "STRav": 5,
+                  "Titanium Plate Armor": 1
+            },
+            "pl_point": 0
+      }
+      ]
+}

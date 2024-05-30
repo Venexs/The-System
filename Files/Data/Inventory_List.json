@@ -1,0 +1,823 @@
+{
+    "Coin Bag 100": [
+        {
+            "desc":"A bag of 100-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"E",
+            "buff":"",
+            "debuff":"",
+
+            "Value":100
+        }
+    ],
+
+    "Coin Bag 300": [
+        {
+            "desc":"A bag of 300-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"D",
+            "buff":"",
+            "debuff":"",
+
+            "Value":300
+        }
+    ],
+
+    "Coin Bag 500": [
+        {
+            "desc":"A bag of 500-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"D",
+            "buff":"",
+            "debuff":"",
+
+            "Value":500
+        }
+    ],
+
+    "Coin Bag 1000": [
+        {
+            "desc":"A bag of 1000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"C",
+            "buff":"",
+            "debuff":"",
+
+            "Value":1000
+        }
+    ],
+
+    "Coin Bag 2000": [
+        {
+            "desc":"A bag of 2000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"C",
+            "buff":"",
+            "debuff":"",
+
+            "Value":2000
+        }
+    ],
+
+    "Coin Bag 5000": [
+        {
+            "desc":"A bag of 5000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"B",
+            "buff":"",
+            "debuff":"",
+
+            "Value":5000
+        }
+    ],
+
+    "Coin Bag 10000": [
+        {
+            "desc":"A bag of 10000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"A",
+            "buff":"",
+            "debuff":"",
+
+            "Value":10000
+        }
+    ],
+
+    "Coin Bag 50000": [
+        {
+            "desc":"A bag of 50000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"S",
+            "buff":"",
+            "debuff":"",
+
+            "Value":50000
+        }
+    ],
+
+    "Coin Bag 80000": [
+        {
+            "desc":"A bag of 80000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"S",
+            "buff":"",
+            "debuff":"",
+
+            "Value":80000
+        }
+    ],
+
+    "Coin Bag 130000": [
+        {
+            "desc":"A bag of 150000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"S",
+            "buff":"",
+            "debuff":"",
+
+            "Value":150000
+        }
+    ],
+
+    "Coin Bag 250000": [
+        {
+            "desc":"A bag of 250000-or-so coins",
+            "qty":1,
+            "cat":"MONEY",
+            "rank":"S",
+            "buff":"",
+            "debuff":"",
+
+            "Value":250000
+        }
+    ],
+
+    "Gatekeepers Necklace": [
+        {
+            "desc":"Necklace worn by the Demon-Door Guardian",
+            "qty":1,
+            "cat":"COLLAR",
+            "rank":"A",
+            "buff":
+            {
+                "AGIbuff":7,
+                "PERbuff":4
+            },
+            "debuff":"",
+
+            "Value":20000
+        }
+    ],
+
+    "High Knights Chestplate": [
+        {
+            "desc":"Chestplate of a High-Ranking Knight",
+            "qty":1,
+            "cat":"CHESTPLATE",
+            "rank":"B",
+            "buff":
+            {
+                "STRbuff":4
+            },
+            "debuff":"",
+
+            "Value":5000
+        }
+    ],
+
+    "High Knights Gauntlet": [
+        {
+            "desc":"Gauntlet of a High-Ranking Knight",
+            "qty":1,
+            "cat":"FIRST GAUNTLET",
+            "rank":"B",
+            "buff":
+            {
+                "STRbuff":2
+            },
+            "debuff":"",
+
+            "Value":2000
+        }
+    ],
+
+    "Assassins Shoes": [
+        {
+            "desc":"Shoes of a Deadly Assassin",
+            "qty":1,
+            "cat":"BOOTS",
+            "rank":"C",
+            "buff":
+            {
+                "AGIbuff":2,
+                "PERbuff":1
+            },
+            "debuff":"",
+
+            "Value":300
+        }
+    ],
+
+    "Archers Gauntlet": [
+        {
+            "desc":"Gauntlet of a weak Archer",
+            "qty":1,
+            "cat":"SECOND GAUNTLET",
+            "rank":"C",
+            "buff":
+            {
+                "AGIbuff":1
+            },
+            "debuff":
+            {
+                "STRbuff":2
+            },
+
+            "Value":200
+        }
+    ],
+
+    "Silver Ring": [
+        {
+            "desc":"An Enchanted ring from a Sorcerer",
+            "qty":1,
+            "cat":"RING",
+            "rank":"C",
+            "buff":
+            {
+                "MANbuff":2
+            },
+            "debuff":"",
+
+            "Value":500
+        }
+    ],
+
+    "Demon Monarch's Ring": [
+        {
+            "desc":"The ring worn by the Demon Monarch",
+            "qty":1,
+            "cat":"RING",
+            "rank":"S",
+            "buff":
+            {
+                "MANbuff":15
+            },
+            "debuff":"",
+
+            "Value":10000
+        }
+    ],
+
+    "Demon Monarch's Crown": [
+        {
+            "desc":"The Crown worn by the Demon Monarch",
+            "qty":1,
+            "cat":"HELM",
+            "rank":"S",
+            "buff":
+            {
+                "MANbuff":15,
+                "INTbuff":10
+            },
+            "debuff":"",
+
+            "Value":15000
+        }
+    ],
+
+    "Red Knights Helmet": [
+        {
+            "desc":"The Helmet of the Red Knight",
+            "qty":1,
+            "cat":"HELM",
+            "rank":"S",
+            "buff":
+            {
+                "STRbuff":20,
+                "AGIbuff":20
+            },
+            "debuff":"",
+
+            "Value":100000
+        }
+    ],
+
+    "Archmage's Robes": [
+        {
+            "desc": "Robes worn by a legendary Archmage",
+            "qty": 1,
+            "cat": "CHESTPLATE",
+            "rank": "S",
+            "buff": {
+                "INTbuff": 25,
+                "MANbuff": 20
+            },
+            "debuff": {
+                "STRdebuff": 10,
+                "AGIdebuff": 10
+            },
+            "Value": 100000
+        }
+      ],
+
+      "Golden Boots of Agility": [
+        {
+            "desc": "Boots made from pure gold, enhancing agility",
+            "qty": 1,
+            "cat": "BOOTS",
+            "rank": "A",
+            "buff": {
+                "AGIbuff": 15
+            },
+            "debuff": {
+                "VITdebuff": 5
+            },
+            "Value": 75000
+        }
+      ],
+
+      "Amulet of Vitality": [
+        {
+            "desc": "An enchanted amulet that boosts vitality",
+            "qty": 1,
+            "cat": "COLLAR",
+            "rank": "B",
+            "buff": {
+                "VITbuff": 15
+            },
+            "debuff": {
+                "INTdebuff": 5,
+                "MANdebuff": 5
+            },
+            "Value": 8000
+        }
+      ],
+
+      "Silver Helm of Perception": [
+        {
+            "desc": "A silver helmet that enhances perception",
+            "qty": 1,
+            "cat": "HELM",
+            "rank": "A",
+            "buff": {
+                "PERbuff": 20
+            },
+            "debuff": {
+                "AGIdebuff": 10
+            },
+            "Value": 20000
+        }
+      ],
+
+      "Dragonhide Armor": [
+        {
+            "desc": "Armor crafted from the hide of a dragon",
+            "qty": 1,
+            "cat": "CHESTPLATE",
+            "rank": "S",
+            "buff": {
+                "VITbuff": 20,
+                "STRbuff": 15
+            },
+            "debuff": {
+                "AGIdebuff": 10,
+                "MANdebuff": 10
+            },
+            "Value": 200000
+        }
+      ],
+
+      "Scepter of Intelligence": [
+        {
+            "desc": "A majestic scepter that enhances intelligence",
+            "qty": 1,
+            "cat": "WEAPON",
+            "rank": "A",
+            "buff": {
+                "INTbuff": 25
+            },
+            "debuff": {
+                "VITdebuff": 5,
+                "AGIdebuff": 5
+            },
+            "Value": 10000
+        }
+      ],
+
+      "Boots of the Swift": [
+        {
+            "desc": "Boots imbued with enchantments for swiftness",
+            "qty": 1,
+            "cat": "BOOTS",
+            "rank": "B",
+            "buff": {
+                "AGIbuff": 15
+            },
+            "debuff": {
+                "VITdebuff": 5
+            },
+            "Value": 5000
+        }
+      ],
+
+      "Ring of Endurance": [
+        {
+            "desc": "A ring that enhances endurance and resilience",
+            "qty": 1,
+            "cat": "RING",
+            "rank": "B",
+            "buff": {
+                "VITbuff": 15
+            },
+            "debuff": {
+                "STRdebuff": 5,
+                "AGIdebuff": 5
+            },
+            "Value": 4000
+        }
+      ],
+
+      "Hood of Mysteries": [
+        {
+            "desc": "A mysterious hood that enhances perception",
+            "qty": 1,
+            "cat": "HELM",
+            "rank": "B",
+            "buff": {
+                "PERbuff": 15
+            },
+            "debuff": {
+                "STRdebuff": 5,
+                "VITdebuff": 5
+            },
+            "Value": 5500
+        }
+      ],
+
+      "LVLADD": [
+        {
+            "desc": "An Extra point to you Level",
+            "qty": 1,
+            "cat": "???",
+            "rank": "?",
+            "buff": "",
+            "debuff":"",
+            "Value": 0
+        }
+      ],
+
+      "STRav": [
+        {
+            "desc": "Adds an extra available point to use in STR,AGI or VIT",
+            "qty": 1,
+            "cat": "???",
+            "rank": "?",
+            "buff": "",
+            "debuff":"",
+            "Value": 0
+        }
+      ],
+
+      "INTav": [
+        {
+            "desc": "Adds an extra available point to use in INT,PER or MAN",
+            "qty": 1,
+            "cat": "???",
+            "rank": "?",
+            "buff": "",
+            "debuff":"",
+            "Value": 0
+        }
+      ],
+
+      "Gauntlet of Lightning": [
+        {
+            "desc": "A Red Gauntlet with Yellow Lines. Said to be worn by The Fastest Man Alive...",
+            "qty": 1,
+            "cat": "FIRST GAUNTLET",
+            "rank": "S",
+            "buff": {
+                "AGIbuff": 20
+            },
+            "debuff":"",
+            "Value": 50000
+        }
+      ],
+
+      "Mystic Hood": [
+        {
+          "desc": "A hood imbued with arcane energies, enhancing magical perception",
+          "qty": 1,
+          "cat": "HELM",
+          "rank": "A",
+          "buff": {
+            "INTbuff": 10,
+            "PERbuff": 10
+          },
+          "debuff": {
+            "AGIdebuff": 5,
+            "VITdebuff": 5
+          },
+          "Value": 15000
+        }
+      ],
+      "Guardian's Plate": [
+        {
+          "desc": "Plate armor worn by the protectors of ancient kingdoms",
+          "qty": 1,
+          "cat": "CHESTPLATE",
+          "rank": "B",
+          "buff": {
+            "VITbuff": 10,
+            "STRbuff": 5
+          },
+          "debuff": {
+            "AGIdebuff": 5,
+            "MANdebuff": 5
+          },
+          "Value": 8000
+        }
+      ],
+      "Squire's Gauntlet": [
+        {
+          "desc": "Gauntlet worn by a loyal squire, providing basic protection",
+          "qty": 1,
+          "cat": "FIRST GAUNTLET",
+          "rank": "D",
+          "buff": {
+            "STRbuff": 2
+          },
+          "debuff": {
+            "AGIdebuff": 1
+          },
+          "Value": 1000
+        }
+      ],
+      "Swift Striders": [
+        {
+          "desc": "Boots designed for swift movement and agility",
+          "qty": 1,
+          "cat": "BOOTS",
+          "rank": "B",
+          "buff": {
+            "AGIbuff": 8,
+            "PERbuff": 4
+          },
+          "debuff": {
+            "VITdebuff": 3
+          },
+          "Value": 6000
+        }
+      ],
+      "Amulet of Protection": [
+        {
+          "desc": "An amulet that wards off harm and enhances resilience",
+          "qty": 1,
+          "cat": "COLLAR",
+          "rank": "A",
+          "buff": {
+            "VITbuff": 12,
+            "DEFbuff": 5
+          },
+          "debuff": {
+            "AGIdebuff": 5,
+            "MANdebuff": 3
+          },
+          "Value": 12000
+        }
+      ],
+      "Ring of Precision": [
+        {
+          "desc": "A ring that sharpens focus and improves accuracy",
+          "qty": 1,
+          "cat": "RING",
+          "rank": "B",
+          "buff": {
+            "PERbuff": 8
+          },
+          "debuff": {
+            "AGIdebuff": 4
+          },
+          "Value": 4500
+        }
+      ],
+
+      "Sovereign's Veil": [
+        {
+            "desc": "A hood worn only by the most powerful sorcerers and wizards, imbued with ancient magic.",
+            "qty": 1,
+            "cat": "HELM",
+            "rank": "S",
+            "buff": {
+                "INTbuff": 30,
+                "MANbuff": 25
+            },
+            "debuff": {
+                "STRdebuff": 15,
+                "AGIdebuff": 15
+            },
+            "Value": 200000
+        }
+    ],
+
+    "Aetherial Circlet": [
+        {
+            "desc": "A mystical circlet woven from pure aether, enhancing the wearer's intellect to unparalleled heights.",
+            "qty": 1,
+            "cat": "HELM",
+            "rank": "S",
+            "buff": {
+                "INTbuff": 30
+            },
+            "debuff": {},
+            "Value": 300000
+        }
+    ],
+
+    "Blade Dancer's Boots": [
+        {
+            "desc": "Boots worn by the elite Blade Dancers, providing exceptional agility and speed in combat.",
+            "qty": 1,
+            "cat": "BOOTS",
+            "rank": "B",
+            "buff": {
+                "AGIbuff": 15
+            },
+            "debuff": {},
+            "Value": 8000
+        }
+    ],
+
+    "Titanium Plate Armor": [
+        {
+            "desc": "Armor forged from titanium, granting immense strength and resilience to the wearer.",
+            "qty": 1,
+            "cat": "CHESTPLATE",
+            "rank": "A",
+            "buff": {
+                "STRbuff": 25,
+                "VITbuff": 20
+            },
+            "debuff": {
+                "AGIdebuff": 10
+            },
+            "Value": 25000
+        }
+    ],
+    
+    "Sapphire Band": [
+        {
+            "desc": "A ring embedded with a sapphire gem, enhancing the wearer's perception and intuition.",
+            "qty": 1,
+            "cat": "RING",
+            "rank": "C",
+            "buff": {
+                "PERbuff": 8
+            },
+            "debuff": {},
+            "Value": 3500
+        }
+    ],
+    
+    "Ironclad Gauntlet": [
+        {
+            "desc": "A sturdy gauntlet crafted from iron, offering a modest boost to vitality and endurance.",
+            "qty": 1,
+            "cat": "FIRST GAUNTLET",
+            "rank": "D",
+            "buff": {
+                "VITbuff": 10
+            },
+            "debuff": {},
+            "Value": 1500
+        }
+    ],
+
+    "Gauntlet of the Eternal Guardian": [
+        {
+            "desc": "Forged by the legendary smiths of the Eternal Forge, this gauntlet grants its wearer unparalleled strength and protection.",
+            "qty": 1,
+            "cat": "SECOND GAUNTLET",
+            "rank": "S",
+            "buff": {
+                "STRbuff": 50,
+                "VITbuff": 40
+            },
+            "debuff": {},
+            "Value": 700000
+        }
+    ],
+
+    "Chameleon Cloak": [
+        {
+            "desc": "Clock made by the Mages of the Organization",
+            "qty": 1,
+            "cat": "CHESTPLATE",
+            "rank": "S",
+            "buff": {
+                "PERbuff": 30,
+                "AGIbuff":20
+            },
+            "debuff": {},
+            "Value": 100000
+        }
+    ],
+
+    "High-Minister's Amulet": [
+        {
+            "desc": "An ancient relic said to hold the power to sway minds. Once used by a high ranking minister",
+            "qty": 1,
+            "cat": "COLLAR",
+            "rank": "S",
+            "buff": {
+                "MANbuff": 50
+            },
+            "debuff": {},
+            "Value": 750000
+        }
+    ],
+
+    "Blade of Precision": [
+        {
+            "desc": "The Blade of Precision is a weapon of deadly accuracy. Its edge is honed to perfection, allowing its wielder to strike with pinpoint precision, bypassing even the thickest armor.",
+            "qty": 1,
+            "cat": "WEAPON",
+            "rank": "A",
+            "buff": {
+                "STRbuff": 30
+            },
+            "debuff": {},
+            "Value": 500000
+        }
+    ],
+    
+    "Dragonscale Boots": [
+        {
+            "desc": "Crafted from the scales of ancient dragons and infused with the essence of resilience, these boots provide unparalleled protection and durability. Wearing the Boots of Resilience grants the wearer unmatched resilience against physical and magical attacks, allowing them to endure even the most devastating assaults.",
+            "qty": 1,
+            "cat": "BOOTS",
+            "rank": "S",
+            "buff": {
+                "VITbuff": 40,
+                "AGIbuff": 30
+            },
+            "debuff": {},
+            "Value": 800000
+        }
+    ],
+
+    "Ring of Arcane Mastery": [
+        {
+            "desc": "A legendary ring infused with arcane power, granting its wearer unparalleled intelligence.",
+            "qty": 1,
+            "cat": "RING",
+            "rank": "S",
+            "buff": {
+                "INTbuff": 50
+            },
+            "debuff": {
+                "VITdebuff":20
+            },
+            "Value": 1000000
+        }
+    ],
+
+    "First Glove of Colossus": [
+        {
+            "desc": "Once upon a time, there lived a warrior named Colossus. He died fighting armies alone to defend his nation. This is his glove",
+            "qty": 1,
+            "cat": "FIRST GAUNTLET",
+            "rank": "A",
+            "buff": {
+                "STRbuff": 20
+            },
+            "debuff": {
+                "AGIdebuff":10
+            },
+            "Value": 100000
+        }
+    ],
+
+    "Second Glove of Colossus": [
+        {
+            "desc": "Once upon a time, there lived a warrior named Colossus. He died fighting armies alone to defend his nation. This is his glove",
+            "qty": 1,
+            "cat": "SECOND GAUNTLET",
+            "rank": "A",
+            "buff": {
+                "STRbuff": 20
+            },
+            "debuff": {
+                "AGIdebuff":10
+            },
+            "Value": 100000
+        }
+    ],
+
+    "Glasses of God": [
+        {
+            "desc": "These glasses, rumored to be crafted by divine hands, grant their wearer unparalleled perception. their origins remain a mystery.",
+            "qty": 1,
+            "cat": "HELM",
+            "rank": "S",
+            "buff": {
+                "PERbuff": 60
+            },
+            "debuff": {},
+            "Value": 1500000
+        }
+    ]
+    
+    
+}

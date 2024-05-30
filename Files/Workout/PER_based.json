@@ -1,0 +1,92 @@
+{
+    "Mindfull Meditation":[
+        {
+            "desc":"Practice mindfulness meditation to increase awareness of sensory experiences and improve attention to the present moment.",
+            "time":1,
+
+            "timeval":"Minute",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Mindfull Breathing":[
+        {
+            "desc":"Inhale through your nose and exhaling through your mouth, for a 6-second cycle. Let go of thoughts and distractions, staying mindful of the breath's journey in and out of your body to find peace and relaxation.",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Mindfull Observation":[
+        {
+            "desc":"Take a moment to choose a natural object around you. Focus on it for a minute or two, observing it as if you're seeing it for the first time. Allow yourself to be consumed by its presence and connect with its purpose in the natural world.",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Mindfull Awareness":[
+        {
+            "desc":"Choose a touch point that resonates with you today and, instead of going through your daily motions on autopilot, take occasional moments to stop and cultivate purposeful awareness of what you are doing and the blessings these actions brings to your life.",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Mindfull Listening":[
+        {
+            "desc":"Close your eyes and put on your headphones. Don't judge the music by its genre, title, or artist. Instead, allow yourself to get lost in the sound journey. Explore every aspect of the track, even if you don't like it at first. Listen to each instrument's dynamics separately and focus on the vocals, including tone and range.",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Mindfull Immersion":[
+        {
+            "desc":"Instead of labouring through and constantly thinking about finishing a particular task, become aware of every step and fully immerse yourself in the progress. Take the activity beyond a routine by aligning yourself with it physically, mentally and spiritually.",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Mindfull Appreciation":[
+        {
+            "desc":"Have you ever wondered about the origin and function of everyday things? Have you appreciated their benefits to your life and others'? Have you imagined life without them or noticed their intricate details? Have you considered how they're interconnected and support Earth's functioning? Identify five things and learn all you can about their creation and purpose to appreciate their role in your life.",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ]
+}

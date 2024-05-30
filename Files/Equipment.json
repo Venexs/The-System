@@ -1,0 +1,54 @@
+{
+      "HELM": {
+            "Assasins Helmet": [
+                  {
+                        "desc": "The Helmet of a forgotten Assassin",
+                        "qty": 1,
+                        "cat": "HELM",
+                        "rank": "C",
+                        "buff": {
+                              "STRbuff": 2,
+                              "AGIbuff": 2
+                        },
+                        "debuff": "",
+                        "Value": 1000
+                  }
+            ]
+      },
+      "CHESTPLATE": {},
+      "FIRST GAUNTLET": {
+            "Gauntlet of Lightning": [
+                  {
+                        "desc": "A Red Gauntlet with Yellow Lines. Said to be worn by The Fastest Man Alive...",
+                        "qty": 1,
+                        "cat": "FIRST GAUNTLET",
+                        "rank": "S",
+                        "buff": {
+                              "AGIbuff": 20
+                        },
+                        "debuff": "",
+                        "Value": 50000
+                  }
+            ]
+      },
+      "SECOND GAUNTLET": {},
+      "BOOTS": {
+            "Boots of the Swift": [
+                  {
+                        "desc": "Boots imbued with enchantments for swiftness",
+                        "qty": 1,
+                        "cat": "BOOTS",
+                        "rank": "B",
+                        "buff": {
+                              "AGIbuff": 15
+                        },
+                        "debuff": {
+                              "VITdebuff": 5
+                        },
+                        "Value": 5000
+                  }
+            ]
+      },
+      "COLLAR": {},
+      "RING": {}
+}

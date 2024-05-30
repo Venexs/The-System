@@ -1,38 +1,38 @@
 {
     "status": [
         {
-            "hp":150,
-            "mp":0,
-            "level":1,
-            "str":0,
-            "int":0,
-            "agi":0,
-            "vit":0,
-            "per":0,
-            "man":0
+            "name": "SUNG JIN-WOO",
+            "hp": 160,
+            "mp": 10,
+            "level": 10,
+            "str": 3,
+            "int": 0,
+            "agi": 0,
+            "vit": 0,
+            "per": 0,
+            "man": 0,
+            "XP": 0,
+            "coins": 97016600
         },
         {
-            "title":"None",
-            "job":"None"
+            "title": "None",
+            "job": "None"
         }
     ],
-
     "avail_eq": [
         {
-            "str_based":0,
-            "int_based":0
+            "str_based": 3,
+            "int_based": 6
         }
     ],
-
     "equipment": [
         {
-            "helm":"None",
-            "chest":"None",
-            "first_gaunt":"None",
-            "collar":"None",
-            "second_gaunt":"None",
-            "ring":"None",
-            "boot":"None"
+            "STR": 2,
+            "AGI": 37,
+            "VIT": -5,
+            "INT": 0,
+            "PER": 0,
+            "MAN": 0
         }
     ]
 }

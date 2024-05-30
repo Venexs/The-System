@@ -1,0 +1,27 @@
+{
+    "Books":[
+        {
+            "desc":"Read a book. Any book",
+            "amt":2,
+
+            "amtval":"Chapters",
+            "type":"Common"
+        },
+        {
+            "INTBUFF":1
+        }
+    ],
+
+    "Revising":[
+        {
+            "desc":"Find something out that you didn't know about a subject",
+            "time":60,
+
+            "timeval":"Minutes",
+            "Type":"Learn"
+        },
+        {
+            "INTBUFF":1
+        }
+    ]
+}

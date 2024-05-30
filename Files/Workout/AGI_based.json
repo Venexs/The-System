@@ -2,7 +2,10 @@
     "Jumping Jacks":[
         {
             "desc":"It is a physical jumping exercise performed by jumping to a position with the legs spread wide and the hands going overhead, sometimes in a clap, and then returning to a position with the feet together and the arms at the sides.",
-            "amt":50
+            "amt":50,
+
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "AGIBUFF":1
@@ -12,7 +15,10 @@
     "Skipping":[
         {
             "desc":"Skipping is a form of exercise that involves swinging a rope around your body and jumping over it as it passes under your feet",
-            "amt":50
+            "amt":50,
+
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "AGIBUFF":1
@@ -22,7 +28,10 @@
     "Windwill Toe Touch":[
         {
             "desc":"It involves standing on the toes and arms extended with palms facing forward, turning around to touch the opposite toe with the hand and then returning to the starting position.",
-            "amt":15
+            "amt":15,
+
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "AGIBUFF":1
@@ -32,7 +41,10 @@
     "Tuck Jumps":[
         {
             "desc":"It is a progression upon the bodyweight squat jump that entails a lifter to tuck their legs up into the chest once in flight, then fully place them back into the landing position each and every jump",
-            "amt":15
+            "amt":15,
+
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "AGIBUFF":1
@@ -42,18 +54,62 @@
     "Plank Shoulder Taps":[
         {
             "desc":"It involves holding a plank position while simultaneously tapping your opposite shoulders.",
-            "amt":15
+            "amt":15,
+
+            "amtval":"Pairs",
+            "type":"Common"
         },
         {
-            "STRBUFF":1,
             "AGIBUFF":1
         }
     ],
 
     "High Knees":[
         {
-            "desc":"It nvolves running in place while lifting one knee up towards the chest at a time, alternating between both legs",
-            "time": 45
+            "desc":"It Involves running in place while lifting one knee up towards the chest at a time, alternating between both legs",
+            "time": 45,
+
+            "timeval":"Seconds",
+            "type":"Learn"
+        },
+        {
+            "AGIBUFF":1
+        }
+    ],
+
+    "Side Shuffle":[
+        {
+            "desc":"It involves moving side-to-side on one foot while maintaining a steady rhythm with your arms.",
+            "amt": 15,
+
+            "amtval":"Pairs",
+            "type":"Common"
+        },
+        {
+            "AGIBUFF":1
+        }
+    ],
+
+    "Lateral Side step":[
+        {
+            "desc":"This exercise involves quickly stepping to the side while shifting your weight in the opposite direction. ",
+            "amt": 15,
+
+            "amtval":"Pairs",
+            "type":"Common"
+        },
+        {
+            "AGIBUFF":1
+        }
+    ],
+
+    "Shuttle Runs":[
+        {
+            "desc":"It involves starting a line and sprinting to the finish line and back.",
+            "amt": 15,
+
+            "amtval":"Laps",
+            "type":"Common"
         },
         {
             "AGIBUFF":1

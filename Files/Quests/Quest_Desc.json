@@ -1,0 +1,29 @@
+{
+    "Easy":
+    [
+        "You have given a mission by the organization.",
+        "A Soldier has given you a quest",
+        "The Unkown Sorcerer has told you to practice these",
+        "A Challenger dared you to do complete these objectives",
+        "Your Guardian wishes for you to complete this."
+    ],
+
+    "Intermediate":
+    [
+        "A mysterious figure has left behind a list of tasks",
+        "A soldier handed you a list of covert missions",
+        "A commander shares a list of exercise, these will prove to be useful in the upcoming campaign",
+        "An elder delivers a bundle of scrolls, each containing instructions",
+        "Your Guardian has given you instructions",
+        "You were Challenged"
+    ],
+
+    "Hard":
+    [
+        "The Order has directly ordered you to complete this quest",
+        "The Unkown Sorcerer returns to give you a quest",
+        "The Order requires you to complete this training",
+        "A God has given you a Challenge. Finish it if you dare",
+        "A Monarch has given you a task"
+    ]
+}

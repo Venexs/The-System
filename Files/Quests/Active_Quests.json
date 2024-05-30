@@ -1,14 +1,185 @@
 {
-    "Courage of the Weak":[
-        {
-            "Status":"Ongoing",
-            "desc":"Become a Player",
-            "type":"Active"
-        },
-        {
-            "Rewards":{
-                "LVLADD":10
+      "Courage of the Weak": [
+            {
+                  "ID": 0,
+                  "obj": "Become a Player",
+                  "rank": "?",
+                  "type": "Unknown",
+                  "desc": "Quest given by [Unknown]",
+                  "Rewards": {
+                        "LVLADD": 10
+                  }
             }
-        }
-    ]
+      ],
+      "If You're Worthy": [
+            {
+                  "desc": "An elder delivers a bundle of scrolls, each containing instructions",
+                  "time": 45,
+                  "amt": 30,
+                  "timeval": "Seconds",
+                  "amtval": "Times",
+                  "type": "Common",
+                  "rank": "C",
+                  "ID": 323864,
+                  "Rewards": {
+                        "Coin Bag 5000": 1,
+                        "Assassins Shoes": 1
+                  },
+                  "skill": "Shoulder Tap Pushups"
+            }
+      ],
+      "Blindness is better than Ignorance": [
+            {
+                  "desc": "You were Challenged",
+                  "amt": 5,
+                  "amtval": "Chapters",
+                  "type": "Common",
+                  "rank": "B",
+                  "ID": 116842,
+                  "Rewards": {
+                        "Coin Bag 80000": 1,
+                        "Hood of Mysteries": 1,
+                        "LVLADD": 2,
+                        "INTav": 6
+                  },
+                  "skill": "Books"
+            }
+      ],
+      "Legacy of the Sacred Treasure": [
+            {
+                  "desc": "The Order requires you to complete this training",
+                  "time": 45,
+                  "amt": 75,
+                  "timeval": "Seconds",
+                  "amtval": "Times",
+                  "type": "Common",
+                  "rank": "A",
+                  "ID": 983200,
+                  "Rewards": {
+                        "Coin Bag 130000": 1,
+                        "Titanium Plate Armor": 1,
+                        "LVLADD": 5,
+                        "STRav": 8
+                  },
+                  "skill": "Shoulder Tap Pushups"
+            }
+      ],
+      "Smarter-Bettter-Faster": [
+            {
+                  "desc": "A Monarch has given you a task",
+                  "amt": 10,
+                  "amtval": "Chapters",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 108841,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Dragonhide Armor": 1,
+                        "LVLADD": 8,
+                        "INTav": 10
+                  },
+                  "skill": "Books"
+            }
+      ],
+      "The Wings of an Angel": [
+            {
+                  "desc": "A soldier handed you a list of covert missions",
+                  "amt": 3,
+                  "amtval": "KM",
+                  "type": "Common",
+                  "rank": "C",
+                  "ID": 803208,
+                  "Rewards": {
+                        "Coin Bag 5000": 1,
+                        "Coin Bag 2000": 1
+                  },
+                  "skill": "Yoga"
+            }
+      ],
+      "To be The Honored One": [
+            {
+                  "desc": "Your Guardian wishes for you to complete this.",
+                  "amt": 45,
+                  "amtval": "Minute",
+                  "type": "Common",
+                  "rank": "D",
+                  "ID": 789823,
+                  "Rewards": {
+                        "Coin Bag 500": 1,
+                        "Ironclad Gauntlet": 1
+                  },
+                  "skill": "Hobbies"
+            }
+      ],
+      "Advanced skills are indifferent to Magic": [
+            {
+                  "desc": "The Unkown Sorcerer returns to give you a quest",
+                  "amt": 120,
+                  "amtval": "Minute",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 610339,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Chameleon Cloak": 1,
+                        "LVLADD": 8,
+                        "INTav": 10
+                  },
+                  "skill": "Hobbies"
+            }
+      ],
+      "Fight. Just Fight": [
+            {
+                  "desc": "A Monarch has given you a task",
+                  "time": 45,
+                  "amt": 100,
+                  "timeval": "Seconds",
+                  "amtval": "Times",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 237335,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Gauntlet of Lightning": 1,
+                        "LVLADD": 8,
+                        "STRav": 10
+                  },
+                  "skill": "Shoulder Tap Pushups"
+            }
+      ],
+      "To know all is to control all": [
+            {
+                  "desc": "A God has given you a Challenge. Finish it if you dare",
+                  "amt": 120,
+                  "amtval": "Minute",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 450436,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Glasses of God": 1,
+                        "LVLADD": 8,
+                        "INTav": 10
+                  },
+                  "skill": "Hobbies"
+            }
+      ],
+      "Forward. Don't look Back": [
+            {
+                  "desc": "A God has given you a Challenge. Finish it if you dare",
+                  "time": 120,
+                  "timeval": "Seconds",
+                  "type": "Learn",
+                  "obj_desc": "It Involves running in place while lifting one knee up towards the chest at a time, alternating between both legs",
+                  "rank": "S",
+                  "ID": 295005,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Archmage's Robes": 1,
+                        "LVLADD": 8,
+                        "STRav": 10
+                  },
+                  "skill": "Jumping Jacks"
+            }
+      ]
 }

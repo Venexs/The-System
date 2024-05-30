@@ -1,0 +1,40 @@
+{
+    "Yoga":[
+        {
+            "desc":"Look up different Yoga positions and do them for given time",
+            "time":60,
+
+            "timval":"Seconds",
+            "type":"Learn"
+        },
+        {
+            "VITBUFF":1
+        }
+    ],
+
+    "Stretchs":[
+        {
+            "desc":"Look up different Yoga positions and do them for given time",
+            "time":60,
+
+            "timval":"Seconds",
+            "type":"Learn"
+        },
+        {
+            "VITBUFF":1
+        }
+    ],
+
+    "Cycling":[
+        {
+            "desc":"Go Cycling",
+            "amt":2,
+
+            "amtval":"KM",
+            "type":"Common"
+        },
+        {
+            "VITBUFF":1
+        }
+    ]
+}

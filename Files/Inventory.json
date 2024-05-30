@@ -1,51 +1,44 @@
 {
-    "Warlock Chestplate Blueprint": [
-        {
-            "desc":"A Blueprint design of The Warlock Armor Set",
-            "qty":1,
-            "cat":"PAPER",
-            "rank":"D",
-            "buff":"",
-            "debuff":""
-        }
-    ],
-
-    "Warlock Gauntlets Blueprint": [
-        {
-            "desc":"A Blueprint design of The Warlock Armor Set",
-            "qty":1,
-            "cat":"PAPER",
-            "rank":"D",
-            "buff":"",
-            "debuff":""
-        }
-    ],
-
-    "Warlock Boots Blueprint": [
-        {
-            "desc":"A Blueprint design of The Warlock Armor Set",
-            "qty":1,
-            "cat":"PAPER",
-            "rank":"D",
-            "buff":"",
-            "debuff":""
-        }
-    ],
-
-    "Assasin Helmet": [
-        {
-            "desc":"A helm from a fallen assasin",
-            "qty":1,
-            "cat":"HELM",
-            "rank":"D",
-            "buff":"AGI+10",
-            "debuff":"",
-
-            "strbuff":0,
-            "agibuff":10,
-            "intbuff":0,
-            "vitbuff":0,
-            "perbuff":0
-        }
-    ]
+      "Assasins Helmet": [
+            {
+                  "desc": "The Helmet of a forgotten Assassin",
+                  "qty": 1,
+                  "cat": "HELM",
+                  "rank": "C",
+                  "buff": {
+                        "STRbuff": 2,
+                        "AGIbuff": 2
+                  },
+                  "debuff": "",
+                  "Value": 1000
+            }
+      ],
+      "Boots of the Swift": [
+            {
+                  "desc": "Boots imbued with enchantments for swiftness",
+                  "qty": 1,
+                  "cat": "BOOTS",
+                  "rank": "B",
+                  "buff": {
+                        "AGIbuff": 15
+                  },
+                  "debuff": {
+                        "VITdebuff": 5
+                  },
+                  "Value": 5000
+            }
+      ],
+      "Gauntlet of Lightning": [
+            {
+                  "desc": "A Red Gauntlet with Yellow Lines. Said to be worn by The Fastest Man Alive...",
+                  "qty": 1,
+                  "cat": "FIRST GAUNTLET",
+                  "rank": "S",
+                  "buff": {
+                        "AGIbuff": 20
+                  },
+                  "debuff": "",
+                  "Value": 50000
+            }
+      ]
 }

@@ -1,0 +1,27 @@
+{
+    "Hobbies":[
+        {
+            "desc":"Work on your creative hobbies for a while",
+            "amt":30,
+
+            "amtval":"Minute",
+            "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Stretch":[
+        {
+            "desc":"Lie down and stretch out with both arms over your head for 10 seconds",
+            "amt":2,
+
+            "amtval":"Times",
+            "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ]
+}

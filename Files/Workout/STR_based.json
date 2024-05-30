@@ -3,11 +3,14 @@
         {
             "desc":"Tap the right Shoulder with your left hand and vice-versa after one pushup",
             "time":45,
-            "amt":15
+            "amt":15,
+            
+            "timeval":"Seconds",
+            "amtval":"Times",
+            "type":"Common"
         },
         {
-            "STRBUFF":1,
-            "AGIBUFF":1
+            "STRBUFF":1
         }
     ],
 
@@ -15,7 +18,11 @@
         {
             "desc":"Step forward with your right foot, lowering your body into a basic lunge position. Twist your upper body to the right from your midsection. Keep your core engaged, squeeze your glutes, and be careful to not rotate your knee",
             "time":45,
-            "amt":15
+            "amt":15,
+
+            "timeval":"Seconds",
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "STRBUFF":1
@@ -26,11 +33,14 @@
         {
             "desc":"Using your abdominals, bend your right knee in toward your chest, then step it back into the plank position. Repeat with your left leg, bringing it toward your chest and then stepping it back",
             "time":45,
-            "amt":15
+            "amt":15,
+
+            "timeval":"Seconds",
+            "amtval":"Times",
+            "type":"Common"
         },
         {
-            "STRBUFF":1,
-            "AGIBUFF":1
+            "STRBUFF":1
         }
     ],
 
@@ -38,7 +48,11 @@
         {
             "desc":"Lay on your back with your knees bent and raise the straightened leg skyward while keeping contact with the ground",
             "time":45,
-            "amt":15
+            "amt":15,
+
+            "timeval":"Seconds",
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "STRBUFF":1
@@ -49,7 +63,11 @@
         {
             "desc":"This exercise can be performed lying down or sitting up, and involves lifting the legs off the ground while keeping them straight.",
             "time":45,
-            "amt":15
+            "amt":15,
+
+            "timeval":"Seconds",
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "STRBUFF":1
@@ -60,7 +78,37 @@
         {
             "desc":"The plank exercise is an isometric core exercise that involves maintaining a position similar to a push-up for the maximum possible time.",
             "time":45,
-            "amt":15
+            "amt":1,
+
+            "timeval":"Seconds",
+            "amtval":"Times",
+            "type":"Common"
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+
+    "Crunches":[
+        {
+            "desc":"Crunches are exercises that you do to strengthen your stomach muscles. They involve sitting up from a lying position with your legs straight, bent, or raised.",
+            "amt":15,
+
+            "amtval":"Times",
+            "type":"Common"
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+
+    "Toe Stands":[
+        {
+            "desc":"Lie on the floor in a prone position, with your legs straight and your arms extended in front of you. Keeping your head in a neutral position (avoid looking up), slowly lift your arms and legs around 6 inches off the floor, or until you feel your lower back muscles contracting.",
+            "amt":15,
+
+            "amtval":"Times",
+            "type":"Common"
         },
         {
             "STRBUFF":1
