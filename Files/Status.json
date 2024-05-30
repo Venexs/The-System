@@ -4,15 +4,15 @@
             "name": "SUNG JIN-WOO",
             "hp": 160,
             "mp": 10,
-            "level": 10,
-            "str": 3,
+            "level": 1,
+            "str": 0,
             "int": 0,
             "agi": 0,
             "vit": 0,
             "per": 0,
             "man": 0,
             "XP": 0,
-            "coins": 97016600
+            "coins": 0
         },
         {
             "title": "None",
@@ -21,15 +21,15 @@
     ],
     "avail_eq": [
         {
-            "str_based": 3,
-            "int_based": 6
+            "str_based": 0,
+            "int_based": 0
         }
     ],
     "equipment": [
         {
-            "STR": 2,
-            "AGI": 37,
-            "VIT": -5,
+            "STR": 0,
+            "AGI": 0,
+            "VIT": 0,
             "INT": 0,
             "PER": 0,
             "MAN": 0
