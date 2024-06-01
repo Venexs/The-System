@@ -71,6 +71,7 @@ def get():
         rank_check_data["status"][0]['coins']+=coins
         rank_check_data["avail_eq"][0]['str_based']+=av_str
         rank_check_data["avail_eq"][0]['int_based']+=av_int
+        rank_check_data["status"][0]['XP']+=xp_pl
         json.dump(rank_check_data, status_import, indent=4)
 
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
