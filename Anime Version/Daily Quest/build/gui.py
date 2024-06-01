@@ -24,14 +24,6 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-subprocess.Popen(['python', 'sfx.py'])
-
-window = Tk()
-
-window.geometry("477x856")
-window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
-
 
 def update_timer(end_time):
     remaining_time = end_time - datetime.now()
@@ -121,6 +113,14 @@ def check_comp():
             daily_quest_data["Final"]["Sit"]+=5
             daily_quest_data["Final"]["Squat"]+=5
             daily_quest_data["Final"]["Run"]+=0.5
+
+            daily_quest_data["Player"]["Push"]=0
+            daily_quest_data["Player"]["Sit"]=0
+            daily_quest_data["Player"]["Squat"]=0
+            daily_quest_data["Player"]["Run"]=0
+            daily_quest_data["Player"]["Int_type"]=0
+            daily_quest_data["Player"]["Sleep"]=0
+
             if round(fl_int,1)!=10:
                 daily_quest_data["Final"]["Int_type"]+=0.5
             else:
@@ -226,6 +226,13 @@ elif date_from_string==today:
         full_check=True
 
 if full_check==False:
+    subprocess.Popen(['python', 'sfx.py'])
+
+    window = Tk()
+
+    window.geometry("477x856")
+    window.configure(bg = "#FFFFFF")
+    window.attributes('-alpha',0.8)
 
     canvas = Canvas(
         window,
@@ -535,13 +542,11 @@ if full_check==False:
     end_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
     update_timer(end_time)
 
+    window.resizable(False, False)
+    window.mainloop()
+
 else:
     if rew_check=="True":
         subprocess.Popen(['python', 'Anime Version/Quest Complete/build/gui.py'])
-        window.quit()
     else:
         subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/build/gui.py'])
-        window.quit()
-
-window.resizable(False, False)
-window.mainloop()
