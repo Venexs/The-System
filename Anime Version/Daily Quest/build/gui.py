@@ -106,8 +106,13 @@ def check_comp():
         fl_int=daily_quest_data["Final"]["Int_type"]
         fl_slp=daily_quest_data["Final"]["Sleep"]
         # ? =======================================================
+    
+    with open('Files\Checks\Secret_Quest_Check.json', 'r') as secrer_quest:
+        secrer_quest_data=json.load(secrer_quest)
+        day_num=secrer_quest_data["Day"]
+        tdy_week_num=datetime.today().weekday()
 
-    if pl_push>=fl_push and pl_run>=fl_run and pl_sqat>=fl_sqat and pl_sit>=fl_sit and pl_int>=fl_int and pl_slp>=fl_slp:
+    if (pl_push/2)>=fl_push and (pl_run/2)>=fl_run and (pl_sqat/2)>=fl_sqat and (pl_sit/2)>=fl_sit and (pl_int/2)>=fl_int and (pl_slp/2)>=fl_slp:
         if fl_push!=100 and fl_sit!=100 and fl_sqat!=100:
             daily_quest_data["Final"]["Push"]+=5
             daily_quest_data["Final"]["Sit"]+=5
@@ -125,6 +130,9 @@ def check_comp():
                 daily_quest_data["Final"]["Int_type"]+=0.5
             else:
                 daily_quest_data["Final"]["Int_type"]+=0.5
+
+            with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                json.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
             with open("Files/Checks/Daily_time_check.csv", 'w',  newline='') as fin_daily_date_check_file:
                 fw1=csv.writer(fin_daily_date_check_file)
