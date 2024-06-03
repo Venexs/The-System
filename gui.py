@@ -494,7 +494,7 @@ with open('Files/Data/Random_Quest_Day.json', 'r') as random_quest:
             random_quest_data["Day"]=random.randint(0,6)
 
 if comp_check==True:
-    with open('Files/Data/Random_Quest_Day.json', 'r') as finalrandom_quest:
+    with open('Files/Data/Random_Quest_Day.json', 'w') as finalrandom_quest:
         json.dump(random_quest_data, finalrandom_quest, indent=4)
 
 # ? =====================================================================
