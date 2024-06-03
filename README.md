@@ -13,9 +13,13 @@ The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkin
 
 ## Installation
 
+This is only for a Windows machine. Linux Port is WIP
+
 Install [Python](https://www.python.org/downloads/)
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install these modules. Usually PIP is insatlled with Python
+
+Open the CMD to paste these commands one at a time and if installed properly, the modules should be installed
 
 Tkinter
 
