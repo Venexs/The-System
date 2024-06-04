@@ -39,8 +39,8 @@ def center_window(window, width, height):
 window_height = 289
 window_width = 524
 
-#window.geometry("524x289")
-center_window(window, window_width, window_height)
+window.geometry("524x289")
+#center_window(window, window_width, window_height)
 window.configure(bg = "#FFFFFF")
 window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
@@ -76,19 +76,6 @@ with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
     info=pen_info_data["Penalty Info"]
     pr_name1=info[0]
     pr_name2=info[1]
-
-def task_kill():
-    if pr_name1 != "NONE":
-        for proc in psutil.process_iter(['pid', 'name']):
-            if proc.info['name'] == pr_name1:
-                os.system(f"taskkill /F /PID {proc.info['pid']}")
-    if pr_name2 != "NONE":
-        for proc in psutil.process_iter(['pid', 'name']):
-            if proc.info['name'] == pr_name2:
-                os.system(f"taskkill /F /PID {proc.info['pid']}")
-    
-    # Schedule the function to be called again after 1000 milliseconds (1 second)
-    window.after(1000, task_kill)
 
 canvas = Canvas(
     window,
