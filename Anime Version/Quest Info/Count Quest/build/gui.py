@@ -186,10 +186,10 @@ def up():
     global ex_txt
     ex_tr_txt=canvas.itemcget(ex_txt, "text")
     new_1=int(ex_tr_txt)+1
-    be_new_1=f"{new_1:03d}"
+    be_new_1=f"{new_1}"
     canvas.itemconfig(ex_txt, text=be_new_1)
 
-    if new_1==num:
+    if int(new_1)==int(num):
         reward()
 
 canvas = Canvas(
@@ -295,7 +295,7 @@ canvas.create_text(
     font=("Montserrat SemiBold", 12 * -1)
 )
 
-canvas.create_text(
+ex_txt=canvas.create_text(
     483.0,
     262.0,
     anchor="nw",
@@ -313,7 +313,7 @@ canvas.create_text(
     font=("Montserrat Regular", 14 * -1)
 )
 
-ex_txt=canvas.create_text(
+canvas.create_text(
     483.0,
     280.0,
     anchor="nw",
