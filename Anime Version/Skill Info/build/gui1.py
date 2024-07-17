@@ -11,6 +11,8 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import json
 import subprocess
+import cv2
+from PIL import Image, ImageTk
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
@@ -97,6 +99,56 @@ window = Tk()
 window.geometry("450x163")
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+#window.update()
+
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.update_frame()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.canvas.itemconfig(self.image_id, image=imgtk)
+            self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def ex_close(win):
+    win.quit()
 
 with open("Files/Temp Files/Skill Temp.csv", 'r') as csv_open:
     fr=csv.reader(csv_open)
@@ -116,7 +168,8 @@ with open("Files/Skills/Skill.json", 'r') as fron:
             pl_points=data_main[name][0]["pl_point"]
             base=data_main[name][0]["base"]
 
-get=data['Values'][0][str(lvl+1)]
+if lvl!="MAX":
+    get=data['Values'][0][str(lvl+1)]
 
 with open("Files/status.json", 'r') as status:
     status_data=json.load(status)

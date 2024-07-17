@@ -25,10 +25,15 @@ window = Tk()
 window.geometry("475x163")
 window.configure(bg = "#2D2D2D")
 window.attributes('-alpha',0.9)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
 
 desc1=desc2=''
 segments = []
 segment_length = 77
+
+def ex_close(win):
+    win.quit()
 
 with open("Files/Temp Files/Shop Sell Temp.csv", 'r') as csv_open:
     fr=csv.reader(csv_open)
@@ -208,5 +213,22 @@ button_1.place(
     width=95.0,
     height=16.0
 )
+
+button_image_0 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_0 = Button(
+    image=button_image_0,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_0.place(
+    x=440.0,
+    y=3.0,
+    width=28.0,
+    height=28.0
+)
+
 window.resizable(False, False)
 window.mainloop()
