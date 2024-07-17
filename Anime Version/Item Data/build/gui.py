@@ -11,6 +11,9 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import csv
 import json
+import cv2
+from PIL import Image, ImageTk
+import os
 
 subprocess.Popen(['python', 'sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
@@ -25,8 +28,72 @@ window = Tk()
 
 window.geometry("957x555")
 window.configure(bg = "#FFFFFF")
-
 window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+#window.update()
+
+debuff_1_name=''
+debuff_2_name=''
+debuff_1='-'
+debuff_2='-'
+
+buff_1_name=''
+buff_2_name=''
+buff_1='-'
+buff_2='-'
+
+desc1=desc2=''
+segments = []
+segment_length = 77
+
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.update_frame()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.canvas.itemconfig(self.image_id, image=imgtk)
+            self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def ex_close(win):
+    win.quit()
+
 
 with open('Files/Temp Files/Inventory temp.csv', 'r') as fout:
     fr=csv.reader(fout)
@@ -45,7 +112,15 @@ n_cat=cat
 if cat.upper()=="FIRST GAUNTLET" or cat.upper()=="SECOND GAUNTLET":
     n_cat="GAUNTLET"
 qty=data[name][0]["qty"]
-desc=data[name][0]["desc"]
+desc_full=data[name][0]["desc"]
+
+for i in range(0, len(desc_full), segment_length):
+    segments.append(desc_full[i:i+segment_length])
+
+if len(segments) >= 1:
+    desc1 = segments[0]
+if len(segments) >= 2:
+    desc2 = segments[1]
 val=data[name][0]['Value']
 
 item_full_data[name]=data[name]
@@ -201,6 +276,9 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
+video_path = "Files/0001-0200.mp4"
+player = VideoPlayer(canvas, video_path, 478.0, 277.0)
+
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
@@ -270,9 +348,18 @@ canvas.create_text(
 
 canvas.create_text(
     204.0,
+    380.0,
+    anchor="nw",
+    text=desc1+'-',
+    fill="#FFFFFF",
+    font=("Montserrat Light", 14 * -1)
+)
+
+canvas.create_text(
+    204.0,
     400.0,
     anchor="nw",
-    text=desc,
+    text=desc2,
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
@@ -401,36 +488,41 @@ canvas.create_rectangle(
     fill="#2E2E2E",
     outline="")
 
-if cat=='HELM':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_2.png"))
-elif cat=='CHESTPLATE':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_1.png"))
-elif cat=='GAUNTLET':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_4.png"))
-elif cat=='BOOTS':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_3.png"))
-elif cat=='COLLAR':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_11.png"))
-elif cat=='RING':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_10.png"))
-elif cat=='WEAPON':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_5.png"))
-elif cat=='MONEY':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_6.png"))
-elif cat=='PAPER':
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_7.png"))
-else:
-    image_image_3 = PhotoImage(
-        file=relative_to_assets("button_8.png"))
+def get_button_image(name, max_width, max_height):
+    try:
+        # Construct the absolute path to the Images folder
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # Navigate up to the project root directory
+        project_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+        file_loc = os.path.join(project_root, "Images")
+        files = os.path.join(file_loc, name + ' Big.png')
+        if not os.path.exists(files):
+            raise FileNotFoundError
+    except:
+        file_loc = os.path.join(project_root, "Images")
+        files = os.path.join(file_loc, "Unknown.png")
+
+    # Open the image
+    image = Image.open(files)
+    
+    # Calculate the resize ratio
+    width_ratio = max_width / image.width
+    height_ratio = max_height / image.height
+    resize_ratio = min(width_ratio, height_ratio)
+    
+    # Resize the image
+    new_width = int(image.width * resize_ratio)
+    new_height = int(image.height * resize_ratio)
+    resized_image = image.resize((new_width, new_height))
+    
+    # Convert the image to PhotoImage
+    photo_image = ImageTk.PhotoImage(resized_image)
+    
+    return photo_image
+
+max_width, max_height = 164.615385, 126.153846
+
+image_image_3 = get_button_image(name, max_width, max_height)
 image_3 = canvas.create_image(
     214.0,
     164.0,
@@ -484,5 +576,33 @@ button_3.place(
     width=40.0,
     height=40.0
 )
+
+image_0=canvas.create_rectangle(
+    0.0,
+    0.0,
+    960.0,
+    37.0,
+    fill="#2E2E2E",
+    outline="")
+
+canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+
+button_image_0 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_0 = Button(
+    image=button_image_0,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_0.place(
+    x=920.0,
+    y=4.0,
+    width=28.0,
+    height=28.0
+)
+
 window.resizable(False, False)
 window.mainloop()
