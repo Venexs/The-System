@@ -11,6 +11,9 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import json
 import subprocess
+import cv2
+from PIL import Image, ImageTk
+import os
 
 subprocess.Popen(['python', 'sfx.py'])
 
@@ -27,6 +30,56 @@ window = Tk()
 window.geometry("957x555")
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+#window.update()
+
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.update_frame()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.canvas.itemconfig(self.image_id, image=imgtk)
+            self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def ex_close(win):
+    win.quit()
 
 def open_select(cat):
     fout=open('Files/Temp Files/Equipment Temp.csv', 'w', newline='')
@@ -60,6 +113,9 @@ image_1 = canvas.create_image(
     277.0,
     image=image_image_1
 )
+
+video_path = "Files/0001-0200.mp4"
+player = VideoPlayer(canvas, video_path, 478.0, 277.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -113,6 +169,7 @@ canvas.create_text(
 helm=chest=f_gaun=s_gaun=boot=ring=collar='-'
 helmboost_1=chestboost_1=f_gaunboost_1=s_gaunboost_1=bootboost_1=ringboost_1=collarboost_1=''
 helmboost_2=chestboost_2=f_gaunboost_2=s_gaunboost_2=bootboost_2=ringboost_2=collarboost_2=''
+max_width, max_height = 164/1.5, 126/1.5
 
 with open('Files/Equipment.json', 'r') as fout:
     data=json.load(fout)
@@ -158,9 +215,9 @@ with open('Files/Equipment.json', 'r') as fout:
         print('',end='')
 
     try:
-        chest=list(data['CHEST'].keys())[0]
-        if type(data["CHEST"][chest][0]["buff"]) is dict:
-            chest_buff_main=list(data["CHEST"][chest][0]["buff"].keys())
+        chest=list(data['CHESTPLATE'].keys())[0]
+        if type(data["CHESTPLATE"][chest][0]["buff"]) is dict:
+            chest_buff_main=list(data["CHESTPLATE"][chest][0]["buff"].keys())
 
             # ? CHEST BUFF 1 
             chestboost_1_name=chest_buff_main[0]
@@ -177,7 +234,7 @@ with open('Files/Equipment.json', 'r') as fout:
             elif chestboost_1_name=="MANbuff":
                 chestbuff_1_name="MAN"
                 
-            chestboost_1=chestbuff_1_name+' +'+str(data["CHEST"][chest][0]["buff"][chestboost_1_name])
+            chestboost_1=chestbuff_1_name+' +'+str(data["CHESTPLATE"][chest][0]["buff"][chestboost_1_name])
 
             # ? CHEST BUFF 2
             chestboost_2_name=chest_buff_main[1]
@@ -194,7 +251,7 @@ with open('Files/Equipment.json', 'r') as fout:
             elif chestboost_2_name=="MANbuff":
                 chestbuff_2_name="MAN"
                 
-            chestboost_2=chestbuff_2_name+' +'+str(data["CHEST"][chest][0]["buff"][chestboost_2_name])
+            chestboost_2=chestbuff_2_name+' +'+str(data["CHESTPLATE"][chest][0]["buff"][chestboost_2_name])
     except:
         print('',end='')
 
@@ -407,12 +464,39 @@ with open('Files/Equipment.json', 'r') as fout:
 # ? Helmet Part
 # ? ====================================================================
 
-if helm=='None' or helm=='-':
-    image_image_6 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_6 = PhotoImage(
-        file=relative_to_assets("image_6.png"))
+def get_button_image(name, max_width, max_height):
+    try:
+        # Construct the absolute path to the Images folder
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # Navigate up to the project root directory
+        project_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+        file_loc = os.path.join(project_root, "Images")
+        files = os.path.join(file_loc, name + ' Big.png')
+        if not os.path.exists(files):
+            raise FileNotFoundError
+    except:
+        file_loc = os.path.join(project_root, "Images")
+        files = os.path.join(file_loc, "Unknown.png")
+
+    # Open the image
+    image = Image.open(files)
+    
+    # Calculate the resize ratio
+    width_ratio = max_width / image.width
+    height_ratio = max_height / image.height
+    resize_ratio = min(width_ratio, height_ratio)
+    
+    # Resize the image
+    new_width = int(image.width * resize_ratio)
+    new_height = int(image.height * resize_ratio)
+    resized_image = image.resize((new_width, new_height))
+    
+    # Convert the image to PhotoImage
+    photo_image = ImageTk.PhotoImage(resized_image)
+    
+    return photo_image
+
+image_image_6 = get_button_image(helm, max_width, max_height)
 image_6 = canvas.create_image(
     164.0,
     189.0,
@@ -466,12 +550,7 @@ button_1.place(
 # ? Chestplate Part
 # ? ====================================================================
 
-if chest=='None' or chest=='-':
-    image_image_7 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_7 = PhotoImage(
-        file=relative_to_assets("image_7.png"))
+image_image_7 = get_button_image(chest, max_width, max_height)
 image_7 = canvas.create_image(
     262.0,
     285.0,
@@ -525,12 +604,7 @@ button_2.place(
 # ? First Gauntlet Part
 # ? ====================================================================
 
-if f_gaun=='None' or f_gaun=='-':
-    image_image_8 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_8 = PhotoImage(
-        file=relative_to_assets("image_8.png"))
+image_image_8 = get_button_image(f_gaun, max_width, max_height)
 image_8 = canvas.create_image(
     164.0,
     381.0,
@@ -584,12 +658,7 @@ button_3.place(
 # ? Boots Part
 # ? ====================================================================
 
-if boot=='None' or boot=='-':
-    image_image_9 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_9 = PhotoImage(
-        file=relative_to_assets("image_9.png"))
+image_image_9 = get_button_image(boot, max_width, max_height)
 image_9 = canvas.create_image(
     807.0,
     418.0,
@@ -643,12 +712,7 @@ button_4.place(
 # ? Collar Part
 # ? ====================================================================
 
-if collar=='None' or collar=='-':
-    image_image_10 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_10 = PhotoImage(
-        file=relative_to_assets("image_10.png"))
+image_image_10 = get_button_image(collar, max_width, max_height)
 image_10 = canvas.create_image(
     806.0,
     125.0,
@@ -702,12 +766,7 @@ button_5.place(
 # ? Ring Part
 # ? ====================================================================
 
-if ring=='None' or ring=='-':
-    image_image_11 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_11 = PhotoImage(
-        file=relative_to_assets("image_11.png"))
+image_image_11 = get_button_image(ring, max_width, max_height)
 image_11 = canvas.create_image(
     684.0,
     318.0,
@@ -761,12 +820,7 @@ button_6.place(
 # ? Second Gauntlet Part
 # ? ====================================================================
 
-if s_gaun=='None' or s_gaun=='-':
-    image_image_12 = PhotoImage(
-        file=relative_to_assets("end.png"))
-else:
-    image_image_12 = PhotoImage(
-        file=relative_to_assets("image_12.png"))
+image_image_12 = get_button_image(s_gaun, max_width, max_height)
 image_12 = canvas.create_image(
     684.0,
     226.0,
@@ -880,20 +934,48 @@ image_20 = canvas.create_image(
     image=image_image_20
 )
 
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
-button_8 = Button(
-    image=button_image_8,
+#button_image_8 = PhotoImage(
+#    file=relative_to_assets("button_8.png"))
+#button_8 = Button(
+#    image=button_image_8,
+#    borderwidth=0,
+#    highlightthickness=0,
+#    command=set_effect_open,
+#    relief="flat"
+#)
+#button_8.place(
+#    x=420.0,
+#    y=466.0,
+#    width=114.0,
+#    height=15.0
+#)
+
+image_0=canvas.create_rectangle(
+    0.0,
+    0.0,
+    960.0,
+    37.0,
+    fill="#2E2E2E",
+    outline="")
+
+canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+
+button_image_26 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_26 = Button(
+    image=button_image_26,
     borderwidth=0,
     highlightthickness=0,
-    command=set_effect_open,
+    command=lambda: ex_close(window),
     relief="flat"
 )
-button_8.place(
-    x=420.0,
-    y=466.0,
-    width=114.0,
-    height=15.0
+button_26.place(
+    x=920.0,
+    y=4.0,
+    width=28.0,
+    height=28.0
 )
+
 window.resizable(False, False)
 window.mainloop()
