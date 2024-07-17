@@ -28,8 +28,8 @@
     ],
     "equipment": [
         {
-            "STR": 35,
-            "AGI": 10,
+            "STR": 0,
+            "AGI": 0,
             "VIT": 0,
             "INT": 0,
             "PER": 0,
