@@ -147,7 +147,7 @@ image_5 = canvas.create_image(
 
 canvas.create_text(
     146.0,
-    564.0,
+    544.0,
     anchor="nw",
     text="(In Status Tab)",
     fill="#FFFFFF",
@@ -223,8 +223,16 @@ image_image_9 = PhotoImage(
     file=relative_to_assets("image_9.png"))
 image_9 = canvas.create_image(
     195.0,
-    533.0,
+    520.0,
     image=image_image_9
+)
+
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    201.0,
+    607.0,
+    image=image_image_10
 )
 
 image_0=canvas.create_rectangle(
