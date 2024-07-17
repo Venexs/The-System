@@ -52,6 +52,12 @@ Pillow
 pip install Pillow
 ```
 
+Open CV2
+
+```bash
+pip install opencv-python
+```
+
 Also Install all the fonts in the fonts folder to get the best experience.
 
 ## Usage
