@@ -12,6 +12,8 @@ import json
 import csv
 import subprocess
 import random
+import cv2
+from PIL import Image, ImageTk
 
 subprocess.Popen(['python', 'sfx.py'])
 
@@ -28,6 +30,55 @@ window = Tk()
 window.geometry("548x314")
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.update_frame()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.canvas.itemconfig(self.image_id, image=imgtk)
+            self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def ex_close(win):
+    win.quit()
 
 name1=name2=name3=name4=name5=name6='-'
 lvl1=lvl2=lvl3=lvl4=lvl5=lvl6='??'
@@ -96,6 +147,9 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
+video_path = "Files/0001-0200.mp4"
+player = VideoPlayer(canvas, video_path, 603.0, 447.0)
+
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
@@ -115,7 +169,7 @@ image_3 = canvas.create_image(
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
-    281.0,
+    288.0,
     279.0,
     image=image_image_4
 )
@@ -363,5 +417,33 @@ button_6.place(
     width=24.0,
     height=24.0
 )
+
+image_0=canvas.create_rectangle(
+    0.0,
+    0.0,
+    960.0,
+    37.0,
+    fill="#2E2E2E",
+    outline="")
+
+canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+
+button_image_0 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_0 = Button(
+    image=button_image_0,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_0.place(
+    x=510.0,
+    y=4.0,
+    width=28.0,
+    height=28.0
+)
+
 window.resizable(False, False)
 window.mainloop()
