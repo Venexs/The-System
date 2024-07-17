@@ -252,7 +252,7 @@
             "buff":
             {
                 "MANbuff":15
-            },
+            },  
             "debuff":"",
 
             "Value":10000
@@ -512,7 +512,7 @@
           "Value": 15000
         }
       ],
-      "Guardian's Plate": [
+      "Guardians Plate": [
         {
           "desc": "Plate armor worn by the protectors of ancient kingdoms",
           "qty": 1,

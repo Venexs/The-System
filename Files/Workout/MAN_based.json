@@ -12,13 +12,122 @@
         }
     ],
 
-    "Stretch":[
+    "Stretches":[
         {
             "desc":"Lie down and stretch out with both arms over your head for 10 seconds",
             "amt":2,
 
             "amtval":"Times",
             "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Public Speaking":[
+        {
+            "desc":"Practice a speech or presentation in front of a mirror",
+            "amt":15,
+
+            "amtval":"Minute",
+            "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Active Listening":[
+        {
+            "desc":"Engage in a conversation and focus on listening more than speaking",
+            "amt":15,
+            "amtval":"Minute",
+            "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Debate Practice":[
+        {
+            "desc":"Join a debate club or engage in a friendly debate with a peer",
+            "amt":2,
+            "amtval":"Session",
+            "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Storytelling":[
+        {
+            "desc":"Tell a captivating story to a friend or a group",
+            "amt":2,
+            "amtval":"Minutes",
+            "type":"Learn"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Networking":[
+        {
+            "desc":"Attend a networking event or connect with new people online",
+            "amt":1,
+            "amtval":"Event",
+            "type":"Learn"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Roleplay":[
+        {
+            "desc":"Engage in a roleplaying scenario to practice negotiation skills",
+            "amt":1,
+            "amtval":"Scenario",
+            "type":"Learn"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Confidence Practice":[
+        {
+            "desc":"Spend time understanding and empathizing with someone else's perspective",
+            "amt":20,
+            "amtval":"Minute",
+            "type":"Common"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Read Biographies":[
+        {
+            "desc":"Read a biography of a renowned leader",
+            "amt":1,
+            "amtval":"Book",
+            "type":"Learn"
+        },
+        {
+            "MANBUFF":1
+        }
+    ],
+
+    "Improv":[
+        {
+            "desc":"Participate in an improvisation exercise or class",
+            "amt":1,
+            "amtval":"Class",
+            "type":"Learn"
         },
         {
             "MANBUFF":1

@@ -1,0 +1,11 @@
+{
+    "Job Change Quest":[
+        {
+            "desc":"A Quest given to you by [UNKNWON], This Quest allows you to change your class depending on your distribution of points",
+            "type":"UNKNWON",
+            "status":"Bought",
+            "amt":0,
+            "base":"INT"
+        }
+    ]
+}
