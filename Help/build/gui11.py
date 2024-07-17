@@ -260,7 +260,7 @@ button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print(),
+    command=lambda: webbrowser.open("https://www.patreon.com/venexs"),
     relief="flat"
 )
 button_4.place(
