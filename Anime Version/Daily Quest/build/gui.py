@@ -211,102 +211,6 @@ def check_comp():
                 
                 window.quit()
 
-def update_pushup():
-    if pl_push==fl_push:
-        if day_num==tdy_week_num:
-            global pushup_txt
-            current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
-            print(current_text)
-            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-                daily_quest_data["Player"]["Push"]+=1
-                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-            canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
-    else:
-        global pushup_txt
-        current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
-        print(current_text)
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Push"]+=1
-            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
-
-def update_situp():
-    if pl_sit==fl_sit:
-        if day_num==tdy_week_num:
-            global situp_txt
-            current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
-            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-                daily_quest_data["Player"]["Sit"]+=1
-                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-            canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
-    else:
-        global situp_txt
-        current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Sit"]+=1
-            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
-
-def update_sqat():
-    if pl_sqat==fl_sqat:
-        if day_num==tdy_week_num:
-            global squat_txt
-            current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
-            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-                daily_quest_data["Player"]["Squat"]+=1
-                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-            canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sqat}]")
-    else:
-        global situp_txt
-        current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Sit"]+=1
-            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
-
-def update_run():
-    if pl_run==fl_run:
-        if day_num==tdy_week_num:
-            global run_txt
-            current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
-            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-                daily_quest_data["Player"]["Run"]+=0.5
-                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-            canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
-    else:
-        global run_txt
-        current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Run"]+=0.5
-            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
-
-def update_int():
-    if pl_int==fl_int:
-        if day_num==tdy_week_num:
-            global int_txt
-            current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
-            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-                daily_quest_data["Player"]["Int_type"]+=0.5
-                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-            canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
-    else:
-        global int_txt
-        current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Int_type"]+=0.5
-            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
-
-def update_sleep():
-    if pl_slp==1:
-        global sleep_txt
-        current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Sleep"]+=1
-            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
-
 def preview():
     subprocess.Popen(['python', 'Anime Version/Daily Quest Preview/build/gui.py'])
 
@@ -492,7 +396,7 @@ if full_check==False:
         font=("Montserrat Regular", 14 * -1)
     )
 
-    canvas.create_text(
+    pushup_txt=canvas.create_text(
         315.0,
         246.0,
         anchor="nw",
@@ -501,7 +405,7 @@ if full_check==False:
         font=("Montserrat Regular", 14 * -1)
     )
 
-    canvas.create_text(
+    situp_txt=canvas.create_text(
         315.0,
         284.0,
         anchor="nw",
@@ -510,7 +414,7 @@ if full_check==False:
         font=("Montserrat Regular", 14 * -1)
     )
 
-    canvas.create_text(
+    squat_txt=canvas.create_text(
         315.0,
         322.0,
         anchor="nw",
@@ -519,7 +423,7 @@ if full_check==False:
         font=("Montserrat Regular", 14 * -1)
     )
 
-    canvas.create_text(
+    run_txt=canvas.create_text(
         313.0,
         363.0,
         anchor="nw",
@@ -528,7 +432,7 @@ if full_check==False:
         font=("Montserrat Regular", 14 * -1)
     )
 
-    canvas.create_text(
+    int_txt=canvas.create_text(
         333.0,
         420.0,
         anchor="nw",
@@ -537,7 +441,7 @@ if full_check==False:
         font=("Montserrat Regular", 14 * -1)
     )
 
-    canvas.create_text(
+    sleep_txt=canvas.create_text(
         334.0,
         459.0,
         anchor="nw",
@@ -649,6 +553,102 @@ if full_check==False:
         width=20.0,
         height=20.0
     )
+
+    def update_pushup():
+        if pl_push==fl_push:
+            if day_num==tdy_week_num:
+                #global pushup_txt
+                current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
+                print(current_text)
+                with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                    daily_quest_data["Player"]["Push"]+=1
+                    json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+                canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
+        else:
+            #global pushup_txt
+            current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
+            print(current_text)
+            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                daily_quest_data["Player"]["Push"]+=1
+                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
+
+    def update_situp():
+        if pl_sit==fl_sit:
+            if day_num==tdy_week_num:
+                #global situp_txt
+                current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
+                with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                    daily_quest_data["Player"]["Sit"]+=1
+                    json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+                canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
+        else:
+            #global situp_txt
+            current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
+            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                daily_quest_data["Player"]["Sit"]+=1
+                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
+
+    def update_sqat():
+        if pl_sqat==fl_sqat:
+            if day_num==tdy_week_num:
+                #global squat_txt
+                current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
+                with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                    daily_quest_data["Player"]["Squat"]+=1
+                    json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+                canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sqat}]")
+        else:
+            #global situp_txt
+            current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
+            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                daily_quest_data["Player"]["Sit"]+=1
+                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
+
+    def update_run():
+        if pl_run==fl_run:
+            if day_num==tdy_week_num:
+                #global run_txt
+                current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
+                with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                    daily_quest_data["Player"]["Run"]+=0.5
+                    json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+                canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
+        else:
+            #global run_txt
+            current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
+            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                daily_quest_data["Player"]["Run"]+=0.5
+                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
+
+    def update_int():
+        if pl_int==fl_int:
+            if day_num==tdy_week_num:
+                #global int_txt
+                current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
+                with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                    daily_quest_data["Player"]["Int_type"]+=0.5
+                    json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+                canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
+        else:
+            #global int_txt
+            current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
+            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                daily_quest_data["Player"]["Int_type"]+=0.5
+                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
+
+    def update_sleep():
+        if pl_slp==1:
+            #global sleep_txt
+            current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
+            with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
+                daily_quest_data["Player"]["Sleep"]+=1
+                json.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
 
     canvas.create_text(
         96.0,
