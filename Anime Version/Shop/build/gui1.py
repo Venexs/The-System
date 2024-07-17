@@ -28,10 +28,15 @@ window = Tk()
 window.geometry("475x163")
 window.configure(bg = "#2D2D2D")
 window.attributes('-alpha',0.9)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
 
 with open("Files/status.json", 'r') as read_status_file:
     read_status_file_data=json.load(read_status_file)
     coins=read_status_file_data["status"][0]['coins']
+
+def ex_close(win):
+    win.quit()
 
 desc1=desc2=''
 segments = []
@@ -176,6 +181,9 @@ def quests_add(rank,vals):
                 elif details["amt"]==30:
                     details["amt"]+=15
 
+                elif details["amt"]==1:
+                    details["amt"]+=1
+
             if ("time" in details) and ("amt" not in details):
                 if details["time"]==60:
                     details["time"]+=60
@@ -199,6 +207,9 @@ def quests_add(rank,vals):
 
                 elif details["amt"]==30:
                     details["amt"]+=30
+
+                elif details["amt"]==1:
+                    details["amt"]+=2
 
             if ("time" in details) and ("amt" not in details):
                 if details["time"]==45:
@@ -224,6 +235,9 @@ def quests_add(rank,vals):
                 elif details["amt"]==30:
                     details["amt"]+=60
 
+                elif details["amt"]==1:
+                    details["amt"]+=3
+
             if ("time" in details) and ("amt" not in details):
                 if details["time"]==45:
                     details["time"]+=45
@@ -248,6 +262,9 @@ def quests_add(rank,vals):
                 elif details["amt"]==30:
                     details["amt"]+=70
 
+                elif details["amt"]==1:
+                    details["amt"]+=4
+
             if ("time" in details) and ("amt" not in details):
                 if details["time"]==45:
                     details["time"]+=65
@@ -271,6 +288,9 @@ def quests_add(rank,vals):
 
                 elif details["amt"]==30:
                     details["amt"]+=90
+
+                elif details["amt"]==1:
+                    details["amt"]+=5
 
             if ("time" in details) and ("amt" not in details):
                 if details["time"]==45:
@@ -318,6 +338,22 @@ canvas = Canvas(
     highlightthickness = 0,
     relief = "ridge"
 )
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
@@ -431,5 +467,33 @@ button_1.place(
     width=92.0,
     height=16.0
 )
+
+image_0=canvas.create_rectangle(
+    0.0,
+    0.0,
+    500.0,
+    35.0,
+    fill="#212121",
+    outline="")
+
+canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+
+button_image_0 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_0 = Button(
+    image=button_image_0,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_0.place(
+    x=440.0,
+    y=3.0,
+    width=28.0,
+    height=28.0
+)
+
 window.resizable(False, False)
 window.mainloop()

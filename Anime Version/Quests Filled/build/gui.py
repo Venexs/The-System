@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System\Anime Version\Quests Filled\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -38,8 +38,8 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    516.0,
-    363.0,
+    430.0,
+    163.0,
     image=image_image_1
 )
 
@@ -49,7 +49,7 @@ canvas.create_text(
     anchor="nw",
     text="Quest Slots are Filled!",
     fill="#FFFFFF",
-    font=("MontserratRoman Regular", 40 * -1)
+    font=("Montserrat Regular", 40 * -1)
 )
 
 image_image_2 = PhotoImage(
