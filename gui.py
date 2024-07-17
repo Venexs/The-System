@@ -8,121 +8,170 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import threading
 import json
 import csv
 import subprocess
-from PIL import Image, ImageTk
-from datetime import datetime, timedelta
-import threading
 import time
 import sys
-import random
-
-def run_once_prog():
-    try:
-        with open("Files/Data/First_open.csv", 'r') as first_open_check_file:
-            first_open_check_data=csv.reader(first_open_check_file)
-            first_run_file_check=False
-            try:
-                for k in first_open_check_data:
-                    if k[0]!="True":
-                        first_run_file_check=True
-            except:
-                first_run_file_check=True
-    except:
-        first_run_file_check=True
-
-    if first_run_file_check==True:
-        stop_event.set()
-
-        # Wait for the thread to finish
-        thread.join()
-
-        subprocess.Popen(['python', 'Help/build/gui.py'])
-
-        sys.exit()
-
-subprocess.Popen(['python', 'sfx.py'])
+import system
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
+thing=txt='None'
+fin_data={
+    "Skills":"False",
+    "Quests":"False",
+    "Upgrade":"False",
+    "Lines":"False"
+}
+
+stop_event0 = threading.Event()
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-stop_event = threading.Event()
+def make_window_transparent(window):
+    # This function makes the window background transparent
+    window.wm_attributes('-transparentcolor', window['bg'])
+
+def unhide_line(s):
+    if s=="Skills":
+        canvas.itemconfig(thing_txt, text="New Skill Acquired")
+    elif s=="Quests":
+        canvas.itemconfig(thing_txt, text="New Quest Acquired")
+    elif s=="Upgrade":
+        canvas.itemconfig(thing_txt, text="Random skill upgraded")
+    canvas.itemconfig("text0", state="normal")
+    canvas.itemconfig("text", state="normal")
+    pause_thread()
+
+def unhide_lines():
+    txt="LINE - 1\nLINE - 2\nLINE - 3"
+    canvas.itemconfig(line_txt, text=txt)
+    canvas.itemconfig("text0", state="normal")
+    canvas.itemconfig("tex2", state="normal")
+    pause_thread()
+
+def check_for_updates(stop_event, pause_event):
+    while not stop_event.is_set():
+        if not pause_event.is_set():
+            try:
+                with open('Files/Data/New_Updates.json', 'r') as updatefile:
+                    check_data = json.load(updatefile)
+                    if check_data["Skills"] == "True":
+                        hide_text_items0()
+                        unhide_line("Skills")
+                    elif check_data["Quests"] == "True":
+                        hide_text_items0()
+                        unhide_line("Quests")
+                    elif check_data["Upgrade"] == "True":
+                        hide_text_items0()
+                        unhide_line("Upgrade")
+                    elif check_data["Lines"] == "True":
+                        hide_text_items0()
+                        unhide_lines()
+            except:
+                print("Error")
+        else:
+            print("", end='')
+        time.sleep(1)
+
+def pause_thread():
+    pause_event.set()
+    print("Thread paused")
+
+def resume_thread():
+    pause_event.clear()
+    print("Thread resumed")
+
+def code_final(event):
+    et1=entry_1.get()
+    et2=entry_2.get()
+    et3=entry_3.get()
+    et4=entry_4.get()
+    et5=entry_5.get()
+
+    if et1=='A' and et2=='R' and et3=='1' and et4=='5' and et5=='E':
+        with open("Files\Titles\Titles.json", 'r') as fson:
+            data=json.load(fson)
+            data["False Ranker"]={"Statbuff":10,"Rank":"?"}
+
+        with open("Files/Titles/Titles.json", 'w') as final_title_import:
+            json.dump(data, final_title_import, indent=4)
+
+        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/build/gui.py')])
+
+    elif et1=='I' and et2=='M' and et3=='G' and et4=='O' and et5=='D':
+        with open("Files\Titles\Titles.json", 'r') as fson:
+            data=json.load(fson)
+            data["One Above All"]={"Statbuff":50,"Rank":"?"}
+
+        with open("Files/Titles/Titles.json", 'w') as final_title_import:
+            json.dump(data, final_title_import, indent=4)
+
+        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/build/gui.py')])
+
+    else:
+        subprocess.Popen(['python', (f'{theme} Version/Access Code Incomplete/build/gui.py')])
+
+    hide_0()
 
 window = Tk()
 
-def close():
-    stop_event.set()
-
-    # Wait for the thread to finish
-    thread.join()
-
-    sys.exit()
-
-def center_window(window, width, height):
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    x = screen_width - width
-    y = ((screen_height - height) // 2)-80
-
-    window.geometry(f"{width}x{height}+{x}+{y}")
-
-window_height = 585
-window_width = 76
-
-center_window(window, window_width, window_height)
-window.configure(bg = "#FFFFFF")
+window.geometry("435x423")
+window.configure(bg = "#505050")
 window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
-window.attributes('-alpha',0.8)
+#window.update()
+make_window_transparent(window)
+
+thread0=threading.Thread(target=system.check_midnight(window,stop_event0))
+thread0.start()
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def update_file():
+    with open('Files/Data/New_Updates.json', 'w') as updatefile:
+        json.dump(fin_data, updatefile, indent=4)
+
+def hide_text_items(event):
+    canvas.itemconfig("text0", state="hidden")
+    canvas.itemconfig("text", state="hidden")
+    canvas.itemconfig("text1", state="hidden")
+    update_file()
+    resume_thread()
+
+def hide_text_items0():
+    canvas.itemconfig("text0", state="hidden")
+    canvas.itemconfig("text", state="hidden")
+    canvas.itemconfig("text1", state="hidden")
+    update_file()
+    resume_thread()
+
+def show_bar(event):
+    canvas.itemconfig("bar", state="normal")
+
+def hide_bar(event):
+    canvas.itemconfig("bar", state="hidden")
 
 with open('Files/Data/Theme_Check.json', 'r') as themefile:
     theme_data=json.load(themefile)
     theme=theme_data["Theme"]
-
-def fin_pen():
-    today = datetime.now().date()
-
-    yesterday = today - timedelta(days=1)
-    with open('Files/Checks/Today_Quest.csv', 'r', newline='') as fout:
-        fr=csv.reader(fout)
-        for k in fr:
-            status=k[1]
-            date=k[0]
-
-    p_date=datetime.strptime(date, "%Y-%m-%d").date()
-    if yesterday!=p_date and status=="UNDONE":
-        subprocess.Popen(['python', 'Anime Version/Penalty Quest/build/gui.py'])
-    elif yesterday!=p_date or status=="UNDONE":
-        subprocess.Popen(['python', 'Anime Version/Penalty Quest/build/gui.py'])
-
-def penalty_check():
-    with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
-        data0=json.load(pen_info_file)
-        target_time_str=data0["Penalty Time"]
-
-    now=datetime.now()
-    target_time=datetime.strptime(target_time_str, "%H:%M").time()
-    target_datetime=datetime.combine(now.date(), target_time)
-    
-    if target_datetime<now:
-        target_datetime+=timedelta(days=1)
-    
-    wait_time_ms = int((target_datetime - now).total_seconds() * 1000)
-    
-    window.after(wait_time_ms, fin_pen)
-
-def check_midnight():
-    while stop_event.is_set():
-        now = datetime.now()
-        if now.hour == 0 and now.minute == 0:
-            penalty_check
-        time.sleep(1)
 
 with open("Files/status.json", 'r') as fson:
     data=json.load(fson)
@@ -149,362 +198,19 @@ with open("Files/status.json", 'r') as fson:
     av_str_based=data["avail_eq"][0]['str_based']
     av_int_based=data["avail_eq"][0]['int_based']
     # ? =================================================
-    
-# ? =====================================================================
+
 # ? =====================================================================
 # ! The Every 5th Level Skil Checker
-if lvl%5==0:
-    with open("Files/Skills/Skill_old_check.json", 'r') as check_file:
-        old_lvl_data=json.load(check_file)
-        old_lvl_key=list(old_lvl_data.keys())
-
-    if lvl!=old_lvl_data["old_stat"][0]["lvl"]:
-        comp_str= int(stre) - old_lvl_data["old_stat"][0]["str"]
-        comp_int= int(intel) - old_lvl_data["old_stat"][0]["int"]
-        comp_agi= int(agi) - old_lvl_data["old_stat"][0]["agi"]
-        comp_vit= int(vit) - old_lvl_data["old_stat"][0]["vit"]
-        comp_per= int(per) - old_lvl_data["old_stat"][0]["lvl"]
-        comp_man= int(man) - old_lvl_data["old_stat"][0]["man"]
-
-        comp_rec={"STR":comp_str, "INT":comp_int, "AGI":comp_agi, "VIT":comp_vit, "PER":comp_per, "MAN":comp_man}
-        max_value = max(comp_rec.values())
-
-        max_keys = [key for key, value in comp_rec.items() if value == max_value]
-
-        if len(max_keys) > 1:
-            second_max_value = max(v for k, v in comp_rec.items() if k not in max_keys)
-            second_max_keys = [key for key, value in comp_rec.items() if value == second_max_value]
-            max_keys.extend(second_max_keys)
-
-        if len(max_keys)>2:
-            new_keys=[]
-            new_keys.append(max_keys[0])
-            new_keys.append(max_keys[1])
-            max_keys=sorted(new_keys)
-
-        with open("Files/Skills/Skill_List.json", 'r') as skill_list:
-            skill_list_data=json.load(skill_list)
-            skill_list_keys=list(skill_list_data.keys())
-    
-        name_of_skill=[]
-        skill_value=-1
-        
-        for k in skill_list_keys:
-            if sorted(skill_list_data[k][1]["Condition"]) == max_keys:
-                name_of_skill.append(k)
-                skill_value+=1
-        
-        if skill_value!=0:
-            choosen_skill=name_of_skill[random.randint(0, skill_value)]
-        else:
-            choosen_skill=name_of_skill[0]
-        
-
-        with open("Files/Skills/Skill.json", 'r') as main_skills:
-            main_skill_data=json.load(main_skills)
-            try:
-                main_skill_keys=list(main_skill_data.keys())
-            except:
-                main_skill_keys=[]
-
-        dupli=False
-
-        if main_skill_keys!=[]:
-            for k in main_skill_keys:
-                if k==choosen_skill:
-                    dupli=True
-        
-        if dupli==True:
-            if main_skill_data[choosen_skill]["lvl"]!="MAX":
-                main_skill_data[choosen_skill]["lvl"]+=1
-
-                with open("Files/Skills/Skill.json", 'w') as update_main_skills:
-                    json.dump(main_skill_data, update_main_skills, indent=6)
-                with open("Files/Temp Files/Skill Up Temp.csv", 'w', newline='') as skill_temp_csv_open:
-                    fw=csv.writer(skill_temp_csv_open)
-                    fw.writerow([choosen_skill])
-                subprocess.Popen(['python', 'Skill Up/Upgrade Skill/build/gui.py'])
-        
-        elif dupli==False:
-            main_skill_data[choosen_skill]=[(skill_list_data[choosen_skill].pop(0))]
-            main_skill_data[choosen_skill]["pl_point"]=0
-            with open("Files/Skills/Skill.json", 'w') as update_main_skills:
-                json.dump(main_skill_data, update_main_skills, indent=6)
-            subprocess.Popen(['python', 'Skill Up/New Skill/build/gui.py'])
-
-        old_lvl_data["old_stat"][0]["lvl"]=lvl
-        old_lvl_data["old_stat"][0]["str"]=stre
-        old_lvl_data["old_stat"][0]["int"]=intel
-        old_lvl_data["old_stat"][0]["agi"]=agi
-        old_lvl_data["old_stat"][0]["vit"]=vit
-        old_lvl_data["old_stat"][0]["per"]=per
-        old_lvl_data["old_stat"][0]["man"]=man
-
-        with open("Files/Skills/Skill_old_check.json", 'w') as final_check_file:
-            json.dump(old_lvl_data, final_check_file, indent=4)
+system.random_skill_check()
 # ? =====================================================================
-# ? =====================================================================
-
-# ! The Random Quests thing
-with open('Files/Data/Random_Quest_Day.json', 'r') as random_quest:
-    random_quest_data=json.load(random_quest)
-    day_num=random_quest_data["Day"]
-    tdy_week_num=datetime.today().weekday()
-    comp_check=False
-
-    if day_num==tdy_week_num:
-        comp_check=True
-        rank_val_list=["S","A","B","C","D","E"]
-        rank=random.choice(rank_val_list)
-        ab_points=["STR","AGI","VIT","INT","PER","MAN"]
-        random_ab=ab_points[random.randint(0, 5)]
-
-        # ? Active Quests
-        try:
-            with open("Files/Quests/Active_Quests.json", 'r') as active_quests_file:
-                activ_quests=json.load(active_quests_file)
-                name_of_activ_quests=list(activ_quests.keys())
-                activ_quests_vals=0
-                for k in name_of_activ_quests:
-                    activ_quests_vals+=1
-        except:
-            name_of_activ_quests=[]
-
-        if activ_quests_vals<13 and activ_quests_vals!=13:
-            # ? Quest Name
-            with open("Files\Quests\Quest_Names.json", 'r') as quest_name_file:
-                quest_names=json.load(quest_name_file)
-                if random_ab in ["STR","AGI","VIT"]:
-                    names_list=quest_names["STR"]
-                    check=True
-                    while check:
-                        quest_name=random.choice(names_list)
-                        if quest_name in name_of_activ_quests:
-                            quest_name=random.choice(names_list)
-                        else:
-                            check=False
-                    rew3="STRav"
-                elif random_ab in ["INT","PER","MAN"]:
-                    names_list=quest_names["INT"]
-                    check=True
-                    while check:
-                        quest_name=random.choice(names_list)
-                        if quest_name in name_of_activ_quests:
-                            quest_name=random.choice(names_list)
-                        else:
-                            check=False
-                    rew3="INTav"
-            
-            # ? Quest Description
-            with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
-                quest_desc=json.load(quest_desc_file)
-                if rank in ["E", "D"]:
-                    desc_list=quest_desc["Easy"]
-                    findesc=random.choice(desc_list)
-                elif rank in ["C", "B"]:
-                    desc_list=quest_desc["Intermediate"]
-                    findesc=random.choice(desc_list)
-                elif rank in ["A", "S"]:
-                    desc_list=quest_desc["Hard"]
-                    findesc=random.choice(desc_list)
-
-            # ! MAIN INFO
-            # ? Rewards
-            amt={
-                "S":250000, 
-                "A":130000,
-                "B":80000,
-                "C":5000,
-                "D":500,
-                "E":300
-                }
-            
-            coinval=amt[rank]
-            rew1=f"Coin Bag {coinval}"
-            with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
-                reward_names=json.load(rewards_name_file)
-                reward_names_list=list(reward_names.keys())
-
-                final_rewards_list=[]
-                for k in reward_names_list:
-                    if rank==reward_names[k][0]["rank"]:
-                        final_rewards_list.append(k)
-                
-                rew2=random.choice(final_rewards_list)
-
-            # ? Quest Info
-            file_name=f"Files\Workout\{random_ab}_based.json"
-            with open(file_name, 'r') as quest_file_name:
-                quest_main_names=json.load(quest_file_name)
-                quest_main_names_list=list(quest_main_names.keys())
-                final_quest_main_name=random.choice(quest_main_names_list)
-
-                details=quest_main_names[final_quest_main_name][0]
-
-            # ? Final
-
-            rew_dict={rew1:1, rew2:1}
-            if rank in ["S"]:
-                rew_dict["LVLADD"]=8
-                rew_dict[rew3]=10
-            elif rank in ["A"]:
-                rew_dict["LVLADD"]=5
-                rew_dict[rew3]=8
-            elif rank in ["B"]:
-                rew_dict["LVLADD"]=2
-                rew_dict[rew3]=6
-
-            if details["type"]=='Learn':
-                details["obj_desc"]=details["desc"]
-
-            details["desc"]=findesc
-            details["rank"]=rank
-            details["ID"]=random.randrange(1,999999)
-
-            if rank=="D":
-                if "amt" in details:
-                    if details["amt"]==50:
-                        details["amt"]+=10
-
-                    elif details["amt"]==15:
-                        details["amt"]+=5
-
-                    elif details["amt"]==2:
-                        details["amt"]+=1
-
-                    elif details["amt"]==30:
-                        details["amt"]+=15
-
-                if ("time" in details) and ("amt" not in details):
-                    if details["time"]==60:
-                        details["time"]+=60
-
-                    elif details["time"]==45:
-                        details["time"]+=15
-
-                    elif details["time"]==1:
-                        details["time"]+=1
-
-            elif rank=="C":
-                if "amt" in details:
-                    if details["amt"]==50:
-                        details["amt"]+=20
-
-                    elif details["amt"]==15:
-                        details["amt"]+=15
-
-                    elif details["amt"]==2:
-                        details["amt"]+=1
-
-                    elif details["amt"]==30:
-                        details["amt"]+=30
-
-                if ("time" in details) and ("amt" not in details):
-                    if details["time"]==45:
-                        details["time"]+=30
-
-                    elif details["time"]==60:
-                        details["time"]+=120
-
-                    elif details["time"]==1:
-                        details["time"]+=2
-
-            elif rank=="B":
-                if "amt" in details:
-                    if details["amt"]==50:
-                        details["amt"]+=50
-
-                    elif details["amt"]==15:
-                        details["amt"]+=35
-
-                    elif details["amt"]==2:
-                        details["amt"]+=3
-
-                    elif details["amt"]==30:
-                        details["amt"]+=60
-
-                if ("time" in details) and ("amt" not in details):
-                    if details["time"]==45:
-                        details["time"]+=45
-
-                    elif details["time"]==60:
-                        details["time"]+=240
-
-                    elif details["time"]==1:
-                        details["time"]+=4
-
-            elif rank=="A":
-                if "amt" in details:
-                    if details["amt"]==50:
-                        details["amt"]+=100
-
-                    elif details["amt"]==15:
-                        details["amt"]+=60
-
-                    elif details["amt"]==2:
-                        details["amt"]+=5
-
-                    elif details["amt"]==30:
-                        details["amt"]+=70
-
-                if ("time" in details) and ("amt" not in details):
-                    if details["time"]==45:
-                        details["time"]+=65
-
-                    elif details["time"]==60:
-                        details["time"]+=360
-
-                    elif details["time"]==1:
-                        details["time"]+=6
-
-            elif rank=="S":
-                if "amt" in details:
-                    if details["amt"]==50:
-                        details["amt"]+=150
-
-                    elif details["amt"]==15:
-                        details["amt"]+=85
-
-                    elif details["amt"]==2:
-                        details["amt"]+=8
-
-                    elif details["amt"]==30:
-                        details["amt"]+=90
-
-                if ("time" in details) and ("amt" not in details):
-                    if details["time"]==45:
-                        details["time"]+=75
-
-                    elif details["time"]==60:
-                        details["time"]+=540
-
-                    elif details["time"]==1:
-                        details["time"]+=9
-
-            details["Rewards"]=rew_dict
-
-            acti_name=list(quest_main_names.keys())[0]
-            details["skill"]=acti_name
-            
-            activ_quests[quest_name]=[details]
-
-            with open("Files/Quests/Active_Quests.json", 'w') as fin_active_quest_file:
-                json.dump(activ_quests, fin_active_quest_file, indent=6)
-
-            random_quest_data["Day"]=random.randint(0,6)
-
-if comp_check==True:
-    with open('Files/Data/Random_Quest_Day.json', 'w') as finalrandom_quest:
-        json.dump(random_quest_data, finalrandom_quest, indent=4)
-
-# ? =====================================================================
+system.random_quest()
 # ? =====================================================================
 
 canvas = Canvas(
     window,
-    bg = "#FFFFFF",
-    height = 585,
-    width = 76,
+    bg = "#505050",
+    height = 423,
+    width = 435,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -515,164 +221,455 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    258.0,
-    403.0,
+    359.0,
+    74.0,
     image=image_image_1
 )
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    44.0,
-    290.0,
+    358.5,
+    73.0,
     image=image_image_2
 )
 
-inv_name=f"{theme} Version/Inventory/build/gui.py"
+canvas.tag_bind(image_2, "<ButtonPress-1>", show_bar)
 
-button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    425.0,
+    10.0,
+    image=image_image_3
+)
+
+canvas.tag_bind(image_3, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_3, "<B1-Motion>", move_window)
+
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    151.0,
+    73.0,
+    image=image_image_4,
+    tags="text0",
+    state="hidden"
+)
+
+line_txt=canvas.create_text(
+    11.0,
+    55.0,
+    anchor="nw",
+    text="LINE - 1\nLINE - 2\nLINE - 3",
+    fill="#000000",
+    font=("MontserratItalic Medium", 10 * -1),
+    tags="text1",
+    state="hidden"
+)
+
+thing_txt=canvas.create_text(
+    13.0,
+    61.0,
+    anchor="nw",
+    text=f"NEW {thing} acquired!",
+    fill="#000000",
+    font=("MontserratItalic Medium", 20 * -1),
+    tags="text",
+    state="hidden"
+)
+
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
 button_1 = Button(
-    window,
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', inv_name]),
+    command=lambda: hide_text_items0(),
     relief="flat"
 )
 button_1.place(
-    x=6.0,
-    y=72.0,
-    width=64.0,
-    height=64.0
+    x=283.0,
+    y=32.0,
+    width=12.0,
+    height=12.0
 )
 
-dlq_name=f"{theme} Version/Daily Quest/build/gui.py"
+canvas.create_rectangle(
+    259.0,
+    133.0,
+    425.0,
+    417.0,
+    fill="#1A1A1A",
+    outline="",
+    tags="bar",
+    state="hidden")
 
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', dlq_name]),
-    relief="flat"
-)
-button_2.place(
-    x=6.0,
-    y=144.0,
-    width=64.0,
-    height=64.0
-)
-
-quest_name=f"{theme} Version/Quests/build/gui.py"
-
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', quest_name]),
-    relief="flat"
-)
-button_3.place(
-    x=6.0,
-    y=216.0,
-    width=64.0,
-    height=64.0
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    339.0,
+    166.0,
+    image=image_image_5,
+    tags="bar",
+    state="hidden"
 )
 
-skill_name=f'{theme} Version/Skills Tab/build/gui.py'
+def inv_open(event):
+    inv_name=f"{theme} Version/Inventory/build/gui.py"
+    subprocess.Popen(['python', inv_name])
 
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', skill_name]),
-    relief="flat"
-)
-button_4.place(
-    x=6.0,
-    y=288.0,
-    width=64.0,
-    height=64.0
+canvas.tag_bind(image_5, "<ButtonPress-1>", inv_open)
+
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    334.0,
+    197.5,
+    image=image_image_6,
+    tags="bar",
+    state="hidden"
 )
 
-status_name=f'{theme} Version/Status Tab/build/gui.py'
+def daily_open(event):
+    inv_name=f"{theme} Version/Daily Quest/build/gui.py"
+    subprocess.Popen(['python', inv_name])
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
-button_5 = Button(
-    image=button_image_5,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', status_name]),
-    relief="flat"
-)
-button_5.place(
-    x=6.0,
-    y=360.0,
-    width=64.0,
-    height=64.0
+canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
+
+image_image_7 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_7 = canvas.create_image(
+    354.0,
+    229.5,
+    image=image_image_7,
+    tags="bar",
+    state="hidden"
 )
 
-equp_name=f'{theme} Version/Equipment/build/gui.py'
+def quest_open(event):
+    inv_name=f"{theme} Version/Quests/build/gui.py"
+    subprocess.Popen(['python', inv_name])
 
-button_image_6 = PhotoImage(
-    file=relative_to_assets("button_6.png"))
-button_6 = Button(
-    image=button_image_6,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', equp_name]),
-    relief="flat"
-)
-button_6.place(
-    x=6.0,
-    y=432.0,
-    width=64.0,
-    height=64.0
+canvas.tag_bind(image_7, "<ButtonPress-1>", quest_open)
+
+image_image_8 = PhotoImage(
+    file=relative_to_assets("image_8.png"))
+image_8 = canvas.create_image(
+    359.0,
+    261.5,
+    image=image_image_8,
+    tags="bar",
+    state="hidden"
 )
 
-shop_name=f'{theme} Version/Shop/build/gui.py'
+def skill_open(event):
+    inv_name=f"{theme} Version/Skills Tab/build/gui.py"
+    subprocess.Popen(['python', inv_name])
 
-button_image_7 = PhotoImage(
-    file=relative_to_assets("button_7.png"))
-button_7 = Button(
-    image=button_image_7,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', shop_name]),
-    relief="flat"
-)
-button_7.place(
-    x=6.0,
-    y=504.0,
-    width=64.0,
-    height=64.0
+canvas.tag_bind(image_8, "<ButtonPress-1>", skill_open)
+
+image_image_9 = PhotoImage(
+    file=relative_to_assets("image_9.png"))
+image_9 = canvas.create_image(
+    357.0,
+    293.5,
+    image=image_image_9,
+    tags="bar",
+    state="hidden"
 )
 
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
-button_8 = Button(
-    image=button_image_8,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: close(),
-    relief="flat"
-)
-button_8.place(
-    x=40.0,
-    y=35.0,
-    width=30.0,
-    height=30.0
+def status_open(event):
+    inv_name=f"{theme} Version/Status Tab/build/gui.py"
+    subprocess.Popen(['python', inv_name])
+
+canvas.tag_bind(image_9, "<ButtonPress-1>", status_open)
+
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    337.0,
+    325.5,
+    image=image_image_10,
+    tags="bar",
+    state="hidden"
 )
 
+def equip_open(event):
+    inv_name=f"{theme} Version/Equipment/build/gui.py"
+    subprocess.Popen(['python', inv_name])
 
-thread=threading.Thread(target=check_midnight)
+canvas.tag_bind(image_10, "<ButtonPress-1>", equip_open)
+
+image_image_11 = PhotoImage(
+    file=relative_to_assets("image_11.png"))
+image_11 = canvas.create_image(
+    361.0,
+    357.5,
+    image=image_image_11,
+    tags="bar",
+    state="hidden"
+)
+
+def shop_open(event):
+    inv_name=f"{theme} Version/Shop/build/gui.py"
+    subprocess.Popen(['python', inv_name])
+
+canvas.tag_bind(image_11, "<ButtonPress-1>", shop_open)
+
+image_image_12 = PhotoImage(
+    file=relative_to_assets("image_12.png"))
+image_12 = canvas.create_image(
+    364.0,
+    390.0,
+    image=image_image_12,
+    tags="bar",
+    state="hidden"
+)
+
+def close_full(event):
+    stop_event.set()
+
+    # Wait for the thread to finish
+    thread.join()
+
+    sys.exit()
+
+canvas.tag_bind(image_12, "<ButtonPress-1>", close_full)
+
+image_image_13 = PhotoImage(
+    file=relative_to_assets("image_13.png"))
+image_13 = canvas.create_image(
+    415.0,
+    143.0,
+    image=image_image_13,
+    tags="bar",
+    state="hidden"
+)
+
+canvas.tag_bind(image_13, "<ButtonPress-1>", hide_bar)
+
+image_image_14 = PhotoImage(
+    file=relative_to_assets("image_14.png"))
+image_14 = canvas.create_image(
+    289.0,
+    117.0,
+    image=image_image_14
+)
+
+canvas.create_rectangle(
+    11.0,
+    122.0,
+    254.0,
+    189.0,
+    fill="#0C0C0C",
+    outline="",
+    tags="acc",
+    state="hidden")
+
+canvas.create_rectangle(
+    14.0,
+    125.0,
+    251.0,
+    186.0,
+    fill="#D9D9D9",
+    outline="",
+    tags="acc",
+    state="hidden")
+
+canvas.create_text(
+    54.0,
+    124.0,
+    anchor="nw",
+    text="ENTER ACCESS CODE",
+    fill="#000000",
+    font=("Montserrat Medium", 13 * -1),
+    tags="acc",
+    state="hidden"
+)
+
+fnt=18
+
+image_image_15 = PhotoImage(
+    file=relative_to_assets("image_15.png"))
+image_15 = canvas.create_image(
+    245.0,
+    131.0,
+    image=image_image_15,
+    tags="acc",
+    state="hidden"
+)
+
+image_image_16 = PhotoImage(
+    file=relative_to_assets("image_16.png"))
+image_16 = canvas.create_image(
+    240.0,
+    175.0,
+    image=image_image_16,
+    tags="acc",
+    state="hidden"
+)
+
+def hide(event):
+    entry_1.place_forget()
+    entry_2.place_forget()
+    entry_3.place_forget()
+    entry_4.place_forget()
+    entry_5.place_forget()
+
+    canvas.itemconfig("acc", state="hidden")
+    canvas.itemconfig("acc0", state="hidden")
+
+def hide_0():
+    entry_1.place_forget()
+    entry_2.place_forget()
+    entry_3.place_forget()
+    entry_4.place_forget()
+    entry_5.place_forget()
+
+    canvas.itemconfig("acc", state="hidden")
+    canvas.itemconfig("acc0", state="hidden")
+
+def show(event):
+    global entry_1
+    global entry_2
+    global entry_3
+    global entry_4
+    global entry_5
+
+    entry_image_1 = PhotoImage(
+        file=relative_to_assets("entry_1.png"))
+    entry_bg_1 = canvas.create_image(
+        56.5,
+        163.5,
+        image=entry_image_1,
+        tags="acc",
+        state="hidden"
+    )
+    entry_1 = Entry(
+        bd=0,
+        bg="#FFFFFF",
+        fg="#000716",
+        highlightthickness=0,
+        font=('Montserrat', fnt),
+        justify="center"
+    )
+    entry_1.place(
+        x=41.0,
+        y=144.0,
+        width=31.0,
+        height=37.0
+    )
+
+    entry_image_2 = PhotoImage(
+        file=relative_to_assets("entry_2.png"))
+    entry_bg_2 = canvas.create_image(
+        94.5,
+        163.5,
+        image=entry_image_2,
+        tags="acc",
+        state="hidden"
+    )
+    entry_2 = Entry(
+        bd=0,
+        bg="#FFFFFF",
+        fg="#000716",
+        highlightthickness=0,
+        font=('Montserrat', fnt),
+        justify="center"
+    )
+    entry_2.place(
+        x=79.0,
+        y=144.0,
+        width=31.0,
+        height=37.0
+    )
+
+    entry_image_3 = PhotoImage(
+        file=relative_to_assets("entry_3.png"))
+    entry_bg_3 = canvas.create_image(
+        132.5,
+        163.5,
+        image=entry_image_3,
+        tags="acc",
+        state="hidden"
+    )
+    entry_3 = Entry(
+        bd=0,
+        bg="#FFFFFF",
+        fg="#000716",
+        highlightthickness=0,
+        font=('Montserrat', fnt),
+        justify="center"
+    )
+    entry_3.place(
+        x=117.0,
+        y=144.0,
+        width=31.0,
+        height=37.0
+    )
+
+    entry_image_4 = PhotoImage(
+        file=relative_to_assets("entry_4.png"))
+    entry_bg_4 = canvas.create_image(
+        170.5,
+        163.5,
+        image=entry_image_4,
+        tags="acc",
+        state="hidden"
+    )
+    entry_4 = Entry(
+        bd=0,
+        bg="#FFFFFF",
+        fg="#000716",
+        highlightthickness=0,
+        font=('Montserrat', fnt),
+        justify="center"
+    )
+    entry_4.place(
+        x=155.0,
+        y=144.0,
+        width=31.0,
+        height=37.0
+    )
+
+    entry_image_5 = PhotoImage(
+        file=relative_to_assets("entry_5.png"))
+    entry_bg_5 = canvas.create_image(
+        208.5,
+        163.5,
+        image=entry_image_5,
+        tags="acc",
+        state="hidden"
+    )
+    entry_5 = Entry(
+        bd=0,
+        bg="#FFFFFF",
+        fg="#000716",
+        highlightthickness=0,
+        font=('Montserrat', fnt),
+        justify="center"
+    )
+    entry_5.place(
+        x=193.0,
+        y=144.0,
+        width=31.0,
+        height=37.0
+    )
+
+    canvas.itemconfig("acc", state="normal")
+    canvas.itemconfig("acc0", state="normal")
+
+canvas.tag_bind(image_16, "<ButtonPress-1>", code_final)
+canvas.tag_bind(image_15, "<ButtonPress-1>", hide)
+canvas.tag_bind(image_14, "<ButtonPress-1>", show)
+
+stop_event = threading.Event()
+pause_event = threading.Event()
+thread = threading.Thread(target=check_for_updates, args=(stop_event,pause_event))
 thread.start()
-run_once_prog()
+
+system.run_once_prog(stop_event0, thread0)
+
 window.resizable(False, False)
 window.mainloop()
