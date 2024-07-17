@@ -840,7 +840,7 @@ canvas.create_text(
     font=("Montserrat Regular", 18 * -1)
 )
 
-av_int_based_txt=canvas.create_text(
+canvas.create_text(
     14.0,
     161.0,
     anchor="nw",
@@ -858,7 +858,7 @@ canvas.create_text(
     font=("Montserrat Regular", 18 * -1)
 )
 
-canvas.create_text(
+av_int_based_txt=canvas.create_text(
     324.0,
     610.0,
     anchor="nw",
