@@ -16,14 +16,51 @@ import random
 import json
 import csv
 import subprocess
+import cv2
+from PIL import Image, ImageTk
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.frame_skip = frame_skip  # Number of frames to skip
+        self.resize_factor = resize_factor  # Factor to resize frames
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.frame_count = 0
+        self.update_frame()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            self.frame_count += 1
+            if self.frame_count % self.frame_skip == 0:  # Skip frames for performance
+                frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(frame)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.canvas.itemconfig(self.image_id, image=imgtk)
+                self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
+
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
-
 
 def update_timer(end_time):
     remaining_time = end_time - datetime.now()
@@ -111,36 +148,64 @@ def check_comp():
         secrer_quest_data=json.load(secrer_quest)
         day_num=secrer_quest_data["Day"]
         tdy_week_num=datetime.today().weekday()
+    if day_num==tdy_week_num:
+        if (pl_push/2)>=fl_push and (pl_run/2)>=fl_run and (pl_sqat/2)>=fl_sqat and (pl_sit/2)>=fl_sit and (pl_int/2)>=fl_int and (pl_slp/2)>=fl_slp:
+            if fl_push!=100 and fl_sit!=100 and fl_sqat!=100:
+                daily_quest_data["Final"]["Push"]+=5
+                daily_quest_data["Final"]["Sit"]+=5
+                daily_quest_data["Final"]["Squat"]+=5
+                daily_quest_data["Final"]["Run"]+=0.5
 
-    if (pl_push/2)>=fl_push and (pl_run/2)>=fl_run and (pl_sqat/2)>=fl_sqat and (pl_sit/2)>=fl_sit and (pl_int/2)>=fl_int and (pl_slp/2)>=fl_slp:
-        if fl_push!=100 and fl_sit!=100 and fl_sqat!=100:
-            daily_quest_data["Final"]["Push"]+=5
-            daily_quest_data["Final"]["Sit"]+=5
-            daily_quest_data["Final"]["Squat"]+=5
-            daily_quest_data["Final"]["Run"]+=0.5
+                daily_quest_data["Player"]["Push"]=0
+                daily_quest_data["Player"]["Sit"]=0
+                daily_quest_data["Player"]["Squat"]=0
+                daily_quest_data["Player"]["Run"]=0
+                daily_quest_data["Player"]["Int_type"]=0
+                daily_quest_data["Player"]["Sleep"]=0
 
-            daily_quest_data["Player"]["Push"]=0
-            daily_quest_data["Player"]["Sit"]=0
-            daily_quest_data["Player"]["Squat"]=0
-            daily_quest_data["Player"]["Run"]=0
-            daily_quest_data["Player"]["Int_type"]=0
-            daily_quest_data["Player"]["Sleep"]=0
+                if round(fl_int,1)!=10:
+                    daily_quest_data["Final"]["Int_type"]+=0.5
 
-            if round(fl_int,1)!=10:
-                daily_quest_data["Final"]["Int_type"]+=0.5
-            else:
-                daily_quest_data["Final"]["Int_type"]+=0.5
+                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                    json.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
-            with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
-                json.dump(daily_quest_data, final_daily_quest_file, indent=4)
-
-            with open("Files/Checks/Daily_time_check.csv", 'w',  newline='') as fin_daily_date_check_file:
-                fw1=csv.writer(fin_daily_date_check_file)
-                fw1.writerow([today_date_str,"DONE"])
-        
-            subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/build/gui.py'])
+                with open("Files/Checks/Daily_time_check.csv", 'w',  newline='') as fin_daily_date_check_file:
+                    fw1=csv.writer(fin_daily_date_check_file)
+                    fw1.writerow([today_date_str,"DONE"])
             
-            window.quit()
+                subprocess.Popen(['python', 'Anime Version/Secret Quest Rewards/build/gui.py'])
+                
+                window.quit()
+    else:
+        if (pl_push)>=fl_push and (pl_run)>=fl_run and (pl_sqat)>=fl_sqat and (pl_sit)>=fl_sit and (pl_int)>=fl_int and (pl_slp)>=fl_slp:
+            if fl_push!=100 and fl_sit!=100 and fl_sqat!=100:
+                daily_quest_data["Final"]["Push"]+=5
+                daily_quest_data["Final"]["Sit"]+=5
+                daily_quest_data["Final"]["Squat"]+=5
+                daily_quest_data["Final"]["Run"]+=0.5
+
+                daily_quest_data["Player"]["Push"]=0
+                daily_quest_data["Player"]["Sit"]=0
+                daily_quest_data["Player"]["Squat"]=0
+                daily_quest_data["Player"]["Run"]=0
+                daily_quest_data["Player"]["Int_type"]=0
+                daily_quest_data["Player"]["Sleep"]=0
+
+                if round(fl_int,1)!=10:
+                    daily_quest_data["Final"]["Int_type"]+=0.5
+                else:
+                    daily_quest_data["Final"]["Int_type"]+=0.5
+
+                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                    json.dump(daily_quest_data, final_daily_quest_file, indent=4)
+
+                with open("Files/Checks/Daily_time_check.csv", 'w',  newline='') as fin_daily_date_check_file:
+                    fw1=csv.writer(fin_daily_date_check_file)
+                    fw1.writerow([today_date_str,"DONE"])
+            
+                subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/build/gui.py'])
+                
+                window.quit()
 
 def update_pushup():
     global pushup_txt
@@ -150,7 +215,6 @@ def update_pushup():
         daily_quest_data["Player"]["Push"]+=1
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
     canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
-    check_comp()
 
 def update_situp():
     global situp_txt
@@ -159,7 +223,6 @@ def update_situp():
         daily_quest_data["Player"]["Sit"]+=1
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
     canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
-    check_comp()
 
 def update_sqat():
     global squat_txt
@@ -168,7 +231,6 @@ def update_sqat():
         daily_quest_data["Player"]["Squat"]+=1
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
     canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sqat}]")
-    check_comp()
 
 def update_run():
     global run_txt
@@ -177,7 +239,6 @@ def update_run():
         daily_quest_data["Player"]["Run"]+=0.5
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
     canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
-    check_comp()
 
 def update_int():
     global int_txt
@@ -186,7 +247,6 @@ def update_int():
         daily_quest_data["Player"]["Int_type"]+=0.5
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
     canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
-    check_comp()
 
 def update_sleep():
     global sleep_txt
@@ -195,12 +255,29 @@ def update_sleep():
         daily_quest_data["Player"]["Sleep"]+=1
         json.dump(daily_quest_data, write_daily_quest_file, indent=4)
     canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
-    check_comp()
 
 def preview():
     subprocess.Popen(['python', 'Anime Version/Daily Quest Preview/build/gui.py'])
 
     window.quit()
+
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def ex_close(win):
+    win.quit()
 
 try:
     with open("Files/Checks/Daily_time_check.csv", 'r') as Daily_date_check_file:
@@ -238,14 +315,18 @@ if full_check==False:
 
     window = Tk()
 
-    window.geometry("477x856")
+    window.geometry("477x774")
     window.configure(bg = "#FFFFFF")
     window.attributes('-alpha',0.8)
+    window.overrideredirect(True)
+    window.wm_attributes("-topmost", True)
+    #window.update()
+
 
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
-        height = 856,
+        height = 774,
         width = 477,
         bd = 0,
         highlightthickness = 0,
@@ -257,15 +338,18 @@ if full_check==False:
         file=relative_to_assets("image_1.png"))
     image_1 = canvas.create_image(
         277.0,
-        428.0,
+        495.0,
         image=image_image_1
     )
+
+    video_path = "Files/0001-0200.mp4"
+    player = VideoPlayer(canvas, video_path, 277.0, 400.0)
 
     image_image_2 = PhotoImage(
         file=relative_to_assets("image_2.png"))
     image_2 = canvas.create_image(
         244.0,
-        445.0,
+        403.0,
         image=image_image_2
     )
 
@@ -273,7 +357,7 @@ if full_check==False:
         file=relative_to_assets("image_3.png"))
     image_3 = canvas.create_image(
         241.0,
-        154.0,
+        102.0,
         image=image_image_3
     )
 
@@ -281,22 +365,22 @@ if full_check==False:
         file=relative_to_assets("image_4.png"))
     image_4 = canvas.create_image(
         244.0,
-        246.0,
+        194.0,
         image=image_image_4
     )
 
     timer=canvas.create_text(
         128.0,
-        700.0,
+        648.0,
         anchor="nw",
         text="00:00:00",
         fill="#FFFFFF",
-        font=("Montserrat Bold", 48 * -1)
+        font=("Inter Bold", 48 * -1)
     )
 
     canvas.create_text(
         91.0,
-        194.0,
+        142.0,
         anchor="nw",
         text="[Daily Quest: Player Training has arrived]",
         fill="#FFFFFF",
@@ -305,7 +389,7 @@ if full_check==False:
 
     canvas.create_text(
         86.0,
-        296.0,
+        244.0,
         anchor="nw",
         text="Push-ups",
         fill="#FFFFFF",
@@ -314,7 +398,7 @@ if full_check==False:
 
     canvas.create_text(
         86.0,
-        336.0,
+        284.0,
         anchor="nw",
         text="Sit-ups",
         fill="#FFFFFF",
@@ -323,7 +407,7 @@ if full_check==False:
 
     canvas.create_text(
         86.0,
-        375.0,
+        323.0,
         anchor="nw",
         text="Squats",
         fill="#FFFFFF",
@@ -332,7 +416,7 @@ if full_check==False:
 
     canvas.create_text(
         86.0,
-        415.0,
+        363.0,
         anchor="nw",
         text="Running",
         fill="#FFFFFF",
@@ -341,7 +425,7 @@ if full_check==False:
 
     canvas.create_text(
         86.0,
-        472.0,
+        420.0,
         anchor="nw",
         text="Chapter Reading",
         fill="#FFFFFF",
@@ -350,61 +434,61 @@ if full_check==False:
 
     canvas.create_text(
         86.0,
-        511.0,
+        459.0,
         anchor="nw",
         text="Proper Last Night Sleep",
         fill="#FFFFFF",
         font=("Montserrat Regular", 14 * -1)
     )
 
-    pushup_txt=canvas.create_text(
+    canvas.create_text(
         315.0,
-        298.0,
+        246.0,
         anchor="nw",
         text=f"[{pl_push}/{fl_push}]",
         fill="#FFFFFF",
         font=("Montserrat Regular", 14 * -1)
     )
 
-    situp_txt=canvas.create_text(
+    canvas.create_text(
         315.0,
-        336.0,
+        284.0,
         anchor="nw",
         text=f"[{pl_sit}/{fl_sit}]",
         fill="#FFFFFF",
         font=("Montserrat Regular", 14 * -1)
     )
 
-    squat_txt=canvas.create_text(
+    canvas.create_text(
         315.0,
-        374.0,
+        322.0,
         anchor="nw",
         text=f"[{pl_sqat}/{fl_sqat}]",
         fill="#FFFFFF",
         font=("Montserrat Regular", 14 * -1)
     )
 
-    run_txt=canvas.create_text(
+    canvas.create_text(
         313.0,
-        415.0,
+        363.0,
         anchor="nw",
         text=f"[{pl_run}/{fl_run}km]",
         fill="#FFFFFF",
         font=("Montserrat Regular", 14 * -1)
     )
 
-    int_txt=canvas.create_text(
+    canvas.create_text(
         333.0,
-        472.0,
+        420.0,
         anchor="nw",
         text=f"[{pl_int}/{fl_int}]",
         fill="#FFFFFF",
         font=("Montserrat Regular", 14 * -1)
     )
 
-    sleep_txt=canvas.create_text(
+    canvas.create_text(
         334.0,
-        511.0,
+        459.0,
         anchor="nw",
         text=f"[{pl_slp}/{fl_slp}]",
         fill="#FFFFFF",
@@ -415,7 +499,7 @@ if full_check==False:
         file=relative_to_assets("image_5.png"))
     image_5 = canvas.create_image(
         242.0,
-        415.0,
+        363.0,
         image=image_image_5
     )
 
@@ -430,7 +514,7 @@ if full_check==False:
     )
     button_1.place(
         x=380.0,
-        y=296.0,
+        y=244.0,
         width=20.0,
         height=20.0
     )
@@ -446,7 +530,7 @@ if full_check==False:
     )
     button_2.place(
         x=380.0,
-        y=336.0,
+        y=284.0,
         width=20.0,
         height=20.0
     )
@@ -462,7 +546,7 @@ if full_check==False:
     )
     button_3.place(
         x=380.0,
-        y=373.0,
+        y=321.0,
         width=20.0,
         height=20.0
     )
@@ -478,7 +562,7 @@ if full_check==False:
     )
     button_4.place(
         x=380.0,
-        y=415.0,
+        y=363.0,
         width=20.0,
         height=20.0
     )
@@ -494,7 +578,7 @@ if full_check==False:
     )
     button_5.place(
         x=380.0,
-        y=472.0,
+        y=420.0,
         width=20.0,
         height=20.0
     )
@@ -510,14 +594,14 @@ if full_check==False:
     )
     button_6.place(
         x=382.0,
-        y=510.0,
+        y=458.0,
         width=20.0,
         height=20.0
     )
 
     canvas.create_text(
         96.0,
-        562.0,
+        510.0,
         anchor="nw",
         text="Preview Rewards",
         fill="#FFFFFF",
@@ -535,7 +619,7 @@ if full_check==False:
     )
     button_7.place(
         x=73.0,
-        y=559.0,
+        y=507.0,
         width=20.0,
         height=20.0
     )
@@ -544,12 +628,55 @@ if full_check==False:
         file=relative_to_assets("image_6.png"))
     image_6 = canvas.create_image(
         244.0,
-        650.0,
+        598.0,
         image=image_image_6
     )
+
+    button_image_8 = PhotoImage(
+        file=relative_to_assets("button_8.png"))
+    button_8 = Button(
+        image=button_image_8,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: check_comp(),
+        relief="flat"
+    )
+    button_8.place(
+        x=273.0,
+        y=519.0,
+        width=160.0,
+        height=27.0
+    )
+
+    image_0=canvas.create_rectangle(
+        0.0,
+        0.0,
+        477.0,
+        37.0,
+        fill="#2E2E2E",
+        outline="")
+
+    button_image_9 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+    button_9 = Button(
+        image=button_image_9,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: ex_close(window),
+        relief="flat"
+    )
+    button_9.place(
+        x=442.0,
+        y=4.0,
+        width=28.0,
+        height=28.0
+    )
+
+    canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+    canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+
     end_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
     update_timer(end_time)
-
     window.resizable(False, False)
     window.mainloop()
 

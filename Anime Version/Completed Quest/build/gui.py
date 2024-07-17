@@ -35,8 +35,6 @@ canvas = Canvas(
     relief = "ridge"
 )
 
-# Commit Check
-
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
