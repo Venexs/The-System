@@ -118,10 +118,10 @@ with open("Files/Data/Rank_Rewards.json", 'r') as final_rank_check_file:
 
 def get():
     with open("Files/status.json", 'w') as status_import:
-        final_rank_check_data["status"][0]['coins']+=coins
-        final_rank_check_data["avail_eq"][0]['str_based']+=av_str
-        final_rank_check_data["avail_eq"][0]['int_based']+=av_int
-        json.dump(final_rank_check_data, status_import, indent=4)
+        rank_check_data["status"][0]['coins']+=coins
+        rank_check_data["avail_eq"][0]['str_based']+=av_str
+        rank_check_data["avail_eq"][0]['int_based']+=av_int
+        json.dump(rank_check_data, status_import, indent=4)
 
     subprocess.Popen(['python', 'Anime Version/Status Tab/build/gui.py'])
     window.quit()
