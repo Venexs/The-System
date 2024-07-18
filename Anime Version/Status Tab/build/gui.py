@@ -573,7 +573,7 @@ canvas.create_text(
     font=("Montserrat Regular", 15 * -1)
 )
 
-canvas.create_text(
+man_txt=canvas.create_text(
     254.0,
     498.0,
     anchor="nw",
