@@ -601,11 +601,11 @@ if full_check==False:
                 canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sqat}]")
         else:
             #global situp_txt
-            current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
+            current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
             with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
                 daily_quest_data["Player"]["Squat"]+=1
                 json.dump(daily_quest_data, write_daily_quest_file, indent=4)
-            canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
+            canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_run():
         if pl_run==fl_run:
