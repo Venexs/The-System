@@ -1053,7 +1053,7 @@ with open("Files/Data/Job_info.json", 'r') as stat_fson:
 if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
     canvas.itemconfig("Job", state="normal")
 else:
-    canvas.itemconfig("Job", state="hiddn")
+    canvas.itemconfig("Job", state="hidden")
 
 window.resizable(False, False)
 window.mainloop()
