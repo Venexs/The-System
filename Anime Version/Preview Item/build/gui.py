@@ -108,7 +108,8 @@ cat=data[name][0]["cat"]
 n_cat=cat
 if cat.upper()=="FIRST GAUNTLET" or cat.upper()=="SECOND GAUNTLET":
     n_cat="GAUNTLET"
-desc_full=data[k][0]["desc"]
+
+desc_full=data[name][0]["desc"]
 
 for i in range(0, len(desc_full), segment_length):
     segments.append(desc_full[i:i+segment_length])

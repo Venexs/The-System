@@ -89,7 +89,7 @@ with open("Files\Skills\Skill.json", 'r') as fson:
         data=json.load(fson)
         data_key=list(data.keys())
         for k in data_key:
-            if data[k][0]["type"]=='Passive':
+            if data[k][0]["type"]=='Job':
                 if c==0:
                     name1=k
                     lvl1=data[k][0]["lvl"]
