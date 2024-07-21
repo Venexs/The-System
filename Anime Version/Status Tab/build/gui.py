@@ -14,6 +14,7 @@ import subprocess
 import random
 import cv2
 from PIL import Image, ImageTk
+from datetime import datetime, timedelta
 
 subprocess.Popen(['python', 'sfx.py'])
 
@@ -127,6 +128,34 @@ def title_color(name):
         color="#FFFFFF"
 
     return color
+
+def start_job(event):
+    with open("Files/Data/Job_info.json", 'r') as stat_fson:
+        data=json.load(stat_fson)
+
+    canvas.itemconfig("Jobs", state="hidden")
+    data["status"][0]["job_active"]='True'
+
+    data["status"][1]["plSTR"]=int(stre)
+    data["status"][1]["plINT"]=int(intel)
+    data["status"][1]["plAGI"]=int(agi)
+    data["status"][1]["plVIT"]=int(vit)
+    data["status"][1]["plPER"]=int(per)
+    data["status"][1]["plMAN"]=int(man)
+
+    with open("Files\Temp Files\Job_Change Date.csv", 'w', newline='') as time_open_csv_file:
+        fw=csv.writer(time_open_csv_file)
+        current_date = datetime.now()
+        # Add 10 days to the current date
+        future_date = current_date + timedelta(days=1)
+        # Define the desired format for the date string
+        date_format = "%Y-%m-%d"
+        # Convert the future date to a string
+        future_date_string = future_date.strftime(date_format)
+        fw.writerow([future_date_string])
+
+    with open("Files/Data/Job_info.json", 'w') as fson:
+        json.dump(data, fson, indent=4)
 
 canvas = Canvas(
     window,
@@ -287,6 +316,8 @@ def update_str():
             ability_check_file_data=json.load(ability_check_file)
             val=ability_check_file_data["Check"]["STR"]
         if val<3:
+            with open("Files/Data/Job_info.json", 'r') as stat_fson:
+                stat_data=json.load(stat_fson)
             global str_txt
             current_text = canvas.itemcget(str_txt, "text")
             # ? ====================================================
@@ -297,6 +328,10 @@ def update_str():
                 data["status"][0]['str']+=1
                 data["avail_eq"][0]['str_based']-=1
                 json.dump(data, fson, indent=4)
+            # ? ====================================================
+            stat_data["status"][1]["STR"]+=1
+            with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+                json.dump(stat_data, final_stat_fson, indent=4)
             # ? ====================================================
             new_text = f"{new_number:03d}"
             canvas.itemconfig(str_txt, text=new_text)
@@ -317,6 +352,8 @@ def update_agi():
             ability_check_file_data=json.load(ability_check_file)
             val=ability_check_file_data["Check"]["AGI"]
         if val<3:
+            with open("Files/Data/Job_info.json", 'r') as stat_fson:
+                stat_data=json.load(stat_fson)
             global agi_txt
             current_text = canvas.itemcget(agi_txt, "text")
             # ? ====================================================
@@ -327,6 +364,10 @@ def update_agi():
                 data["status"][0]['agi']+=1
                 data["avail_eq"][0]['str_based']-=1
                 json.dump(data, fson, indent=4)
+            # ? ====================================================
+            stat_data["status"][1]["AGI"]+=1
+            with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+                json.dump(stat_data, final_stat_fson, indent=4)
             # ? ====================================================
             new_text = f"{new_number:03d}"
             canvas.itemconfig(agi_txt, text=new_text)
@@ -347,6 +388,8 @@ def update_vit():
             ability_check_file_data=json.load(ability_check_file)
             val=ability_check_file_data["Check"]["VIT"]
         if val<3:
+            with open("Files/Data/Job_info.json", 'r') as stat_fson:
+                stat_data=json.load(stat_fson)
             global vit_txt
             current_text = canvas.itemcget(vit_txt, "text")
             # ? ====================================================
@@ -357,6 +400,10 @@ def update_vit():
                 data["status"][0]['vit']+=1
                 data["avail_eq"][0]['str_based']-=1
                 json.dump(data, fson, indent=4)
+            # ? ====================================================
+            stat_data["status"][1]["VIT"]+=1
+            with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+                json.dump(stat_data, final_stat_fson, indent=4)
             # ? ====================================================
             new_text = f"{new_number:03d}"
             canvas.itemconfig(vit_txt, text=new_text)
@@ -377,6 +424,8 @@ def update_int():
             ability_check_file_data=json.load(ability_check_file)
             val=ability_check_file_data["Check"]["INT"]
         if val<3:
+            with open("Files/Data/Job_info.json", 'r') as stat_fson:
+                stat_data=json.load(stat_fson)
             global int_txt
             current_text = canvas.itemcget(int_txt, "text")
             # ? ====================================================
@@ -387,6 +436,10 @@ def update_int():
                 data["status"][0]['int']+=1
                 data["avail_eq"][0]['int_based']-=1
                 json.dump(data, fson, indent=4)
+            # ? ====================================================
+            stat_data["status"][1]["INT"]+=1
+            with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+                json.dump(stat_data, final_stat_fson, indent=4)
             # ? ====================================================
             new_text = f"{new_number:03d}"
             canvas.itemconfig(int_txt, text=new_text)
@@ -407,6 +460,8 @@ def update_per():
             ability_check_file_data=json.load(ability_check_file)
             val=ability_check_file_data["Check"]["PER"]
         if val<3:
+            with open("Files/Data/Job_info.json", 'r') as stat_fson:
+                stat_data=json.load(stat_fson)
             global per_txt
             current_text = canvas.itemcget(per_txt, "text")
             # ? ====================================================
@@ -417,6 +472,10 @@ def update_per():
                 data["status"][0]['per']+=1
                 data["avail_eq"][0]['int_based']-=1
                 json.dump(data, fson, indent=4)
+            # ? ====================================================
+            stat_data["status"][1]["PER"]+=1
+            with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+                json.dump(stat_data, final_stat_fson, indent=4)
             # ? ====================================================
             new_text = f"{new_number:03d}"
             canvas.itemconfig(per_txt, text=new_text)
@@ -437,6 +496,8 @@ def update_man():
             ability_check_file_data=json.load(ability_check_file)
             val=ability_check_file_data["Check"]["MAN"]
         if val<3:
+            with open("Files/Data/Job_info.json", 'r') as stat_fson:
+                stat_data=json.load(stat_fson)
             global man_txt
             current_text = canvas.itemcget(man_txt, "text")
             # ? ====================================================
@@ -447,6 +508,10 @@ def update_man():
                 data["status"][0]['man']+=1
                 data["avail_eq"][0]['int_based']-=1
                 json.dump(data, fson, indent=4)
+            # ? ====================================================
+            stat_data["status"][1]["MAN"]+=1
+            with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+                json.dump(stat_data, final_stat_fson, indent=4)
             # ? ====================================================
             new_text = f"{new_number:03d}"
             canvas.itemconfig(man_txt, text=new_text)
@@ -482,7 +547,6 @@ def de_update_int():
 
 # / =================================================
 # / =================================================
-
 str_txt=canvas.create_text(
     63.0,
     390.0,
@@ -922,11 +986,23 @@ image_image_19 = PhotoImage(
     file=relative_to_assets("image_19.png"))
 image_19 = canvas.create_image(
     259.0,
-    240.0,
+    242.0,
     image=image_image_19
 )
 
 canvas.tag_bind(image_19, "<ButtonPress-1>", title_chng)
+
+image_image_20 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_20 = canvas.create_image(
+    259.0,
+    208.0,
+    image=image_image_20,
+    tags='Job',
+    state='hidden'
+)
+
+canvas.tag_bind(image_20, "<ButtonPress-1>", start_job)
 
 image_0=canvas.create_rectangle(
     0.0,
@@ -970,6 +1046,14 @@ button_9.place(
     width=145.0,
     height=23.0
 )
+
+with open("Files/Data/Job_info.json", 'r') as stat_fson:
+    stat_data=json.load(stat_fson)
+
+if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
+    canvas.itemconfig("Job", state="normal")
+else:
+    canvas.itemconfig("Job", state="hiddn")
 
 window.resizable(False, False)
 window.mainloop()
