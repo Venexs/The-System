@@ -1,0 +1,5 @@
+tk==0.1.0
+pathlib==1.0.1
+psutil==5.9.4
+pillow==10.2.0
+opencv-python==4.6.0.66

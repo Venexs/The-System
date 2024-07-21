@@ -70,7 +70,7 @@ def run_once_prog(stp_eve, thrd):
         # Wait for the thread to finish
         thrd.join()
 
-        subprocess.Popen(['python', 'Help/build/gui.py'])
+        subprocess.Popen(['python', 'First/Check/build/gui.py'])
 
         sys.exit()
 
@@ -164,6 +164,8 @@ def random_skill_check():
                     if k==choosen_skill:
                         dupli=True
             
+            print(choosen_skill)
+
             if dupli==True:
                 if main_skill_data[choosen_skill][0]["lvl"]!="MAX":
                     main_skill_data[choosen_skill][0]["lvl"]+=1
@@ -184,7 +186,7 @@ def random_skill_check():
             
             elif dupli==False:
                 main_skill_data[choosen_skill]=[(skill_list_data[choosen_skill].pop(0))]
-                main_skill_data[choosen_skill]["pl_point"]=0
+                main_skill_data[choosen_skill][0]["pl_point"]=0
                 with open("Files/Skills/Skill.json", 'w') as update_main_skills:
                     json.dump(main_skill_data, update_main_skills, indent=6)
                 with open('Files/Data/New_Updates.json', 'w') as updatefile:

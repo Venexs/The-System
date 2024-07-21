@@ -15,6 +15,9 @@ import subprocess
 import time
 import sys
 import system
+import cv2
+from PIL import Image, ImageTk
+from datetime import datetime
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -28,6 +31,43 @@ fin_data={
 }
 
 stop_event0 = threading.Event()
+stop_event1 = threading.Event()
+
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.frame_skip = frame_skip  # Number of frames to skip
+        self.resize_factor = resize_factor  # Factor to resize frames
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.frame_count = 0
+        self.update_frame()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            self.frame_count += 1
+            if self.frame_count % self.frame_skip == 0:  # Skip frames for performance
+                frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(frame)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.canvas.itemconfig(self.image_id, image=imgtk)
+                self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -54,6 +94,69 @@ def unhide_lines():
     canvas.itemconfig("tex2", state="normal")
     pause_thread()
 
+def timer_func():
+    date_format = "%Y-%m-%d"
+    with open("Files\Temp Files\Job_Change Date.csv", 'r') as time_open_csv_file:
+        fr=csv.reader(time_open_csv_file)
+        for k in fr:
+            end_time_str=k[0]
+        
+    end_time = datetime.strptime(end_time_str, date_format)
+    
+    # Calculate the remaining time
+    remaining_time = end_time - datetime.now()
+
+    # Check if the remaining time is positive
+    if remaining_time.total_seconds() <= 0:
+        canvas.itemconfig(timer, text="Job Complete")
+        give_job()
+        return
+
+    # Format the remaining time as days, hours, minutes, and seconds
+    days = remaining_time.days
+    hours, remainder = divmod(remaining_time.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    # Update the text on the Canvas
+    timer_text = f"  {days:02d} Days {hours:02d}:{minutes:02d}:{seconds:02d}"
+    canvas.itemconfig(timer, text=timer_text)
+
+    # Schedule the next update after 1000 milliseconds (1 second)
+    window.after(1000, timer_func)
+
+def give_job():
+    canvas.itemconfig("job", state='hidden')
+    stop_event1.set()
+    with open("Files/Data/Job_info.json", 'r') as fson:
+        data=json.load(fson)
+        data["status"][0]['job_confirm']='True'
+
+        a1=data["status"][1]["plSTR"]-data["status"][1]["STR"]
+        a2=data["status"][1]["plINT"]-data["status"][1]["INT"]
+        a3=data["status"][1]["plAGI"]-data["status"][1]["AGI"]
+        a4=data["status"][1]["plVIT"]-data["status"][1]["VIT"]
+        a5=data["status"][1]["plPER"]-data["status"][1]["PER"]
+        a6=data["status"][1]["plMAN"]-data["status"][1]["MAN"]
+
+    ability_dict={"STR":a1, "INT":a2, "AGI":a3, "VIT":a4, "PER":a5, "MAN":a6}
+    abi=max(ability_dict)
+
+    with open("Files/Data/Job_info.json", 'w') as stfson:
+        json.dump(data, stfson, indent=4)
+
+    if abi=="STR":
+        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui.py'])
+    elif abi=="AGI":
+        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui1.py'])
+    elif abi=="VIT":
+        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui2.py'])
+    elif abi=="INT":
+        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui3.py'])
+    elif abi=="PER":
+        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui4.py'])
+    elif abi=="MAN":
+        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui5.py'])
+
 def check_for_updates(stop_event, pause_event):
     while not stop_event.is_set():
         if not pause_event.is_set():
@@ -78,6 +181,29 @@ def check_for_updates(stop_event, pause_event):
             print("", end='')
         time.sleep(1)
 
+def check_for_job():
+    while not stop_event1.is_set():
+        with open("Files/Data/Job_info.json", 'r') as fson:
+            data=json.load(fson)
+        job_check=data["status"][0]['job_active']
+        job_confim=data["status"][0]['job_confirm']
+
+        if job_check=='True' and job_confim=='False':
+            if data["status"][0]['job_check']=='False':
+                data["status"][0]['job_check']='True'
+                with open("Files/Data/Job_info.json", 'w') as fina_fson:
+                    json.dump(data, fina_fson, indent=4)
+        
+                subprocess.Popen(['python', 'D:/Projects/System/Anime Version/Accept Job Change/build/gui.py'])
+                canvas.itemconfig("job", state='normal')
+                timer_func()
+                stop_event1.set()
+            else:
+                canvas.itemconfig("job", state='normal')
+                timer_func()
+                stop_event1.set()
+        time.sleep(5)
+            
 def pause_thread():
     pause_event.set()
     print("Thread paused")
@@ -116,7 +242,7 @@ def code_final(event):
     else:
         subprocess.Popen(['python', (f'{theme} Version/Access Code Incomplete/build/gui.py')])
 
-    hide_0()
+    hide(0)
 
 window = Tk()
 
@@ -454,7 +580,8 @@ image_image_14 = PhotoImage(
 image_14 = canvas.create_image(
     289.0,
     117.0,
-    image=image_image_14
+    image=image_image_14,
+    tag='acc_fir'
 )
 
 canvas.create_rectangle(
@@ -517,18 +644,12 @@ def hide(event):
     entry_4.place_forget()
     entry_5.place_forget()
 
-    canvas.itemconfig("acc", state="hidden")
-    canvas.itemconfig("acc0", state="hidden")
-
-def hide_0():
-    entry_1.place_forget()
-    entry_2.place_forget()
-    entry_3.place_forget()
-    entry_4.place_forget()
-    entry_5.place_forget()
-
-    canvas.itemconfig("acc", state="hidden")
-    canvas.itemconfig("acc0", state="hidden")
+    try:
+        canvas.itemconfig("acc_fir", state="normal")
+        canvas.itemconfig("acc", state="hidden")
+        canvas.itemconfig("acc0", state="hidden")
+    except:
+        print('', end='')
 
 def show(event):
     global entry_1
@@ -536,6 +657,8 @@ def show(event):
     global entry_3
     global entry_4
     global entry_5
+
+    canvas.itemconfig("acc_fir", state="hidden")
 
     entry_image_1 = PhotoImage(
         file=relative_to_assets("entry_1.png"))
@@ -664,10 +787,72 @@ canvas.tag_bind(image_16, "<ButtonPress-1>", code_final)
 canvas.tag_bind(image_15, "<ButtonPress-1>", hide)
 canvas.tag_bind(image_14, "<ButtonPress-1>", show)
 
+def show_job():
+    canvas.itemconfig("job", state="normal")
+
+def hide_job():
+    canvas.itemconfig("job", state="hidden")
+
+canvas.create_rectangle(
+    11.0,
+    191.0,
+    254.0,
+    258.0,
+    fill="#FFFFFF",
+    tags="job",
+    outline="",
+    state="hidden")
+
+image_image_17 = PhotoImage(
+    file=relative_to_assets("image_17.png"))
+image_17 = canvas.create_image(
+    132.0,
+    224.0,
+    image=image_image_17,
+    tags="job",
+    state="hidden"
+)
+
+canvas.create_text(
+    57.0,
+    195.0,
+    anchor="nw",
+    text="JOB CHANGE QUEST",
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 14 * -1),
+    tags="job",
+    state="hidden"
+)
+
+timer=canvas.create_text(
+    33.0,
+    215.0,
+    anchor="nw",
+    text="   XX Days HH:MM:SS",
+    fill="#FFFFFF",
+    font=("Montserrat Bold", 20 * -1),
+    tags="job",
+    state="hidden"
+)
+
+canvas.create_text(
+    203.0,
+    242.0,
+    anchor="nw",
+    text="Remaining",
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 8 * -1),
+    tags="job",
+    state="hidden"
+)
+
 stop_event = threading.Event()
 pause_event = threading.Event()
 thread = threading.Thread(target=check_for_updates, args=(stop_event,pause_event))
 thread.start()
+
+thread1 = threading.Thread(target=check_for_job)
+thread1.start()
 
 system.run_once_prog(stop_event0, thread0)
 
