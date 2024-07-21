@@ -1,3 +1,10 @@
 {
-
+    "One Above All": {
+        "Statbuff": 50,
+        "Rank": "?"
+    },
+    "False Ranker": {
+        "Statbuff": 10,
+        "Rank": "?"
+    }
 }

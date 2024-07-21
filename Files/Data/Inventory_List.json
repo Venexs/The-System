@@ -744,7 +744,7 @@
     
     "Dragonscale Boots": [
         {
-            "desc": "Crafted from the scales of ancient dragons and infused with the essence of resilience, these boots provide unparalleled protection and durability. Wearing the Boots of Resilience grants the wearer unmatched resilience against physical and magical attacks, allowing them to endure even the most devastating assaults.",
+            "desc": "Crafted from the scales of ancient dragons and infused with the essence of resilience, these boots provide unparalleled protection and durability.",
             "qty": 1,
             "cat": "BOOTS",
             "rank": "S",
