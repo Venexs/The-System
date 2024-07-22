@@ -11,14 +11,6 @@ This Program is made to simulate that system by helping the user get motivation 
 
 The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkinter-Designer](https://github.com/ParthJadhav/Tkinter-Designer/tree/master) 
 
-## IMPORTANT 
-
-When you open the program, after a while you'll see a tab called Penalty check. I'd suggest only adding game programs or etc. If any important exe that is required bt your system is added into the system, during penalty, your PC may crash and not open up again
-
-If you don't want any risks, I suggest leaving the box empty 
-
-This goes for everyone. This is still in Beta Test so please understand 🙏
-
 ## Installation
 
 This is only for a Windows machine. Linux Port is WIP
