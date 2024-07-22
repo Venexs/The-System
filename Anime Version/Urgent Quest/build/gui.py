@@ -37,6 +37,13 @@ def complete():
         ability_check_file_data["Check"][abi]=0
         json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
+    with open("Files/Data/Job_info.json", 'r') as stat_fson:
+        stat_data=json.load(stat_fson)
+
+    stat_data["status"][1][abi]+=1
+    with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+        json.dump(stat_data, final_stat_fson, indent=4)
+
     with open("Files/status.json", 'r') as fson:
         data=json.load(fson)
         abi_l=abi.lower()
@@ -91,12 +98,12 @@ with open(file_name, 'r') as workout_file:
             both_check=True
             time_check=True
             amt2=workout_file_data[name][0]["time"]
-            amt2_val=workout_file_data[name][0]["timeval"]
+            amt2_val=workout_file_data[name][0]["timval"]
 
     if "time" in workout_file_data[name][0]:
         time_check=True
         amt2=workout_file_data[name][0]["time"]
-        amt2_val=workout_file_data[name][0]["timeval"]
+        amt2_val=workout_file_data[name][0]["timval"]
         if "amt" in workout_file_data[name][0]:
             one_check=True
             both_check=True
