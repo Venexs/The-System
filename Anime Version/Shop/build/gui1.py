@@ -304,8 +304,7 @@ def quests_add(rank,vals):
 
         details["Rewards"]=rew_dict
 
-        acti_name=list(quest_main_names.keys())[0]
-        details["skill"]=acti_name
+        details["skill"]=final_quest_main_name
         
         activ_quests[quest_name]=[details]
 

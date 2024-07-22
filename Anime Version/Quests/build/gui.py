@@ -79,6 +79,10 @@ def move_window(event):
 def ex_close(win):
     win.quit()
 
+def questadd():
+    subprocess.Popen(['python', 'Anime Version/Quest adder/build/gui.py'])
+    window.quit()
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -731,6 +735,22 @@ button_13.place(
     y=652.0,
     width=24.0,
     height=24.0
+)
+
+button_image_14 = PhotoImage(
+    file=relative_to_assets("button_14.png"))
+button_14 = Button(
+    image=button_image_14,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: questadd(),
+    relief="flat"
+)
+button_14.place(
+    x=472.0,
+    y=129.0,
+    width=30.0,
+    height=30.0
 )
 
 image_0=canvas.create_rectangle(
