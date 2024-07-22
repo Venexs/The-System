@@ -555,9 +555,13 @@ image_12 = canvas.create_image(
 
 def close_full(event):
     stop_event.set()
+    stop_event0.set()
+    stop_event1.set()
 
     # Wait for the thread to finish
     thread.join()
+    thread1.join()
+    thread0.join()
 
     sys.exit()
 
