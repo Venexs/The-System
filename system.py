@@ -64,7 +64,30 @@ def run_once_prog(stp_eve, thrd):
     except:
         first_run_file_check=True
 
-    if first_run_file_check==True:
+    try:
+        with open("Files/Data/First_open.csv", 'r') as second_open_check_file:
+            second_open_check_data=csv.reader(second_open_check_file)
+            second_run_file_check=False
+            try:
+                for k in second_open_check_data:
+                    if k[0]!="True":
+                        second_run_file_check=True
+            except:
+                second_run_file_check=True
+    except:
+        second_run_file_check=True
+
+    if first_run_file_check==True and second_run_file_check==True:
+        stp_eve.set()
+
+        # Wait for the thread to finish
+        thrd.join()
+    
+        subprocess.Popen(['python', 'First/Start/build/gui.py'])
+
+        sys.exit()
+    
+    elif first_run_file_check==True and second_run_file_check==False:
         stp_eve.set()
 
         # Wait for the thread to finish
