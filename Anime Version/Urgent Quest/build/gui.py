@@ -44,11 +44,17 @@ def complete():
     with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
         json.dump(stat_data, final_stat_fson, indent=4)
 
+    if abi_l in ["str",'vit','agi']:
+        abi_2="str_based"
+    elif abi_l in ["int",'per','man']:
+        abi_2="int_based"
+    
     with open("Files/status.json", 'r') as fson:
         data=json.load(fson)
         abi_l=abi.lower()
         data["status"][0][abi_l]+=1
-    
+        data["avail_eq"][0][abi_2]-=1
+
     with open("Files/status.json", 'w') as fin_fson:
         json.dump(data, fin_fson, indent=4)
 
@@ -98,12 +104,12 @@ with open(file_name, 'r') as workout_file:
             both_check=True
             time_check=True
             amt2=workout_file_data[name][0]["time"]
-            amt2_val=workout_file_data[name][0]["timval"]
+            amt2_val=workout_file_data[name][0]["timeval"]
 
     if "time" in workout_file_data[name][0]:
         time_check=True
         amt2=workout_file_data[name][0]["time"]
-        amt2_val=workout_file_data[name][0]["timval"]
+        amt2_val=workout_file_data[name][0]["timeval"]
         if "amt" in workout_file_data[name][0]:
             one_check=True
             both_check=True

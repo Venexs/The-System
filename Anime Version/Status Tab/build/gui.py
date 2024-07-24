@@ -16,8 +16,6 @@ import cv2
 from PIL import Image, ImageTk
 from datetime import datetime, timedelta
 
-subprocess.Popen(['python', 'sfx.py'])
-
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
@@ -303,9 +301,17 @@ with open("Files/Data/Level_Up_Values.json", 'r') as fron:
     xp_end=data_1["XP Check"][str(lvl)]
 
     fin_xp=xp_end-xp_str
+    if fin_xp<0:
+        data["status"][0]['level']+=1
+        with open("Files/status.json", 'w') as final_lvl_fson:
+            json.dump(data, final_lvl_fson, indent=4)
+        subprocess.Popen(['python', 'Anime Version/Status Tab/build/gui.py'])
+        window.quit()
 
 # ? =====================================================================
 # ? =====================================================================
+
+subprocess.Popen(['python', 'sfx.py'])
 
 # / =================================================
 # / =================================================
