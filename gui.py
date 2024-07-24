@@ -323,7 +323,7 @@ with open("Files/status.json", 'r') as fson:
     av_int_based=data["avail_eq"][0]['int_based']
     # ? =================================================
 
-def open_dungeon():
+def open_dungeon(event):
     subprocess.Popen(['python', 'Anime Version/Dungeon/build/gui.py'])
 
 # ? =====================================================================
