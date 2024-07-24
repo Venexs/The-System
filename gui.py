@@ -5,8 +5,6 @@
 
 from pathlib import Path
 
-# from tkinter import *
-# Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import threading
 import json
@@ -324,6 +322,9 @@ with open("Files/status.json", 'r') as fson:
     av_str_based=data["avail_eq"][0]['str_based']
     av_int_based=data["avail_eq"][0]['int_based']
     # ? =================================================
+
+def open_dungeon():
+    subprocess.Popen(['python', 'Anime Version/Dungeon/build/gui.py'])
 
 # ? =====================================================================
 # ! The Every 5th Level Skil Checker
@@ -849,6 +850,16 @@ canvas.create_text(
     tags="job",
     state="hidden"
 )
+
+image_image_18 = PhotoImage(
+    file=relative_to_assets("image_18.png"))
+image_18 = canvas.create_image(
+    414.0,
+    164.0,
+    image=image_image_18
+)
+
+canvas.tag_bind(image_18, "<ButtonPress-1>", open_dungeon)
 
 stop_event = threading.Event()
 pause_event = threading.Event()
