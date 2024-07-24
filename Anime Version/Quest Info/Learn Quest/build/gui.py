@@ -85,7 +85,7 @@ with open("Files/Temp Files/Quest Temp.csv", 'r') as csv_open:
     for k in fr:
         name=k[0]
 
-desc1=desc2=''
+objdesc1=objdesc2=''
 segments = []
 other_seg=[]
 segment_length = 70
