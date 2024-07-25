@@ -86,7 +86,7 @@ def ex_close(win):
     win.quit()
 
 
-def passive():
+def job():
     subprocess.Popen(['python', 'Anime Version/Skills Tab/build/gui2.py'])
 
     window.quit()
@@ -96,7 +96,7 @@ def active():
 
     window.quit()
 
-def job():
+def passive():
     subprocess.Popen(['python', 'Anime Version/Skills Tab/build/gui4.py'])
 
     window.quit()

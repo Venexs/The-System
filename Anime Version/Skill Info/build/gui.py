@@ -88,7 +88,7 @@ with open("Files/Temp Files/Skill Temp.csv", 'r') as csv_open:
 
 desc1=desc2=''
 segments = []
-segment_length = 77
+segment_length = 60
 
 with open("Files/Skills/Skill.json", 'r') as fson:
     data=json.load(fson)
@@ -112,6 +112,8 @@ with open("Files/Skills/Skill.json", 'r') as fson:
                 desc1 = segments[0]
             if len(segments) >= 2:
                 desc2 = segments[1]
+
+main_lvl=lvl
 
 # ? ===============================================================================
 
@@ -310,11 +312,11 @@ def reward():
             with open("Files/Inventory.json", 'w') as finaladdon:
                 json.dump(data_fininv, finaladdon, indent=6)
 
-if lvl==10:
+if main_lvl==10:
     new_lvl="MAX"
     data[name][0]["lvl"]=new_lvl
 
-    lvl=new_lvl
+    main_lvl=new_lvl
     with open("Files/Skills/Skill.json", 'w') as fin_skill:
         json.dump(data, fin_skill, indent=6)
 
@@ -473,7 +475,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=lambda: (subprocess.Popen(['python', 'Anime Version/Skills Tab/build/gui.py']),window.quit()),
     relief="flat"
 )
 button_1.place(
