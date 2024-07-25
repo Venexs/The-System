@@ -177,20 +177,21 @@ def get_image(rank,typel):
         return PhotoImage(file=relative_to_assets("image_17.png"))
             
 def open_quest(name,id,type):
-    with open("Files/Temp Files/Quest Temp.csv", 'w', newline='') as csv_open:
-            fw=csv.writer(csv_open)
-            rec=[name,id]
-            fw.writerow(rec)
-    if type=='Learn':
-        subprocess.Popen(['python', 'Anime Version/Quest Info/Learn Quest/build/gui.py'])
-    
-    elif type=='Common':
-        subprocess.Popen(['python', 'Anime Version/Quest Info/Count Quest/build/gui.py'])
+    if name!="-":
+        with open("Files/Temp Files/Quest Temp.csv", 'w', newline='') as csv_open:
+                fw=csv.writer(csv_open)
+                rec=[name,id]
+                fw.writerow(rec)
+        if type=='Learn':
+            subprocess.Popen(['python', 'Anime Version/Quest Info/Learn Quest/build/gui.py'])
+        
+        elif type=='Common':
+            subprocess.Popen(['python', 'Anime Version/Quest Info/Count Quest/build/gui.py'])
 
-    elif type=='Unknown':
-        subprocess.Popen(['python', 'Anime Version/Quest Info/Unknown Quest/build/gui.py'])
+        elif type=='Unknown':
+            subprocess.Popen(['python', 'Anime Version/Quest Info/Unknown Quest/build/gui.py'])
 
-    window.quit()
+        window.quit()
 
 # ? ==================================================================
 try:
