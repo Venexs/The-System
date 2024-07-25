@@ -87,7 +87,7 @@ def ex_close(win):
     win.quit()
 
 def fin():
-    subprocess.Popen(['python', 'Help/build/gui.py'])
+    subprocess.Popen(['python', 'Help/build/gui11.py'])
     window.quit()
 
 canvas = Canvas(
