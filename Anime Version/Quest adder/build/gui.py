@@ -167,7 +167,7 @@ def fin():
             "amt":quest_amt,
             "amtval":quest_amt_type,
             "type":"Learn",
-            "obj_desc":"Quest given by Player. No descriptino Availabke",
+            "obj_desc":"Quest given by Player. No description Available",
             "rank":rank,
             "ID": id_val,
             "Rewards":rew_dict,
