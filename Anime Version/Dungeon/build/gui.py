@@ -171,7 +171,6 @@ def dun_check():
 dun_check()
 
 def open_dunfile(rank):
-
     with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=json.load(dun_full)
 
@@ -186,7 +185,7 @@ def open_dunfile(rank):
             fw.writerow([rank])
 
         with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
-            json.load(dun_full_data, final_dun_full, indent=6)
+            json.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', 'Anime Version/Dungeon Runs/build/gui.py'])
         window.quit()

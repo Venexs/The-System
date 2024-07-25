@@ -275,6 +275,7 @@ def get():
     global XP_val
     global rank
     global rew_rank
+    global mob
 
     with open("Files\Data\Dungeon_Rank.csv", 'r') as rank_file:
         rank_file_reader=csv.reader(rank_file)
@@ -283,8 +284,6 @@ def get():
             rew_rank=rank
 
     if rank!="Red":
-        global rank
-        global mob
 
         if mob==3:
             if rank=='E':rank='D'

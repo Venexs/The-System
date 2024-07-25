@@ -43,15 +43,15 @@ def complete():
     stat_data["status"][1][abi]+=1
     with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
         json.dump(stat_data, final_stat_fson, indent=4)
-
-    if abi_l in ["str",'vit','agi']:
-        abi_2="str_based"
-    elif abi_l in ["int",'per','man']:
-        abi_2="int_based"
     
     with open("Files/status.json", 'r') as fson:
         data=json.load(fson)
         abi_l=abi.lower()
+
+        if abi_l in ["str",'vit','agi']:
+            abi_2="str_based"
+        elif abi_l in ["int",'per','man']:
+            abi_2="int_based"
         data["status"][0][abi_l]+=1
         data["avail_eq"][0][abi_2]-=1
 

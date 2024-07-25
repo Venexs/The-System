@@ -86,6 +86,7 @@ with open("Files/Temp Files/Quest Temp.csv", 'r') as csv_open:
         name=k[0]
 
 objdesc1=objdesc2=''
+desc1=desc2=''
 segments = []
 other_seg=[]
 segment_length = 70
