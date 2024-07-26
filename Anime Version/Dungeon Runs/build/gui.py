@@ -37,7 +37,6 @@ window.wm_attributes("-topmost", True)
 waves={}
 XP_val=0
 mob=1
-rank='X'
 rew_rank='X'
 
 class VideoPlayer:
@@ -336,7 +335,10 @@ def mob_fun():
     global mob
 
     mob_num=str(mob)
-    name=list(waves[mob_num])[0]
+    if rank!='Red' and mob_num=='3':
+        name=list(waves["Final"])[0]
+    else:
+        name=list(waves[mob_num])[0]
     if waves[mob_num][name]['swarm']=='Yes':
         group="Group"
     else:
@@ -463,6 +465,11 @@ button_2.place(
     height=22.0
 )
 
+with open("Files\Data\Dungeon_Rank.csv", 'r') as rank_file:
+    rank_file_reader=csv.reader(rank_file)
+    for k in rank_file_reader:
+        rank=k[0]
+
 canvas.create_text(
     28.0,
     98.0,
@@ -541,7 +548,9 @@ canvas.create_text(
     anchor="nw",
     text="Time Left:",
     fill="#FFFFFF",
-    font=("Montserrat Regular", 12 * -1)
+    font=("Montserrat Regular", 12 * -1),
+    tags="red time",
+    state="hidden"
 )
 
 canvas.create_text(
@@ -550,7 +559,9 @@ canvas.create_text(
     anchor="nw",
     text="00:00:00",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 32 * -1)
+    font=("Montserrat Bold", 32 * -1),
+    tags="red time",
+    state="hidden"
 )
 
 image_0=canvas.create_rectangle(

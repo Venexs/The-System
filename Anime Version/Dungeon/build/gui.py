@@ -137,12 +137,12 @@ def dun_check():
         # A Rank Distro
         a_rank_vals=0
         for k in range(10):
-            if random.randint(1, 5) == 1:
+            if random.randint(1, 10) == 1:
                 a_rank_vals+=1
 
         # S Rank Distro
         s_rank_vals=0
-        for k in range(10):
+        for k in range(1):
             if random.randint(1, 10) == 1:
                 s_rank_vals+=1
         
@@ -170,7 +170,113 @@ def dun_check():
 
 dun_check()
 
-def open_dunfile(rank):
+def open_e_dunfile(eve):
+    rank='E'
+    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+        dun_full_data=json.load(dun_full)
+
+    date_format = "%Y-%m-%d"
+    current_date = datetime.now().date()
+    current_date_string = current_date.strftime(date_format)
+    dun_full_data[current_date_string][rank]-=1
+
+    if dun_full_data[current_date_string][rank]!=0:
+        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+            fw=csv.writer(rank_file)
+            fw.writerow([rank])
+
+        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+            json.dump(dun_full_data, final_dun_full, indent=6)
+
+        subprocess.Popen(['python', 'Anime Version/Dungeon Runs/build/gui.py'])
+        window.quit()
+
+def open_d_dunfile(eve):
+    rank='D'
+    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+        dun_full_data=json.load(dun_full)
+
+    date_format = "%Y-%m-%d"
+    current_date = datetime.now().date()
+    current_date_string = current_date.strftime(date_format)
+    dun_full_data[current_date_string][rank]-=1
+
+    if dun_full_data[current_date_string][rank]!=0:
+        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+            fw=csv.writer(rank_file)
+            fw.writerow([rank])
+
+        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+            json.dump(dun_full_data, final_dun_full, indent=6)
+
+        subprocess.Popen(['python', 'Anime Version/Dungeon Runs/build/gui.py'])
+        window.quit()
+
+def open_c_dunfile(eve):
+    rank='C'
+    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+        dun_full_data=json.load(dun_full)
+
+    date_format = "%Y-%m-%d"
+    current_date = datetime.now().date()
+    current_date_string = current_date.strftime(date_format)
+    dun_full_data[current_date_string][rank]-=1
+
+    if dun_full_data[current_date_string][rank]!=0:
+        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+            fw=csv.writer(rank_file)
+            fw.writerow([rank])
+
+        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+            json.dump(dun_full_data, final_dun_full, indent=6)
+
+        subprocess.Popen(['python', 'Anime Version/Dungeon Runs/build/gui.py'])
+        window.quit()
+
+def open_b_dunfile(eve):
+    rank='B'
+    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+        dun_full_data=json.load(dun_full)
+
+    date_format = "%Y-%m-%d"
+    current_date = datetime.now().date()
+    current_date_string = current_date.strftime(date_format)
+    dun_full_data[current_date_string][rank]-=1
+
+    if dun_full_data[current_date_string][rank]!=0:
+        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+            fw=csv.writer(rank_file)
+            fw.writerow([rank])
+
+        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+            json.dump(dun_full_data, final_dun_full, indent=6)
+
+        subprocess.Popen(['python', 'Anime Version/Dungeon Runs/build/gui.py'])
+        window.quit()
+
+def open_a_dunfile(eve):
+    rank='A'
+    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+        dun_full_data=json.load(dun_full)
+
+    date_format = "%Y-%m-%d"
+    current_date = datetime.now().date()
+    current_date_string = current_date.strftime(date_format)
+    dun_full_data[current_date_string][rank]-=1
+
+    if dun_full_data[current_date_string][rank]!=0:
+        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+            fw=csv.writer(rank_file)
+            fw.writerow([rank])
+
+        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+            json.dump(dun_full_data, final_dun_full, indent=6)
+
+        subprocess.Popen(['python', 'Anime Version/Dungeon Runs/build/gui.py'])
+        window.quit()
+
+def open_s_dunfile(eve):
+    rank='S'
     with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=json.load(dun_full)
 
@@ -236,7 +342,7 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-canvas.tag_bind(image_4, "<ButtonPress-1>", open_dunfile("E"))
+canvas.tag_bind(image_4, "<ButtonPress-1>", open_e_dunfile)
 
 canvas.create_text(
     41.0,
@@ -255,7 +361,7 @@ image_5 = canvas.create_image(
     image=image_image_5
 )
 
-canvas.tag_bind(image_5, "<ButtonPress-1>", open_dunfile("D"))
+canvas.tag_bind(image_5, "<ButtonPress-1>", open_d_dunfile)
 
 canvas.create_text(
     164.0,
@@ -274,7 +380,7 @@ image_6 = canvas.create_image(
     image=image_image_6
 )
 
-canvas.tag_bind(image_6, "<ButtonPress-1>", open_dunfile("C"))
+canvas.tag_bind(image_6, "<ButtonPress-1>", open_c_dunfile)
 
 canvas.create_text(
     287.0,
@@ -294,7 +400,7 @@ image_7 = canvas.create_image(
     image=image_image_7
 )
 
-canvas.tag_bind(image_7, "<ButtonPress-1>", open_dunfile("B"))
+canvas.tag_bind(image_7, "<ButtonPress-1>", (open_b_dunfile))
 
 canvas.create_text(
     410.0,
@@ -313,7 +419,7 @@ image_8 = canvas.create_image(
     image=image_image_8
 )
 
-canvas.tag_bind(image_8, "<ButtonPress-1>", open_dunfile("A"))
+canvas.tag_bind(image_8, "<ButtonPress-1>", ((open_a_dunfile)))
 
 canvas.create_text(
     533.0,
@@ -332,7 +438,7 @@ image_9 = canvas.create_image(
     image=image_image_9
 )
 
-canvas.tag_bind(image_9, "<ButtonPress-1>", open_dunfile("S"))
+canvas.tag_bind(image_9, "<ButtonPress-1>", (open_s_dunfile))
 
 canvas.create_text(
     656.0,
