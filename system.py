@@ -9,8 +9,6 @@ import threading
 import time
 import sys
 import random
-import win32gui
-import win32.lib.win32con as win32con
 
 def fin_pen():
     today = datetime.now().date()
@@ -90,8 +88,6 @@ def run_once_prog(stp_eve, thrd):
 
         # Wait for the thread to finish
         thrd.join()
-        the_program_to_hide = win32gui.GetForegroundWindow()
-        win32gui.ShowWindow(the_program_to_hide , win32con.SW_HIDE)
     
         subprocess.Popen(['python', 'First/Start/build/gui.py'])
 
@@ -102,24 +98,10 @@ def run_once_prog(stp_eve, thrd):
 
         # Wait for the thread to finish
         thrd.join()
-        the_program_to_hide = win32gui.GetForegroundWindow()
-        win32gui.ShowWindow(the_program_to_hide , win32con.SW_HIDE)
 
         subprocess.Popen(['python', 'First/Check/build/gui.py'])
 
         sys.exit()
-
-    else:
-        stp_eve.set()
-
-        # Wait for the thread to finish
-        thrd.join()
-
-        the_program_to_hide = win32gui.GetForegroundWindow()
-        win32gui.ShowWindow(the_program_to_hide , win32con.SW_HIDE)
-
-        sys.exit()
-
 
 def random_skill_check():
     with open("Files/status.json", 'r') as fson:
