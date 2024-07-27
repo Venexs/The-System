@@ -17,14 +17,9 @@ import cv2
 from PIL import Image, ImageTk
 from datetime import datetime
 import pandas as pd
-import win32gui
-import win32.lib.win32con as win32con
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
-
-the_program_to_hide = win32gui.GetForegroundWindow()
-win32gui.ShowWindow(the_program_to_hide , win32con.SW_HIDE)
 
 thing=txt='None'
 fin_data={
