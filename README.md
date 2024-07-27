@@ -10,6 +10,7 @@ In the Anime/Manga/Light Novel, Solo Levelling, The MC has a screen only he can 
 This Program is made to simulate that system by helping the user get motivation to work-out and gamify their life.
 
 The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkinter-Designer](https://github.com/ParthJadhav/Tkinter-Designer/tree/master) 
+[](Status_Tab.png)
 
 ## Installation
 
@@ -19,7 +20,7 @@ Install [Python](https://www.python.org/downloads/)
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install these modules. Usually PIP is insatlled with Python
 
-Open the CMD to paste these commands one at a time and if installed properly, the modules should be installed
+Please run the installer.bat file to install all the necesarry modules in the right versions. Or you can download the modules yourself using the CMD lines below
 
 Tkinter
 
@@ -50,7 +51,20 @@ Open CV2
 pip install opencv-python
 ```
 
-Also Install all the fonts in the fonts folder to get the best experience.
+Pandas
+
+```bash
+pip install pandas
+```
+
+Urllib
+
+```bash
+pip install urllib3
+```
+
+
+Also Install all the fonts in the (fonts folder)[Fonts/Montserrat-VariableFont_wght.ttf] to get the best experience.
 
 ## Usage
 
