@@ -149,7 +149,7 @@ image_4 = canvas.create_image(
 )
 
 image_0=canvas.create_rectangle(
-    14.0,
+    0.0,
     0.0,
     596.0,
     28.0,
