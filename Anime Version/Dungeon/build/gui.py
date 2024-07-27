@@ -15,6 +15,7 @@ import random
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime, timedelta
+import pandas as pd
 
 subprocess.Popen(['python', 'sfx.py'])
 
