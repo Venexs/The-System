@@ -10,7 +10,7 @@ In the Anime/Manga/Light Novel, Solo Levelling, The MC has a screen only he can 
 This Program is made to simulate that system by helping the user get motivation to work-out and gamify their life.
 
 The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkinter-Designer](https://github.com/ParthJadhav/Tkinter-Designer/tree/master) 
-[Status Tab](Status_Tab.png)
+![Status Tab](Status_Tab.png)
 
 ## Installation
 
