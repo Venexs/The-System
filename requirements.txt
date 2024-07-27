@@ -3,3 +3,7 @@ pathlib==1.0.1
 psutil==5.9.4
 pillow==10.2.0
 opencv-python==4.6.0.66
+pandas==2.0.3
+urllib3==1.26.6
+requests==2.25.1
+zipp==3.6.0

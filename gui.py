@@ -16,9 +16,15 @@ import system
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime
+import pandas as pd
+import win32gui
+import win32.lib.win32con as win32con
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+
+the_program_to_hide = win32gui.GetForegroundWindow()
+win32gui.ShowWindow(the_program_to_hide , win32con.SW_HIDE)
 
 thing=txt='None'
 fin_data={
@@ -241,6 +247,20 @@ def code_final(event):
         subprocess.Popen(['python', (f'{theme} Version/Access Code Incomplete/build/gui.py')])
 
     hide(0)
+
+def update_sys(eve):
+    url='https://raw.githubusercontent.com/Venexs/System_SL/main/Version.csv'
+    columns=pd.read_csv(url, nrows=0).columns.tolist()
+    vers=float(columns[0])
+
+    with open("Version.csv", 'r') as ver_file: 
+        ver_data=csv.reader(ver_file)
+        for k in ver_data:
+            this_ver=float(k[0])
+    
+    if vers!=this_ver:
+        subprocess.Popen(['python', 'Update System/build/gui.py'])
+        window.quit()
 
 window = Tk()
 
@@ -856,10 +876,24 @@ image_image_18 = PhotoImage(
 image_18 = canvas.create_image(
     414.0,
     164.0,
-    image=image_image_18
+    image=image_image_18,
+    tags="bar",
+    state="hidden"
 )
 
 canvas.tag_bind(image_18, "<ButtonPress-1>", open_dungeon)
+
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_19 = canvas.create_image(
+    414.0,
+    187.0,
+    image=image_image_19,
+    tags="bar",
+    state="hidden"
+)
+
+canvas.tag_bind(image_19, "<ButtonPress-1>", update_sys)
 
 stop_event = threading.Event()
 pause_event = threading.Event()

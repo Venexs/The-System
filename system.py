@@ -78,6 +78,12 @@ def run_once_prog(stp_eve, thrd):
         second_run_file_check=True
 
     if first_run_file_check==True and second_run_file_check==True:
+        requirements_file='requirements.txt'
+        try:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', requirements_file])
+            print(f"Installed packages from {requirements_file} successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to install packages from {requirements_file}. Error: {e}")
         stp_eve.set()
 
         # Wait for the thread to finish
