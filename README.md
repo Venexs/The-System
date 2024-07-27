@@ -1,5 +1,3 @@
-# System_SL
-
 # The System (Solo Levelling)
 This is just a fun project I made, trying to emulate and fulfil the function that The 'System' in Solo Levelling had. (THIS IS JUST A TESTING VERSION!)
 
