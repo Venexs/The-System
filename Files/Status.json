@@ -2,17 +2,17 @@
     "status": [
         {
             "name": "SUNG JIN-WOO",
-            "hp": 1000,
-            "mp": 600,
-            "level": 50,
-            "str": 20,
-            "int": 20,
-            "agi": 20,
-            "vit": 20,
-            "per": 20,
-            "man": 20,
+            "hp": 100,
+            "mp": 10,
+            "level": 1,
+            "str": 0,
+            "int": 0,
+            "agi": 0,
+            "vit": 0,
+            "per": 0,
+            "man": 0,
             "XP": 0,
-            "coins": 10000
+            "coins": 100
         },
         {
             "title_bool": "False",
@@ -22,8 +22,8 @@
     ],
     "avail_eq": [
         {
-            "str_based": 6,
-            "int_based": 6
+            "str_based": 1,
+            "int_based": 1
         }
     ],
     "equipment": [
