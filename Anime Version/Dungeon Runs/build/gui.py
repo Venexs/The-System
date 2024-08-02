@@ -337,13 +337,16 @@ def mob_fun():
     mob_num=str(mob)
     if rank!='Red' and mob_num=='3':
         name=list(waves["Final"])[0]
+        mob_num_fin="Final"
     else:
         name=list(waves[mob_num])[0]
-    if waves[mob_num][name]['swarm']=='Yes':
+        mob_num_fin=mob_num
+
+    if waves[mob_num_fin][name]['swarm']=='Yes':
         group="Group"
     else:
         group="Swarm"
-    wave_text=f"[Wave - 0{mob_num}]"
+    wave_text=f"[Wave - {mob_num_fin}]"
     group_txt=f"A {group} of {name} has appeared in front of you. "
     canvas.itemconfig(waves_txt, text=wave_text)
     canvas.itemconfig(enemy, text=group_txt)
@@ -381,7 +384,7 @@ def next():
             avp=6
 
         status_read_data["status"][0]['XP']+=XP_val
-        status_read_data["avail_eq"][0]['coins']+=coin
+        status_read_data["status"][0]['coins']+=coin
         status_read_data["avail_eq"][0]['str_based']+=avp
         status_read_data["avail_eq"][0]['int_based']+=avp
 
