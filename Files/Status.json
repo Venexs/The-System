@@ -1,7 +1,7 @@
 {
     "status": [
         {
-            "name": "SUNG JIN-WOO",
+            "name": "Sung Jin-Woo",
             "hp": 100,
             "mp": 10,
             "level": 1,
@@ -12,7 +12,7 @@
             "per": 0,
             "man": 0,
             "XP": 0,
-            "coins": 100
+            "coins": 1000
         },
         {
             "title_bool": "False",

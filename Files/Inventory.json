@@ -1,3 +1,15 @@
 {
-      
+    "Glasses of God": [
+        {
+            "desc": "Glasses Worn by the Great Architect",
+            "qty": 1,
+            "cat": "HELM",
+            "rank": "S",
+            "buff": {
+                "PERbuff": 60
+            },
+            "debuff": {},
+            "Value": 1500000
+        }
+    ]
 }
