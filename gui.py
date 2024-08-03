@@ -29,6 +29,20 @@ fin_data={
     "Lines":"False"
 }
 
+tab_data={
+    "Inventory": "Close",
+    "Daily": "Close",
+    "Quest": "Close",
+    "Skill": "Close",
+    "Status": "Close",
+    "Equipment": "Close",
+    "Shop": "Close",
+    "Dungeons": "Close"
+}
+
+with open("Files/Tabs.json", 'w') as tab_reset:
+    json.dump(tab_data,tab_reset, indent=4)
+
 stop_event0 = threading.Event()
 stop_event1 = threading.Event()
 
@@ -339,7 +353,16 @@ with open("Files/status.json", 'r') as fson:
     # ? =================================================
 
 def open_dungeon(event):
-    subprocess.Popen(['python', 'Anime Version/Dungeon/build/gui.py'])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Dungeons"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Dungeons"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        subprocess.Popen(['python', 'Anime Version/Dungeon/build/gui.py'])
 
 # ? =====================================================================
 # ! The Every 5th Level Skil Checker
@@ -458,8 +481,17 @@ image_5 = canvas.create_image(
 )
 
 def inv_open(event):
-    inv_name=f"{theme} Version/Inventory/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Inventory"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Inventory"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Inventory/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_5, "<ButtonPress-1>", inv_open)
 
@@ -474,8 +506,17 @@ image_6 = canvas.create_image(
 )
 
 def daily_open(event):
-    inv_name=f"{theme} Version/Daily Quest/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Daily"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Daily"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Daily Quest/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
 
@@ -490,8 +531,17 @@ image_7 = canvas.create_image(
 )
 
 def quest_open(event):
-    inv_name=f"{theme} Version/Quests/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Quest"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Quest"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Quests/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_7, "<ButtonPress-1>", quest_open)
 
@@ -506,8 +556,17 @@ image_8 = canvas.create_image(
 )
 
 def skill_open(event):
-    inv_name=f"{theme} Version/Skills Tab/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Skill"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Skill"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Skills Tab/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_8, "<ButtonPress-1>", skill_open)
 
@@ -522,8 +581,17 @@ image_9 = canvas.create_image(
 )
 
 def status_open(event):
-    inv_name=f"{theme} Version/Status Tab/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Status"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Status"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Status Tab/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_9, "<ButtonPress-1>", status_open)
 
@@ -538,8 +606,17 @@ image_10 = canvas.create_image(
 )
 
 def equip_open(event):
-    inv_name=f"{theme} Version/Equipment/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Equipment"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Equipment"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Equipment/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_10, "<ButtonPress-1>", equip_open)
 
@@ -554,8 +631,17 @@ image_11 = canvas.create_image(
 )
 
 def shop_open(event):
-    inv_name=f"{theme} Version/Shop/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Shop"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Shop"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Shop/build/gui.py"
+        subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_11, "<ButtonPress-1>", shop_open)
 
@@ -878,17 +964,17 @@ image_18 = canvas.create_image(
 
 canvas.tag_bind(image_18, "<ButtonPress-1>", open_dungeon)
 
-image_image_19 = PhotoImage(
-    file=relative_to_assets("image_19.png"))
-image_19 = canvas.create_image(
-    414.0,
-    187.0,
-    image=image_image_19,
-    tags="bar",
-    state="hidden"
-)
+#image_image_19 = PhotoImage(
+#    file=relative_to_assets("image_19.png"))
+#image_19 = canvas.create_image(
+#    414.0,
+#    187.0,
+#    image=image_image_19,
+#    tags="bar",
+#    state="hidden"
+#)
 
-canvas.tag_bind(image_19, "<ButtonPress-1>", update_sys)
+#canvas.tag_bind(image_19, "<ButtonPress-1>", update_sys)
 
 stop_event = threading.Event()
 pause_event = threading.Event()
