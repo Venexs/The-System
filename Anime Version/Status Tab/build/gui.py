@@ -8,13 +8,16 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import threading
 import json
 import csv
 import subprocess
-import random
+import time
+import sys
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime, timedelta
+import pandas as pd
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -23,15 +26,64 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-
 window = Tk()
 
-window.geometry("391x676")
+def make_window_transparent(window):
+    # This function makes the window background transparent
+    window.wm_attributes('-transparentcolor', "#0C679B")
+
+def animate_window_open(window, target_height, width, step=2, delay=5):
+    current_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
+
+    if current_height < target_height:
+        new_height = min(current_height + step, target_height)
+    else:
+        new_height = current_height
+    
+    new_y = screen_height // 2 - new_height // 2
+    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+
+    if new_height < target_height:
+        window.after(delay, animate_window_open, window, target_height, width, step, delay)
+
+def animate_window_close(window, target_height, width, step=2, delay=5):
+    current_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
+
+    if current_height > target_height:
+        new_height = max(current_height - step, target_height)
+    else:
+        new_height = current_height
+    
+    new_y = screen_height // 2 - new_height // 2
+    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+
+    if new_height > target_height:
+        window.after(delay, animate_window_close, window, target_height, width, step, delay)
+    else:
+        window.quit()
+
+initial_height = 0
+target_height = 716
+window_width = 488
+
+window.geometry(f"{window_width}x{initial_height}")
+animate_window_open(window, target_height, window_width, step=30, delay=1)
+
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-#window.update()
+make_window_transparent(window)
+
+subprocess.Popen(['python', 'sfx.py'])
 
 def three_val(val):
     values=f"{val:03d}:"
@@ -65,8 +117,8 @@ class VideoPlayer:
         self.cap = cv2.VideoCapture(video_path)
         self.x = x
         self.y = y
-        self.frame_skip = frame_skip  # Number of frames to skip
-        self.resize_factor = resize_factor  # Factor to resize frames
+        self.frame_skip = frame_skip
+        self.resize_factor = resize_factor
         self.image_id = self.canvas.create_image(self.x, self.y)
         self.frame_count = 0
         self.update_frame()
@@ -75,13 +127,12 @@ class VideoPlayer:
         ret, frame = self.cap.read()
         
         if not ret:
-            # If the video has ended, reset the capture object
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
             ret, frame = self.cap.read()
 
         if ret:
             self.frame_count += 1
-            if self.frame_count % self.frame_skip == 0:  # Skip frames for performance
+            if self.frame_count % self.frame_skip == 0:
                 frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 img = Image.fromarray(frame)
@@ -110,7 +161,14 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
-    win.quit()
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Status"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
+    subprocess.Popen(['python', 'sfx_close.py'])
+    animate_window_close(window, initial_height, window_width, step=30, delay=1)
 
 def title_chng(event):
     subprocess.Popen(['python', 'Anime Version/Equip Title/build/gui.py'])
@@ -131,7 +189,7 @@ def start_job(event):
     with open("Files/Data/Job_info.json", 'r') as stat_fson:
         data=json.load(stat_fson)
 
-    canvas.itemconfig("Jobs", state="hidden")
+    canvas.itemconfig("Job", state="hidden")
     data["status"][0]["job_active"]='True'
 
     data["status"][1]["plSTR"]=int(stre)
@@ -158,8 +216,8 @@ def start_job(event):
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 676,
-    width = 391,
+    height = 716,
+    width = 488,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -169,52 +227,44 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    478.0,
-    413.0,
+    734.0,
+    581.0,
     image=image_image_1
 )
 
 video_path = "Files/0001-0200.mp4"
-player = VideoPlayer(canvas, video_path, 478.0, 413.0)
+player = VideoPlayer(canvas, video_path, 430.0, 363.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    195.0,
-    362.0,
+    230.0,
+    367.0,
     image=image_image_2
 )
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
-    109.0,
-    112.0,
+    150.0,
+    117.0,
     image=image_image_3
 )
 
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
-    191.0,
-    455.0,
+    232.0,
+    460.0,
     image=image_image_4
 )
 
 image_image_5 = PhotoImage(
     file=relative_to_assets("image_5.png"))
 image_5 = canvas.create_image(
-    191.0,
-    328.0,
+    232.0,
+    333.0,
     image=image_image_5
-)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    748.0,
-    80.0,
-    image=image_image_6
 )
 
 # ? =====================================================================
@@ -310,8 +360,6 @@ with open("Files/Data/Level_Up_Values.json", 'r') as fron:
 
 # ? =====================================================================
 # ? =====================================================================
-
-subprocess.Popen(['python', 'sfx.py'])
 
 # / =================================================
 # / =================================================
@@ -554,8 +602,8 @@ def de_update_int():
 # / =================================================
 # / =================================================
 str_txt=canvas.create_text(
-    63.0,
-    390.0,
+    104.0,
+    395.0,
     anchor="nw",
     text=stre,
     fill="#FFFFFF",
@@ -563,8 +611,8 @@ str_txt=canvas.create_text(
 )
 
 canvas.create_text(
-    106.0,
-    393.0,
+    147.0,
+    398.0,
     anchor="nw",
     text=f"({str_buff})",
     fill="#34FF48",
@@ -572,8 +620,8 @@ canvas.create_text(
 )
 
 int_txt=canvas.create_text(
-    61.0,
-    444.0,
+    102.0,
+    449.0,
     anchor="nw",
     text=intel,
     fill="#FFFFFF",
@@ -581,8 +629,8 @@ int_txt=canvas.create_text(
 )
 
 canvas.create_text(
-    104.0,
-    447.0,
+    145.0,
+    452.0,
     anchor="nw",
     text=f"({int_buff})",
     fill="#34FF48",
@@ -590,8 +638,8 @@ canvas.create_text(
 )
 
 agi_txt=canvas.create_text(
-    61.0,
-    496.0,
+    102.0,
+    501.0,
     anchor="nw",
     text=agi,
     fill="#FFFFFF",
@@ -599,8 +647,8 @@ agi_txt=canvas.create_text(
 )
 
 canvas.create_text(
-    104.0,
-    499.0,
+    145.0,
+    504.0,
     anchor="nw",
     text=f"({agi_buff})",
     fill="#34FF48",
@@ -608,8 +656,8 @@ canvas.create_text(
 )
 
 vit_txt=canvas.create_text(
-    241.0,
-    390.0,
+    282.0,
+    395.0,
     anchor="nw",
     text=vit,
     fill="#FFFFFF",
@@ -617,8 +665,8 @@ vit_txt=canvas.create_text(
 )
 
 canvas.create_text(
-    282.0,
-    393.0,
+    323.0,
+    398.0,
     anchor="nw",
     text=f"({vit_buff})",
     fill="#34FF48",
@@ -626,8 +674,8 @@ canvas.create_text(
 )
 
 per_txt=canvas.create_text(
-    248.0,
-    442.0,
+    289.0,
+    447.0,
     anchor="nw",
     text=per,
     fill="#FFFFFF",
@@ -635,78 +683,78 @@ per_txt=canvas.create_text(
 )
 
 canvas.create_text(
-    289.0,
-    445.0,
+    330.0,
+    450.0,
     anchor="nw",
     text=f"({per_buff})",
     fill="#34FF48",
     font=("Montserrat Regular", 15 * -1)
 )
 
-man_txt=canvas.create_text(
-    254.0,
-    498.0,
-    anchor="nw",
-    text=man,
-    fill="#FFFFFF",
-    font=("Montserrat SemiBold", 20 * -1)
-)
-
 canvas.create_text(
-    296.0,
-    500.0,
+    337.0,
+    505.0,
     anchor="nw",
     text=f"({man_buff})",
     fill="#34FF48",
     font=("Montserrat Regular", 15 * -1)
 )
 
+man_txt=canvas.create_text(
+    295.0,
+    503.0,
+    anchor="nw",
+    text=man,
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 20 * -1)
+)
+
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    86.0,
+    407.0,
+    image=image_image_6
+)
+
 image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
-    45.0,
-    402.0,
+    84.0,
+    461.0,
     image=image_image_7
 )
 
 image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
-    43.0,
-    456.0,
+    85.0,
+    513.0,
     image=image_image_8
 )
 
 image_image_9 = PhotoImage(
     file=relative_to_assets("image_9.png"))
 image_9 = canvas.create_image(
-    44.0,
-    508.0,
+    266.0,
+    407.0,
     image=image_image_9
 )
 
 image_image_10 = PhotoImage(
     file=relative_to_assets("image_10.png"))
 image_10 = canvas.create_image(
-    225.0,
-    402.0,
+    270.0,
+    459.0,
     image=image_image_10
 )
 
 image_image_11 = PhotoImage(
     file=relative_to_assets("image_11.png"))
 image_11 = canvas.create_image(
-    229.0,
-    454.0,
+    273.0,
+    515.0,
     image=image_image_11
-)
-
-image_image_12 = PhotoImage(
-    file=relative_to_assets("image_12.png"))
-image_12 = canvas.create_image(
-    232.0,
-    510.0,
-    image=image_image_12
 )
 
 button_image_1 = PhotoImage(
@@ -719,8 +767,8 @@ button_1 = Button(
     relief="flat"
 )
 button_1.place(
-    x=147.0,
-    y=393.0,
+    x=188.0,
+    y=398.0,
     width=20.954654693603516,
     height=20.0
 )
@@ -735,8 +783,8 @@ button_2 = Button(
     relief="flat"
 )
 button_2.place(
-    x=148.0,
-    y=447.0,
+    x=189.0,
+    y=452.0,
     width=20.954654693603516,
     height=20.0
 )
@@ -751,8 +799,8 @@ button_3 = Button(
     relief="flat"
 )
 button_3.place(
-    x=148.0,
-    y=499.0,
+    x=189.0,
+    y=504.0,
     width=20.954654693603516,
     height=20.0
 )
@@ -767,8 +815,8 @@ button_4 = Button(
     relief="flat"
 )
 button_4.place(
-    x=323.0,
-    y=390.0,
+    x=364.0,
+    y=395.0,
     width=20.954654693603516,
     height=20.0
 )
@@ -783,8 +831,8 @@ button_5 = Button(
     relief="flat"
 )
 button_5.place(
-    x=329.0,
-    y=442.0,
+    x=370.0,
+    y=447.0,
     width=20.954654693603516,
     height=20.0
 )
@@ -799,25 +847,42 @@ button_6 = Button(
     relief="flat"
 )
 button_6.place(
-    x=336.0,
-    y=498.0,
+    x=377.0,
+    y=503.0,
     width=20.954654693603516,
     height=20.0
+)
+
+image_image_12 = PhotoImage(
+    file=relative_to_assets("image_12.png"))
+image_12 = canvas.create_image(
+    94.0,
+    315.0,
+    image=image_image_12
+)
+
+canvas.create_text(
+    113.0,
+    305.0,
+    anchor="nw",
+    text=hp,
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 18 * -1)
 )
 
 image_image_13 = PhotoImage(
     file=relative_to_assets("image_13.png"))
 image_13 = canvas.create_image(
-    53.0,
-    310.0,
+    320.0,
+    315.0,
     image=image_image_13
 )
 
 canvas.create_text(
-    72.0,
-    300.0,
+    339.0,
+    305.0,
     anchor="nw",
-    text=hp,
+    text=mp,
     fill="#FFFFFF",
     font=("Montserrat Medium", 18 * -1)
 )
@@ -825,31 +890,14 @@ canvas.create_text(
 image_image_14 = PhotoImage(
     file=relative_to_assets("image_14.png"))
 image_14 = canvas.create_image(
-    279.0,
-    310.0,
+    179.0,
+    343.0,
     image=image_image_14
 )
 
 canvas.create_text(
-    298.0,
-    300.0,
-    anchor="nw",
-    text=mp,
-    fill="#FFFFFF",
-    font=("Montserrat Medium", 18 * -1)
-)
-
-image_image_15 = PhotoImage(
-    file=relative_to_assets("image_15.png"))
-image_15 = canvas.create_image(
-    136.0,
-    342.0,
-    image=image_image_15
-)
-
-canvas.create_text(
-    239.0,
-    328.0,
+    280.0,
+    333.0,
     anchor="nw",
     text=fin_xp,
     fill="#FFFFFF",
@@ -857,8 +905,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    281.0,
-    220.0,
+    322.0,
+    225.0,
     anchor="nw",
     text="LEVEL",
     fill="#FFFFFF",
@@ -866,8 +914,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    287.0,
-    159.0,
+    328.0,
+    164.0,
     anchor="nw",
     text=old_lvl,
     fill="#FFFFFF",
@@ -875,8 +923,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    14.0,
-    194.0,
+    55.0,
+    199.0,
     anchor="nw",
     text="JOB:",
     fill="#FFFFFF",
@@ -884,8 +932,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    14.0,
-    228.0,
+    55.0,
+    233.0,
     anchor="nw",
     text="TITLE:",
     fill="#FFFFFF",
@@ -893,8 +941,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    66.0,
-    195.0,
+    107.0,
+    200.0,
     anchor="nw",
     text=job.upper(),
     fill="#FFFFFF",
@@ -902,8 +950,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    81.0,
-    229.0,
+    122.0,
+    234.0,
     anchor="nw",
     text=tit.upper(),
     fill=title_color(tit),
@@ -911,8 +959,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    14.0,
-    161.0,
+    55.0,
+    166.0,
     anchor="nw",
     text="NAME:",
     fill="#FFFFFF",
@@ -920,8 +968,8 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    88.0,
-    162.0,
+    129.0,
+    167.0,
     anchor="nw",
     text=name,
     fill="#FFFFFF",
@@ -929,10 +977,27 @@ canvas.create_text(
 )
 
 av_int_based_txt=canvas.create_text(
-    324.0,
-    610.0,
+    365.0,
+    615.0,
     anchor="nw",
     text=av_int_based,
+    fill="#FFFFFF",
+    font=("Montserrat Bold", 24 * -1)
+)
+
+image_image_15 = PhotoImage(
+    file=relative_to_assets("image_15.png"))
+image_15 = canvas.create_image(
+    297.0,
+    630.0,
+    image=image_image_15
+)
+
+av_str_based_txt=canvas.create_text(
+    365.0,
+    560.0,
+    anchor="nw",
+    text=av_str_based,
     fill="#FFFFFF",
     font=("Montserrat Bold", 24 * -1)
 )
@@ -940,86 +1005,134 @@ av_int_based_txt=canvas.create_text(
 image_image_16 = PhotoImage(
     file=relative_to_assets("image_16.png"))
 image_16 = canvas.create_image(
-    256.0,
-    625.0,
+    304.0,
+    579.0,
     image=image_image_16
 )
 
-av_str_based_txt=canvas.create_text(
-    324.0,
-    555.0,
-    anchor="nw",
-    text=av_str_based,
-    fill="#FFFFFF",
-    font=("Montserrat Bold", 24 * -1)
-)
-
-image_image_17 = PhotoImage(
-    file=relative_to_assets("image_17.png"))
-image_17 = canvas.create_image(
-    263.0,
-    574.0,
-    image=image_image_17
-)
-
 canvas.create_text(
-    10.0,
-    569.0,
+    51.0,
+    574.0,
     anchor="nw",
     text="COINS:",
     fill="#FFFFFF",
     font=("Montserrat Medium", 16 * -1)
 )
 
-image_image_18 = PhotoImage(
-    file=relative_to_assets("image_18.png"))
-image_18 = canvas.create_image(
-    91.0,
-    604.0,
-    image=image_image_18
+image_image_17 = PhotoImage(
+    file=relative_to_assets("image_17.png"))
+image_17 = canvas.create_image(
+    132.0,
+    609.0,
+    image=image_image_17
 )
 
 canvas.create_text(
-    44.0,
-    593.0,
+    85.0,
+    598.0,
     anchor="nw",
     text=coins,
     fill="#FFFFFF",
     font=("Montserrat Regular", 20 * -1)
 )
 
+image_image_18 = PhotoImage(
+    file=relative_to_assets("image_18.png"))
+image_18 = canvas.create_image(
+    300.0,
+    245.0,
+    image=image_image_18
+)
+
+canvas.tag_bind(image_18, "<ButtonPress-1>", title_chng)
+
+
+image_image_200 = PhotoImage(
+    file=relative_to_assets("image_18.png"))
+image_200 = canvas.create_image(
+    300.0,
+    208.0,
+    image=image_image_200,
+    tags='Job',
+    state='normal'
+)
+
+canvas.tag_bind(image_200, "<ButtonPress-1>", start_job)
+
+button_image_7 = PhotoImage(
+    file=relative_to_assets("button_7.png"))
+button_7 = Button(
+    image=button_image_7,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: subprocess.Popen(['python', 'Anime Version/Statistics/build/gui.py']),
+    relief="flat"
+)
+button_7.place(
+    x=51.0,
+    y=65.0,
+    width=145.0,
+    height=23.0
+)
+
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    101.0,
+    21.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    678.0,
+    494.0,
+    716.0,
+    fill="#0C679B",
+    outline="")
+
 image_image_19 = PhotoImage(
     file=relative_to_assets("image_19.png"))
 image_19 = canvas.create_image(
-    259.0,
-    242.0,
+    -15.0,
+    348.0,
     image=image_image_19
 )
 
-canvas.tag_bind(image_19, "<ButtonPress-1>", title_chng)
-
 image_image_20 = PhotoImage(
-    file=relative_to_assets("image_19.png"))
+    file=relative_to_assets("image_20.png"))
 image_20 = canvas.create_image(
-    259.0,
-    208.0,
-    image=image_image_20,
-    tags='Job',
-    state='hidden'
+    462.0,
+    351.0,
+    image=image_image_20
 )
 
-canvas.tag_bind(image_20, "<ButtonPress-1>", start_job)
-
-image_0=canvas.create_rectangle(
+canvas.create_rectangle(
+    92.0,
     0.0,
-    0.0,
-    391.0,
-    35.0,
-    fill="#212121",
+    488.0,
+    34.0,
+    fill="#0C679B",
     outline="")
 
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+image_image_21 = PhotoImage(
+    file=relative_to_assets("image_21.png"))
+image_21 = canvas.create_image(
+    244.0,
+    19.0,
+    image=image_image_21
+)
+
+canvas.tag_bind(image_21, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_21, "<B1-Motion>", move_window)
+
+image_image_22 = PhotoImage(
+    file=relative_to_assets("image_22.png"))
+image_22 = canvas.create_image(
+    295.0,
+    680.0,
+    image=image_image_22
+)
 
 button_image_8 = PhotoImage(
     file=relative_to_assets("button_8.png"))
@@ -1031,32 +1144,17 @@ button_8 = Button(
     relief="flat"
 )
 button_8.place(
-    x=358.0,
-    y=3.0,
-    width=28.0,
-    height=28.0
-)
-
-button_image_9 = PhotoImage(
-    file=relative_to_assets("button_9.png"))
-button_9 = Button(
-    image=button_image_9,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: subprocess.Popen(['python', 'Anime Version/Statistics/build/gui.py']),
-    relief="flat"
-)
-button_9.place(
-    x=233.0,
-    y=60.0,
-    width=145.0,
-    height=23.0
+    x=390.0,
+    y=55.0,
+    width=20.0,
+    height=20.0
 )
 
 with open("Files/Data/Job_info.json", 'r') as stat_fson:
     stat_data=json.load(stat_fson)
 
 if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
+    print()
     canvas.itemconfig("Job", state="normal")
 else:
     canvas.itemconfig("Job", state="hidden")

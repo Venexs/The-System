@@ -23,6 +23,9 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def make_window_transparent(window):
+    # This function makes the window background transparent
+    window.wm_attributes('-transparentcolor', "#0c679b")
 
 window = Tk()
 
@@ -31,7 +34,7 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-#window.update()
+make_window_transparent(window)
 
 debuff_1_name=''
 debuff_2_name=''
@@ -93,7 +96,6 @@ def move_window(event):
 
 def ex_close(win):
     win.quit()
-
 
 with open('Files/Temp Files/Inventory temp.csv', 'r') as fout:
     fr=csv.reader(fout)
@@ -257,6 +259,7 @@ def return_inv():
     subprocess.Popen(['python', 'Anime Version/Inventory/build/gui.py'])
     window.quit()
 
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -287,8 +290,6 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
-# ! ITEM NAME
-
 canvas.create_rectangle(
     346.0,
     111.0,
@@ -298,16 +299,16 @@ canvas.create_rectangle(
     outline="")
 
 canvas.create_text(
-    350.0,
+    347.0,
     112.0,
     anchor="nw",
     text="Item:",
     fill="#FFFFFF",
-    font=("Montserrat", 24 * -1)
+    font=("Montserrat Regular", 24 * -1)
 )
 
 canvas.create_text(
-    415.0,
+    407.0,
     112.0,
     anchor="nw",
     text=name,
@@ -315,13 +316,29 @@ canvas.create_text(
     font=("Montserrat SemiBold", 24 * -1)
 )
 
-# ! Acquisitions
-
 canvas.create_text(
     346.0,
     175.0,
     anchor="nw",
     text="Acquisition Difficulty:",
+    fill="#FFFFFF",
+    font=("Montserrat Light", 14 * -1)
+)
+
+canvas.create_text(
+    204.0,
+    411.0,
+    anchor="nw",
+    text=desc2,
+    fill="#FFFFFF",
+    font=("Montserrat Light", 14 * -1)
+)
+
+canvas.create_text(
+    204.0,
+    391.0,
+    anchor="nw",
+    text=desc1+'-',
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
@@ -344,28 +361,6 @@ canvas.create_text(
     font=("Montserrat SemiBold", 15 * -1)
 )
 
-# ! Description
-
-canvas.create_text(
-    204.0,
-    380.0,
-    anchor="nw",
-    text=desc1+'-',
-    fill="#FFFFFF",
-    font=("Montserrat Light", 14 * -1)
-)
-
-canvas.create_text(
-    204.0,
-    400.0,
-    anchor="nw",
-    text=desc2,
-    fill="#FFFFFF",
-    font=("Montserrat Light", 14 * -1)
-)
-
-# ! Buffs and Debuffs
-
 canvas.create_text(
     287.0,
     272.0,
@@ -376,21 +371,21 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    345.0,
+    347.0,
     272.0,
     anchor="nw",
     text=f"-{buff_1_name} {buff_1}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
 
 canvas.create_text(
-    345.0,
+    347.0,
     294.0,
     anchor="nw",
     text=f"-{buff_2_name} {buff_2}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
 
 canvas.create_text(
@@ -403,24 +398,22 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    365.0,
+    367.0,
     333.0,
     anchor="nw",
     text=f"-{debuff_1_name} {debuff_1}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
 
 canvas.create_text(
-    365.0,
+    367.0,
     353.0,
     anchor="nw",
     text=f"-{debuff_2_name} {debuff_2}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
-
-# ! Category
 
 canvas.create_text(
     528.0,
@@ -440,31 +433,27 @@ canvas.create_text(
     font=("Montserrat Light", 14 * -1)
 )
 
-# ! Value
-
 canvas.create_text(
     637.0,
-    197.0,
+    198.0,
     anchor="nw",
-    text=val,
+    text=f"{val:,}",
     fill="#FFFFFF",
     font=("Montserrat SemiBold", 15 * -1)
 )
 
 canvas.create_text(
     637.0,
-    176.0,
+    177.0,
     anchor="nw",
     text="Value:",
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
 
-# ! Quantity
-
 canvas.create_text(
-    710.0,
-    197.0,
+    740.0,
+    198.0,
     anchor="nw",
     text=qty,
     fill="#FFFFFF",
@@ -472,10 +461,10 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    710.0,
-    176.0,
+    740.0,
+    177.0,
     anchor="nw",
-    text="Quantity:",
+    text="Qty",
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
@@ -530,7 +519,7 @@ image_3 = canvas.create_image(
 )
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("Sell.png"))
+    file=relative_to_assets("button_1.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
@@ -540,13 +529,13 @@ button_1 = Button(
 )
 button_1.place(
     x=622.0,
-    y=428.0,
+    y=445.0,
     width=135.0,
     height=25.0
 )
 
 button_image_2 = PhotoImage(
-    file=relative_to_assets("Equip.png"))
+    file=relative_to_assets("button_2.png"))
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
@@ -556,13 +545,13 @@ button_2 = Button(
 )
 button_2.place(
     x=774.0,
-    y=428.0,
+    y=445.0,
     width=76.0,
     height=25.0
 )
 
 button_image_3 = PhotoImage(
-    file=relative_to_assets("Return.png"))
+    file=relative_to_assets("button_3.png"))
 button_3 = Button(
     image=button_image_3,
     borderwidth=0,
@@ -577,32 +566,63 @@ button_3.place(
     height=40.0
 )
 
-image_0=canvas.create_rectangle(
+canvas.create_rectangle(
     0.0,
     0.0,
-    960.0,
-    37.0,
-    fill="#2E2E2E",
+    240.0,
+    24.0,
+    fill="#0c679b",
     outline="")
 
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+canvas.create_rectangle(
+    0.0,
+    525.0,
+    925.0,
+    555.0,
+    fill="#0c679b",
+    outline="")
 
-button_image_0 = PhotoImage(
-    file=relative_to_assets("button_0.png"))
-button_0 = Button(
-    image=button_image_0,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: ex_close(window),
-    relief="flat"
-)
-button_0.place(
-    x=920.0,
-    y=4.0,
-    width=28.0,
-    height=28.0
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    35.0,
+    270.0,
+    image=image_image_4
 )
 
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    925.0,
+    294.0,
+    image=image_image_5
+)
+
+canvas.create_rectangle(
+    240.0,
+    0.0,
+    957.0,
+    36.0,
+    fill="#0c679b",
+    outline="")
+
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    478.0,
+    21.0,
+    image=image_image_6
+)
+
+canvas.tag_bind(image_6, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_6, "<B1-Motion>", move_window)
+
+image_image_7 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_7 = canvas.create_image(
+    480.0,
+    530.0,
+    image=image_image_7
+)
 window.resizable(False, False)
 window.mainloop()
