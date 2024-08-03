@@ -8,9 +8,17 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import threading
+import json
+import csv
+import subprocess
+import time
+import sys
 import cv2
 from PIL import Image, ImageTk
-import subprocess
+from datetime import datetime
+import pandas as pd
+
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
@@ -18,16 +26,75 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def make_window_transparent(window):
+    window.wm_attributes('-transparentcolor', "#0C679B")
+
+def center_window(root, width, height):
+    # Get screen width and height
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    
+    # Calculate position x, y to center the window
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    
+    # Set the dimensions of the window and the position
+    root.geometry(f'{width}x{height}+{x}+{y}')
+
+def animate_window_open(window, target_height, width, step=2, delay=5):
+    current_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
+
+    if current_height < target_height:
+        new_height = min(current_height + step, target_height)
+    else:
+        new_height = current_height
+    
+    new_y = screen_height // 2 - new_height // 2
+    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+
+    if new_height < target_height:
+        window.after(delay, animate_window_open, window, target_height, width, step, delay)
+
+def animate_window_close(window, target_height, width, step=2, delay=5):
+    current_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
+
+    if current_height > target_height:
+        new_height = max(current_height - step, target_height)
+    else:
+        new_height = current_height
+    
+    new_y = screen_height // 2 - new_height // 2
+    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+
+    if new_height > target_height:
+        window.after(delay, animate_window_close, window, target_height, width, step, delay)
+    else:
+        window.quit()
 
 window = Tk()
 
-subprocess.Popen(['python', 'sfx.py'])
+initial_height = 0
+target_height = 145
+window_width = 715
 
-window.geometry("568x109")
+window.geometry(f"{window_width}x{initial_height}")
+animate_window_open(window, target_height, window_width, step=10, delay=1)
+
+center_window(window,window_width,target_height)
+subprocess.Popen(['python', 'sfx.py'])
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
-window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+make_window_transparent(window)
 
 class VideoPlayer:
     def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
@@ -80,14 +147,15 @@ def move_window(event):
     lastx = event.x_root
     lasty = event.y_root
 
-def ex_close(win):
-    win.quit()
+def ex_close(eve):
+    subprocess.Popen(['python', 'sfx_close.py'])
+    animate_window_close(window, initial_height, window_width, step=12, delay=1)
 
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 109,
-    width = 568,
+    height = 145,
+    width = 715,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -97,56 +165,42 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    341.0,
-    364.0,
+    273.0,
+    245.0,
     image=image_image_1
 )
 
 video_path = "Files/0001-0200.mp4"
 player = VideoPlayer(canvas, video_path, 430.0, 263.0)
 
-canvas.create_text(
-    140.0,
-    35.0,
-    anchor="nw",
-    text="Leveled Up!",
-    fill="#FFFFFF",
-    font=("Montserrat Medium", 48 * -1)
-)
-
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    285.0,
-    68.0,
+    363.0,
+    74.0,
     image=image_image_2
 )
 
-image_0=canvas.create_rectangle(
-    0.0,
-    0.0,
-    596.0,
-    28.0,
-    fill="#2E2E2E",
-    outline="")
-
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
-
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: ex_close(window),
-    relief="flat"
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    357.0,
+    70.0,
+    image=image_image_3
 )
-button_1.place(
-    x=538.0,
-    y=3.0,
-    width=23.0,
-    height=23.0
+
+canvas.tag_bind(image_3, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_3, "<B1-Motion>", move_window)
+
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    604.0,
+    46.0,
+    image=image_image_4
 )
+
+canvas.tag_bind(image_4, "<ButtonPress-1>", ex_close)
+
 window.resizable(False, False)
 window.mainloop()
