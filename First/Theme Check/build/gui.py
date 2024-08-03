@@ -14,8 +14,6 @@ import cv2
 from PIL import Image, ImageTk
 import time
 
-subprocess.Popen(['python', 'sfx.py'])
-
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
@@ -76,23 +74,6 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
     else:
         window.quit()
 
-window = Tk()
-
-initial_height = 0
-target_height = 449
-window_width = 696
-
-make_window_transparent(window)
-
-window.geometry(f"{window_width}x{initial_height}")
-animate_window_open(window, target_height, window_width, step=25, delay=1)
-
-center_window(window,window_width,target_height)
-window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
-window.overrideredirect(True)
-window.wm_attributes("-topmost", True)
-
 class VideoPlayer:
     def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
         self.canvas = canvas
@@ -148,31 +129,32 @@ def ex_close(eve):
     subprocess.Popen(['python', 'sfx_close.py'])
     animate_window_close(window, initial_height, window_width, step=30, delay=1)
 
-def prog():
-    canvas.itemconfig("First", state="normal")
-    window.after(5000, hide_first)
-
-def hide_first():
-    canvas.itemconfig("First", state="hidden")
-    canvas.itemconfig("Second", state="normal")
-    window.after(5000, show_third)
-
-def show_third():
-    canvas.itemconfig("Second", state="hidden")
-    canvas.itemconfig("Third", state="normal")
-    window.after(5000, end_prog)
-
-def end_prog():
-    canvas.itemconfig("Third", state="hidden")
-    subprocess.Popen(['python', 'First/Cartenon Temple/build/gui.py'])
+def name(eve):
+    subprocess.Popen(['python', 'Anime Version/Penalty Check/build/gui.py'])
     window.quit()
 
+window = Tk()
+
+initial_height = 0
+target_height = 592
+window_width = 934
+
+window.geometry(f"{window_width}x{initial_height}")
+animate_window_open(window, target_height, window_width, step=25, delay=1)
+
+#center_window(window,window_width,target_height)
+subprocess.Popen(['python', 'sfx.py'])
+window.configure(bg = "#FFFFFF")
+window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+make_window_transparent(window)
 
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 449,
-    width = 696,
+    height = 592,
+    width = 934,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -182,152 +164,145 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    609.0,
-    301.0,
+    731.0,
+    384.0,
     image=image_image_1
 )
 
 video_path = "Files/0001-0200.mp4"
-player = VideoPlayer(canvas, video_path, 478.0, 313.0)
+player = VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    348.0,
-    233.0,
+    471.0,
+    308.0,
     image=image_image_2
 )
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
-    379.0,
-    110.0,
+    236.0,
+    113.0,
     image=image_image_3
 )
 
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
-    186.0,
-    110.0,
+    248.0,
+    310.0,
     image=image_image_4
 )
+
+canvas.tag_bind(image_4, "<ButtonPress-1>", name)
 
 image_image_5 = PhotoImage(
     file=relative_to_assets("image_5.png"))
 image_5 = canvas.create_image(
-    347.0,
-    206.0,
-    image=image_image_5,
-    tags="First",
-    state="hidden"  
+    394.0,
+    318.0,
+    image=image_image_5
 )
 
 image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
-    347.0,
-    239.0,
-    image=image_image_6,
-    tags="Second",
-    state="hidden"  
+    540.0,
+    319.0,
+    image=image_image_6
 )
 
 image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
-    347.0,
-    221.0,
-    image=image_image_7,
-    tags="Third",
-    state="hidden"  
+    686.0,
+    318.0,
+    image=image_image_7
 )
 
-image_0=canvas.create_rectangle(
-    0.0,
-    0.0,
-    696.0,
-    29.0,
-    fill="#333333",
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    6.0,
-    190.0,
-    42.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    414.0,
-    696.0,
-    449.0,
-    fill="#0C679B",
-    outline="")
-
-image_image_80 = PhotoImage(
-    file=relative_to_assets("side1.png"))
-image_80 = canvas.create_image(
-    43.0,
-    222.13719177246094,
-    image=image_image_80
-)
-
-image_image_90 = PhotoImage(
-    file=relative_to_assets("side2.png"))
-image_90 = canvas.create_image(
-    652.0,
-    230.52886962890625,
-    image=image_image_90
-)
-
-canvas.create_rectangle(
-    178.0,
-    6.0,
-    696.0,
-    52.0,
-    fill="#0C679B",
-    outline="")
-
-image_image_100 = PhotoImage(
-    file=relative_to_assets("bar1.png"))
-image_100 = canvas.create_image(
-    345.0,
-    35.0,
-    image=image_image_100
-)
-
-canvas.tag_bind(image_100, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_100, "<B1-Motion>", move_window)
-
-image_image_110 = PhotoImage(
-    file=relative_to_assets("bar2.png"))
-image_110 = canvas.create_image(
-    347.0,
-    415.0,
-    image=image_image_110
-)
-
-button_image_20 = PhotoImage(
-    file=relative_to_assets("close.png"))
-button_20 = Button(
-    image=button_image_20,
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+button_1 = Button(
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: ex_close(window),
     relief="flat"
 )
-button_20.place(
-    x=564.0,
-    y=52.0,
-    width=21.20473861694336,
-    height=24.221660614013672
+button_1.place(
+    x=759.0,
+    y=73.0,
+    width=25.0,
+    height=25.0
 )
 
-prog()
+canvas.create_rectangle(
+    33.0,
+    7.0,
+    906.0,
+    45.0,
+    fill="#333333",
+    outline="")
 
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    336.0,
+    50.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    541.0,
+    934.0,
+    592.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_8 = PhotoImage(
+    file=relative_to_assets("image_8.png"))
+image_8 = canvas.create_image(
+    70.0,
+    313.0,
+    image=image_image_8
+)
+
+image_image_9 = PhotoImage(
+    file=relative_to_assets("image_9.png"))
+image_9 = canvas.create_image(
+    865.0,
+    325.0,
+    image=image_image_9
+)
+
+canvas.create_rectangle(
+    235.0,
+    0.0,
+    934.0,
+    69.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    452.0,
+    47.0,
+    image=image_image_10
+)
+
+canvas.tag_bind(image_10, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_10, "<B1-Motion>", move_window)
+
+image_image_11 = PhotoImage(
+    file=relative_to_assets("image_11.png"))
+image_11 = canvas.create_image(
+    458.0,
+    556.0,
+    image=image_image_11
+)
 window.resizable(False, False)
 window.mainloop()

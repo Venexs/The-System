@@ -12,9 +12,9 @@ import subprocess
 import random
 import cv2
 from PIL import Image, ImageTk
-import threading
+import time
+import json
 
-subprocess.Popen(['python', 'sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -22,7 +22,6 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
-
 
 def make_window_transparent(window):
     window.wm_attributes('-transparentcolor', "#0C679B")
@@ -75,25 +74,7 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
     if new_height > target_height:
         window.after(delay, animate_window_close, window, target_height, width, step, delay)
     else:
-        subprocess.Popen(['python', 'First/Info/build/gui.py'])
         window.quit()
-
-window = Tk()
-
-initial_height = 0
-target_height = 449
-window_width = 696
-
-make_window_transparent(window)
-
-window.geometry(f"{window_width}x{initial_height}")
-animate_window_open(window, target_height, window_width, step=25, delay=1)
-
-center_window(window,window_width,target_height)
-window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
-window.overrideredirect(True)
-window.wm_attributes("-topmost", True)
 
 class VideoPlayer:
     def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
@@ -150,15 +131,45 @@ def ex_close(eve):
     subprocess.Popen(['python', 'sfx_close.py'])
     animate_window_close(window, initial_height, window_width, step=30, delay=1)
 
-def fin():
-    subprocess.Popen(['python', 'sfx_close.py'])
-    animate_window_close(window, initial_height, window_width, step=30, delay=1)
+def get():
+    name=entry_1.get()
+    age=entry_2.get()
+    height=entry_3.get()
+    weight=entry_4.get()
+    wrk_rate=entry_5.get()
+    result=entry_6.get()
+
+    with open("Files/status.json", 'r') as first_fson:
+        data=json.load(first_fson)
+        data["status"][0]['name']=name
+    
+    with open("Files/status.json", 'w') as fson:
+        json.dump(data, fson, indent=4)
+
+    subprocess.Popen(['python', 'First/Theme Check/build/gui.py'])
+    window.quit()
+
+window = Tk()
+
+initial_height = 0
+target_height = 549
+window_width = 867
+
+window.geometry(f"{window_width}x{initial_height}")
+animate_window_open(window, target_height, window_width, step=30, delay=1)
+subprocess.Popen(['python', 'sfx.py'])
+
+window.configure(bg = "#FFFFFF")
+window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+make_window_transparent(window)
 
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
-    height = 449,
-    width = 696,
+    height = 549,
+    width = 867,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -168,139 +179,318 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    609.0,
-    301.0,
+    665.0,
+    922.0,
     image=image_image_1
 )
 
 video_path = "Files/0001-0200.mp4"
-player = VideoPlayer(canvas, video_path, 478.0, 313.0)
+player = VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    348.0,
-    233.0,
+    450.0,
+    286.0,
     image=image_image_2
 )
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
-    379.0,
-    110.0,
+    188.0,
+    101.0,
     image=image_image_3
 )
 
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
-    186.0,
-    110.0,
+    188.0,
+    310.99999999999994,
     image=image_image_4
 )
 
 canvas.create_text(
-    190.0,
-    214.0,
+    321.0,
+    137.0,
     anchor="nw",
-    text="Congratulations on becoming a",
+    text="Name:",
     fill="#FFFFFF",
-    font=("Montserrat Regular", 16 * -1)
+    font=("Montserrat Medium", 16 * -1)
+)
+
+entry_image_1 = PhotoImage(
+    file=relative_to_assets("entry_1.png"))
+entry_bg_1 = canvas.create_image(
+    486.5,
+    170.5,
+    image=entry_image_1
+)
+entry_1 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_1.place(
+    x=321.0,
+    y=159.0,
+    width=331.0,
+    height=21.0
 )
 
 canvas.create_text(
-    448.0,
-    214.0,
+    321.0,
+    186.0,
     anchor="nw",
-    text="Player.",
+    text="Age (in Years):",
     fill="#FFFFFF",
-    font=("Montserrat Regular", 16 * -1)
+    font=("Montserrat Medium", 16 * -1)
 )
 
-image_0=canvas.create_rectangle(
+entry_image_2 = PhotoImage(
+    file=relative_to_assets("entry_2.png"))
+entry_bg_2 = canvas.create_image(
+    381.5,
+    219.5,
+    image=entry_image_2
+)
+entry_2 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_2.place(
+    x=321.0,
+    y=208.0,
+    width=121.0,
+    height=21.0
+)
+
+canvas.create_text(
+    321.0,
+    239.0,
+    anchor="nw",
+    text="Height (in cm):",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 16 * -1)
+)
+
+entry_image_3 = PhotoImage(
+    file=relative_to_assets("entry_3.png"))
+entry_bg_3 = canvas.create_image(
+    381.5,
+    272.5,
+    image=entry_image_3
+)
+entry_3 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_3.place(
+    x=321.0,
+    y=261.0,
+    width=121.0,
+    height=21.0
+)
+
+canvas.create_text(
+    456.0,
+    239.0,
+    anchor="nw",
+    text="Weight (in kg):",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 16 * -1)
+)
+
+entry_image_4 = PhotoImage(
+    file=relative_to_assets("entry_4.png"))
+entry_bg_4 = canvas.create_image(
+    516.5,
+    272.5,
+    image=entry_image_4
+)
+entry_4 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_4.place(
+    x=456.0,
+    y=261.0,
+    width=121.0,
+    height=21.0
+)
+
+canvas.create_text(
+    321.0,
+    295.0,
+    anchor="nw",
+    text="Your Physical Workout rate per week ",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 16 * -1)
+)
+
+canvas.create_text(
+    321.0,
+    313.0,
+    anchor="nw",
+    text="(Moderate, Extreme, Impossible):",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 16 * -1)
+)
+entry_image_5 = PhotoImage(
+    file=relative_to_assets("entry_5.png"))
+entry_bg_5 = canvas.create_image(
+    459.0,
+    349.5,
+    image=entry_image_5
+)
+entry_5 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_5.place(
+    x=321.0,
+    y=338.0,
+    width=276.0,
+    height=21.0
+)
+
+canvas.create_text(
+    321.0,
+    369.0,
+    anchor="nw",
+    text="Desired Result (Mild Weight gain, Mild Weight Loss):",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 16 * -1)
+)
+
+entry_image_6 = PhotoImage(
+    file=relative_to_assets("entry_6.png"))
+entry_bg_6 = canvas.create_image(
+    418.5,
+    402.5,
+    image=entry_image_6
+)
+entry_6 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_6.place(
+    x=321.0,
+    y=391.0,
+    width=195.0,
+    height=21.0
+)
+
+
+canvas.create_rectangle(
     0.0,
     0.0,
-    696.0,
-    29.0,
-    fill="#333333",
+    237.0,
+    44.0,
+    fill="#0C679B",
     outline="")
 
 canvas.create_rectangle(
     0.0,
-    6.0,
-    190.0,
+    512.0,
+    867.0,
+    554.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    36.0,
+    278.0,
+    image=image_image_5
+)
+
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    831.0,
+    288.0,
+    image=image_image_6
+)
+
+canvas.create_rectangle(
+    222.0,
+    0.0,
+    867.0,
+    56.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_7 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_7 = canvas.create_image(
+    429.0,
     42.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    414.0,
-    696.0,
-    449.0,
-    fill="#0C679B",
-    outline="")
-
-image_image_80 = PhotoImage(
-    file=relative_to_assets("side1.png"))
-image_80 = canvas.create_image(
-    43.0,
-    222.13719177246094,
-    image=image_image_80
+    image=image_image_7
 )
 
-image_image_90 = PhotoImage(
-    file=relative_to_assets("side2.png"))
-image_90 = canvas.create_image(
-    652.0,
-    230.52886962890625,
-    image=image_image_90
+canvas.tag_bind(image_7, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_7, "<B1-Motion>", move_window)
+
+image_image_8 = PhotoImage(
+    file=relative_to_assets("image_8.png"))
+image_8 = canvas.create_image(
+    433.0,
+    523.0,
+    image=image_image_8
 )
 
-canvas.create_rectangle(
-    178.0,
-    6.0,
-    696.0,
-    52.0,
-    fill="#0C679B",
-    outline="")
-
-image_image_100 = PhotoImage(
-    file=relative_to_assets("bar1.png"))
-image_100 = canvas.create_image(
-    345.0,
-    35.0,
-    image=image_image_100
-)
-
-canvas.tag_bind(image_100, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_100, "<B1-Motion>", move_window)
-
-image_image_110 = PhotoImage(
-    file=relative_to_assets("bar2.png"))
-image_110 = canvas.create_image(
-    347.0,
-    415.0,
-    image=image_image_110
-)
-
-button_image_20 = PhotoImage(
-    file=relative_to_assets("close.png"))
-button_20 = Button(
-    image=button_image_20,
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+button_1 = Button(
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: ex_close(window),
     relief="flat"
 )
-button_20.place(
-    x=564.0,
-    y=52.0,
-    width=21.20473861694336,
-    height=24.221660614013672
+button_1.place(
+    x=752.9273681640625,
+    y=79.543701171875,
+    width=26.41452407836914,
+    height=29.49186897277832
 )
-window.after(3000, fin)
+
+button_1.place(
+    x=752.9273681640625,
+    y=79.543701171875,
+    width=26.41452407836914,
+    height=29.49186897277832
+)
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_2 clicked"),
+    relief="flat"
+)
+button_2.place(
+    x=624.0,
+    y=457.0,
+    width=151.41452026367188,
+    height=29.49186897277832
+)
 
 window.resizable(False, False)
 window.mainloop()

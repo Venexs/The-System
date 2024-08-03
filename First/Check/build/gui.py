@@ -24,9 +24,71 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
+def make_window_transparent(window):
+    window.wm_attributes('-transparentcolor', "#0C679B")
+
+def center_window(root, width, height):
+    # Get screen width and height
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    
+    # Calculate position x, y to center the window
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    
+    # Set the dimensions of the window and the position
+    root.geometry(f'{width}x{height}+{x}+{y}')
+
+def animate_window_open(window, target_height, width, step=2, delay=5):
+    current_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
+
+    if current_height < target_height:
+        new_height = min(current_height + step, target_height)
+    else:
+        new_height = current_height
+    
+    new_y = screen_height // 2 - new_height // 2
+    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+
+    if new_height < target_height:
+        window.after(delay, animate_window_open, window, target_height, width, step, delay)
+
+def animate_window_close(window, target_height, width, step=2, delay=5):
+    current_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
+
+    if current_height > target_height:
+        new_height = max(current_height - step, target_height)
+    else:
+        new_height = current_height
+    
+    new_y = screen_height // 2 - new_height // 2
+    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+
+    if new_height > target_height:
+        window.after(delay, animate_window_close, window, target_height, width, step, delay)
+    else:
+        window.quit()
+
 window = Tk()
 
-window.geometry("696x449")
+initial_height = 0
+target_height = 449
+window_width = 696
+
+make_window_transparent(window)
+
+window.geometry(f"{window_width}x{initial_height}")
+animate_window_open(window, target_height, window_width, step=25, delay=1)
+
+center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
@@ -83,8 +145,9 @@ def move_window(event):
     lastx = event.x_root
     lasty = event.y_root
 
-def ex_close(win):
-    win.quit()
+def ex_close(eve):
+    subprocess.Popen(['python', 'sfx_close.py'])
+    animate_window_close(window, initial_height, window_width, step=30, delay=1)
 
 def prog():
     canvas.itemconfig("First", state="normal")
@@ -219,23 +282,79 @@ image_0=canvas.create_rectangle(
     fill="#333333",
     outline="")
 
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+canvas.create_rectangle(
+    0.0,
+    6.0,
+    190.0,
+    42.0,
+    fill="#0C679B",
+    outline="")
 
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
+canvas.create_rectangle(
+    0.0,
+    414.0,
+    696.0,
+    449.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_80 = PhotoImage(
+    file=relative_to_assets("side1.png"))
+image_80 = canvas.create_image(
+    43.0,
+    222.13719177246094,
+    image=image_image_80
+)
+
+image_image_90 = PhotoImage(
+    file=relative_to_assets("side2.png"))
+image_90 = canvas.create_image(
+    652.0,
+    230.52886962890625,
+    image=image_image_90
+)
+
+canvas.create_rectangle(
+    178.0,
+    6.0,
+    696.0,
+    52.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_100 = PhotoImage(
+    file=relative_to_assets("bar1.png"))
+image_100 = canvas.create_image(
+    345.0,
+    35.0,
+    image=image_image_100
+)
+
+canvas.tag_bind(image_100, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_100, "<B1-Motion>", move_window)
+
+image_image_110 = PhotoImage(
+    file=relative_to_assets("bar2.png"))
+image_110 = canvas.create_image(
+    347.0,
+    415.0,
+    image=image_image_110
+)
+
+button_image_20 = PhotoImage(
+    file=relative_to_assets("close.png"))
+button_20 = Button(
+    image=button_image_20,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: ex_close(window),
     relief="flat"
 )
-button_1.place(
-    x=670.0,
-    y=3.0,
-    width=23.0,
-    height=23.0
+button_20.place(
+    x=564.0,
+    y=52.0,
+    width=21.20473861694336,
+    height=24.221660614013672
 )
 
 prog()
