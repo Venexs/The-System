@@ -482,7 +482,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: get(),
     relief="flat"
 )
 button_2.place(
