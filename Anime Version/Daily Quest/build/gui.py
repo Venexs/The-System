@@ -232,6 +232,13 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Daily"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
+    subprocess.Popen(['python', 'sfx_close.py'])
     win.quit()
 
 try:
@@ -559,7 +566,6 @@ if full_check==False:
             if day_num==tdy_week_num:
                 #global pushup_txt
                 current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
-                print(current_text)
                 with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
                     daily_quest_data["Player"]["Push"]+=1
                     json.dump(daily_quest_data, write_daily_quest_file, indent=4)
@@ -567,7 +573,6 @@ if full_check==False:
         else:
             #global pushup_txt
             current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
-            print(current_text)
             with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
                 daily_quest_data["Player"]["Push"]+=1
                 json.dump(daily_quest_data, write_daily_quest_file, indent=4)

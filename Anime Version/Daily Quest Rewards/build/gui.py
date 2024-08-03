@@ -72,6 +72,12 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Daily"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
     win.quit()
 
 subprocess.Popen(['python', 'sfx.py'])
@@ -117,13 +123,29 @@ with open("Files/Data/Rank_Rewards.json", 'r') as final_rank_check_file:
     coins=rew_list[2]
 
 def get():
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Daily"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
+
     with open("Files/status.json", 'w') as status_import:
         rank_check_data["status"][0]['coins']+=coins
         rank_check_data["avail_eq"][0]['str_based']+=av_str
         rank_check_data["avail_eq"][0]['int_based']+=av_int
         json.dump(rank_check_data, status_import, indent=4)
 
-    subprocess.Popen(['python', 'Anime Version/Status Tab/build/gui.py'])
+    window.quit()
+
+def no():
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Daily"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
+
     window.quit()
 
 canvas = Canvas(
@@ -299,7 +321,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: window.quit(),
+    command=lambda: no(),
     relief="flat"
 )
 button_2.place(

@@ -89,6 +89,13 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Dungeons"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
+    subprocess.Popen(['python', 'sfx_close.py'])
     win.quit()
 
 def dun_check():
