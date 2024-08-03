@@ -19,6 +19,9 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def make_window_transparent(window):
+    # This function makes the window background transparent
+    window.wm_attributes('-transparentcolor', "#0c679b")
 
 window = Tk()
 
@@ -27,6 +30,7 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+make_window_transparent(window)
 
 class VideoPlayer:
     def __init__(self, canvas, video_path, x, y):
@@ -73,6 +77,13 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Inventory"]='Close'
+        json.dump(tab_son_data,fin_tab_son,indent=4)
+    subprocess.Popen(['python', 'sfx_close.py'])
     win.quit()
 
 canvas = Canvas(
@@ -1713,16 +1724,64 @@ canvas.create_text(
 #    height=33.0
 #)
 
-image_0=canvas.create_rectangle(
+canvas.create_rectangle(
     0.0,
     0.0,
-    855.0,
-    37.0,
-    fill="#2E2E2E",
+    299.0,
+    26.0,
+    fill="#0c679b",
     outline="")
 
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+canvas.create_rectangle(
+    -60.0,
+    552.0,
+    990.0,
+    592.0,
+    fill="#0c679b",
+    outline="")
+
+image_image_29 = PhotoImage(
+    file=relative_to_assets("image_29.png"))
+image_29 = canvas.create_image(
+    -10.0,
+    283.77264404296875,
+    image=image_image_29
+)
+
+image_image_30 = PhotoImage(
+    file=relative_to_assets("image_30.png"))
+image_30 = canvas.create_image(
+    851.018310546875,
+    308.69981384277344,
+    image=image_image_30
+)
+
+canvas.create_rectangle(
+    187.0,
+    0.0,
+    910.0,
+    38.0,
+    fill="#0c679b",
+    outline="")
+
+image_image_31 = PhotoImage(
+    file=relative_to_assets("image_31.png"))
+image_31 = canvas.create_image(
+    427.0,
+    22.0,
+    image=image_image_31
+)
+
+canvas.tag_bind(image_31, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_31, "<B1-Motion>", move_window)
+
+image_image_32 = PhotoImage(
+    file=relative_to_assets("image_32.png"))
+image_32 = canvas.create_image(
+    427.0,
+    555.0,
+    image=image_image_32
+)
 
 button_image_26 = PhotoImage(
     file=relative_to_assets("button_26.png"))
@@ -1734,10 +1793,11 @@ button_26 = Button(
     relief="flat"
 )
 button_26.place(
-    x=810.0,
-    y=4.0,
-    width=28.0,
-    height=28.0
+    x=806.0,
+    y=64.0,
+    width=20.0,
+    height=20.0
 )
+
 window.resizable(False, False)
 window.mainloop()

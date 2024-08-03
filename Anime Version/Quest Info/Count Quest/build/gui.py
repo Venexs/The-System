@@ -23,6 +23,9 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def make_window_transparent(window):
+    # This function makes the window background transparent
+    window.wm_attributes('-transparentcolor', "#0c679b")
 
 window = Tk()
 
@@ -31,7 +34,7 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-#window.update()
+make_window_transparent(window)
 
 class VideoPlayer:
     def __init__(self, canvas, video_path, x, y):
@@ -688,32 +691,63 @@ button_7.place(
     width=120.0,
     height=16.0
 )
-
-image_0=canvas.create_rectangle(
+canvas.create_rectangle(
     0.0,
     0.0,
-    960.0,
-    37.0,
-    fill="#2E2E2E",
+    240.0,
+    24.0,
+    fill="#0c679b",
     outline="")
 
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+canvas.create_rectangle(
+    0.0,
+    525.0,
+    925.0,
+    555.0,
+    fill="#0c679b",
+    outline="")
 
-button_image_0 = PhotoImage(
-    file=relative_to_assets("button_0.png"))
-button_0 = Button(
-    image=button_image_0,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: ex_close(window),
-    relief="flat"
+image_image_40 = PhotoImage(
+    file=relative_to_assets("Side1.png"))
+image_40 = canvas.create_image(
+    20.0,
+    270.0,
+    image=image_image_40
 )
-button_0.place(
-    x=860.0,
-    y=4.0,
-    width=28.0,
-    height=28.0
+
+image_image_50 = PhotoImage(
+    file=relative_to_assets("Side2.png"))
+image_50 = canvas.create_image(
+    880.0,
+    294.0,
+    image=image_image_50
+)
+
+canvas.create_rectangle(
+    240.0,
+    0.0,
+    957.0,
+    36.0,
+    fill="#0c679b",
+    outline="")
+
+image_image_60 = PhotoImage(
+    file=relative_to_assets("Bar1.png"))
+image_60 = canvas.create_image(
+    478.0,
+    21.0,
+    image=image_image_60
+)
+
+canvas.tag_bind(image_60, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_60, "<B1-Motion>", move_window)
+
+image_image_70 = PhotoImage(
+    file=relative_to_assets("Bar2.png"))
+image_70 = canvas.create_image(
+    480.0,
+    530.0,
+    image=image_image_70
 )
 
 window.resizable(False, False)

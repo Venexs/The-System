@@ -23,6 +23,9 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def make_window_transparent(window):
+    # This function makes the window background transparent
+    window.wm_attributes('-transparentcolor', "#0c679b")
 
 window = Tk()
 
@@ -31,7 +34,7 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-#window.update()
+make_window_transparent(window)
 
 debuff_1_name=''
 debuff_2_name=''
@@ -100,15 +103,17 @@ with open('Files/Temp Files/Preview Item Temp.csv', 'r') as fout:
         name=k[0]
         qty=k[1]
 
-with open("Files/Data/Inventory_List.json", 'r') as fson:
+with open("Files\Data\Inventory_List.json", 'r') as fson:
     data=json.load(fson)
+    dat_keys=list(data.keys())
+
+item_full_data={}
 
 rank=data[name][0]["rank"]
 cat=data[name][0]["cat"]
 n_cat=cat
 if cat.upper()=="FIRST GAUNTLET" or cat.upper()=="SECOND GAUNTLET":
     n_cat="GAUNTLET"
-
 desc_full=data[name][0]["desc"]
 
 for i in range(0, len(desc_full), segment_length):
@@ -118,23 +123,51 @@ if len(segments) >= 1:
     desc1 = segments[0]
 if len(segments) >= 2:
     desc2 = segments[1]
-
 val=data[name][0]['Value']
 
-def better_name(name):
-    if name=='LVLADD':
-        name1="Level Increase"
+item_full_data[name]=data[name]
 
-    elif name=='STRav':
-        name1="Addition of STR based Available Points"
+def selling():
+    with open("Files/status.json", 'r') as read_status_file:
+        read_status_file_data=json.load(read_status_file)
 
-    elif name=='INTav':
-        name1="Addition of INT based Available Points"
-    
+    with open("Files/Inventory.json", 'r') as fin_inv_fson:
+        fin_inv_data=json.load(fin_inv_fson)
+
+        fin_qt=fin_inv_data[name][0]["qty"]
+        fin_inv_data[name][0]["qty"]=fin_qt-1
+        closing=False
+        if fin_inv_data[name][0]["qty"]==0:
+            del fin_inv_data[name]
+            closing=True
+
+    with open("Files/Inventory.json", 'w') as finaladdon_inv:
+        json.dump(fin_inv_data, finaladdon_inv, indent=6)
+
+    with open("Files/status.json", 'w') as write_status_file:
+        read_status_file_data["status"][0]['coins']+=int(val)
+        json.dump(read_status_file_data, write_status_file, indent=4)
+
+    if closing==True:
+        subprocess.Popen(['python', 'Anime Version/Inventory/build/gui.py'])
+
+        window.quit()
+
     else:
-        name1=name
+        subprocess.Popen(['python', 'Anime Version/Item Data/build/gui.py'])
 
-    return(name1)
+        window.quit()
+
+def equip():
+    if cat in ["HELM", "CHESTPLATE", "FIRST GAUNTLET", "SECOND GAUNTLET", "BOOTS", "COLLAR", "RING"]:
+        with open('Files/Equipment.json', 'r') as finale_equip:
+            finale_equip_data=json.load(finale_equip)
+            finale_equip_data[cat]=item_full_data
+
+        with open('Files/Equipment.json', 'w') as inject:
+            json.dump(finale_equip_data, inject, indent=6)
+
+        subprocess.Popen(['python', 'Anime Version/Equipment/build/gui.py'])
 
 if type(data[name][0]["buff"]) is dict:
     try:
@@ -214,8 +247,6 @@ if type(data[name][0]["debuff"]) is dict:
 
         debuff_2="+"+str(data[name][0]["debuff"][rol_2[1]])
     except:
-        debuff_1_name=''
-        debuff_1='-'
         debuff_2_name=''
         debuff_2='-'
 else:
@@ -223,6 +254,11 @@ else:
     debuff_2_name=''
     debuff_1='-'
     debuff_2='-'
+
+def return_inv():
+    subprocess.Popen(['python', 'Anime Version/Inventory/build/gui.py'])
+    window.quit()
+
 
 canvas = Canvas(
     window,
@@ -254,41 +290,55 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
-# ! ITEM NAME
-
 canvas.create_rectangle(
     346.0,
     111.0,
-    890.0,
+    758.0,
     147.0,
     fill="#303030",
     outline="")
 
 canvas.create_text(
-    350.0,
+    347.0,
     112.0,
     anchor="nw",
     text="Item:",
     fill="#FFFFFF",
-    font=("Montserrat", 24 * -1)
+    font=("Montserrat Regular", 24 * -1)
 )
 
 canvas.create_text(
-    415.0,
+    407.0,
     112.0,
     anchor="nw",
-    text=better_name(name),
+    text=name,
     fill="#FFFFFF",
     font=("Montserrat SemiBold", 24 * -1)
 )
-
-# ! Acquisitions
 
 canvas.create_text(
     346.0,
     175.0,
     anchor="nw",
     text="Acquisition Difficulty:",
+    fill="#FFFFFF",
+    font=("Montserrat Light", 14 * -1)
+)
+
+canvas.create_text(
+    204.0,
+    411.0,
+    anchor="nw",
+    text=desc2,
+    fill="#FFFFFF",
+    font=("Montserrat Light", 14 * -1)
+)
+
+canvas.create_text(
+    204.0,
+    391.0,
+    anchor="nw",
+    text=desc1+'-',
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
@@ -311,28 +361,6 @@ canvas.create_text(
     font=("Montserrat SemiBold", 15 * -1)
 )
 
-# ! Description
-
-canvas.create_text(
-    204.0,
-    380.0,
-    anchor="nw",
-    text=desc1+'-',
-    fill="#FFFFFF",
-    font=("Montserrat Light", 14 * -1)
-)
-
-canvas.create_text(
-    204.0,
-    400.0,
-    anchor="nw",
-    text=desc2,
-    fill="#FFFFFF",
-    font=("Montserrat Light", 14 * -1)
-)
-
-# ! Buffs and Debuffs
-
 canvas.create_text(
     287.0,
     272.0,
@@ -343,21 +371,21 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    345.0,
+    347.0,
     272.0,
     anchor="nw",
     text=f"-{buff_1_name} {buff_1}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
 
 canvas.create_text(
-    345.0,
+    347.0,
     294.0,
     anchor="nw",
     text=f"-{buff_2_name} {buff_2}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
 
 canvas.create_text(
@@ -370,24 +398,22 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    365.0,
+    367.0,
     333.0,
     anchor="nw",
     text=f"-{debuff_1_name} {debuff_1}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
 
 canvas.create_text(
-    365.0,
+    367.0,
     353.0,
     anchor="nw",
     text=f"-{debuff_2_name} {debuff_2}",
     fill="#FFFFFF",
-    font=("Montserrat SemiBold", 15 * -1)
+    font=("Montserrat Light", 15 * -1)
 )
-
-# ! Category
 
 canvas.create_text(
     528.0,
@@ -407,31 +433,27 @@ canvas.create_text(
     font=("Montserrat Light", 14 * -1)
 )
 
-# ! Value
-
 canvas.create_text(
     637.0,
-    197.0,
+    198.0,
     anchor="nw",
-    text=val,
+    text=f"{val:,}",
     fill="#FFFFFF",
     font=("Montserrat SemiBold", 15 * -1)
 )
 
 canvas.create_text(
     637.0,
-    176.0,
+    177.0,
     anchor="nw",
     text="Value:",
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
 
-# ! Quantity
-
 canvas.create_text(
-    710.0,
-    197.0,
+    740.0,
+    198.0,
     anchor="nw",
     text=qty,
     fill="#FFFFFF",
@@ -439,10 +461,10 @@ canvas.create_text(
 )
 
 canvas.create_text(
-    710.0,
-    176.0,
+    740.0,
+    177.0,
     anchor="nw",
-    text="Quantity:",
+    text="Qty",
     fill="#FFFFFF",
     font=("Montserrat Light", 14 * -1)
 )
@@ -496,33 +518,79 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
-image_0=canvas.create_rectangle(
-    0.0,
-    0.0,
-    960.0,
-    37.0,
-    fill="#2E2E2E",
-    outline="")
-
-canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_0, "<B1-Motion>", move_window)
-
-button_image_0 = PhotoImage(
-    file=relative_to_assets("button_0.png"))
-button_0 = Button(
-    image=button_image_0,
+button_image_3 = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+button_3 = Button(
+    image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: ex_close(window),
     relief="flat"
 )
-button_0.place(
-    x=920.0,
-    y=4.0,
-    width=28.0,
-    height=28.0
+button_3.place(
+    x=819.0,
+    y=64.0,
+    width=40.0,
+    height=40.0
 )
 
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    240.0,
+    24.0,
+    fill="#0c679b",
+    outline="")
 
+canvas.create_rectangle(
+    0.0,
+    525.0,
+    925.0,
+    555.0,
+    fill="#0c679b",
+    outline="")
+
+image_image_4 = PhotoImage(
+    file=relative_to_assets("image_4.png"))
+image_4 = canvas.create_image(
+    35.0,
+    270.0,
+    image=image_image_4
+)
+
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    925.0,
+    294.0,
+    image=image_image_5
+)
+
+canvas.create_rectangle(
+    240.0,
+    0.0,
+    957.0,
+    36.0,
+    fill="#0c679b",
+    outline="")
+
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    478.0,
+    21.0,
+    image=image_image_6
+)
+
+canvas.tag_bind(image_6, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_6, "<B1-Motion>", move_window)
+
+image_image_7 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_7 = canvas.create_image(
+    480.0,
+    530.0,
+    image=image_image_7
+)
 window.resizable(False, False)
 window.mainloop()
