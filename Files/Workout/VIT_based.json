@@ -4,7 +4,7 @@
             "desc":"Look up different Yoga positions and do them for given time",
             "time":60,
 
-            "timval":"Seconds",
+            "timeval":"Seconds",
             "type":"Learn"
         },
         {
@@ -17,7 +17,7 @@
             "desc":"Look up different Yoga positions and do them for given time",
             "time":60,
 
-            "timval":"Seconds",
+            "timeval":"Seconds",
             "type":"Learn"
         },
         {
