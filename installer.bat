@@ -1,1 +1,3 @@
-pip install -r requirements.txt
+@echo off
+
+python Installer/installer.py

@@ -1,3 +1,9 @@
 import winsound
+import json
 
-winsound.PlaySound('Files/Close.wav', winsound.SND_FILENAME)
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=json.load(pres_file)
+
+theme=pres_file_data["Active Theme"][0]
+closes=pres_file_data[theme]["Close SFX"]
+winsound.PlaySound(closes, winsound.SND_FILENAME)

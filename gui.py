@@ -12,16 +12,17 @@ import csv
 import subprocess
 import time
 import sys
-import system
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime
 import pandas as pd
+import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 thing=txt='None'
+
 fin_data={
     "Skills":"False",
     "Quests":"False",
@@ -45,42 +46,6 @@ with open("Files/Tabs.json", 'w') as tab_reset:
 
 stop_event0 = threading.Event()
 stop_event1 = threading.Event()
-
-class VideoPlayer:
-    def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
-        self.canvas = canvas
-        self.video_path = video_path
-        self.cap = cv2.VideoCapture(video_path)
-        self.x = x
-        self.y = y
-        self.frame_skip = frame_skip  # Number of frames to skip
-        self.resize_factor = resize_factor  # Factor to resize frames
-        self.image_id = self.canvas.create_image(self.x, self.y)
-        self.frame_count = 0
-        self.update_frame()
-
-    def update_frame(self):
-        ret, frame = self.cap.read()
-        
-        if not ret:
-            # If the video has ended, reset the capture object
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, frame = self.cap.read()
-
-        if ret:
-            self.frame_count += 1
-            if self.frame_count % self.frame_skip == 0:  # Skip frames for performance
-                frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                img = Image.fromarray(frame)
-                imgtk = ImageTk.PhotoImage(image=img)
-                self.canvas.itemconfig(self.image_id, image=imgtk)
-                self.canvas.imgtk = imgtk
-
-        self.canvas.after(10, self.update_frame)
-
-    def __del__(self):
-        self.cap.release()
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -158,17 +123,17 @@ def give_job():
         json.dump(data, stfson, indent=4)
 
     if abi=="STR":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui.py'])
+        subprocess.Popen(['python', 'Anime Version/All Jobs/gui.py'])
     elif abi=="AGI":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui1.py'])
+        subprocess.Popen(['python', 'Anime Version/All Jobs/gui1.py'])
     elif abi=="VIT":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui2.py'])
+        subprocess.Popen(['python', 'Anime Version/All Jobs/gui2.py'])
     elif abi=="INT":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui3.py'])
+        subprocess.Popen(['python', 'Anime Version/All Jobs/gui3.py'])
     elif abi=="PER":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui4.py'])
+        subprocess.Popen(['python', 'Anime Version/All Jobs/gui4.py'])
     elif abi=="MAN":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui5.py'])
+        subprocess.Popen(['python', 'Anime Version/All Jobs/gui5.py'])
 
 def check_for_updates(stop_event, pause_event):
     while not stop_event.is_set():
@@ -207,7 +172,7 @@ def check_for_job():
                 with open("Files/Data/Job_info.json", 'w') as fina_fson:
                     json.dump(data, fina_fson, indent=4)
         
-                subprocess.Popen(['python', 'D:/Projects/System/Anime Version/Accept Job Change/build/gui.py'])
+                subprocess.Popen(['python', 'D:/Projects/System/Anime Version/Accept Job Change/gui.py'])
                 canvas.itemconfig("job", state='normal')
                 timer_func()
                 stop_event1.set()
@@ -240,7 +205,7 @@ def code_final(event):
         with open("Files/Titles/Titles.json", 'w') as final_title_import:
             json.dump(data, final_title_import, indent=4)
 
-        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/build/gui.py')])
+        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/gui.py')])
 
     elif et1=='I' and et2=='M' and et3=='G' and et4=='O' and et5=='D':
         with open("Files\Titles\Titles.json", 'r') as fson:
@@ -250,11 +215,20 @@ def code_final(event):
         with open("Files/Titles/Titles.json", 'w') as final_title_import:
             json.dump(data, final_title_import, indent=4)
 
-        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/build/gui.py')])
+        fout=open('Files/Temp Files/Inventory temp.csv', 'w', newline='')
+        fw=csv.writer(fout)
+        rec=["Access Code Complete"]
+        fw.writerow(rec)
+        fout.close()
 
     else:
-        subprocess.Popen(['python', (f'{theme} Version/Access Code Incomplete/build/gui.py')])
+        fout=open('Files/Temp Files/Inventory temp.csv', 'w', newline='')
+        fw=csv.writer(fout)
+        rec=["Access Code Incomplete"]
+        fw.writerow(rec)
+        fout.close()
 
+    subprocess.Popen(['python', "Anime Version\Message\gui.py"])
     hide(0)
 
 def update_sys(eve):
@@ -268,8 +242,11 @@ def update_sys(eve):
             this_ver=float(k[0])
     
     if vers!=this_ver:
-        subprocess.Popen(['python', 'Update System/build/gui.py'])
+        subprocess.Popen(['python', 'Update System/gui.py'])
         window.quit()
+
+def open_cal(eve):
+    subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
 
 window = Tk()
 
@@ -280,7 +257,7 @@ window.overrideredirect(True)
 #window.update()
 make_window_transparent(window)
 
-thread0=threading.Thread(target=system.check_midnight(window,stop_event0))
+thread0=threading.Thread(target=thesystem.system.check_midnight(window,stop_event0))
 thread0.start()
 
 def start_move(event):
@@ -362,13 +339,13 @@ def open_dungeon(event):
             tab_son_data["Dungeons"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        subprocess.Popen(['python', 'Anime Version/Dungeon/build/gui.py'])
+        subprocess.Popen(['python', 'Anime Version/Dungeon/gui.py'])
 
 # ? =====================================================================
 # ! The Every 5th Level Skil Checker
-system.random_skill_check()
+thesystem.system.random_skill_check()
 # ? =====================================================================
-system.random_quest()
+thesystem.system.random_quest()
 # ? =====================================================================
 
 canvas = Canvas(
@@ -490,7 +467,7 @@ def inv_open(event):
             tab_son_data["Inventory"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Inventory/build/gui.py"
+        inv_name=f"{theme} Version/Inventory/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_5, "<ButtonPress-1>", inv_open)
@@ -515,7 +492,7 @@ def daily_open(event):
             tab_son_data["Daily"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Daily Quest/build/gui.py"
+        inv_name=f"{theme} Version/Daily Quest/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
@@ -540,7 +517,7 @@ def quest_open(event):
             tab_son_data["Quest"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Quests/build/gui.py"
+        inv_name=f"{theme} Version/Quests/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_7, "<ButtonPress-1>", quest_open)
@@ -565,7 +542,7 @@ def skill_open(event):
             tab_son_data["Skill"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Skills Tab/build/gui.py"
+        inv_name=f"{theme} Version/Skills Tab/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_8, "<ButtonPress-1>", skill_open)
@@ -590,7 +567,7 @@ def status_open(event):
             tab_son_data["Status"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Status Tab/build/gui.py"
+        inv_name=f"{theme} Version/Status Tab/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_9, "<ButtonPress-1>", status_open)
@@ -615,7 +592,7 @@ def equip_open(event):
             tab_son_data["Equipment"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Equipment/build/gui.py"
+        inv_name=f"{theme} Version/Equipment/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_10, "<ButtonPress-1>", equip_open)
@@ -640,7 +617,7 @@ def shop_open(event):
             tab_son_data["Shop"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=f"{theme} Version/Shop/build/gui.py"
+        inv_name=f"{theme} Version/Shop/gui.py"
         subprocess.Popen(['python', inv_name])
 
 canvas.tag_bind(image_11, "<ButtonPress-1>", shop_open)
@@ -964,17 +941,17 @@ image_18 = canvas.create_image(
 
 canvas.tag_bind(image_18, "<ButtonPress-1>", open_dungeon)
 
-#image_image_19 = PhotoImage(
-#    file=relative_to_assets("image_19.png"))
-#image_19 = canvas.create_image(
-#    414.0,
-#    187.0,
-#    image=image_image_19,
-#    tags="bar",
-#    state="hidden"
-#)
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_19 = canvas.create_image(
+    414.0,
+    187.0,
+    image=image_image_19,
+    tags="bar",
+    state="hidden"
+)
 
-#canvas.tag_bind(image_19, "<ButtonPress-1>", update_sys)
+canvas.tag_bind(image_19, "<ButtonPress-1>", open_cal)
 
 stop_event = threading.Event()
 pause_event = threading.Event()
@@ -984,7 +961,7 @@ thread.start()
 thread1 = threading.Thread(target=check_for_job)
 thread1.start()
 
-system.run_once_prog(stop_event0, thread0)
+thesystem.system.run_once_prog(stop_event0, thread0)
 
 window.resizable(False, False)
 window.mainloop()
