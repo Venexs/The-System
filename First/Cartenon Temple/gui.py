@@ -11,6 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import random
 import cv2
+import json
 from PIL import Image, ImageTk
 import time
 import csv
@@ -28,7 +29,7 @@ import thesystem.system
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-subprocess.Popen(['python', 'sfx.py'])
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -124,7 +125,7 @@ def play():
     window.after(5000, start)
 
 def answer():
-    subprocess.Popen(['python', 'sfx_glitch.py'])
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
     global confirm
 
     canvas.itemconfig("Sixth", state="hidden")
@@ -142,34 +143,34 @@ def start(c=0):
     global confirm
 
     if c==0:
-        subprocess.Popen(['python', 'sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
         canvas.itemconfig("Zero", state="hidden")
         canvas.itemconfig("First", state="normal")
     elif c==1:
-        subprocess.Popen(['python', 'sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
         canvas.itemconfig("Zero", state="hidden")
         canvas.itemconfig("First", state="hidden")
         canvas.itemconfig("Second", state="normal")
     elif c==2:
-        subprocess.Popen(['python', 'sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
         canvas.itemconfig("First", state="hidden")
         canvas.itemconfig("Second", state="hidden")
         canvas.itemconfig("Third", state="normal")
     elif c==3:
-        subprocess.Popen(['python', 'sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
         canvas.itemconfig("First", state="hidden")
         canvas.itemconfig("Second", state="hidden")
         canvas.itemconfig("Third", state="hidden")
         canvas.itemconfig("Fourth", state="normal")
     elif c==4:
-        subprocess.Popen(['python', 'sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
         canvas.itemconfig("First", state="hidden")
         canvas.itemconfig("Second", state="hidden")
         canvas.itemconfig("Third", state="hidden")
         canvas.itemconfig("Fourth", state="hidden")
         canvas.itemconfig("Fifth", state="normal")
     elif c==5:
-        subprocess.Popen(['python', 'sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
         canvas.itemconfig("First", state="hidden")
         canvas.itemconfig("Second", state="hidden")
         canvas.itemconfig("Third", state="hidden")

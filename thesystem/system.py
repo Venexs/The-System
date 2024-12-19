@@ -1,6 +1,8 @@
+
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import json
+import queue
 import csv
 import subprocess
 from PIL import Image, ImageTk
@@ -11,22 +13,37 @@ import sys
 import random
 import cv2
 import os
+import google.generativeai as genai
+import shutil
+
+last_run = 0 
 
 def fin_pen():
     today = datetime.now().date()
 
     yesterday = today - timedelta(days=1)
-    with open('Files/Checks/Today_Quest.csv', 'r', newline='') as fout:
+    with open('Files/Checks/Daily_time_check.csv', 'r', newline='') as fout:
         fr=csv.reader(fout)
         for k in fr:
             status=k[1]
             dates=k[0]
 
     p_date=datetime.strptime(dates, "%Y-%m-%d").date()
-    if yesterday==p_date and status=="UNDONE":
-        subprocess.Popen(['python', 'Anime Version/Penalty Quest/gui.py'])
-    elif yesterday!=p_date or status=="UNDONE":
-        subprocess.Popen(['python', 'Anime Version/Penalty Quest/gui.py'])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+    with open("Files/Settings.json", 'r') as settings_open:
+        setting_data=json.load(settings_open)
+    if yesterday==p_date and status=="UNDONE" and setting_data["Settings"]["Main_Penalty"]!="False":
+        subprocess.Popen(['python', f'{theme} Version/Penalty Quest/gui.py'])
+        with open('Files/Checks/Daily_time_check.csv', 'w', newline='') as fout_final:
+            fout_final_wr=csv.writer(fout_final)
+            fout_final_wr.writerow([dates,"DONE","Complete"])
+    elif yesterday!=p_date or status=="UNDONE" and setting_data["Settings"]["Main_Penalty"]!="False":
+        subprocess.Popen(['python', f'{theme} Version/Penalty Quest/gui.py'])
+        with open('Files/Checks/Daily_time_check.csv', 'w', newline='') as fout_final:
+            fout_final_wr=csv.writer(fout_final)
+            fout_final_wr.writerow([dates,"DONE","Complete"])
 
     #! ===================================================================
     with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
@@ -54,7 +71,10 @@ def fin_pen():
         result='MILD WEIGHT LOSS'
         cal_tdy_val=0
 
-    cal_pen=False
+    global last_run
+    cal_pen = False
+    cooldown = 24 * 60 * 60  # 24 hours in seconds
+    
 
     if result=='MILD WEIGHT LOSS':
         cal_30=cal_val+(cal_val*0.25)
@@ -66,8 +86,10 @@ def fin_pen():
         if cal_tdy_val<cal_30 or cal_tdy_val==0:
             cal_pen=True
 
-    if cal_pen==True:
+    current_time = time.time()
+    if cal_pen and (current_time - last_run > cooldown):
         subprocess.Popen(['python', 'First/Calorie Penalty/gui.py'])
+        last_run = current_time  # Update the last run time
 
     #! ===================================================================
 
@@ -110,7 +132,7 @@ def run_once_prog(stp_eve, thrd):
         first_run_file_check=True
 
     try:
-        with open("Files/Data/First_open.csv", 'r') as second_open_check_file:
+        with open("Files/Data/Prove_file.csv", 'r') as second_open_check_file:
             second_open_check_data=csv.reader(second_open_check_file)
             second_run_file_check=False
             try:
@@ -150,141 +172,119 @@ def run_once_prog(stp_eve, thrd):
 
 def random_skill_check():
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
-        name=data["status"][0]['name'].upper()
+        data = json.load(fson)
+        name = data["status"][0]['name'].upper()
         # ? =================================================
-        hp=data["status"][0]['hp']
-        mp=data["status"][0]['mp']
-        lvl=data["status"][0]['level']
-        old_lvl=f"{lvl:02d}"
+        hp = data["status"][0]['hp']
+        mp = data["status"][0]['mp']
+        lvl = data["status"][0]['level']
+        old_lvl = f"{lvl:02d}"
         # ? =================================================
-        stre=data["status"][0]['str']
-        intel=data["status"][0]['int']
-        agi=data["status"][0]['agi']
-        vit=data["status"][0]['vit']
-        per=data["status"][0]['per']
-        man=data["status"][0]['man']
+        stre = data["status"][0]['str']
+        intel = data["status"][0]['int']
+        agi = data["status"][0]['agi']
+        vit = data["status"][0]['vit']
+        per = data["status"][0]['per']
+        man = data["status"][0]['man']
         # ? =================================================
-        tit=data["status"][1]['title'].upper()
-        job=data["status"][1]['job'].upper()
+        tit = data["status"][1]['title'].upper()
+        job = data["status"][1]['job'].upper()
         # ? =================================================
-        xp_str=data["status"][0]['XP']
-        coins=data["status"][0]['coins']
+        xp_str = data["status"][0]['XP']
+        coins = data["status"][0]['coins']
         # ? =================================================
-        av_str_based=data["avail_eq"][0]['str_based']
-        av_int_based=data["avail_eq"][0]['int_based']
+        av_str_based = data["avail_eq"][0]['str_based']
+        av_int_based = data["avail_eq"][0]['int_based']
         # ? =================================================
-    if lvl%5==0:
-        with open("Files/Skills/Skill_old_check.json", 'r') as check_file:
-            old_lvl_data=json.load(check_file)
-            old_lvl_key=list(old_lvl_data.keys())
+    if lvl % 5 == 0:
+        with open("E:\System\Edited\SystemUpdate3\System_SL-main/Files/Skills/Skill_old_check.json", 'r') as check_file:
+            old_lvl_data = json.load(check_file)
 
-        if lvl!=old_lvl_data["old_stat"][0]["lvl"]:
-            comp_str= int(stre) - int(old_lvl_data["old_stat"][0]["str"])
-            comp_int= int(intel) - int(old_lvl_data["old_stat"][0]["int"])
-            comp_agi= int(agi) - int(old_lvl_data["old_stat"][0]["agi"])
-            comp_vit= int(vit) - int(old_lvl_data["old_stat"][0]["vit"])
-            comp_per= int(per) - int(old_lvl_data["old_stat"][0]["lvl"])
-            comp_man= int(man) - int(old_lvl_data["old_stat"][0]["man"])
+        if lvl != old_lvl_data["old_stat"][0]["lvl"]:
+            comp_str = int(stre) - int(old_lvl_data["old_stat"][0]["str"])
+            comp_int = int(intel) - int(old_lvl_data["old_stat"][0]["int"])
+            comp_agi = int(agi) - int(old_lvl_data["old_stat"][0]["agi"])
+            comp_vit = int(vit) - int(old_lvl_data["old_stat"][0]["vit"])
+            comp_per = int(per) - int(old_lvl_data["old_stat"][0]["per"])
+            comp_man = int(man) - int(old_lvl_data["old_stat"][0]["man"])
 
-            comp_rec={"STR":comp_str, "INT":comp_int, "AGI":comp_agi, "VIT":comp_vit, "PER":comp_per, "MAN":comp_man}
+            comp_rec = {"STR": comp_str, "INT": comp_int, "AGI": comp_agi, "VIT": comp_vit, "PER": comp_per, "MAN": comp_man}
             max_value = max(comp_rec.values())
-
             max_keys = [key for key, value in comp_rec.items() if value == max_value]
 
+            # Fix for multiple maximum values
             if len(max_keys) > 1:
-                second_max_value = max(v for k, v in comp_rec.items() if k not in max_keys)
-                second_max_keys = [key for key, value in comp_rec.items() if value == second_max_value]
-                max_keys.extend(second_max_keys)
+                remaining_values = [v for k, v in comp_rec.items() if k not in max_keys]
+                if remaining_values:
+                    second_max_value = max(remaining_values)
+                    second_max_keys = [key for key, value in comp_rec.items() if value == second_max_value]
+                    max_keys.extend(second_max_keys)
 
-            if len(max_keys)>2:
-                new_keys=[]
-                new_keys.append(max_keys[0])
-                new_keys.append(max_keys[1])
-                max_keys=sorted(new_keys)
+            # Limit max_keys to 2, sorted alphabetically
+            if len(max_keys) > 2:
+                max_keys = sorted(max_keys)[:2]
 
             with open("Files/Skills/Skill_List.json", 'r') as skill_list:
-                skill_list_data=json.load(skill_list)
-                skill_list_keys=list(skill_list_data.keys())
-        
-            name_of_skill=[]
-            skill_value=0
-            
+                skill_list_data = json.load(skill_list)
+                skill_list_keys = list(skill_list_data.keys())
+
+            name_of_skill = []
+            skill_value = 0
+
             for k in skill_list_keys:
                 if sorted(skill_list_data[k][1]["Condition"]) in max_keys:
                     name_of_skill.append(k)
-                    skill_value+=1
+                    skill_value += 1
 
-            print(skill_value)
             try:
-                if skill_value!=0:
-                    choosen_skill=name_of_skill[random.randint(0, skill_value)]
+                if skill_value != 0:
+                    choosen_skill = name_of_skill[random.randint(0, skill_value - 1)]
                 else:
-                    choosen_skill=name_of_skill[0]
-            except:
-                choosen_skill="Dash"
+                    choosen_skill = name_of_skill[0]
+            except IndexError:
+                choosen_skill = "Dash"
 
             with open("Files/Skills/Skill.json", 'r') as main_skills:
-                main_skill_data=json.load(main_skills)
-                try:
-                    main_skill_keys=list(main_skill_data.keys())
-                except:
-                    main_skill_keys=[]
+                main_skill_data = json.load(main_skills)
+                main_skill_keys = list(main_skill_data.keys()) if main_skill_data else []
 
-            dupli=False
+            dupli = choosen_skill in main_skill_keys
 
-            if main_skill_keys!=[]:
-                for k in main_skill_keys:
-                    if k==choosen_skill:
-                        dupli=True
-            
-            print(choosen_skill)
-
-            if dupli==True:
-                if main_skill_data[choosen_skill][0]["lvl"]!="MAX":
-                    main_skill_data[choosen_skill][0]["lvl"]+=1
-
+            if dupli:
+                if main_skill_data[choosen_skill][0]["lvl"] != "MAX":
+                    main_skill_data[choosen_skill][0]["lvl"] += 1
                     with open("Files/Skills/Skill.json", 'w') as update_main_skills:
                         json.dump(main_skill_data, update_main_skills, indent=6)
                     with open("Files/Temp Files/Skill Up Temp.csv", 'w', newline='') as skill_temp_csv_open:
-                        fw=csv.writer(skill_temp_csv_open)
+                        fw = csv.writer(skill_temp_csv_open)
                         fw.writerow([choosen_skill])
                     with open('Files/Data/New_Updates.json', 'w') as updatefile:
-                        fin_data={
-                                    "Skills":"False",
-                                    "Quests":"False",
-                                    "Upgrade":"True",
-                                    "Lines":"False"
-                                }
+                        fin_data = {"Skills": "False", "Quests": "False", "Upgrade": "True", "Lines": "False"}
                         json.dump(fin_data, updatefile, indent=4)
-            
-            elif dupli==False:
-                main_skill_data[choosen_skill]=[(skill_list_data[choosen_skill].pop(0))]
-                main_skill_data[choosen_skill][0]["pl_point"]=0
+            else:
+                main_skill_data[choosen_skill] = [(skill_list_data[choosen_skill].pop(0))]
+                main_skill_data[choosen_skill][0]["pl_point"] = 0
                 with open("Files/Skills/Skill.json", 'w') as update_main_skills:
                     json.dump(main_skill_data, update_main_skills, indent=6)
                 with open('Files/Data/New_Updates.json', 'w') as updatefile:
-                    fin_data={
-                                "Skills":"True",
-                                "Quests":"False",
-                                "Upgrade":"False",
-                                "Lines":"False"
-                            }
+                    fin_data = {"Skills": "True", "Quests": "False", "Upgrade": "False", "Lines": "False"}
                     json.dump(fin_data, updatefile, indent=4)
-                
-            old_lvl_data["old_stat"][0]["lvl"]=lvl
-            old_lvl_data["old_stat"][0]["str"]=stre
-            old_lvl_data["old_stat"][0]["int"]=intel
-            old_lvl_data["old_stat"][0]["agi"]=agi
-            old_lvl_data["old_stat"][0]["vit"]=vit
-            old_lvl_data["old_stat"][0]["per"]=per
-            old_lvl_data["old_stat"][0]["man"]=man
+
+            old_lvl_data["old_stat"][0].update({
+                "lvl": lvl,
+                "str": stre,
+                "int": intel,
+                "agi": agi,
+                "vit": vit,
+                "per": per,
+                "man": man,
+            })
 
             with open("Files/Skills/Skill_old_check.json", 'w') as final_check_file:
                 json.dump(old_lvl_data, final_check_file, indent=4)
 
 def check_midnight(window,stop_event):
-    while stop_event.is_set():
+    while not stop_event.is_set():
         now = datetime.now()
         if now.hour == 0 and now.minute == 0:
             penalty_check(window)
@@ -292,7 +292,7 @@ def check_midnight(window,stop_event):
 
 def random_quest():
     # ! The Random Quests thing
-    with open('Files/Data/Random_Quest_Day.json', 'r') as random_quest:
+    with open('E:\System\Edited\SystemUpdate3\System_SL-main/Files/Data/Random_Quest_Day.json', 'r') as random_quest:
         random_quest_data=json.load(random_quest)
         day_num=random_quest_data["Day"]
         tdy_week_num=datetime.today().weekday()
@@ -574,11 +574,41 @@ def animate_window_open(window, target_height, width, step=2, delay=5, doners=Fa
 
     if round((new_height/target_height), 1)==0.2:
         if doners==False:
-            #subprocess.Popen(['python', 'sfx.py'])
+            #subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
             done_val=True
 
     if new_height < target_height:
         window.after(delay, animate_window_open, window, target_height, width, step, delay, done_val)
+
+def animate_window_open_middle(window, target_height, target_width, step=2, delay=5, doners=False):
+    # Get the current dimensions of the window
+    current_height = window.winfo_height()
+    current_width = window.winfo_width()
+
+    # Get screen dimensions
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    # Calculate the new height and width for the animation step
+    new_height = min(current_height + step, target_height) if current_height < target_height else current_height
+    new_width = min(current_width + step, target_width) if current_width < target_width else current_width
+
+    # Center the window as it resizes
+    new_x = screen_width // 2 - new_width // 2
+    new_y = screen_height // 2 - new_height // 2
+
+    # Update the window geometry
+    window.geometry(f"{new_width}x{new_height}+{new_x}+{new_y}")
+
+    # Trigger the sound effect logic
+    done_val = False
+    if round((new_height / target_height), 1) == 0.2 and not doners:
+        # subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])  # Uncomment for actual sound trigger
+        done_val = True
+
+    # Continue animation if the target size is not reached
+    if new_height < target_height or new_width < target_width:
+        window.after(delay, animate_window_open, window, target_height, target_width, step, delay, done_val)
 
 def animate_window_close(window, target_height, width, step=2, delay=5):
     current_height = window.winfo_height()
@@ -600,21 +630,47 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
     else:
         window.quit()
 
-class VideoPlayer:
-    with open("Files\Mod\presets.json", 'r') as pres_file:
-        pres_file_data=json.load(pres_file)
-        final_video_path=pres_file_data["Anime"]["Video"]
+def animate_window_close_middle(window, target_height, target_width, step=2, delay=5):
+    # Get the current dimensions of the window
+    current_height = window.winfo_height()
+    current_width = window.winfo_width()
 
-    def __init__(self, canvas, video_path, x, y, frame_skip=5, resize_factor=0.7):
+    # Get screen dimensions
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    # Calculate the new height and width for the animation step
+    new_height = max(current_height - step, target_height) if current_height > target_height else current_height
+    new_width = max(current_width - step, target_width) if current_width > target_width else current_width
+
+    # Center the window as it resizes
+    new_x = screen_width // 2 - new_width // 2
+    new_y = screen_height // 2 - new_height // 2
+
+    # Update the window geometry
+    window.geometry(f"{new_width}x{new_height}+{new_x}+{new_y}")
+
+    # Continue animation if the target size is not reached
+    if new_height > target_height or new_width > target_width:
+        window.after(delay, animate_window_close, window, target_height, target_width, step, delay)
+    else:
+        # Close the window when the target size is reached
+        window.quit()
+
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x=0, y=0, frame_skip=5, resize_factor=0.7):
         self.canvas = canvas
         self.video_path = video_path
         self.cap = cv2.VideoCapture(video_path)
-        self.x = x
-        self.y = y
-        self.frame_skip = frame_skip  # Increase skip to reduce load
+        self.x = x  # Accept but ignore
+        self.y = y  # Accept but ignore
+        self.frame_skip = frame_skip
         self.resize_factor = resize_factor
-        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.image_id = self.canvas.create_image(0, 0, anchor='nw')  # Initial anchor
         self.frame_count = 0
+
+        # Ensure canvas dimensions are updated before starting
+        self.canvas.update_idletasks()
         self.update_frame()
 
     def update_frame(self):
@@ -628,7 +684,7 @@ class VideoPlayer:
                 ret, frame = self.cap.read()
 
             if ret:
-                # Perform resizing and color conversion only if needed
+                # Perform resizing and color conversion
                 frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -636,7 +692,15 @@ class VideoPlayer:
                 img = Image.fromarray(frame)
                 imgtk = ImageTk.PhotoImage(image=img)
 
-                # Update the canvas image
+                # Calculate the centered position
+                canvas_width = self.canvas.winfo_width()
+                canvas_height = self.canvas.winfo_height()
+                video_width, video_height = img.size
+                x_center = (canvas_width - video_width) // 2
+                y_center = (canvas_height - video_height) // 2
+
+                # Update the canvas image and position
+                self.canvas.coords(self.image_id, x_center, y_center)
                 self.canvas.itemconfig(self.image_id, image=imgtk)
                 self.canvas.imgtk = imgtk
 
@@ -659,22 +723,36 @@ def center_window(root, width, height):
     # Set the dimensions of the window and the position
     root.geometry(f'{width}x{height}+{x}+{y}')
 
-def update_penalty_countdown(duration_seconds,countdown_label,canvas,window):
+def update_penalty_countdown(duration_seconds, countdown_label, canvas, window):
+    # Calculate end time
     end_time = datetime.now() + timedelta(seconds=duration_seconds)
-    update_penalty_countdown(end_time)
-    remaining_time = end_time - datetime.now()
 
-    if remaining_time.days < 0:
-        subprocess.Popen(['python', 'Anime Version/Penalty Quest Rewards/gui.py'])
-        window.quit()
+    # Update the countdown every second
+    def update_timer():
+        # Get the remaining time
+        remaining_time = end_time - datetime.now()
 
-    hours, remainder = divmod(remaining_time.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
+        # If time is up, perform the necessary actions
+        if remaining_time.total_seconds() <= 0:
+            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                theme_data = json.load(themefile)
+                theme = theme_data["Theme"]
+            subprocess.Popen(['python', f'{theme} Version/Penalty Quest Rewards/gui.py'])
+            window.quit()
+            return
 
-    timer_text = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-    canvas.itemconfig(countdown_label, text=timer_text)
+        # Format the remaining time (hours:minutes:seconds)
+        hours, remainder = divmod(remaining_time.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
 
-    window.after(1000, update_penalty_countdown, end_time)
+        timer_text = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+        canvas.itemconfig(countdown_label, text=timer_text)
+
+        # Schedule the function to run again after 1 second
+        window.after(1000, update_timer)
+
+    # Start the countdown
+    update_timer()
 
 def start_job(canvas):
     with open("Files/Data/Job_info.json", 'r') as stat_fson:
@@ -711,7 +789,66 @@ def pos_fix(num):
     else:
         return str(num)
 
-def get_fin_xp(window):
+def get_fin_xp():
+    # Load the status file
+    with open("Files/Status.json", 'r') as fson:
+        data = json.load(fson)
+        lvl = int(data["status"][0]['level'])  # Current level
+        xp = float(data["status"][0]['XP'])  # Current XP value
+        last_lvl = int(data["status"][0]['last_level'])  # Last processed level
+
+    # Load level-up values
+    with open("Files/Data/Level_Up_Values.json", 'r') as fron2:
+        level_up_values = json.load(fron2)["XP Check"]
+
+    leveled_up = False
+    new_lvl = lvl
+
+    # Check for level-ups
+    for k, v in level_up_values.items():
+        level_threshold = int(k)
+        if xp >= float(v) and level_threshold > new_lvl:
+            new_lvl = level_threshold
+            leveled_up = True
+
+    if leveled_up:
+        level_difference = new_lvl - lvl
+        data["status"][0]['level'] = new_lvl
+        data["status"][0]['last_level'] = new_lvl
+
+        # Increment stats based on the number of levels gained
+        data["status"][0]['hp'] += 10 * level_difference
+        data["status"][0]['mp'] += 10 * level_difference
+        data["status"][0]['str'] += 1 * level_difference
+        data["status"][0]['int'] += 1 * level_difference
+        data["status"][0]['agi'] += 1 * level_difference
+        data["status"][0]['vit'] += 1 * level_difference
+        data["status"][0]['per'] += 1 * level_difference
+        data["status"][0]['man'] += 1 * level_difference
+
+        # Save updated status to file
+        with open("Files/Status.json", 'w') as up_fson:
+            json.dump(data, up_fson, indent=4)
+
+        # Trigger level-up GUI
+        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            theme_data = json.load(themefile)
+            theme = theme_data["Theme"]
+            subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
+
+            if data["status"][0]['level']>=100:
+                message_open("Courage of the Weak")
+
+    else:
+        print()
+    fin_xp = None
+    if str(lvl + 1) in level_up_values:
+        next_level_xp = float(level_up_values[str(lvl + 1)])
+        fin_xp = next_level_xp - xp  # Difference between next level XP and current XP
+
+    return [leveled_up,fin_xp]
+
+def get_fin_xp_no_win():
     with open("Files/status.json", 'r') as fson:
         data=json.load(fson)
         lvl=data["status"][0]['level']
@@ -728,207 +865,295 @@ def get_fin_xp(window):
             data["status"][0]['level']+=1
             with open("Files/status.json", 'w') as up_fson:
                 json.dump(data, up_fson, indent=4)
-            subprocess.Popen(['python', 'Anime Version/Leveled up/gui.py'])
-            subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
-            window.quit()
-
-    with open("Files/Data/Level_Up_Values.json", 'r') as fron:
-        data_1=json.load(fron)
-        xp_end=data_1["XP Check"][str(lvl)]
-
-        fin_xp=xp_end-xp_str
-        re_open_check=False
-        if fin_xp<0:
-            data["status"][0]['level']+=1
-            with open("Files/status.json", 'w') as final_lvl_fson:
-                json.dump(data, final_lvl_fson, indent=4)
-            re_open_check=True
-            subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])  
-        return [fin_xp,re_open_check]
+            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                theme_data=json.load(themefile)
+                theme=theme_data["Theme"]
+            subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
+            return [xp_str,fin_chk]
 
 def daily_preview(window):
     with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
             rew_fw=csv.writer(rew_csv_open)
             rew_fw.writerow(["Preview"])
-    subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/gui.py'])
-
-    window.quit()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+    subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
 
 def check_daily_comp(today_date_str, window):
     with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
-        daily_quest_data=json.load(daily_quest_file)
-        # ? =======================================================
-        # ? Players
-        pl_push=daily_quest_data["Player"]["Push"]
-        pl_sit=daily_quest_data["Player"]["Sit"]
-        pl_sqat=daily_quest_data["Player"]["Squat"]
-        pl_run=daily_quest_data["Player"]["Run"]
+        daily_quest_data = json.load(daily_quest_file)
+        
+        # Player's daily progress
+        pl_push = daily_quest_data["Player"]["Push"]
+        pl_sit = daily_quest_data["Player"]["Sit"]
+        pl_sqat = daily_quest_data["Player"]["Squat"]
+        pl_run = daily_quest_data["Player"]["Run"]
+        pl_int = daily_quest_data["Player"]["Int_type"]
+        pl_slp = daily_quest_data["Player"]["Sleep"]
 
-        pl_int=daily_quest_data["Player"]["Int_type"]
-        pl_slp=daily_quest_data["Player"]["Sleep"]
-        # ? =======================================================
-        # ? Final
-        fl_push=daily_quest_data["Final"]["Push"]
-        fl_sit=daily_quest_data["Final"]["Sit"]
-        fl_sqat=daily_quest_data["Final"]["Squat"]
-        fl_run=daily_quest_data["Final"]["Run"]
+        # Final quest goals
+        fl_push = daily_quest_data["Final"]["Push"]
+        fl_sit = daily_quest_data["Final"]["Sit"]
+        fl_sqat = daily_quest_data["Final"]["Squat"]
+        fl_run = daily_quest_data["Final"]["Run"]
+        fl_int = daily_quest_data["Final"]["Int_type"]
+        fl_slp = daily_quest_data["Final"]["Sleep"]
 
-        fl_int=daily_quest_data["Final"]["Int_type"]
-        fl_slp=daily_quest_data["Final"]["Sleep"]
-        # ? =======================================================
-    
-    with open('Files\Checks\Secret_Quest_Check.json', 'r') as secrer_quest:
-        secrer_quest_data=json.load(secrer_quest)
-        day_num=secrer_quest_data["Day"]
-        tdy_week_num=datetime.today().weekday()
-    if day_num==tdy_week_num:
-        if (pl_push/2)>=fl_push and (pl_run/2)>=fl_run and (pl_sqat/2)>=fl_sqat and (pl_sit/2)>=fl_sit and (pl_int/2)>=fl_int:
-            if fl_push!=100 and fl_sit!=100 and fl_sqat!=100:
-                daily_quest_data["Final"]["Push"]+=5
-                daily_quest_data["Final"]["Sit"]+=5
-                daily_quest_data["Final"]["Squat"]+=5
-                daily_quest_data["Final"]["Run"]+=0.5
+    with open('Files/Checks/Secret_Quest_Check.json', 'r') as secrer_quest:
+        secrer_quest_data = json.load(secrer_quest)
+        day_num = secrer_quest_data["Day"]
+        tdy_week_num = datetime.today().weekday()
 
-                daily_quest_data["Player"]["Push"]=0
-                daily_quest_data["Player"]["Sit"]=0
-                daily_quest_data["Player"]["Squat"]=0
-                daily_quest_data["Player"]["Run"]=0
-                daily_quest_data["Player"]["Int_type"]=0
-                daily_quest_data["Player"]["Sleep"]=0
+    # First check if today is the correct day to check completion
+    if day_num == tdy_week_num:
+        if (pl_push / 2) >= fl_push and (pl_run / 2) >= fl_run and (pl_sqat / 2) >= fl_sqat and (pl_sit / 2) >= fl_sit and (pl_int / 2) >= fl_int:
+            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
+                # Update final quest data with rewards
+                daily_quest_data["Final"]["Push"] += 5
+                daily_quest_data["Final"]["Sit"] += 5
+                daily_quest_data["Final"]["Squat"] += 5
+                daily_quest_data["Final"]["Run"] += 0.5
+                daily_quest_data["Streak"]["Value"] += 1
 
-                if round(fl_int,1)!=10:
-                    daily_quest_data["Final"]["Int_type"]+=0.5
+                # Reset player data
+                daily_quest_data["Player"]["Push"] = 0
+                daily_quest_data["Player"]["Sit"] = 0
+                daily_quest_data["Player"]["Squat"] = 0
+                daily_quest_data["Player"]["Run"] = 0
+                daily_quest_data["Player"]["Int_type"] = 0
+                daily_quest_data["Player"]["Sleep"] = 0
 
+                # Increment intellect if not already at max
+                if round(fl_int, 1) != 10:
+                    daily_quest_data["Final"]["Int_type"] += 0.5
+
+                daily_quest_data["Streak"]["Value"]+=1
+                daily_quest_data["Streak"]["Greater_value"]+=1
+
+                # Save the updated quest data
                 with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
                     json.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
-                with open("Files/Checks/Daily_time_check.csv", 'w',  newline='') as fin_daily_date_check_file:
-                    fw1=csv.writer(fin_daily_date_check_file)
-                    fw1.writerow([today_date_str,"UNDONE","Complete"])
-            
-                with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                    rew_fw=csv.writer(rew_csv_open)
+                # Record the completion time check
+                with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as fin_daily_date_check_file:
+                    fw1 = csv.writer(fin_daily_date_check_file)
+                    fw1.writerow([today_date_str, "False", "Complete"])
+
+                # Log reward info
+                with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+                    rew_fw = csv.writer(rew_csv_open)
                     rew_fw.writerow(["Secret"])
-                
-                subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/gui.py'])
-                
+
+                # Execute the reward GUI based on the theme
+                with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                    theme_data = json.load(themefile)
+                    theme = theme_data["Theme"]
+                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
+
+                # Close the daily quest tab
+                with open("Files/Tabs.json", 'r') as tab_son:
+                    tab_son_data = json.load(tab_son)
+
+                with open("Files/Tabs.json", 'w') as fin_tab_son:
+                    tab_son_data["Daily"] = 'Close'
+                    json.dump(tab_son_data, fin_tab_son, indent=4)
+
                 window.quit()
-    else:
-        if (pl_push)>=fl_push and (pl_run)>=fl_run and (pl_sqat)>=fl_sqat and (pl_sit)>=fl_sit and (pl_int)>=fl_int and (pl_slp)>=fl_slp:
-            if fl_push!=100 and fl_sit!=100 and fl_sqat!=100:
-                daily_quest_data["Final"]["Push"]+=5
-                daily_quest_data["Final"]["Sit"]+=5
-                daily_quest_data["Final"]["Squat"]+=5
-                daily_quest_data["Final"]["Run"]+=0.5
 
-                daily_quest_data["Player"]["Push"]=0
-                daily_quest_data["Player"]["Sit"]=0
-                daily_quest_data["Player"]["Squat"]=0
-                daily_quest_data["Player"]["Run"]=0
-                daily_quest_data["Player"]["Int_type"]=0
-                daily_quest_data["Player"]["Sleep"]=0
+        # Handle the condition where day_num != tdy_week_num
+        if (pl_push) >= fl_push and (pl_run) >= fl_run and (pl_sqat) >= fl_sqat and (pl_sit) >= fl_sit and (pl_int) >= fl_int and (pl_slp) >= fl_slp:
+            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
+                # Update final quest data with rewards
+                daily_quest_data["Final"]["Push"] += 5
+                daily_quest_data["Final"]["Sit"] += 5
+                daily_quest_data["Final"]["Squat"] += 5
+                daily_quest_data["Final"]["Run"] += 0.5
+                daily_quest_data["Streak"]["Value"] += 1
 
-                if round(fl_int,1)!=10:
-                    daily_quest_data["Final"]["Int_type"]+=0.5
+                # Reset player data
+                daily_quest_data["Player"]["Push"] = 0
+                daily_quest_data["Player"]["Sit"] = 0
+                daily_quest_data["Player"]["Squat"] = 0
+                daily_quest_data["Player"]["Run"] = 0
+                daily_quest_data["Player"]["Int_type"] = 0
+                daily_quest_data["Player"]["Sleep"] = 0
+
+                # Increment intellect if not already at max
+                if round(fl_int, 1) != 10:
+                    daily_quest_data["Final"]["Int_type"] += 0.5
+
+                # Log reward info
+                if (pl_push) >= fl_push*3 and (pl_run) >= fl_run*3 and (pl_sqat) >= fl_sqat*3 and (pl_sit) >= fl_sit*3 and (pl_int) >= fl_int*3:
+                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+                        rew_fw = csv.writer(rew_csv_open)
+                        rew_fw.writerow(["Great Reward"])
+                        daily_quest_data["Streak"]["Greater_value"] += 1
                 else:
-                    daily_quest_data["Final"]["Int_type"]+=0.5
+                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+                        rew_fw = csv.writer(rew_csv_open)
+                        rew_fw.writerow(["Reward"])
+                        daily_quest_data["Streak"]["Greater_value"]=0
+                        daily_quest_data["Streak"]["Value"] += 1
 
+                # Save the updated quest data
                 with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
                     json.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
-                with open("Files/Checks/Daily_time_check.csv", 'w',  newline='') as fin_daily_date_check_file:
-                    fw1=csv.writer(fin_daily_date_check_file)
-                    fw1.writerow([today_date_str,"DONE"])
+                # Record the completion time check
+                with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as fin_daily_date_check_file:
+                    fw1 = csv.writer(fin_daily_date_check_file)
+                    fw1.writerow([today_date_str, "True", "Complete"])
 
-                with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                    rew_fw=csv.writer(rew_csv_open)
-                    rew_fw.writerow(["Reward"])
-            
-                subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/gui.py'])
-                
+                # Execute the reward GUI based on the theme
+                with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                    theme_data = json.load(themefile)
+                    theme = theme_data["Theme"]
+                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
+
+                # Close the daily quest tab
+                with open("Files/Tabs.json", 'r') as tab_son:
+                    tab_son_data = json.load(tab_son)
+
+                with open("Files/Tabs.json", 'w') as fin_tab_son:
+                    tab_son_data["Daily"] = 'Close'
+                    json.dump(tab_son_data, fin_tab_son, indent=4)
+
+                window.quit()
+
+    else:
+        # Handle the condition where day_num != tdy_week_num
+        if (pl_push) >= fl_push and (pl_run) >= fl_run and (pl_sqat) >= fl_sqat and (pl_sit) >= fl_sit and (pl_int) >= fl_int and (pl_slp) >= fl_slp:
+            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
+                # Update final quest data with rewards
+                daily_quest_data["Final"]["Push"] += 5
+                daily_quest_data["Final"]["Sit"] += 5
+                daily_quest_data["Final"]["Squat"] += 5
+                daily_quest_data["Final"]["Run"] += 0.5
+                daily_quest_data["Streak"]["Value"] += 1
+
+                # Reset player data
+                daily_quest_data["Player"]["Push"] = 0
+                daily_quest_data["Player"]["Sit"] = 0
+                daily_quest_data["Player"]["Squat"] = 0
+                daily_quest_data["Player"]["Run"] = 0
+                daily_quest_data["Player"]["Int_type"] = 0
+                daily_quest_data["Player"]["Sleep"] = 0
+
+                # Increment intellect if not already at max
+                if round(fl_int, 1) != 10:
+                    daily_quest_data["Final"]["Int_type"] += 0.5
+
+                # Log reward info
+                if (pl_push) >= fl_push*3 and (pl_run) >= fl_run*3 and (pl_sqat) >= fl_sqat*3 and (pl_sit) >= fl_sit*3 and (pl_int) >= fl_int*3:
+                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+                        rew_fw = csv.writer(rew_csv_open)
+                        rew_fw.writerow(["Great Reward"])
+                        daily_quest_data["Streak"]["Greater_value"] += 1
+                else:
+                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+                        rew_fw = csv.writer(rew_csv_open)
+                        rew_fw.writerow(["Reward"])
+                        daily_quest_data["Streak"]["Greater_value"]=0
+                        daily_quest_data["Streak"]["Value"] += 1
+
+                # Save the updated quest data
+                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                    json.dump(daily_quest_data, final_daily_quest_file, indent=4)
+
+                # Record the completion time check
+                with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as fin_daily_date_check_file:
+                    fw1 = csv.writer(fin_daily_date_check_file)
+                    fw1.writerow([today_date_str, "True", "Complete"])
+
+                # Execute the reward GUI based on the theme
+                with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                    theme_data = json.load(themefile)
+                    theme = theme_data["Theme"]
+                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
+
+                # Close the daily quest tab
+                with open("Files/Tabs.json", 'r') as tab_son:
+                    tab_son_data = json.load(tab_son)
+
+                with open("Files/Tabs.json", 'w') as fin_tab_son:
+                    tab_son_data["Daily"] = 'Close'
+                    json.dump(tab_son_data, fin_tab_son, indent=4)
+
                 window.quit()
 
 def dun_check():
-    global e_rank
-    global d_rank
-    global c_rank
-    global b_rank
-    global a_rank
-    global s_rank
-    global red_gate
+    global e_rank, d_rank, c_rank, b_rank, a_rank, s_rank, red_gate
 
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_check:
-        dun_check_data=json.load(dun_check)
+    # Path to the JSON file
+    file_path = "Files\\Data\\Todays_Dungeon.json"
+    
+    # Load the existing data from the file
+    try:
+        with open(file_path, 'r') as dun_check:
+            dun_check_data = json.load(dun_check)
+    except FileNotFoundError:
+        dun_check_data = {}
 
-    dun_date=list(dun_check_data.keys())[0]
-    date_format = "%Y-%m-%d"
-
-    date_object = datetime.strptime(dun_date, date_format)
+    # Get today's date as a string
     current_date = datetime.now().date()
-    current_date_string = current_date.strftime(date_format)
+    current_date_string = current_date.strftime("%Y-%m-%d")
 
-    if date_object!=current_date:
+    # Check if data already exists for today's date
+    if current_date_string not in dun_check_data:
         # E Rank Distro
-        e_rank_vals=0
-        for k in range(5):
-            if random.randint(1, 2) == 1:
-                e_rank_vals+=1
+        e_rank_vals = sum(1 for _ in range(5) if random.randint(1, 2) == 1)
 
         # D Rank Distro
-        d_rank_vals=0
-        for k in range(7):
-            if random.randint(1, 3) == 1:
-                d_rank_vals+=1
+        d_rank_vals = sum(1 for _ in range(7) if random.randint(1, 3) == 1)
 
         # C Rank Distro
-        c_rank_vals=0
-        for k in range(10):
-            if random.randint(1, 3) == 1:
-                c_rank_vals+=1
+        c_rank_vals = sum(1 for _ in range(10) if random.randint(1, 3) == 1)
 
         # B Rank Distro
-        b_rank_vals=0
-        for k in range(10):
-            if random.randint(1, 5) == 1:
-                b_rank_vals+=1
+        b_rank_vals = sum(1 for _ in range(10) if random.randint(1, 5) == 1)
 
         # A Rank Distro
-        a_rank_vals=0
-        for k in range(10):
-            if random.randint(1, 10) == 1:
-                a_rank_vals+=1
+        a_rank_vals = sum(1 for _ in range(10) if random.randint(1, 10) == 1)
 
         # S Rank Distro
-        s_rank_vals=0
-        for k in range(1):
-            if random.randint(1, 10) == 1:
-                s_rank_vals+=1
-        
+        s_rank_vals = sum(1 for _ in range(1) if random.randint(1, 10) == 1)
+
         # Red Gate Rank Distro
-        red_rank_vals=0
-        for k in range(10):
-            if random.randint(1, 20) == 1:
-                red_rank_vals+=1
+        red_rank_vals = sum(1 for _ in range(10) if random.randint(1, 20) == 1)
 
-        dun={current_date_string:{"E":e_rank_vals,"D":d_rank_vals,"C":c_rank_vals,"B":b_rank_vals,"A":a_rank_vals,"S":s_rank_vals, "Red Gate":red_rank_vals}}
-        with open("Files\Data\Todays_Dungeon.json", 'w') as wrt_dun_check:
-            json.dump(dun, wrt_dun_check, indent=6)
-            
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
-        dun_full_data=json.load(dun_full)
+        # Store today's values in the dictionary
+        dun_check_data[current_date_string] = {
+            "E": e_rank_vals,
+            "D": d_rank_vals,
+            "C": c_rank_vals,
+            "B": b_rank_vals,
+            "A": a_rank_vals,
+            "S": s_rank_vals,
+            "Red Gate": red_rank_vals
+        }
 
-        e_rank=dun_full_data[current_date_string]["E"]
-        d_rank=dun_full_data[current_date_string]["D"]
-        c_rank=dun_full_data[current_date_string]["C"]
-        b_rank=dun_full_data[current_date_string]["B"]
-        a_rank=dun_full_data[current_date_string]["A"]
-        s_rank=dun_full_data[current_date_string]["S"]
+        # Write the updated data back to the file
+        with open(file_path, 'w') as wrt_dun_check:
+            json.dump(dun_check_data, wrt_dun_check, indent=6)
+    
+    # Retrieve today's values from the data
+    e_rank = dun_check_data[current_date_string]["E"]
+    d_rank = dun_check_data[current_date_string]["D"]
+    c_rank = dun_check_data[current_date_string]["C"]
+    b_rank = dun_check_data[current_date_string]["B"]
+    a_rank = dun_check_data[current_date_string]["A"]
+    s_rank = dun_check_data[current_date_string]["S"]
+    red_gate = dun_check_data[current_date_string]["Red Gate"]
 
-        red_gate=dun_full_data[current_date_string]["Red Gate"]
-
-    return [e_rank, d_rank, c_rank, b_rank, a_rank, s_rank]
+    return e_rank, d_rank, c_rank, b_rank, a_rank, s_rank
 
 def dungeon_rank_get(rank,amt1,amt1_check):
+    with open("Files/status.json", 'r') as fson:
+        data=json.load(fson)
+        agi=data["status"][0]['agi']
+        stre=data["status"][0]['str']
+    minus=reduction(amt1, stre, agi, amt1_check)
     if rank=='D':
         if amt1_check=="amt":
             if amt1==50:
@@ -1025,6 +1250,7 @@ def dungeon_rank_get(rank,amt1,amt1_check):
             elif amt1==1:
                 amt1+=9
 
+    amt1=amt1-minus
     return amt1
 
 def get_item_button_image(name, max_width, max_height):
@@ -1032,8 +1258,15 @@ def get_item_button_image(name, max_width, max_height):
         # Construct the absolute path to the Images folder
         script_dir = os.path.dirname(os.path.abspath(__file__))
         # Navigate up to the project root directory
-        file_loc = os.path.join(script_dir, "Images")
-        files = os.path.join(file_loc, name + ' Big.png')
+        if name.split()[0]=='Coin' and name.split()[1]=='Bag':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Coin Pouch" + ' Big.png')
+        elif name.split()[-1]=='Key':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Instance Keys" + ' Big.png')
+        else:
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, name + ' Big.png')
         if not os.path.exists(files):
             raise FileNotFoundError
     except:
@@ -1058,6 +1291,36 @@ def get_item_button_image(name, max_width, max_height):
     
     return photo_image
 
+def get_armor_image(name, max_width=376, max_height=376):
+    try:
+        # Construct the absolute path to the Images folder
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_loc = os.path.join(script_dir, "Equipment Display")
+        files = os.path.join(file_loc, name + '.png')
+        if not os.path.exists(files):
+            raise FileNotFoundError
+    except:
+        file_loc = os.path.join(script_dir, "Equipment Display")
+        files = os.path.join(file_loc, "unknown.png")
+
+    # Open the image
+    image = Image.open(files)
+    
+    # Calculate the resize ratio
+    width_ratio = max_width / image.width
+    height_ratio = max_height / image.height
+    resize_ratio = min(width_ratio, height_ratio)
+    
+    # Resize the image
+    new_width = int(image.width * resize_ratio)
+    new_height = int(image.height * resize_ratio)
+    resized_image = image.resize((new_width, new_height))
+    
+    # Convert the image to PhotoImage
+    photo_image = ImageTk.PhotoImage(resized_image)
+
+    return photo_image
+
 def inventory_name_cut(name):
     if len(name)>15:
         s=''
@@ -1077,9 +1340,10 @@ def inventory_item_data(name,rank,category,t,r,s,window):
             fw.writerow(rec)
             fout.close()
 
-            subprocess.Popen(['python', 'Anime Version/Item Data/gui.py'])
-
-            window.quit()
+            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                theme_data=json.load(themefile)
+                theme=theme_data["Theme"]
+            subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py'])
     
     except:
         print()
@@ -1089,10 +1353,17 @@ def get_inventory_button_image(name):
         # Construct the absolute path to the Images folder
         script_dir = os.path.dirname(os.path.abspath(__file__))
         # Navigate up to the project root directory
-        file_loc = os.path.join(script_dir, "Images")
-        files = os.path.join(file_loc, name + ' Small.png')
+        if name.split()[0]=='Coin' and name.split()[1]=='Bag':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Coin Pouch" + ' Small.png')
+        elif name.split()[-1]=='Key':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Instance Keys" + ' Small.png')
+        else:
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, name + ' Small.png')
         if not os.path.exists(files):
-            raise FileNotFoundError
+            print(FileNotFoundError)
     except:
         file_loc = os.path.join(script_dir, "Images")
         files = os.path.join(file_loc, "Unknown.png")
@@ -1100,6 +1371,112 @@ def get_inventory_button_image(name):
     return PhotoImage(file=files)
 
 def equip_item(cat,item_full_data, window):
+
+    with open('Files/Inventory.json', 'r') as fout:
+        data=json.load(fout)
+        rol=list(data.keys())
+    with open('Files/Equipment.json', 'r') as first_equipment_file:
+        first_equipment_file_data=json.load(first_equipment_file)
+        if first_equipment_file_data[cat]!={}:
+            item_old_name=list(first_equipment_file_data[cat].keys())[0]
+            old_item_buff_main=list(first_equipment_file_data[cat][item_old_name][0]["buff"].keys())
+            try:
+                # ? HELM BUFF 1 
+                old_item_boost_1_name=old_item_buff_main[0]
+                if old_item_boost_1_name=="AGIbuff":
+                    oldbuff_1_name="AGI"
+                elif old_item_boost_1_name=="STRbuff":
+                    oldbuff_1_name="STR"
+                elif old_item_boost_1_name=="VITbuff":
+                    oldbuff_1_name="VIT"
+                elif old_item_boost_1_name=="INTbuff":
+                    oldbuff_1_name="INT"
+                elif old_item_boost_1_name=="PERbuff":
+                    oldbuff_1_name="PER"
+                elif old_item_boost_1_name=="MANbuff":
+                    oldbuff_1_name="MAN"
+
+                oldbuff1_value=data[cat][item_old_name][0]["buff"][old_item_boost_1_name]
+
+                # ? HELM BUFF 2
+                old_item_boost_2_name=old_item_buff_main[1]
+                if old_item_boost_2_name=="AGIbuff":
+                    oldbuff_2_name="AGI"
+                elif old_item_boost_2_name=="STRbuff":
+                    oldbuff_2_name="STR"
+                elif old_item_boost_2_name=="VITbuff":
+                    oldbuff_2_name="VIT"
+                elif old_item_boost_2_name=="INTbuff":
+                    oldbuff_2_name="INT"
+                elif old_item_boost_2_name=="PERbuff":
+                    oldbuff_2_name="PER"
+                elif old_item_boost_2_name=="MANbuff":
+                    oldbuff_2_name="MAN"
+
+                oldbuff2_value=data[cat][item_old_name][0]["buff"][old_item_boost_2_name]
+            except:
+                print("",end='')
+
+            try:
+                old_item_debuff_main=list(first_equipment_file_data[cat][item_old_name][0]["debuff"].keys())
+                # ? HELM BUFF 1 
+                old_item_deboost_1_name=old_item_debuff_main[0]
+                if old_item_deboost_1_name=="AGIbuff":
+                    olddebuff_1_name="AGI"
+                elif old_item_deboost_1_name=="STRdebuff":
+                    olddebuff_1_name="STR"
+                elif old_item_deboost_1_name=="VITdebuff":
+                    olddebuff_1_name="VIT"
+                elif old_item_deboost_1_name=="INTdebuff":
+                    olddebuff_1_name="INT"
+                elif old_item_deboost_1_name=="PERdebuff":
+                    olddebuff_1_name="PER"
+                elif old_item_deboost_1_name=="MANdebuff":
+                    olddebuff_1_name="MAN"
+
+                olddebuff1_value=data[cat][item_old_name][0]["debuff"][old_item_deboost_1_name]
+
+                # ? HELM BUFF 2
+                old_item_deboost_2_name=old_item_debuff_main[1]
+                if old_item_deboost_2_name=="AGIdebuff":
+                    olddebuff_2_name="AGI"
+                elif old_item_deboost_2_name=="STRdebuff":
+                    olddebuff_2_name="STR"
+                elif old_item_deboost_2_name=="VITdebuff":
+                    olddebuff_2_name="VIT"
+                elif old_item_deboost_2_name=="INTdebuff":
+                    olddebuff_2_name="INT"
+                elif old_item_deboost_2_name=="PERdebuff":
+                    olddebuff_2_name="PER"
+                elif old_item_deboost_2_name=="MANdebuff":
+                    olddebuff_2_name="MAN"
+
+                olddebuff2_value=data[cat][item_old_name][0]["debuff"][old_item_deboost_2_name]
+            except:
+                print("",end='')
+
+            with open("Files/status.json", 'r') as status_file_eq:
+                status_file_eq_data=json.load(status_file_eq)
+                try:
+                    status_file_eq_data["equipment"][0][oldbuff_1_name]=-oldbuff1_value
+                    status_file_eq_data["equipment"][0][oldbuff_2_name]=-oldbuff2_value
+                except:
+                    print()
+
+                try:
+                    status_file_eq_data["equipment"][0][olddebuff_1_name]=+olddebuff1_value
+                    status_file_eq_data["equipment"][0][olddebuff_2_name]=+olddebuff2_value
+                except:
+                    print()
+
+            first_equipment_file_data[cat]={}
+
+            with open('Files/Equipment.json', 'w') as second_write_equipment_file:
+                json.dump(first_equipment_file_data, second_write_equipment_file, indent=6)
+
+            with open('Files/status.json', 'w') as second_write_status_file:
+                json.dump(status_file_eq_data, second_write_status_file, indent=4)
+
     if cat in ["HELM", "CHESTPLATE", "FIRST GAUNTLET", "SECOND GAUNTLET", "BOOTS", "COLLAR", "RING"]:
         with open('Files/Equipment.json', 'r') as finale_equip:
             finale_equip_data=json.load(finale_equip)
@@ -1108,7 +1485,114 @@ def equip_item(cat,item_full_data, window):
         with open('Files/Equipment.json', 'w') as inject:
             json.dump(finale_equip_data, inject, indent=6)
 
-        subprocess.Popen(['python', 'Anime Version/Equipment/gui.py'])
+        with open('Files/Equipment.json', 'r') as second_equipment_file:
+            second_equipment_file_data=json.load(second_equipment_file)
+            item_new_name=list(second_equipment_file_data[cat].keys())[0]
+            new_item_buff_main=list(second_equipment_file_data[cat][item_new_name][0]["buff"].keys())
+
+            # ? HELM BUFF 1 
+            new_item_boost_1_name=new_item_buff_main[0]
+            if new_item_boost_1_name=="AGIbuff":
+                newbuff_1_name="AGI"
+            elif new_item_boost_1_name=="STRbuff":
+                newbuff_1_name="STR"
+            elif new_item_boost_1_name=="VITbuff":
+                newbuff_1_name="VIT"
+            elif new_item_boost_1_name=="INTbuff":
+                newbuff_1_name="INT"
+            elif new_item_boost_1_name=="PERbuff":
+                newbuff_1_name="PER"
+            elif new_item_boost_1_name=="MANbuff":
+                newbuff_1_name="MAN"
+
+            newbuff1_value=second_equipment_file_data[cat][item_new_name][0]["buff"][new_item_boost_1_name]
+
+            try:
+                # ? HELM BUFF 2
+                new_item_boost_2_name=new_item_buff_main[1]
+                if new_item_boost_2_name=="AGIbuff":
+                    newbuff_2_name="AGI"
+                elif new_item_boost_2_name=="STRbuff":
+                    newbuff_2_name="STR"
+                elif new_item_boost_2_name=="VITbuff":
+                    newbuff_2_name="VIT"
+                elif new_item_boost_2_name=="INTbuff":
+                    newbuff_2_name="INT"
+                elif new_item_boost_2_name=="PERbuff":
+                    newbuff_2_name="PER"
+                elif new_item_boost_2_name=="MANbuff":
+                    newbuff_2_name="MAN"
+
+                newbuff2_value=second_equipment_file_data[cat][item_new_name][0]["buff"][new_item_boost_2_name]
+            except:
+                print("",end='')
+
+            try:
+                new_item_debuff_main=list(second_equipment_file_data[cat][item_new_name][0]["debuff"].keys())
+                # ? HELM BUFF 1 
+                new_item_deboost_1_name=new_item_debuff_main[0]
+                if new_item_deboost_1_name=="AGIdebuff":
+                    newbuff_1_name="AGI"
+                elif new_item_deboost_1_name=="STRdebuff":
+                    newbuff_1_name="STR"
+                elif new_item_deboost_1_name=="VITdebuff":
+                    newbuff_1_name="VIT"
+                elif new_item_deboost_1_name=="INTdebuff":
+                    newbuff_1_name="INT"
+                elif new_item_deboost_1_name=="PERdebuff":
+                    newbuff_1_name="PER"
+                elif new_item_deboost_1_name=="MANdebuff":
+                    newbuff_1_name="MAN"
+
+                newdebuff1_value=data[cat][item_new_name][0]["debuff"][new_item_deboost_1_name]
+
+                # ? HELM BUFF 2
+                new_item_deboost_2_name=new_item_buff_main[1]
+                if new_item_deboost_2_name=="AGIdebuff":
+                    newdebuff_2_name="AGI"
+                elif new_item_deboost_2_name=="STRdebuff":
+                    newdebuff_2_name="STR"
+                elif new_item_deboost_2_name=="VITdebuff":
+                    newdebuff_2_name="VIT"
+                elif new_item_deboost_2_name=="INTdebuff":
+                    newdebuff_2_name="INT"
+                elif new_item_deboost_2_name=="PERdebuff":
+                    newdebuff_2_name="PER"
+                elif new_item_deboost_2_name=="MANdebuff":
+                    newdebuff_2_name="MAN"
+
+                newdebuff2_value=data[cat][item_new_name][0]["debuff"][new_item_deboost_2_name]
+            except:
+                print("",end='')
+
+            with open("Files/status.json", 'r') as status2_file_eq:
+                status2_file_eq_data=json.load(status2_file_eq)
+                try:
+                    status2_file_eq_data["equipment"][0][newbuff_1_name]=status2_file_eq_data["equipment"][0][newbuff_1_name]+newbuff1_value
+                    status2_file_eq_data["equipment"][0][newbuff_2_name]=status2_file_eq_data["equipment"][0][newbuff_2_name]+newbuff2_value
+                except:
+                    print()
+
+                try:
+                    status2_file_eq_data["equipment"][0][olddebuff_1_name]=-newdebuff1_value
+                    status2_file_eq_data["equipment"][0][olddebuff_2_name]=-newdebuff2_value
+                except:
+                    print()
+
+            with open('Files/Equipment.json', 'w') as second_final_write_equipment_file:
+                json.dump(second_equipment_file_data, second_final_write_equipment_file, indent=6)
+
+            with open('Files/status.json', 'w') as second_final_write_status_file:
+                json.dump(status2_file_eq_data, second_final_write_status_file, indent=4)
+
+        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            theme_data=json.load(themefile)
+            theme=theme_data["Theme"]
+        with open("Files/Tabs.json",'r') as tab_son:
+            tab_son_data=json.load(tab_son)
+
+        if tab_son_data["Inventory"]=='Close':
+            subprocess.Popen(['python', f'{theme} Version/Equipment/gui.py'])
         window.quit()
 
 def return_back_to_tab(loc,window):
@@ -1116,7 +1600,7 @@ def return_back_to_tab(loc,window):
         theme_data=json.load(themefile)
         theme=theme_data["Theme"]
         fin_loc=f'{theme} Version/{loc}/gui.py'
-    subprocess.Popen(['python', 'Anime Version/Inventory/gui.py'])
+    subprocess.Popen(['python', fin_loc])
     window.quit()   
 
 def selling_item(name,window,val):
@@ -1140,13 +1624,17 @@ def selling_item(name,window,val):
         read_status_file_data["status"][0]['coins']+=int(val)
         json.dump(read_status_file_data, write_status_file, indent=4)
 
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+
     if closing==True:
-        subprocess.Popen(['python', 'Anime Version/Inventory/gui.py'])
+        subprocess.Popen(['python', f'{theme} Version/Inventory/gui.py'])
 
         window.quit()
 
     else:
-        subprocess.Popen(['python', 'Anime Version/Item Data/gui.py'])
+        subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py'])
 
         window.quit()
 
@@ -1161,6 +1649,10 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
     except:
         name_of_activ_quests=[]
     
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+
     if activ_quests_vals<13 and activ_quests_vals!=13:
         quest_name='-'+entry_1.get()
         quest_type=(entry_2.get()).upper()
@@ -1247,26 +1739,24 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
             json.dump(activ_quests, fin_active_quest_file, indent=6)
 
     else:
-        fout=open('Files/Temp Files/Inventory temp.csv', 'w', newline='')
-        fw=csv.writer(fout)
-        rec=["Quest Slot Filled"]
-        fw.writerow(rec)
-        fout.close()
-        subprocess.Popen(['python', "Anime Version\Message\gui.py"])
+        message_open("Quest Slot Filled")
 
     window.quit()
 
-    subprocess.Popen(['python', 'Anime Version/Quests/gui.py'])
+    subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
 
 def set_preview_temp(nameob,quantity):
     if nameob!='-' and quantity!=0:
-        with open("Files/Temp Files/Preview Item Temp.csv", 'w', newline='') as new_csv_open:
+        with open("Files/Temp Files/Inventory temp.csv", 'w', newline='') as new_csv_open:
             fw=csv.writer(new_csv_open)
-            rec=[nameob, quantity]
+            rec=[nameob, quantity, 'Preview']
             fw.writerow(rec)
-        subprocess.Popen(['python', 'Anime Version/Preview Item/gui.py'])
+        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            theme_data=json.load(themefile)
+            theme=theme_data["Theme"]
+        subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py'])
 
-def quest_reward(window,dicts,rank,name):
+def quest_reward(window,dicts,rank,name,special=False):
     rol=list(dicts.keys())
     for k in rol:
         if k=="LVLADD":
@@ -1282,6 +1772,9 @@ def quest_reward(window,dicts,rank,name):
                 data_status["status"][0]['per']+=1
                 data_status["status"][0]['hp']+=10
                 data_status["status"][0]['mp']+=10
+                data_status["status"][0]['fatigue_max']+=40
+                if special!=True:
+                    data_status["status"][0]['fatigue']+=give_fatigue_from_rank(rank)
                 
             if rank=="E":
                 data_status["status"][0]['XP']+=10
@@ -1295,10 +1788,15 @@ def quest_reward(window,dicts,rank,name):
                 data_status["status"][0]['XP']+=150
             elif rank=="S":
                 data_status["status"][0]['XP']+=200
+            else:
+                data_status["status"][0]['XP']+=1000
 
             with open("Files/status.json", 'w') as fson:
                 json.dump(data_status, fson, indent=4)
-            subprocess.Popen(['python', 'Anime Version/Leveled up/gui.py'])
+            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                theme_data=json.load(themefile)
+                theme=theme_data["Theme"]
+            subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
 
         elif k=="STRav":
             for k in range(dicts[k]):
@@ -1349,16 +1847,19 @@ def quest_reward(window,dicts,rank,name):
 
     del quests[name]
 
-    with open("Files/Quests/Active_Quests.json", 'w') as folas:
+    with open("Files/Quests/Active_Quests.json", 'w') as folas: 
         json.dump(quests, folas, indent=6)
 
-    fout=open('Files/Temp Files/Inventory temp.csv', 'w', newline='')
-    fw=csv.writer(fout)
-    rec=["Quest Completed"]
-    fw.writerow(rec)
-    fout.close()
-    subprocess.Popen(['python', "Anime Version\Message\gui.py"])
-    subprocess.Popen(['python', 'Anime Version/Quests/gui.py'])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+    
+    if special==False:
+        message_open("Quest Completed")
+        subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
+    else:
+        message_open("Revertion")
+        subprocess.Popen(['python', 'First/Vows/gui.py'])
 
     window.quit()
 
@@ -1368,64 +1869,440 @@ def abandon_quest(name,window):
 
     del quests[name]
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fols:
+    with open("Files/Quests/Active_Quests.json", 'w') as fols:
         json.dump(quests, fols, indent=6)
 
-    subprocess.Popen(['python', 'Anime Version/Quests/gui.py'])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+    subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
 
     window.quit()
 
 def get_quest_image(rank,typel):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
     if rank!='-' and typel!='-':
         if rank=='D' or rank=='E':
             if typel=="Common":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_5.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_5.png"))
             
             elif typel=="Learn":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_6.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_6.png"))
             
         elif rank=='C' or rank=='B':
             if typel=="Common":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_8.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_8.png"))
             
             elif typel=="Learn":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_9.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_9.png"))
             
         elif rank=='A':
             if typel=="Common":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_11.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_11.png"))
             
             elif typel=="Learn":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_12.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_12.png"))
             
         elif rank=='S':
             if typel=="Common":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_14.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_14.png"))
             
             elif typel=="Learn":
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_15.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_15.png"))
         
         elif rank=='?':
             if typel=='Unknown':
-                return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_16.png"))
+                return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_16.png"))
     else:
-        return PhotoImage(file=("Anime Version/Quests/assets/frame0/image_17.png"))
+        return PhotoImage(file=(f"{theme} Version/Quests/assets/frame0/image_17.png"))
 
 def open_write_quest(name,id,type,window):
     if name!="-":
+        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            theme_data=json.load(themefile)
+            theme=theme_data["Theme"]
         with open("Files/Temp Files/Quest Temp.csv", 'w', newline='') as csv_open:
                 fw=csv.writer(csv_open)
-                rec=[name,id]
+                rec=[name,id,type]
                 fw.writerow(rec)
-        if type=='Learn':
-            subprocess.Popen(['python', 'Anime Version/Quest Info/Learn Quest/gui.py'])
-        
-        elif type=='Common':
-            subprocess.Popen(['python', 'Anime Version/Quest Info/Count Quest/gui.py'])
 
-        elif type=='Unknown':
-            subprocess.Popen(['python', 'Anime Version/Quest Info/Unknown Quest/gui.py'])
+        subprocess.Popen(['python', f'{theme} Version/Quest Info/gui.py'])
+
+        with open("Files/Tabs.json",'r') as tab_son:
+            tab_son_data=json.load(tab_son)
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Quest"]='Close'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
 
         window.quit()
 
+def fade_out(window, alpha):
+    if alpha > 0:
+        window.attributes('-alpha', alpha)
+        alpha -= 0.08
+        window.after(1, fade_out, window, alpha)
+    else:
+        window.attributes('-alpha', 0)
 
+def give_ranking(level):
+    if level>=101:
+        return "National"
+    elif level>=91 and level<=100:
+        return "SSS"
+    elif level>=81 and level<=90:
+        return "SS"
+    elif level>=66 and level<=80:
+        return "S"
+    elif level>=46 and level<=65:
+        return "A"
+    elif level>=31 and level<=45:
+        return "B"
+    elif level>=21 and level<=30:
+        return "C"
+    elif level>=11 and level<=20:
+        return "D"
+    elif level>=1 and level<=10:
+        return "E"
+
+def give_ranking_from_daily(daily_lvl):
+    if daily_lvl>=91 and daily_lvl<=100:
+        return 1300
+    elif daily_lvl>=71 and daily_lvl<=90:
+        return 600
+    elif daily_lvl>=56 and daily_lvl<=70:
+        return 285
+    elif daily_lvl>=41 and daily_lvl<=55:
+        return 175
+    elif daily_lvl>=21 and daily_lvl<=40:
+        return 80
+    elif daily_lvl>=1 and daily_lvl<=20:
+        return 40
+    
+def give_fatigue_from_rank(rank):
+    if rank=='E':
+        return 40
+    elif rank=='D':
+        return 80
+    elif rank=='C':
+        return 175
+    elif rank=='B':
+        return 285
+    elif rank=='A':
+        return 600
+    elif rank=='S':
+        return 1300
+    
+def message_open(message):
+    fout=open('Files/Checks/Message.csv', 'w', newline='')
+    fw=csv.writer(fout)
+    rec=[message]
+    fw.writerow(rec)
+    fout.close()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+    subprocess.Popen(['python', f"{theme} Version\Message\gui.py"])
+
+def reduction(val, stre, agi, types):
+    if types=="amt":
+        if val==50:
+            if stre>=20 and stre<=30:
+                return -10
+            elif stre>=31 and stre<=40:
+                return -20
+            elif stre>=41 and stre<=50:
+                return -30
+            elif stre>=51 and stre<=60:
+                return -40
+            elif stre>=61 and stre<=70:
+                return -100
+            else:
+                return 0
+        
+        elif val==15:
+            if stre>=20 and stre<=30:
+                return -5
+            elif stre>=31 and stre<=40:
+                return -5
+            elif stre>=41 and stre<=50:
+                return -10
+            elif stre>=51 and stre<=60:
+                return -25
+            elif stre>=61 and stre<=70:
+                return -35
+            else:
+                return 0
+            
+        elif val==30:
+            if stre>=20 and stre<=30:
+                return -10
+            elif stre>=31 and stre<=40:
+                return -10
+            elif stre>=41 and stre<=50:
+                return -20
+            elif stre>=51 and stre<=60:
+                return -25
+            elif stre>=61 and stre<=70:
+                return -35
+        
+        else:
+            return 0
+        
+    elif types=="time":
+        if val==45:
+            if agi>=20 and agi<=30:
+                return -10
+            elif agi>=31 and agi<=40:
+                return -20
+            elif agi>=41 and agi<=50:
+                return -30
+            elif agi>=51 and agi<=60:
+                return -30
+            elif agi>=61 and agi<=70:
+                return -40
+            else:
+                return 0
+        
+        elif val==60:
+            if agi>=20 and agi<=30:
+                return -20
+            elif agi>=31 and agi<=40:
+                return -30
+            elif agi>=41 and agi<=50:
+                return -100
+            elif agi>=51 and agi<=60:
+                return -100
+            elif agi>=61 and agi<=70:
+                return -200
+            else:
+                return 0
+        
+        else:
+            return 0
+
+def xp_curve(x):
+    if 1 <= x <= 15:
+        return 30 + 20 * (x - 1)
+    elif x > 15:
+        return 30 + 20 * 14 + max(0, 121.3 * (x - 15)**1.3)  # Ensure XP gain is always positive
+    elif x > 101:
+        return 30 + 20 * 14 + max(0, 121.3 * (x - 15)**1.1)  # Ensure XP gain is always positive
+    else:
+        raise ValueError("x must be greater than or equal to 1")
+
+def check_demons():
+    if not os.path.exists("Files\Demons Castle\Demon_Data.json"):
+        data={
+    "Demon Imp": {
+        "rank": "E",
+        "type": "Normal",
+        "swarm": "Yes",
+        "soul":1,
+        "XP": 10
+    },
+    "Demon Wisp": {
+        "rank": "E",
+        "type": "Normal",
+        "swarm": "Yes",
+        "soul":1,
+        "XP": 12
+    },
+    "Demon Vermin": {
+        "rank": "E",
+        "type": "Normal",
+        "swarm": "Yes",
+        "soul":1,
+        "XP": 15
+    },
+    "Demon Grunt": {
+        "rank": "D",
+        "type": "Normal",
+        "swarm": "Yes",
+        "soul":2,
+        "XP": 20
+    },
+    "Demon Scout": {
+        "rank": "D",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":2,
+        "XP": 25
+    },
+    "Demon Hound": {
+        "rank": "D",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":2,
+        "XP": 30
+    },
+    "Demon Soldier": {
+        "rank": "C",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":3,
+        "XP": 40
+    },
+    "Demon Mage": {
+        "rank": "C",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":3,
+        "XP": 45
+    },
+    "Demon Beast": {
+        "rank": "C",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":3,
+        "XP": 50
+    },
+    "Demon Knight": {
+        "rank": "B",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 60
+    },
+    "Demon Berserker": {
+        "rank": "B",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 65
+    },
+    "Demon Guardian": {
+        "rank": "B",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 70
+    },
+    "Demon Captain": {
+        "rank": "A",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 80
+    },
+    "Demon Assassin": {
+        "rank": "A",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 85
+    },
+    "Demon Warlock": {
+        "rank": "A",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 90
+    },
+    "Demon Noble": {
+        "rank": "S",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 100
+    },
+    "Demon Warlord": {
+        "rank": "S",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 110
+    },
+    "Demon Sorcerer": {
+        "rank": "S",
+        "type": "Normal",
+        "swarm": "No",
+        "soul":4,
+        "XP": 120
+    },
+    "Demon Lord": {
+        "rank": "SS",
+        "type": "Elite",
+        "swarm": "No",
+        "soul":4,
+        "XP": 150
+    },
+    "Demon Archmage": {
+        "rank": "SS",
+        "type": "Elite",
+        "swarm": "No",
+        "soul":4,
+        "XP": 160
+    },
+    "Demon Executioner": {
+        "rank": "SS",
+        "type": "Elite",
+        "swarm": "No",
+        "soul":4,
+        "XP": 170
+    },
+    "Demon Overlord": {
+        "rank": "SSS",
+        "type": "Elite",
+        "swarm": "No",
+        "soul":4,
+        "XP": 250
+    },
+    "Demon King": {
+        "rank": "SSS",
+        "type": "Elite",
+        "swarm": "No",
+        "soul":4,
+        "XP": 300
+    },
+    "Demon Tyrant": {
+        "rank": "SSS",
+        "type": "Elite",
+        "swarm": "No",
+        "soul":4,
+        "XP": 350
+    }
+}
+
+        with open("Files\Demons Castle\Demon_Data.json", "w") as demon_file:
+            json.dump(data, demon_file, indent=6)
+
+        # Generate XP values for x between 1 and 100
+        xp_values = {}
+        prev_value = 0  # Track previous value to enforce monotonicity
+        for x in range(1, 500):
+            current_value = round(xp_curve(x), 1)
+            if current_value <= prev_value:  # Ensure the current value is greater
+                current_value = prev_value + 1
+            xp_values[str(x)] = current_value
+            prev_value = current_value  # Update previous value
+
+        with open("Files/Data/Level_Up_Values.json", 'w') as fron3:
+            json.dump({"XP Check": xp_values}, fron3, indent=4)
+
+        with open("Files\Status.json", 'r') as status_file:
+            status = json.load(status_file)
+            lvl=status["status"][0]['level']
+        
+        xp_of=xp_values[str(lvl)]
+
+        status["status"][0]['XP']=xp_of
+        with open("Files\Status.json", 'w') as status_file:
+            json.dump(status, status_file, indent=8)
+
+def xp_input():
+    # Generate XP values for x between 1 and 100
+    xp_values = {}
+    prev_value = 0  # Track previous value to enforce monotonicity
+    for x in range(1, 500):
+        current_value = round(xp_curve(x), 1)
+        if current_value <= prev_value:  # Ensure the current value is greater
+            current_value = prev_value + 1
+        xp_values[str(x)] = current_value
+        prev_value = current_value  # Update previous value
+
+    with open("Files/Data/Level_Up_Values.json", 'w') as fron3:
+        json.dump({"XP Check": xp_values}, fron3, indent=4)
+        

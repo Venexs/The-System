@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import random
+import json
 import cv2
 from PIL import Image, ImageTk
 import time
@@ -147,7 +147,7 @@ image_3 = canvas.create_image(
 )
 
 prog()
-subprocess.Popen(['python', 'sfx.py'])
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 window.resizable(False, False)
 window.mainloop()

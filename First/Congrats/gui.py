@@ -10,11 +10,22 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import random
+import json
 import cv2
 from PIL import Image, ImageTk
 import threading
+import sys
+import os
 
-subprocess.Popen(['python', 'sfx.py'])
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+
+sys.path.insert(0, project_root)
+
+import thesystem.system
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -75,7 +86,7 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
     if new_height > target_height:
         window.after(delay, animate_window_close, window, target_height, width, step, delay)
     else:
-        subprocess.Popen(['python', 'First/Info/gui.py'])
+        subprocess.Popen(['python', 'First/Sign up/gui.py'])
         window.quit()
 
 window = Tk()
@@ -87,7 +98,7 @@ window_width = 696
 make_window_transparent(window)
 
 window.geometry(f"{window_width}x{initial_height}")
-animate_window_open(window, target_height, window_width, step=25, delay=1)
+animate_window_open(window, target_height, window_width, step=45, delay=1)
 
 center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")
@@ -147,12 +158,12 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'sfx_close.py'])
-    animate_window_close(window, initial_height, window_width, step=30, delay=1)
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    animate_window_close(window, initial_height, window_width, step=45, delay=1)
 
 def fin():
-    subprocess.Popen(['python', 'sfx_close.py'])
-    animate_window_close(window, initial_height, window_width, step=30, delay=1)
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    animate_window_close(window, initial_height, window_width, step=45, delay=1)
 
 canvas = Canvas(
     window,

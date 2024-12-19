@@ -1,0 +1,96 @@
+{
+    "Active Theme":["Anime"],
+    "Anime":{
+        "Video":"Files/Mod/default/Anime/0001-0200.mp4",
+        "Close SFX":"Files/Mod/default/Anime/Close.wav",
+        "Open SFX":"Files/Mod/default/Anime/Open.wav",
+        "Glitch SFX":"Files/Mod/default/Anime/Glitch.wav",
+        "Point SFX":"Files/Mod/default/Anime/Point Add.wav",
+        "Button SFX":"Files/Mod/default/Anime/Button Press.wav",
+
+        "Mid Size Screen":"Files/Mod/default/Anime/Mid Size Screen",
+
+        "Normal Font Color":"#FFFFFF"
+    },
+
+    "Manwha":{
+        "Video":"Files/Mod/default/Manwha/0001-1000.mp4",
+        "Close SFX":"Files/Mod/default/Manwha/Close.wav",
+        "Open SFX":"Files/Mod/default/Manwha/Open.wav",
+        "Glitch SFX":"Files/Mod/default/Manwha/Glitch.wav",
+        "Point SFX":"Files/Mod/default/Manwha/Point Add.wav",
+        "Button SFX":"Files/Mod/default/Manwha/Button Press.wav",
+
+        "Mid Size Screen":"Files/Mod/default/Manwha/Mid Size Screen",
+
+        "Normal Font Color":"#FFD337"
+    },
+
+    "Message":{
+        "Access Code Incomplete":
+        [
+            "Files/Mod/default/messages/Access Code Not Found.png"
+        ],
+        "Access Code Complete":
+        [
+            "Files/Mod/default/messages/Access Code Found.png"
+        ],
+        "Insufficient Funds":
+        [
+            "Files/Mod/default/messages/Insufficient Funds.png"
+        ],
+        "Quest Completed":
+        [
+            "Files/Mod/default/messages/Quest Completed.png"
+        ],
+        "Quest Slot Filled":
+        [
+            "Files/Mod/default/messages/Quest Slots are Filled.png"
+        ],
+        "Title Exists":
+        [
+            "Files/Mod/default/messages/Title Exists.png"
+        ],
+        "No Instance Keys":
+        [
+            "Files/Mod/default/messages/No Instance Keys.png"
+        ],
+        "Instance Reward":
+        [
+            "Files/Mod/default/messages/Instance Reward.png"
+        ],
+        "Normal Reward":
+        [
+            "Files/Mod/default/messages/Normal Reward.png"
+        ],
+        "Fatigue":
+        [
+            "Files/Mod/default/messages/High Fatigue.png"
+        ],
+        "High Rank":
+        [
+            "Files/Mod/default/messages/High Rank.png"
+        ],
+        "Demon Castle Reward":
+        [
+            "Files/Mod/default/messages/Demon Castle Reward.png"
+        ],
+        "Revertion":
+        [
+            "Files/Mod/default/messages/Revertion.png"
+        ],
+        "System Deleted":
+        [
+            "Files/Mod/default/messages/System Deleted.png"
+        ],
+        "Final Session":
+        [
+            "Files/Mod/default/messages/Final Session.png"
+        ]
+        ,
+        "Courage of the Weak":
+        [
+            "Files/Mod/default/messages/Courage of the Weak.png"
+        ]
+    }
+}

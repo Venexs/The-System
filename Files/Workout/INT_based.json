@@ -18,7 +18,7 @@
             "time":60,
 
             "timeval":"Minutes",
-            "Type":"Learn"
+            "type":"Learn"
         },
         {
             "INTBUFF":1

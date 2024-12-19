@@ -22,7 +22,7 @@
         {
             "lvl":1,
             "type":"Active",
-            "desc":"Gives the User the ability to get a faster start in a sprint/run",
+            "desc":"Gives the User the ability to get a faster start in a sprint / run",
 
             "base":"STR",
             "rewards":{

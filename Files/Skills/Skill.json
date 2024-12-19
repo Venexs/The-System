@@ -1,3 +1,15 @@
 {
-
+      "Dash": [
+            {
+                  "lvl": 2,
+                  "type": "Active",
+                  "desc": "Gives the User the ability to get a faster start in a sprint / run",
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of Lightning": 1
+                  },
+                  "pl_point": 0
+            }
+      ]
 }

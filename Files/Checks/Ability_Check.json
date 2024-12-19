@@ -1,10 +1,10 @@
 {
     "Check": {
-        "STR": 1,
-        "AGI": 0,
-        "VIT": 0,
+        "STR": 0,
+        "AGI": 1,
+        "VIT": 3,
         "INT": 1,
-        "PER": 0,
-        "MAN": 0
+        "PER": 3,
+        "MAN": 3
     }
 }

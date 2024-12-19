@@ -9,6 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
+import threading
 import json
 import sys
 import os
@@ -28,60 +29,6 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-
-def make_window_transparent(window):
-    window.wm_attributes('-transparentcolor', "#0C679B")
-
-def center_window(root, width, height):
-    # Get screen width and height
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    
-    # Calculate position x, y to center the window
-    x = (screen_width - width) // 2
-    y = (screen_height - height) // 2
-    
-    # Set the dimensions of the window and the position
-    root.geometry(f'{width}x{height}+{x}+{y}')
-
-def animate_window_open(window, target_height, width, step=2, delay=5):
-    current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height < target_height:
-        new_height = min(current_height + step, target_height)
-    else:
-        new_height = current_height
-    
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
-
-    if new_height < target_height:
-        window.after(delay, animate_window_open, window, target_height, width, step, delay)
-
-def animate_window_close(window, target_height, width, step=2, delay=5):
-    current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height > target_height:
-        new_height = max(current_height - step, target_height)
-    else:
-        new_height = current_height
-    
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
-
-    if new_height > target_height:
-        window.after(delay, animate_window_close, window, target_height, width, step, delay)
-    else:
-        window.quit()
-
 def start_move(event):
     global lastx, lasty
     lastx = event.x_root
@@ -98,9 +45,10 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'sfx_close.py'])
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     subprocess.Popen(['python', 'First/Theme Check/gui.py'])
-    animate_window_close(window, initial_height, window_width, step=30, delay=1)
+    thesystem.system.animate_window_close(window, initial_height, window_width, step=30, delay=1)
 
 window = Tk()
 
@@ -109,14 +57,14 @@ target_height = 549
 window_width = 867
 
 window.geometry(f"{window_width}x{initial_height}")
-animate_window_open(window, target_height, window_width, step=30, delay=1)
-subprocess.Popen(['python', 'sfx.py'])
+thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-make_window_transparent(window)
+thesystem.system.make_window_transparent(window)
 
 with open("Files/status.json", 'r') as first_fson:
     data=json.load(first_fson)

@@ -20,7 +20,7 @@ window = Tk()
 
 # Configure the window
 window.geometry("1272x718")
-subprocess.Popen(['python', 'sfx_glitch.py'])
+subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
 
 window.configure(bg="#000000")
 window.wm_attributes("-topmost", True)
@@ -78,7 +78,7 @@ canvas = Canvas(
 canvas.pack(fill="both", expand=True)
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'sfx_close.py'])
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     window.quit()
 
 # Load images

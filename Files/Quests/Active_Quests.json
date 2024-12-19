@@ -10,5 +10,51 @@
                         "LVLADD": 10
                   }
             }
+      ],
+      "Fight. Just Fight": [
+            {
+                  "desc": "An elder delivers a bundle of scrolls, each containing instructions",
+                  "amt": 30,
+                  "amtval": "Pairs",
+                  "type": "Common",
+                  "rank": "C",
+                  "ID": 82373,
+                  "Rewards": {
+                        "Coin Bag 5000": 1,
+                        "Coin Bag 2000": 1
+                  },
+                  "skill": "Jumping Jacks"
+            }
+      ],
+      "To know all is to control all": [
+            {
+                  "desc": "A commander shares a list of exercise, these will prove to be useful in the upcoming campaign",
+                  "amt": 3,
+                  "amtval": "Book",
+                  "type": "Learn",
+                  "obj_desc": "Read a biography of a renowned leader",
+                  "rank": "C",
+                  "ID": 726002,
+                  "Rewards": {
+                        "Coin Bag 5000": 1,
+                        "Coin Bag 2000": 1
+                  },
+                  "skill": "Read Biographies"
+            }
+      ],
+      "Time to make some Miracles": [
+            {
+                  "desc": "A Challenger dared you to do complete these objectives",
+                  "amt": 3,
+                  "amtval": "Times",
+                  "type": "Common",
+                  "rank": "D",
+                  "ID": 245882,
+                  "Rewards": {
+                        "Coin Bag 500": 1,
+                        "D Rank Instance Key": 1
+                  },
+                  "skill": "Hobbies"
+            }
       ]
 }

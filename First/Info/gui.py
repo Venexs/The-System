@@ -9,11 +9,13 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
+import threading
 import random
 import cv2
 from PIL import Image, ImageTk
 import time
 import json
+import csv
 import sys
 import os
 
@@ -48,11 +50,11 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'sfx_close.py'])
-    thesystem.system.animate_window_close(window, initial_height, window_width, step=30, delay=1)
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 def get():
-    name=entry_1.get()
     age=entry_2.get()
     gen=entry_2_5.get()
     height=entry_3.get()
@@ -82,7 +84,6 @@ def get():
 
     with open("Files/status.json", 'r') as first_fson:
         data=json.load(first_fson)
-        data["status"][0]['name']=name
 
         data["cal_data"][0]["age"]=age
         data["cal_data"][0]["gender"]=gen
@@ -96,8 +97,25 @@ def get():
     with open("Files/status.json", 'w') as fson:
         json.dump(data, fson, indent=4)
 
-    subprocess.Popen(['python', 'First/Main BMI/gui.py'])
-    window.quit()
+    with open("Files/Checks/info_open.csv", 'r') as info_open:
+        info_fr=csv.reader(info_open)
+        for k in info_fr:
+            istrue=k[0]
+
+    if istrue=='True':
+        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            theme_data=json.load(themefile)
+            theme=theme_data["Theme"]
+
+        subprocess.Popen(['Python', f'{theme} Version/Settings/gui.py'])
+        with open("Files/Checks/info_open.csv", 'w', newline='') as info_open:
+            fw=csv.writer(info_open)
+            fw.writerow(["False"])
+        ex_close(window)
+    
+    else:
+        subprocess.Popen(['python', 'First/Main BMI/gui.py'])
+        ex_close(window)
 
 window = Tk()
 
@@ -107,7 +125,7 @@ window_width = 867
 
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
-subprocess.Popen(['python', 'sfx.py'])
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
@@ -163,34 +181,6 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-canvas.create_text(
-    321.0,
-    137.0,
-    anchor="nw",
-    text="Name:",
-    fill="#FFFFFF",
-    font=("Montserrat Medium", 16 * -1)
-)
-
-entry_image_1 = PhotoImage(
-    file=relative_to_assets("entry_1.png"))
-entry_bg_1 = canvas.create_image(
-    486.5,
-    170.5,
-    image=entry_image_1
-)
-entry_1 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0
-)
-entry_1.place(
-    x=321.0,
-    y=159.0,
-    width=331.0,
-    height=21.0
-)
 
 canvas.create_text(
     321.0,
@@ -201,13 +191,6 @@ canvas.create_text(
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_image_2 = PhotoImage(
-    file=relative_to_assets("entry_2.png"))
-entry_bg_2 = canvas.create_image(
-    381.5,
-    219.5,
-    image=entry_image_2
-)
 entry_2 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -230,13 +213,6 @@ canvas.create_text(
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_image_2_5 = PhotoImage(
-    file=relative_to_assets("entry_2.png"))
-entry_bg_2_5 = canvas.create_image(
-    381.5,
-    219.5,
-    image=entry_image_2_5
-)
 entry_2_5 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -259,13 +235,6 @@ canvas.create_text(
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_image_3 = PhotoImage(
-    file=relative_to_assets("entry_3.png"))
-entry_bg_3 = canvas.create_image(
-    381.5,
-    272.5,
-    image=entry_image_3
-)
 entry_3 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -288,13 +257,6 @@ canvas.create_text(
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_image_4 = PhotoImage(
-    file=relative_to_assets("entry_4.png"))
-entry_bg_4 = canvas.create_image(
-    516.5,
-    272.5,
-    image=entry_image_4
-)
 entry_4 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -325,13 +287,6 @@ canvas.create_text(
     fill="#FFFFFF",
     font=("Montserrat Medium", 16 * -1)
 )
-entry_image_5 = PhotoImage(
-    file=relative_to_assets("entry_5.png"))
-entry_bg_5 = canvas.create_image(
-    459.0,
-    349.5,
-    image=entry_image_5
-)
 entry_5 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -349,18 +304,11 @@ canvas.create_text(
     321.0,
     369.0,
     anchor="nw",
-    text="Desired Result (Mild Weight gain, Mild Weight Loss):",
+    text="Desired Result (Mild Weight Gain, Mild Weight Loss):",
     fill="#FFFFFF",
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_image_6 = PhotoImage(
-    file=relative_to_assets("entry_6.png"))
-entry_bg_6 = canvas.create_image(
-    418.5,
-    402.5,
-    image=entry_image_6
-)
 entry_6 = Entry(
     bd=0,
     bg="#FFFFFF",
