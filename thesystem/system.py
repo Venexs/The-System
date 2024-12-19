@@ -2306,3 +2306,219 @@ def xp_input():
     with open("Files/Data/Level_Up_Values.json", 'w') as fron3:
         json.dump({"XP Check": xp_values}, fron3, indent=4)
         
+def GenerateRandomAICode():
+    with open("Files/status.json", 'r') as fson:
+        data = json.load(fson)
+        name = data["status"][0]['name'].upper()
+        # ? =================================================
+        hp = data["status"][0]['hp']
+        mp = data["status"][0]['mp']
+        lvl = data["status"][0]['level']
+        old_lvl = f"{lvl:02d}"
+        # ? =================================================
+        stre = data["status"][0]['str']
+        intel = data["status"][0]['int']
+        agi = data["status"][0]['agi']
+        vit = data["status"][0]['vit']
+        per = data["status"][0]['per']
+        man = data["status"][0]['man']
+        # ? =================================================
+        tit = data["status"][1]['title'].upper()
+        job = data["status"][1]['job'].upper()
+        # ? =================================================
+        xp_str = data["status"][0]['XP']
+        coins = data["status"][0]['coins']
+        # ? =================================================
+        av_str_based = data["avail_eq"][0]['str_based']
+        av_int_based = data["avail_eq"][0]['int_based']
+        system_filepath = "E:/System/Edited/12-06 System Update 3/System_SL-main/thesystem/system.py"
+        try:
+            with open(system_filepath, "r") as file:
+                system_code = file.read()
+        except FileNotFoundError:
+            print(f"Error: The file {system_filepath} was not found.")
+            system_code = None
+        examplefilepath = "E:/System/Edited/12-06 System Update 3/System_SL-main/Anime Version/AIBASE/gui.py"
+        try:
+            with open(examplefilepath, "r") as file:
+                examplefile = file.read()
+        except FileNotFoundError:
+            print(f"Error: The file {examplefilepath} was not found.")
+            examplefile = None
+        # ? =================================================
+        genai.configure(api_key="AIzaSyCSoGWi5wdBs3nXUBrNDMp5gkvyTNTCmqA")
+        model = genai.GenerativeModel("gemini-1.5-pro")
+        response = model.generate_content(
+            """
+
+Generate code for a new quest, gui, dungeon, red gate, or whatever you want. The code needs to be self writing, with the python gemini api.
+
+
+
+
+MAKE SURE THE FIRST THING YOU WRITE AFTER MODULE IMPORTS IS:
+
+
+
+
+
+            code whatever you want to add based on the stats. You can find the stats by doing this:
+            
+            import json
+            
+            TO CHECK AND USE STATS:
+            
+            with open("Files/status.json", 'r') as fson:
+                data = json.load(fson)
+                statnamevar = data["status"][0][statname]
+                print(statnamevar)
+            
+            
+            MAKE SURE ANY STAT VARIABLESYOU WANT TO USE IS INDENTED THE SAME AS WHEN YOU SET THE STAT VARIABLES.
+            
+            Replace statname with the stat name you want to check, you can also check the player level, 0-200. Also replace statnamevar with a slightly modified statname that you plan to check.
+            The current stat values are:
+            hp: {hp}
+            mp: {mp}
+            level: {lvl}
+            str: {stre}
+            int: {intel}
+            agi: {agi}
+            vit: {vit}
+            per: {per}
+            man: {man}
+            
+            
+            GENREATE WHATEVER YOU WANT! MAKE IT ONLY CODE. IF YOU NEED TO ADD COMMENTS, JUST DONT DO IT! I DONT WANT ANY COMMENTS, PURE CODE. DONT EVEN WRITE ANYTHING AT THE BEGINNING!
+            
+            MAKE SURE YOU import the system before you try and use it by doing: import thesystem.system
+            
+            If you need to check how the system.py or any function in that code is structured, read this file!
+            
+            {system_code}
+            
+            The file is thesystem.system.py
+            Use stuff like this to write code to new files:
+            
+            with open(file_name, "w") as file:
+                file.write(codeexample)
+            
+            To generate ai text:
+            
+            import google.generativeai as genai
+
+            genai.configure(api_key="AIzaSyCSoGWi5wdBs3nXUBrNDMp5gkvyTNTCmqA")
+            model = genai.GenerativeModel("gemini-1.5-pro")
+            response = model.generate_content(""ADD PROMPT FOR IT TO CODE: BUT NO COMMENTS ONLY PURE CODE! 
+            
+            
+            MAKE SURE WHEN YOU GENERATE AI CODE YOU USE THIS AFTERWARDS:
+        response = response.text
+        _, _, response = response.partition("\n")
+        response, _, _ = response.rpartition("\n")
+        for artifact in ["```", "```python"]:
+            response = response.replace(artifact, "").strip()
+            
+        TO REMOVE FORMATTING"")
+        
+        
+        
+        
+            print(response.text)
+            when using with open(file_name, "w") as file:, make sure you do this: with open(file_name, "w", encoding="utf-8") as file:
+            
+            When you make the code that generates more code, make sure it generates only code, and it needs to be just as game ready as the file you are generating.
+            
+            Make sure you use my api key, dont edit that.
+
+            Step 1. you need to duplicate the folder called AIBASE, in the main directory, keep the name the same, but add a prefix of AIGENERATEDFUNC#### replace #### with a random number.
+            
+            
+            USE THIS code AS A TEMPLATE FOR TKINKER AND ADD ONTO IT WITH MORE TEXT KEEP EVERYTHING the same but add onto it with other images: 
+
+
+
+
+
+
+                        
+Make sure to import path:
+            
+from pathlib import Path
+
+
+BEFORE YOU MAKE ANY TEXT, MAKE SURE YOU ST relative_to_assets=("/assets/frame0")
+
+
+
+To make new text in the TKinker file use this:
+
+window.create_text(
+    65.99966430664062,
+    88.0,
+    anchor="nw",
+    text="{text}",
+    fill=normal_font_col,
+    font=("Montserrat Bold", 13 * -1)
+)
+REPLACE THE 65 and 88 with x and y values for positions.
+
+
+            Also keep the positions of the pre-existing images the same.
+            
+            YOU SHOULD ALSO ADD AN AI PROMPT TO MAKE NEW FOLDERS AND GUI FILES WHENEVER YOU NEED TO MAKE A NEW GUI YOU CAN DO IT BY DUPLICATING THE AIBASE FOLDER AGAIN WITH A DIFFERENT NAME.
+
+
+MAKE SURE WHEN YOU GENERATE AI CODE YOU USE THIS AFTERWARDS:
+        response = response.text
+        _, _, response = response.partition("\n")
+        response, _, _ = response.rpartition("\n")
+        for artifact in ["```", "```python"]:
+            response = response.replace(artifact, "").strip()
+            
+        TO REMOVE FORMATTING
+            
+            
+            Use shutil to duplicate the folder. Duplicate the folder into the root
+            
+
+            run the file by using this code:
+            
+import subprocess # at the top
+
+subprocess.run(["python", file_name]) # make sure you keep "python" the same.
+            
+            Step 3, MAKE SURE ITS GAME READY AND NOTHING IS UNFINISHED.    
+
+
+            STOP MAKING COMMENTS DAMNIT
+MAKE LITERALLY WHATEVER TEXT YOU WANT IN THAT FILE IN RELATION TO THE SOLO LEVELING SYSTEM. YOU CAN MAKE NEW GUI.
+
+MAKE THE AI ALSO KEEP GENERATING STUFF LIKE MORE CODE FOR ITSELF OVER TIME.
+
+MAKE SURE YOU GENERATE ONLY PURE CODE. NO COMMENTS!
+            
+            """,
+            generation_config=genai.types.GenerationConfig(
+                max_output_tokens=4000,
+                temperature=0.2,
+            ),
+        )
+        generated_code = response.text
+        _, _, generated_code = generated_code.partition("\n")
+        print(generated_code)
+
+        # Remove all formatting artifacts
+        for artifact in ["```", "```python"]:
+            generated_code = generated_code.replace(artifact, "").strip()
+
+        # Save the cleaned code to a file
+        file_name = "generated_script.py"
+        with open(file_name, "w", encoding="utf-8") as file:
+            file.write(generated_code)
+
+        print(f"Code saved to {file_name}")
+
+        # Step 5: Run the Python file
+        subprocess.run(["python", file_name])
+        

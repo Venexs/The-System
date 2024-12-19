@@ -1177,6 +1177,38 @@ image_18 = canvas.create_image(
 
 canvas.tag_bind(image_18, "<ButtonPress-1>", open_dungeon)
 
+image_image_50 = PhotoImage(
+    file=relative_to_assets("image_18.png"))
+image_50 = canvas.create_image(
+    321.0,
+    35.0,
+    image=image_image_50,
+    state="normal"
+)
+
+canvas.tag_bind(image_50, "<ButtonPress-1>", open_requests)
+
+image_image_22 = PhotoImage(
+    file=relative_to_assets("image_22.png"))
+image_22 = canvas.create_image(
+    414.0,
+    315.0,
+    image=image_image_22,
+    tags="bar",
+    state="hidden"
+)
+
+def messagesopen(event):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+        inv_name=f"{theme} Version/PVP Messages/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
+
+canvas.tag_bind(image_22, "<ButtonPress-1>", messagesopen)
+
 
 image_image_19 = PhotoImage(
     file=relative_to_assets("image_19.png"))
