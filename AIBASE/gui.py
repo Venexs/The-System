@@ -16,11 +16,11 @@ import csv
 import sys
 import os
 
-new_working_directory = r"E:/System/Edited/SystemUpdate3/System_SL-main"
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-os.chdir(new_working_directory)
+project_root = os.path.abspath(os.path.join(current_dir, '../'))
 
-sys.path.insert(0, new_working_directory)
+sys.path.insert(0, project_root)
 
 import thesystem.system
 

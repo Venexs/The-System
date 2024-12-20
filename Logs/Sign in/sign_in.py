@@ -61,34 +61,6 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-
-
-
-def animate_window_close(window, target_height, width, step=2, delay=5):
-    current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height > target_height:
-        new_height = max(current_height - step, target_height)
-    else:
-        new_height = current_height
-    
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
-
-    if new_height > target_height:
-        window.after(delay, animate_window_close, window, target_height, width, step, delay)
-    else:
-        window.quit()
-
-def ex_close(eve):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
-    animate_window_close(window, initial_height, window_width, step=25, delay=1)
-
-
 def start_move(event):
     global lastx, lasty
     lastx = event.x_root
@@ -105,6 +77,9 @@ def move_window(event):
     lasty = event.y_root
 
 
+def ex_close(win):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
 
 
 canvas = Canvas(
@@ -259,15 +234,18 @@ def Signin():
             # Save session data to the file
             save_session_to_file(session_data)
             # Proceed with further actions
+            subprocess.Popen(['python', os.path.join(project_root, 'Logs/background.py')])
+            subprocess.Popen(['python', os.path.join(project_root, 'gui.py')])
             ex_close(window)
-            subprocess.Popen(['python', 'E:\\System\\Edited\\SystemUpdate3\\System_SL-main\\Logs\\background.py'])
-            subprocess.Popen(['python', 'E:\\System\\Edited\\SystemUpdate3\\System_SL-main\\gui.py'])
         else:
             print("Sign-in failed.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-
+def CallSignIn():
+    Signin()
+    
+    
+    
 image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 
@@ -276,7 +254,7 @@ button = Button(
     image=image_image_7, 
     borderwidth=0, 
     highlightthickness=0,
-    command=Signin
+    command=CallSignIn
 )
 
 button.place(x=133.0, y=382.0) 

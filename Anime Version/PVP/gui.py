@@ -83,7 +83,7 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
         window.quit()
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'E:\System\Edited\SystemUpdate3\System_SL-main\Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', os.path.join(project_root, 'Files/Mod/default/sfx_close.py')])
     animate_window_close(window, initial_height, window_width, step=45, delay=1)
 
 
@@ -246,7 +246,7 @@ def send_pvp_invite(invitee_username):
             if invite_response.data:
                 print("Success", f"PVP invite sent to {invitee_username}.")
                 ex_close(window)
-                subprocess.Popen(['python', 'E:\System\Edited\SystemUpdate3\System_SL-main\Anime Version\PVP\gui1.py', selected_username])
+                subprocess.Popen(['python', os.path.join(project_root, 'Anime Version/PVP/gui1.py'), selected_username])
             else:
                 print("Error", "Failed to send PVP invite.")
         else:

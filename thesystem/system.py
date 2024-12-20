@@ -2331,14 +2331,14 @@ def GenerateRandomAICode():
         # ? =================================================
         av_str_based = data["avail_eq"][0]['str_based']
         av_int_based = data["avail_eq"][0]['int_based']
-        system_filepath = "E:/System/Edited/12-06 System Update 3/System_SL-main/thesystem/system.py"
+        system_filepath = "/thesystem/system.py"
         try:
             with open(system_filepath, "r") as file:
                 system_code = file.read()
         except FileNotFoundError:
             print(f"Error: The file {system_filepath} was not found.")
             system_code = None
-        examplefilepath = "E:/System/Edited/12-06 System Update 3/System_SL-main/Anime Version/AIBASE/gui.py"
+        examplefilepath = subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
         try:
             with open(examplefilepath, "r") as file:
                 examplefile = file.read()

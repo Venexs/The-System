@@ -5,9 +5,9 @@ import time
 import thesystem.system
 
 
+SESSION_FILE_PATH = "Files/Data/session.json"
 
 def load_session_from_file():
-    SESSION_FILE_PATH = "Files/Data/session.json"
     try:
         if os.path.exists(SESSION_FILE_PATH) and os.path.getsize(SESSION_FILE_PATH) > 0:
             with open(SESSION_FILE_PATH, 'r') as f:
@@ -40,7 +40,7 @@ def load_session_from_file():
 
     # If the session is invalid or file is empty, open sign_in.py
     print("Opening sign_in.py...")
-    subprocess.Popen(["python", "E:\\System\\Edited\\SystemUpdate3\\System_SL-main\\Logs\\Sign in\\sign_in.py"])
+    subprocess.Popen(["python", "Logs/Sign in/sign_in.py"])
     exit()
 def refresh_token(session_data):
     """Attempt to refresh the access token using the refresh token."""
@@ -48,8 +48,8 @@ def refresh_token(session_data):
         # Assuming you use Supabase's `auth.refresh_session` method
         from supabase import create_client, Client
 
-        SUPABASE_URL = "your_supabase_url"
-        SUPABASE_KEY = "your_supabase_key"
+        SUPABASE_URL = "https://smewvswweqnpwzngdtco.supabase.co"
+        SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
         supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
         response = supabase.auth.refresh_session({"refresh_token": session_data["refresh_token"]})

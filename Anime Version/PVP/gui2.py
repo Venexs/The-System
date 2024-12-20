@@ -83,7 +83,7 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
         window.quit()
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'E:\System\Edited\SystemUpdate3\System_SL-main\Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', os.path.join(project_root, 'Files/Mod/default/sfx_close.py')])
     animate_window_close(window, initial_height, window_width, step=45, delay=1)
 
 
