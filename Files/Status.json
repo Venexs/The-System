@@ -1,18 +1,18 @@
 {
     "status": [
         {
-            "name": "Epoch",
+            "name": "Sung Jin-woo",
             "hp": 100,
             "mp": 100,
-            "level": 10,
-            "str": 11,
+            "level": 1,
+            "str": 10,
             "int": 10,
             "agi": 10,
             "vit": 10,
             "per": 10,
             "man": 10,
-            "XP": 210,
-            "coins": 97300,
+            "XP": 0.0,
+            "coins": 0,
             "fatigue_max": 40,
             "fatigue": 0,
             "last_level": 1
@@ -25,7 +25,7 @@
     ],
     "avail_eq": [
         {
-            "str_based": 2,
+            "str_based": 3,
             "int_based": 3
         }
     ],
@@ -41,14 +41,14 @@
     ],
     "cal_data": [
         {
-            "age": "17",
+            "age": "24",
             "gender": "M",
             "height": "180",
-            "weight": "70",
-            "calorie calc": 3094,
-            "final calorie calc": 3434,
+            "weight": "65",
+            "calorie calc": 2631,
+            "final calorie calc": 2920,
             "result": "MILD WEIGHT GAIN",
-            "BMI": 22
+            "BMI": 20
         }
     ]
 }

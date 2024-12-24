@@ -11,7 +11,7 @@
         "Push": 10,
         "Sit": 10,
         "Squat": 10,
-        "Run": 1,
+        "Run": 10,
         "Int_type": 1,
         "Sleep": 1
     },

@@ -40,7 +40,7 @@ def load_session_from_file():
 
     # If the session is invalid or file is empty, open sign_in.py
     print("Opening sign_in.py...")
-    subprocess.Popen(["python", "Logs/Sign in/sign_in.py"])
+    subprocess.Popen(["python", "Logs/Start/gui.py"])
     exit()
 def refresh_token(session_data):
     """Attempt to refresh the access token using the refresh token."""

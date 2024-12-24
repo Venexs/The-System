@@ -53,6 +53,26 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+
+def ex_close(win):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+
 canvas = Canvas(
     window,
     bg = "#0678FF",
@@ -96,20 +116,34 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
+def OpenSignIn():
+    subprocess.Popen(["python", "Logs/Sign in/sign_in.py"])
+    ex_close(window)
+def OpenSignUp():
+    subprocess.Popen(["python", "Logs/Sign up/gui.py"])
+    ex_close(window)
 image_image_5 = PhotoImage(
     file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    356.0,
-    269.0,
-    image=image_image_5
+button = Button(
+    image=image_image_5, 
+    borderwidth=0, 
+    highlightthickness=0,
+    command=OpenSignIn
 )
+button.place(x=150.0, y=356.0)
+
 
 image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    356.0,
-    327.0,
-    image=image_image_6
+button = Button(
+    image=image_image_6, 
+    borderwidth=0,
+    highlightthickness=0,
+    command=OpenSignUp
 )
+button.place(x=400.0, y=356.0)
+
+
+
 window.resizable(False, False)
 window.mainloop()
