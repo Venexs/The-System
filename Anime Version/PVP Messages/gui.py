@@ -237,7 +237,7 @@ def handle_invite_response(invite_id, response):
         if invite_response.data:
             if response == "accepted":
                 ex_close(window)
-                dungeonbk.open_e_pvp(window)
+                subprocess.Popen(['python', f'Anime Version/PVP/gui2.py'])
             elif response == "declined":
                 messagebox.showinfo("Info", "You have declined the invite.")
         else:

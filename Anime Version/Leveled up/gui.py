@@ -14,6 +14,7 @@ import json
 import threading
 import sys
 import os
+from supabase import create_client, Client
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -231,6 +232,153 @@ image_7 = canvas.create_image(
     100.0,
     image=image_image_7
 )
+
+from dotenv import load_dotenv, set_key
+from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
+
+client = InfisicalClient(ClientSettings(
+    auth=AuthenticationOptions(
+        universal_auth=UniversalAuthMethod(
+            client_id="0fa8dbf8-92ee-4889-bd48-1b5dd2d22e87",
+            client_secret="a2c9a58bda26c914e333e6c0f7c35e019b30c3afa67b5dc8419a142ee8b2aec8",
+        )
+    )
+))
+
+
+def get_url():
+    # access value
+    name = client.getSecret(options=GetSecretOptions(
+        environment="dev",
+        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
+        secret_name="SUPABASE_URL"
+    ))
+    return f"{name.secret_value}"
+def get_key():
+    # access value
+    name = client.getSecret(options=GetSecretOptions(
+        environment="dev",
+        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
+        secret_name="SUPABASE_KEY"
+    ))
+    return f"{name.secret_value}"
+
+URL = get_url()
+KEY = get_key()
+
+supabase: Client = create_client(URL, KEY)
+
+
+SESSION_FILE = "Files/Data/session.json"
+
+def load_session():
+    """Load session data from the session file."""
+    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
+        with open(SESSION_FILE, "r") as f:
+            session_data = json.load(f)
+            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
+                return session_data
+
+session = load_session()
+
+
+table_name = "status"  # Replace with the actual table name
+name_column = "name"  # Replace with the actual name column name
+
+
+def get_current_user_id():
+    try:
+        user_response = supabase.auth.get_user(session["access_token"])  # Synchronous call
+        if user_response and user_response.user:
+            return user_response.user.id
+        else:
+            print("User is not authenticated.")  # Add logging for better debugging
+            return None
+    except Exception as e:
+        print(f"Error getting user: {e}")
+        subprocess.Popen(["python", "Logs/Start/gui.py"])
+        exit()
+        return None
+current_user = get_current_user_id()
+
+current_level = supabase.table("status").select("level").eq("user_id", current_user).execute()
+current_hp = supabase.table("status").select("hp").eq("user_id", current_user).execute()
+current_mp = supabase.table("status").select("mp").eq("user_id", current_user).execute()
+
+if current_level.data:
+    current_level = current_level.data[0]["level"]
+else:
+    current_level = 0
+
+if current_hp.data:
+    current_hp = current_hp.data[0]["hp"]
+else:
+    current_hp = 0
+
+if current_mp.data:
+    current_mp = current_mp.data[0]["mp"]
+else:
+    current_mp = 0
+
+
+if current_user:
+    # Fetch the user's current stats
+    response = supabase.table("status").select("str, int, agi, vit, per, man").eq("user_id", current_user).execute()
+
+    if response.data:
+        user_stats = response.data[0]  # Get the first (and likely only) result
+
+        # Increment stats by 10
+        updated_stats = {
+            "str": user_stats["str"] + 1,
+            "int": user_stats["int"] + 1,
+            "agi": user_stats["agi"] + 1,
+            "vit": user_stats["vit"] + 1,
+            "per": user_stats["per"] + 1,
+            "man": user_stats["man"] + 1,
+        }
+
+        # Update the stats in the database
+        update_response = (
+            supabase.table("status")
+            .update(updated_stats)
+            .eq("user_id", current_user)
+            .execute()
+        )
+
+        print(f"Updated stats for user {current_user}: {update_response}")
+    else:
+        print(f"No stats found for user {current_user}.")
+else:
+    print("Could not retrieve current user ID.")
+
+
+# Increment the level and update the database
+response = (
+    supabase.table("status")
+    .update({"level": current_level + 1})
+    .eq("user_id", current_user)
+    .execute()
+)
+response = (
+    supabase.table("status")
+    .update({"hp": current_hp + 10})
+    .eq("user_id", current_user)
+    .execute()
+)
+
+response = (
+    supabase.table("status")
+    .update({"mp": current_mp + 10})
+    .eq("user_id", current_user)
+    .execute()
+)
+
+
+print(f"Update Response: {response}")
+
+
+()
 
 canvas.tag_bind(image_6, "<ButtonPress-1>", start_move)
 canvas.tag_bind(image_6, "<B1-Motion>", move_window)

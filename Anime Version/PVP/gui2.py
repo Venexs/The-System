@@ -14,10 +14,14 @@ import cv2
 from PIL import Image, ImageTk
 import json
 import time
+from datetime import datetime, timedelta
+import time
 import sys
 import os
 from supabase import create_client, Client
 import asyncio
+from dotenv import load_dotenv, set_key
+from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -32,15 +36,228 @@ subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
+client = InfisicalClient(ClientSettings(
+    auth=AuthenticationOptions(
+        universal_auth=UniversalAuthMethod(
+            client_id="0fa8dbf8-92ee-4889-bd48-1b5dd2d22e87",
+            client_secret="a2c9a58bda26c914e333e6c0f7c35e019b30c3afa67b5dc8419a142ee8b2aec8",
+        )
+    )
+))
 
-URL = "https://smewvswweqnpwzngdtco.supabase.co"
-KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
+reps_count = 0  # Starting count of reps
+
+
+def get_url():
+    # access value
+    name = client.getSecret(options=GetSecretOptions(
+        environment="dev",
+        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
+        secret_name="SUPABASE_URL"
+    ))
+    return f"{name.secret_value}"
+def get_key():
+    # access value
+    name = client.getSecret(options=GetSecretOptions(
+        environment="dev",
+        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
+        secret_name="SUPABASE_KEY"
+    ))
+    return f"{name.secret_value}"
+
+URL = get_url()
+KEY = get_key()
 SESSION_FILE = "Files/Data/session.json"
 
 supabase: Client = create_client(URL, KEY)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
+
+
+# Set the countdown duration to 10 minutes (600 seconds)
+countdown_duration = timedelta(seconds=15)
+
+# Function to start the countdown and store it in Supabase
+def start_countdown():
+    start_time = datetime.now()
+    end_time = start_time + countdown_duration
+
+    # Convert datetime objects to ISO 8601 string format before storing
+    start_time_str = start_time.isoformat()
+    end_time_str = end_time.isoformat()
+
+    # Store start and end times as strings in Supabase
+    response = supabase.table("countdowns").insert({
+        "start_time": start_time_str,
+        "end_time": end_time_str,
+        "current_time": start_time_str,  # Initial state of countdown
+    }).execute()
+
+    # Log the full response to check its structure
+    print(f"Response: {response}")
+
+    # Access the response data correctly
+    countdown_data = response.data
+    if countdown_data:
+        countdown_id = countdown_data[0]['id']
+        print(f"Countdown started with ID: {countdown_id}")
+        return countdown_id
+    else:
+        print("No data returned from Supabase insert.")
+        return None
+
+# Function to update the countdown from Supabase and display it in the Tkinter canvas
+def update_canvas_timer(canvas, opponent_name_text, countdown_id):
+    response = supabase.table("countdowns").select("current_time", "end_time").eq("id", countdown_id).execute()
+    global WinorLoseText
+    if response.data:
+        current_time_str = response.data[0]['current_time']
+        end_time_str = response.data[0]['end_time']
+
+        # Define a flexible format string to handle potential variations
+        format_string = "%Y-%m-%dT%H:%M:%S.%f"  # Adjust format based on Supabase data
+
+        try:
+            current_time = datetime.strptime(current_time_str, format_string)
+            end_time = datetime.strptime(end_time_str, format_string)
+        except ValueError:
+            # Handle errors if parsing fails (optional)
+            print(f"Error parsing timestamps: {current_time_str}, {end_time_str}")
+            # Consider using fallback values or logging the error
+
+        # Calculate remaining time
+        remaining_time = end_time - current_time
+        remaining_seconds = max(0, remaining_time.total_seconds())  # Don't allow negative countdown
+
+        # Format remaining time as MM:SS
+        minutes = int(remaining_seconds // 60)
+        seconds = int(remaining_seconds % 60)
+        timercode = f"{minutes:02d}:{seconds:02d}"
+
+        # Update the canvas text with the remaining time
+        canvas.itemconfig(opponent_name_text, text=f"TIME: {timercode}")
+
+        # Update the current time in Supabase every second
+        new_current_time = datetime.now().isoformat()
+        supabase.table("countdowns").update({"current_time": new_current_time}).eq("id", countdown_id).execute()
+        
+        
+        if remaining_seconds <= 0:
+            subprocess.Popen(['python', 'Anime Version/PVP/gui3.py'])
+            exit()
+            return
+        canvas.after(250, update_canvas_timer, canvas, opponent_name_text, countdown_id)
+
+table_name = "status"  # Replace with the actual table name
+name_column = "name"  # Replace with the actual name column name
+SESSION_FILE = "Files/Data/session.json"
+
+def load_session():
+    """Load session data from the session file."""
+    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
+        with open(SESSION_FILE, "r") as f:
+            session_data = json.load(f)
+            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
+                return session_data
+
+session = load_session()
+
+def get_current_user_id():
+    try:
+        user_response = supabase.auth.get_user(session["access_token"])  # Synchronous call
+        if user_response and user_response.user:
+            return user_response.user.id
+        else:
+            print("User is not authenticated or response is invalid.")  # Add logging for better debugging
+            return None
+    except Exception as e:
+        print(f"Error getting user: {e}")
+        return None
+    
+user_id = get_current_user_id()
+
+def get_other_user_id():
+    try:
+        response = supabase.table("pvp_invites") \
+            .select("inviter_id") \
+            .eq("invitee_id", user_id) \
+            .execute()
+        
+        if response.data:
+            # Assuming you only want the first row
+            id = response.data[0]["inviter_id"]
+            return id
+        else:
+            print("No pending invite found.")
+            return None
+    except Exception as e:
+        print(f"Error fetching invite: {e}")
+        return None
+
+other_user_id = get_other_user_id()
+
+def create_reps_row():
+    """Create a new row for reps in the Supabase database."""
+    global reps_count
+    response = supabase.table('reps').insert({'user_id': user_id, 'reps_count': reps_count}).execute()
+create_reps_row()
+
+
+
+def get_reps_from_db():
+    """Get the most recent reps count from the Supabase database."""
+    global reps_count
+    try:
+        # Fetch the newest row for the user_id
+        response = supabase.table('reps') \
+            .select('reps_count') \
+            .eq('user_id', user_id) \
+            .order('created_at', desc=True) \
+            .limit(1) \
+            .execute()
+        
+        if response.data:
+            # Extract reps_count from the newest row
+            reps_count = response.data[0]['reps_count']
+            update_reps_display()
+        else:
+            reps_count = 0  # Default to 0 reps
+            update_reps_display()
+    except Exception as e:
+        print(f"Error fetching reps count from the database: {e}")
+        reps_count = 0  # Default to 0 reps in case of error
+        update_reps_display()
+
+        
+def update_reps_in_db():
+    response = (
+        supabase.table("reps")
+        .update({
+            'reps_count': reps_count 
+        })
+        .eq('user_id', user_id) 
+        .execute() 
+    )
+
+
+def add_reps():
+    """Increment reps by 10."""
+    global reps_count
+    reps_count += 10
+    update_reps_display()
+    update_reps_in_db()
+
+def subtract_reps():
+    """Decrement reps by 10, ensuring it doesn't go below 0."""
+    global reps_count
+    reps_count = max(0, reps_count - 10)
+    update_reps_display()
+    update_reps_in_db()
+
+def update_reps_display():
+    """Update the reps count display on the Tkinter canvas."""
+    canvas.itemconfig(reps_text, text=f"Reps: {reps_count}")
 
 
 window = Tk()
@@ -134,33 +351,55 @@ button_20.place(
 transparent_image = Image.new('RGBA', (1, 1), (0, 0, 0, 0))  # Create a 1x1 transparent image
 transparent_photo = ImageTk.PhotoImage(transparent_image)
 
-# Add this line below the existing canvas placements
+
+
 opponent_name_text = canvas.create_text(
-    350, 200,  # x, y coordinates
+    350, 200,
     anchor="n",
-    text="PVP HAS BEEN ACCEPTED... ENGAGING COMBAT.",
-    fill="White",  # Text color
+    text="TIME: 00:00",  # Initial text
+    fill="White",
     font=("Montserrat Bold", 10),
 )
 
-opponent_name_text1 = canvas.create_text(
-    350, 250,  # x, y coordinates
+# Start the countdown in the backend
+countdown_id = start_countdown()
+
+# Start updating the canvas with the countdown
+update_canvas_timer(canvas, opponent_name_text, countdown_id)
+
+# Display the initial reps count on the canvas
+reps_text = canvas.create_text(
+    350, 0,
     anchor="n",
-    text="Please do not close this window. It will cancel your request.",
-    fill="Red",  # Text color
-    font=("Montserrat Bold", 10),
+    text=f"Reps: {reps_count}",  # Initial value of reps
+    fill="White",
+    font=("Montserrat Bold", 14),
 )
 
+# Create the button to add 10 reps
+add_reps_button = Button(
+    window,
+    text="+ 10 Reps",
+    command=add_reps,
+    bg="#0678FF",
+    fg="white",
+    font=("Montserrat Bold", 12)
+)
+add_reps_button.place(x=200, y=0, width=100, height=30)  # Position the button
 
+# Create the button to subtract 10 reps
+subtract_reps_button = Button(
+    window,
+    text="- 10 Reps",
+    command=subtract_reps,
+    bg="#FF3B3F",
+    fg="white",
+    font=("Montserrat Bold", 12)
+)
+subtract_reps_button.place(x=400, y=0, width=100, height=30)  # Position the button
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        selected_username = sys.argv[1]
-        
-        print(f"Received username: {selected_username}")
-    else:
-        print("No username received!")
-        
+# Fetch initial reps count from Supabase when the app starts
+get_reps_from_db()
         
 window.resizable(False, False)
 window.mainloop()

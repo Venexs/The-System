@@ -2,20 +2,20 @@
     "status": [
         {
             "name": "Sung Jin-woo",
-            "hp": 100,
-            "mp": 100,
-            "level": 1,
-            "str": 10,
-            "int": 10,
-            "agi": 10,
-            "vit": 10,
-            "per": 10,
-            "man": 10,
-            "XP": 0.0,
+            "hp": 110,
+            "mp": 110,
+            "level": 2,
+            "str": 11,
+            "int": 11,
+            "agi": 11,
+            "vit": 11,
+            "per": 11,
+            "man": 11,
+            "XP": 65.0,
             "coins": 0,
             "fatigue_max": 40,
             "fatigue": 0,
-            "last_level": 1
+            "last_level": 2
         },
         {
             "title_bool": "False",

@@ -66,11 +66,6 @@ def open_e_dunfile(eve):
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
         ex_close(eve)
 
-def open_e_pvp(eve):
-    rank='A'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
-        dun_full_data=json.load(dun_full)
-
     date_format = "%Y-%m-%d"
     current_date = datetime.now().date()
     current_date_string = current_date.strftime(date_format)

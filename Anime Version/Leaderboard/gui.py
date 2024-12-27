@@ -4,7 +4,7 @@
 
 
 from pathlib import Path
-
+import asyncio
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar
@@ -18,6 +18,9 @@ import sys
 import os
 from supabase import create_client, Client
 import asyncio
+from datetime import date
+import random
+from dotenv import load_dotenv, set_key
 from dotenv import load_dotenv, set_key
 from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
 
@@ -51,7 +54,6 @@ def get_key():
 URL = get_url()
 KEY = get_key()
 
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 project_root = os.path.abspath(os.path.join(current_dir, '../../'))
@@ -64,8 +66,6 @@ subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
-
-SESSION_FILE = "Files/Data/session.json"
 
 supabase: Client = create_client(URL, KEY)
 
@@ -109,7 +109,6 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
     if new_height > target_height:
         window.after(delay, animate_window_close, window, target_height, width, step, delay)
     else:
-        
         window.quit()
 
 def ex_close(eve):
@@ -160,6 +159,18 @@ button_20.place(
     height=24.221660614013672
 )
 
+transparent_image = Image.new('RGBA', (1, 1), (0, 0, 0, 0))  # Create a 1x1 transparent image
+transparent_photo = ImageTk.PhotoImage(transparent_image)
+
+# Add this line below the existing canvas placements
+opponent_name_text = canvas.create_text(
+    350, 0,  # x, y coordinates
+    anchor="n",
+    text="Leaderboard",
+    fill="White",  # Text color
+    font=("Montserrat Bold", 14),
+)
+
 SESSION_FILE = "Files/Data/session.json"
 
 def load_session():
@@ -173,108 +184,92 @@ def load_session():
 session = load_session()
 
 
+table_name = "status"  # Replace with the actual table name
+name_column = "name"  # Replace with the actual name column name
+level_column = "level"  # Replace with the actual level column name
 
 
-# Function to check invite status periodically
-def poll_invite_status():
-    while True:
-        try:
-            response = supabase.table("pvp_invites") \
-                .select("status") \
-                .eq("inviter_id", user_id) \
-                .execute()
-            
-            if response.data:
-                # Check if any invite has been accepted
-                for invite in response.data:
-                    if invite["status"] == "accepted":
-                        ex_close(window)
-                        subprocess.Popen(['python', f'Anime Version/PVP/gui2.py'])
-                        return  # Exit the thread once the invite is accepted
-        except Exception as e:
-            print(f"Error checking invite status: {e}")
-        
-        time.sleep(1)  # Check every 5 seconds
-
-
-    # Start polling for invite status in a separate thread
-    threading.Thread(target=poll_invite_status, daemon=True).start()
-
-    window.resizable(False, False)
-    window.mainloop()
-    
-    
-def get_current_user_id():
+def get_all_names_and_levels(table_name, name_column, level_column, users_table="status", username_column="name"):
     try:
-        user_response = supabase.auth.get_user(session["access_token"])  # Synchronous call
+        # Get the current authenticated user's username
+        user_response = supabase.auth.get_user(session["access_token"])  # Using sync call
         if user_response and user_response.user:
-            return user_response.user.id
+            current_user_id = user_response.user.id
+
+            # Fetch the current user's status to get the username
+            user_status = supabase.table(users_table) \
+                .select(username_column) \
+                .eq("user_id", current_user_id) \
+                .single() \
+                .execute()
+
+            if user_status.data:  # Access the 'data' attribute directly
+                current_username = user_status.data[username_column]
+                print(f"Current username: {current_username}")  # Debugging
+
+                # Query to exclude the current user's username and fetch name and level
+                response = supabase.table(table_name) \
+                    .select(f"{name_column}, {level_column}") \
+                    .order(level_column, desc=True) \
+                    .execute()
+
+                if response.data:  # Check if data is returned
+                    names_and_levels = [
+                        (row[level_column], row[name_column]) for row in response.data
+                    ]
+                    print(f"Names and levels retrieved: {names_and_levels}")  # Log the results
+                    return names_and_levels
+                else:
+                    print(f"No data found in table {table_name}")
+                    return []
+            else:
+                print("Unable to fetch current user's username.")
+                return []
         else:
-            print("User is not authenticated.")  # Add logging for better debugging
-            return None
+            print("No user is authenticated.")
+            return []  # Return an empty list if no user is logged in
     except Exception as e:
-        print(f"Error getting user: {e}")
-        return None
-    
-user_id = get_current_user_id()
-
-def get_invite_status():
-    try:
-        response = supabase.table("pvp_invites") \
-            .select("inviter_id") \
-            .eq("status", "accepted") \
-            .eq("inviter_id", user_id) \
-            .execute()
-        
-        if response.data:
-            # Assuming you only want the first row
-            id = response.data[0]["inviter_id"]
-            return 
-        else:
-            print("No pending invite found.")
-            return None
-    except Exception as e:
-        print(f"Error fetching invite: {e}")
-        return None
-
-InviteStatus = supabase.table("pvp_invites").select("status").eq("inviter_id", user_id).execute()
+        print(f"An error occurred: {e}")
+        subprocess.Popen(["python", "Logs/Start/gui.py"])
+        quit()
+        return []  # Return an empty list on error
 
 
-transparent_image = Image.new('RGBA', (1, 1), (0, 0, 0, 0))  # Create a 1x1 transparent image
-transparent_photo = ImageTk.PhotoImage(transparent_image)
+def main():
+    global names_and_levels
+    names_and_levels = get_all_names_and_levels(table_name, name_column, level_column)
 
-# Add this line below the existing canvas placements
-opponent_name_text = canvas.create_text(
-    350, 200,  # x, y coordinates
-    anchor="n",
-    text="REQUEST TO BATTLE SENT... CHECK DISCORD STATUS TO SEE IF THEY ARE ONLINE.",
-    fill="White",  # Text color
-    font=("Montserrat Bold", 10),
+
+main()
+
+# Populate the listbox
+listbox = Listbox(
+    window,
+    bg='dodgerblue3',
+    width=600,
+    height=600,
+    highlightcolor="deepskyblue2",
+    highlightthickness=2,
+    bd=0,
+    selectmode="single",  # Disables selection mode
+    font=("Montserrat Bold", 12),
+    fg="white",  # Set the font color to white (or any color you prefer)
+    activestyle="none"
 )
 
-opponent_name_text1 = canvas.create_text(
-    350, 250,  # x, y coordinates
-    anchor="n",
-    text="Please do not close this window. It will cancel your request.",
-    fill="Red",  # Text color
-    font=("Montserrat Bold", 10),
-)
+listbox.pack(side="bottom", fill="both", expand=True, padx=20, pady=100)
 
+scrollbar = Scrollbar(listbox)
+scrollbar.pack(side="right", fill="y")
 
+listbox.config(yscrollcommand=scrollbar.set)
+scrollbar.config(command=listbox.yview)
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        selected_username = sys.argv[1]
-        print(f"Received username: {selected_username}")
-    else:
-        print("No username received!")
-        
-    threading.Thread(target=poll_invite_status, daemon=True).start()
-
-    window.resizable(False, False)
-    window.mainloop()
+# Insert names with levels into the listbox
+for level, name in names_and_levels:
+    listbox.insert("end", f"Level {level}: {name}")
     
-        
+listbox.config(selectbackground="skyblue", selectforeground="black")  # Customize selection color
+
 window.resizable(False, False)
 window.mainloop()
-

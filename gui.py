@@ -348,7 +348,7 @@ def open_cal(eve):
 
 window = Tk()
 
-window.geometry("435x423")
+window.geometry("800x800")
 window.configure(bg = "#505050")
 window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
@@ -509,7 +509,7 @@ thesystem.system.random_quest()
 canvas = Canvas(
     window,
     bg = "#505050",
-    height = 423,
+    height = 600,
     width = 435,
     bd = 0,
     highlightthickness = 0,
@@ -627,7 +627,7 @@ canvas.create_rectangle(
     259.0,
     133.0,
     425.0,
-    417.0,
+    460.0,
     fill="#1A1A1A",
     outline="",
     tags="bar",
@@ -829,6 +829,28 @@ image_11 = canvas.create_image(
     state="hidden"
 )
 
+image_image_23 = PhotoImage(
+    file=relative_to_assets("image_231.png"))
+image_23 = canvas.create_image(
+    332.0,
+    390.5,
+    image=image_image_23,
+    tags="bar",
+    state="hidden"
+)
+
+def leader_open(event):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+        inv_name=f"{theme} Version/Leaderboard/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        
+canvas.tag_bind(image_23, "<ButtonPress-1>", leader_open)
+
+
 def shop_open(event):
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=json.load(themefile)
@@ -854,7 +876,7 @@ image_image_12 = PhotoImage(
     file=relative_to_assets("image_12.png"))
 image_12 = canvas.create_image(
     364.0,
-    390.0,
+    425.0,
     image=image_image_12,
     tags="bar",
     state="hidden"
