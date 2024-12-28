@@ -9,6 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar
 import subprocess
+import random
 import threading
 import cv2
 from PIL import Image, ImageTk
@@ -76,7 +77,7 @@ def relative_to_assets(path: str) -> Path:
 
 
 # Set the countdown duration to 10 minutes (600 seconds)
-countdown_duration = timedelta(seconds=15)
+countdown_duration = timedelta(minutes=10)
 
 # Function to start the countdown and store it in Supabase
 def start_countdown():
@@ -352,6 +353,32 @@ transparent_image = Image.new('RGBA', (1, 1), (0, 0, 0, 0))  # Create a 1x1 tran
 transparent_photo = ImageTk.PhotoImage(transparent_image)
 
 
+
+def get_random_exercise(json_file_path):
+    try:
+        # Load the JSON file
+        with open(json_file_path, 'Files/Data/exercises.json') as file:
+            data = json.load(file)
+
+        # Ensure the data is a list
+        if not isinstance(data, list):
+            raise ValueError("The JSON file must contain a list of exercises.")
+
+        # Return a random exercise
+        return random.choice(data)
+
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+        return f"Error: {e}"
+
+exercise = get_random_exercise()
+
+Text2 = canvas.create_text(
+    350, 200,
+    anchor="n",
+    text="DO AS MANY {exercise} AS YOU CAN IN 10 MINUTES!",  # Initial text
+    fill="White",
+    font=("Montserrat Bold", 10),
+)
 
 opponent_name_text = canvas.create_text(
     350, 200,
