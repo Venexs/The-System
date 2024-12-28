@@ -4,143 +4,221 @@
 
 
 from pathlib import Path
-import asyncio
+
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar
-import subprocess
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar, Frame, Y, TOP, BOTH, X
 import threading
+import json
+import csv
+import subprocess
+import time
 import cv2
 from PIL import Image, ImageTk
-import json
-import time
+from datetime import datetime, timedelta
+import pandas as pd
 import sys
+import math
 import os
 from supabase import create_client, Client
 import asyncio
 from datetime import date
 import random
+from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv, set_key
+from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
+
+client = InfisicalClient(ClientSettings(
+    auth=AuthenticationOptions(
+        universal_auth=UniversalAuthMethod(
+            client_id="0fa8dbf8-92ee-4889-bd48-1b5dd2d22e87",
+            client_secret="a2c9a58bda26c914e333e6c0f7c35e019b30c3afa67b5dc8419a142ee8b2aec8",
+        )
+    )
+))
+
+
+def get_url():
+    # access value
+    name = client.getSecret(options=GetSecretOptions(
+        environment="dev",
+        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
+        secret_name="SUPABASE_URL"
+    ))
+    return f"{name.secret_value}"
+def get_key():
+    # access value
+    name = client.getSecret(options=GetSecretOptions(
+        environment="dev",
+        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
+        secret_name="SUPABASE_KEY"
+    ))
+    return f"{name.secret_value}"
+
+URL = get_url()
+KEY = get_key()
+
+supabase: Client = create_client(URL, KEY)
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
 project_root = os.path.abspath(os.path.join(current_dir, '../../'))
-
 sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+window = Tk()
+window.geometry("488x0")  # Initial collapsed height
+window.configure(bg="#FFFFFF")
+window.attributes('-alpha', 0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+thesystem.system.make_window_transparent(window)
 
+# Animate window open
+window_width = 488
+target_height = 716
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
-URL = "https://smewvswweqnpwzngdtco.supabase.co"
-KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
+# Load JSON data once to reduce file I/O
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-supabase: Client = create_client(URL, KEY)
+status_data = load_json("Files/status.json")
+presets_data = load_json("Files/Mod/presets.json")
 
+# Helper Functions
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
-window = Tk()
+def start_move(event):
+    global lastx, lasty
+    lastx, lasty = event.x_root, event.y_root
 
-initial_height = 0
-initial_width = 0
-target_height = 431
-window_width = 712
+def move_window(event):
+    global lastx, lasty
+    x = window.winfo_x() + (event.x_root - lastx)
+    y = window.winfo_y() + (event.y_root - lasty)
+    window.geometry(f"+{x}+{y}")
+    lastx, lasty = event.x_root, event.y_root
 
-thesystem.system.make_window_transparent(window)
+# Update and Close Functions
+def ex_close(event=None):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
-window.geometry(f"{initial_width}x{initial_height}")
-thesystem.system.animate_window_open_middle(window, target_height, window_width, step=20, delay=1)
+# Initialize Canvas and Widgets
+canvas = Canvas(window, bg="#FFFFFF", height=716, width=488, bd=0, highlightthickness=0, relief="ridge")
+canvas.place(x=0, y=0)
 
-thesystem.system.center_window(window,window_width,target_height)
-window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.6)
-window.overrideredirect(True)
-window.wm_attributes("-topmost", True)
+# Load images once to avoid redundant processing
+images = {
+    "background": PhotoImage(file=relative_to_assets("image_1.png")),
+    "stats": [
+        PhotoImage(file=relative_to_assets(f"image_{i}.png")) for i in range(2, 6)
+    ]
+}
 
-def animate_window_close(window, target_height, width, step=2, delay=5):
-    current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height > target_height:
-        new_height = max(current_height - step, target_height)
-    else:
-        new_height = current_height
-    
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
-
-    if new_height > target_height:
-        window.after(delay, animate_window_close, window, target_height, width, step, delay)
-    else:
-        window.quit()
-
-def ex_close(eve):
-    subprocess.Popen(['python', os.path.join(project_root, 'Files/Mod/default/sfx_close.py')])
-    animate_window_close(window, initial_height, window_width, step=45, delay=1)
-
-
-canvas = Canvas(
-    window,
-    bg = "#0678FF",
-    height = 432,
-    width = 712,
-    bd = 0,
-    highlightthickness = 0,
-    relief = "ridge"
-)
-
-canvas.place(x = 0, y = 0)
-image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
-image_1 = canvas.create_image(
-    356.0,
-    216.0,
-    image=image_image_1
-)
+# Background image and character attributes
+canvas.create_image(430.0, 363.0, image=images["background"])
+player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"]["Video"], 430.0, 363.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    356.0,
-    216.0,
+    230.0,
+    367.0,
     image=image_image_2
 )
 
-button_image_20 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_20 = Button(
-    image=button_image_20,
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    150.0,
+    117.0,
+    image=image_image_3
+)
+
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    101.0,
+    21.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    678.0,
+    494.0,
+    716.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_19 = canvas.create_image(
+    -15.0,
+    348.0,
+    image=image_image_19
+)
+
+image_image_20 = PhotoImage(
+    file=relative_to_assets("image_20.png"))
+image_20 = canvas.create_image(
+    462.0,
+    351.0,
+    image=image_image_20
+)
+
+canvas.create_rectangle(
+    92.0,
+    0.0,
+    488.0,
+    34.0,
+    fill="#0C679B",
+    outline="")
+
+button_image_8 = PhotoImage(
+    file=relative_to_assets("button_8.png"))
+button_8 = Button(
+    image=button_image_8,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: ex_close(window),
     relief="flat"
 )
-button_20.place(
-    x=655.0,
-    y=35.0,
-    width=21.20473861694336,
-    height=24.221660614013672
+button_8.place(
+    x=390.0,
+    y=55.0,
+    width=20.0,
+    height=20.0
 )
 
-transparent_image = Image.new('RGBA', (1, 1), (0, 0, 0, 0))  # Create a 1x1 transparent image
-transparent_photo = ImageTk.PhotoImage(transparent_image)
-
-# Add this line below the existing canvas placements
-opponent_name_text = canvas.create_text(
-    350, 0,  # x, y coordinates
-    anchor="n",
-    text="Select your contender...",
-    fill="White",  # Text color
-    font=("Montserrat Bold", 14),
+image_image_21 = PhotoImage(
+    file=relative_to_assets("image_21.png"))
+image_21 = canvas.create_image(
+    244.0,
+    (19),
+    image=image_image_21
 )
+
+canvas.tag_bind(image_21, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_21, "<B1-Motion>", move_window)
+
+image_image_22 = PhotoImage(
+    file=relative_to_assets("image_22.png"))
+image_22 = canvas.create_image(
+    295.0,
+    680,
+    image=image_image_22
+)
+
 
 SESSION_FILE = "Files/Data/session.json"
 
@@ -277,21 +355,39 @@ def on_select(event):
         selected_username = names[selected_index]
         print(f"Selected username: {selected_username}")  # Print for debugging
 
+listbox_container = Frame(window)
+listbox_container.pack(side="top", fill="y", expand=True, padx=(0, 40), pady=150)
 
+# Configure the Frame to not propagate its size to the Listbox
+listbox_container.pack_propagate(False)
+listbox_container.config(width=350)  # Set the desired width for the Frame
 
-listbox = Listbox(window, bg='dodgerblue3', width=150, height=150, highlightcolor="deepskyblue2", highlightthickness=2, bd=0, selectmode="single")  # Allow only single selection
-listbox.pack(side="bottom", fill="both", expand=True, padx=20, pady=100)
+# Populate the listbox
+listbox = Listbox(
+    listbox_container,  # Place the Listbox inside the Frame
+    bg='#010616',
+    width=350,  # Set the desired width for the Listbox (will be constrained by the Frame)
+    height=10,  # Set an initial height - it will expand with fill="y"
+    highlightthickness=0,
+    bd=0,
+    selectmode="single",  # Disables selection mode
+    font=("Montserrat Bold", 12),
+    fg="white",  # Set the font color to white (or any color you prefer)
+    activestyle="none",
+)
+
+listbox.pack(side="right", fill="y", expand=True, anchor="center") # Pack the Listbox to the RIGHT
+
+scrollbar = Scrollbar(listbox_container, command=listbox.yview)
+scrollbar.pack(side="left", fill="y", padx=(0, 5))  # Pack the Scrollbar to the LEFT
 listbox.bind("<<ListboxSelect>>", on_select)  # Bind the selection event
-
-scrollbar = Scrollbar(listbox)
-scrollbar.pack(side="right", fill="y")
 
 listbox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=listbox.yview)
 
 for name in names:
     listbox.insert("end", name)
-    
+
 
 def Fight():
     global selected_username  # Access the global variable
@@ -315,7 +411,9 @@ button = Button(
     command=Fight
 )
 
-button.place(x=133.0, y=382.0) 
+button.place(x=175.0, y=600.0) 
+
+listbox.config(selectbackground="skyblue", selectforeground="black")  # Customize selection color
 
 
 window.resizable(False, False)

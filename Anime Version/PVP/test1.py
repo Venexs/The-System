@@ -46,7 +46,7 @@ client = InfisicalClient(ClientSettings(
     )
 ))
 
-reps_count = 0  # Starting count of reps
+reps_count = 0
 
 
 def get_url():
@@ -74,8 +74,6 @@ supabase: Client = create_client(URL, KEY)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
-
-
 
 
 # Set the countdown duration to 10 minutes (600 seconds)
@@ -200,16 +198,10 @@ def get_other_user_id():
 
 other_user_id = get_other_user_id()
 
-created_at = datetime.now()
-
 def create_reps_row():
     """Create a new row for reps in the Supabase database."""
     global reps_count
-    response = supabase.table('reps').insert({
-        'user_id': user_id,
-        'reps_count': reps_count,
-        'created_at': created_at.isoformat()  # Convert datetime to ISO string
-    }).execute()
+    response = supabase.table('reps').insert({'user_id': user_id, 'reps_count': reps_count}).execute()
 create_reps_row()
 
 
@@ -240,14 +232,7 @@ def get_reps_from_db():
 
         
 def update_reps_in_db():
-    response = (
-        supabase.table("reps")
-        .update({
-            'reps_count': reps_count 
-        })
-        .eq('user_id', user_id) 
-        .execute() 
-    )
+    print("reps updated")
 
 
 def add_reps():
@@ -454,7 +439,6 @@ def get_random_exercise():
     except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
         return f"Error: {e}"
 
-
 exercise = get_random_exercise()
 
 Text2 = canvas.create_text(
@@ -474,17 +458,14 @@ opponent_name_text = canvas.create_text(
 )
 
 # Start the countdown in the backend
-countdown_id = start_countdown()
-
-# Start updating the canvas with the countdown
-update_canvas_timer(canvas, opponent_name_text, countdown_id)
 
 # Display the initial reps count on the canvas
 reps_text = canvas.create_text(
-    175, 400,
+    0, 0,
+    anchor="n",
     text=f"Reps: {reps_count}",  # Initial value of reps
     fill="White",
-    font=("Montserrat Bold", 14),
+    font=("Montserrat Bold", 50),
 )
 
 # Create the button to add 10 reps
@@ -511,7 +492,6 @@ subtract_reps_button.place(x=175, y=600, width=100, height=30)  # Position the b
 
 # Fetch initial reps count from Supabase when the app starts
 get_reps_from_db()
-        
         
 window.resizable(False, False)
 window.mainloop()

@@ -56,5 +56,21 @@
                   },
                   "skill": "Hobbies"
             }
+      ],
+      "The Master of ones fate": [
+            {
+                  "desc": "A mysterious figure has left behind a list of tasks",
+                  "time": 180,
+                  "timeval": "Minutes",
+                  "type": "Learn",
+                  "obj_desc": "Find something out that you didn't know about a subject",
+                  "rank": "C",
+                  "ID": 802779,
+                  "Rewards": {
+                        "Coin Bag 5000": 1,
+                        "Coin Bag 1000": 1
+                  },
+                  "skill": "Books"
+            }
       ]
 }
