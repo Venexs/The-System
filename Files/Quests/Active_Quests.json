@@ -72,5 +72,20 @@
                   },
                   "skill": "Books"
             }
+      ],
+      "The Work of The King of Curses": [
+            {
+                  "desc": "You were Challenged",
+                  "amt": 3,
+                  "amtval": "Chapters",
+                  "type": "Common",
+                  "rank": "C",
+                  "ID": 612362,
+                  "Rewards": {
+                        "Coin Bag 5000": 1,
+                        "Archers Gauntlet": 1
+                  },
+                  "skill": "Books"
+            }
       ]
 }

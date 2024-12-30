@@ -7,36 +7,26 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar
-import subprocess
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar, Frame, Y, TOP, BOTH, X
 import threading
+import json
+import csv
+import subprocess
+import time
 import cv2
 from PIL import Image, ImageTk
-import json
-import time
 from datetime import datetime, timedelta
-import time
+import pandas as pd
 import sys
+import math
 import os
 from supabase import create_client, Client
 import asyncio
+from datetime import date
+import random
+from dotenv import load_dotenv, set_key
 from dotenv import load_dotenv, set_key
 from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
-from datetime import datetime, timedelta, date
-import csv
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-project_root = os.path.abspath(os.path.join(current_dir, '../../'))
-
-sys.path.insert(0, project_root)
-
-import thesystem.system
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 client = InfisicalClient(ClientSettings(
     auth=AuthenticationOptions(
@@ -67,13 +57,168 @@ def get_key():
 
 URL = get_url()
 KEY = get_key()
-SESSION_FILE = "Files/Data/session.json"
 
 supabase: Client = create_client(URL, KEY)
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+sys.path.insert(0, project_root)
+
+import thesystem.system
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+window = Tk()
+window.geometry("488x0")  # Initial collapsed height
+window.configure(bg="#FFFFFF")
+window.attributes('-alpha', 0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+thesystem.system.make_window_transparent(window)
+
+# Animate window open
+window_width = 488
+target_height = 716
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
+
+# Load JSON data once to reduce file I/O
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
+status_data = load_json("Files/status.json")
+presets_data = load_json("Files/Mod/presets.json")
+
+# Helper Functions
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+
+def start_move(event):
+    global lastx, lasty
+    lastx, lasty = event.x_root, event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    x = window.winfo_x() + (event.x_root - lastx)
+    y = window.winfo_y() + (event.y_root - lasty)
+    window.geometry(f"+{x}+{y}")
+    lastx, lasty = event.x_root, event.y_root
+
+# Update and Close Functions
+def ex_close(event=None):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
+
+# Initialize Canvas and Widgets
+canvas = Canvas(window, bg="#FFFFFF", height=716, width=488, bd=0, highlightthickness=0, relief="ridge")
+canvas.place(x=0, y=0)
+
+# Load images once to avoid redundant processing
+images = {
+    "background": PhotoImage(file=relative_to_assets("image_1.png")),
+    "stats": [
+        PhotoImage(file=relative_to_assets(f"image_{i}.png")) for i in range(2, 6)
+    ]
+}
+
+# Background image and character attributes
+canvas.create_image(430.0, 363.0, image=images["background"])
+player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"]["Video"], 430.0, 363.0)
+
+image_image_2 = PhotoImage(
+    file=relative_to_assets("image_2.png"))
+image_2 = canvas.create_image(
+    230.0,
+    367.0,
+    image=image_image_2
+)
+
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    225.0,
+    117.0,
+    anchor="n",
+    image=image_image_3
+)
+
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    101.0,
+    21.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    678.0,
+    494.0,
+    716.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_19 = canvas.create_image(
+    -15.0,
+    348.0,
+    image=image_image_19
+)
+
+image_image_20 = PhotoImage(
+    file=relative_to_assets("image_20.png"))
+image_20 = canvas.create_image(
+    462.0,
+    351.0,
+    image=image_image_20
+)
+
+canvas.create_rectangle(
+    92.0,
+    0.0,
+    488.0,
+    34.0,
+    fill="#0C679B",
+    outline="")
+
+button_image_8 = PhotoImage(
+    file=relative_to_assets("button_8.png"))
+button_8 = Button(
+    image=button_image_8,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_8.place(
+    x=390.0,
+    y=55.0,
+    width=20.0,
+    height=20.0
+)
+
+image_image_21 = PhotoImage(
+    file=relative_to_assets("image_21.png"))
+image_21 = canvas.create_image(
+    244.0,
+    (19),
+    image=image_image_21
+)
+
+canvas.tag_bind(image_21, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_21, "<B1-Motion>", move_window)
+
+image_image_22 = PhotoImage(
+    file=relative_to_assets("image_22.png"))
+image_22 = canvas.create_image(
+    295.0,
+    680,
+    image=image_image_22
+)
 
 table_name = "status"  # Replace with the actual table name
 name_column = "name"  # Replace with the actual name column name
@@ -135,51 +280,6 @@ def get_other_user_id():
 
 other_user = get_other_user_id()
 
-with open("Files/status.json", 'r') as rank_check_file:
-    rank_check_data=json.load(rank_check_file)
-    
-def get_rank():
-    with open("Files/status.json", 'r') as rank_check_file:
-        rank_check_data=json.load(rank_check_file)
-        lvl=rank_check_data["status"][0]['level']
-
-        if lvl>=1 and lvl<=10:
-            rank="E"
-        elif lvl>=11 and lvl<=20:
-            rank="D"
-        elif lvl>=21 and lvl<=30:
-            rank="C"
-        elif lvl>=31 and lvl<=45:
-            rank="B"
-        elif lvl>=46 and lvl<=65:
-            rank="A"
-        elif lvl>=66 and lvl<=80:
-            rank="S"
-        elif lvl>=81 and lvl<=90:
-            rank="SS"
-        elif lvl>=91 and lvl<=100:
-            rank="SSS"
-        elif lvl>=101:
-            rank="National"
-    return rank
-current_user_reps = supabase.table("reps").select("reps_count").eq("user_id", user_id).execute()
-rank = get_rank()
-av_str = current_user_reps / 8
-av_int = current_user_reps / 8
-coins = current_user_reps * 4
-xp_pl = current_user_reps / 2
-
-def rewards():
-    with open("Files/Status.json", 'w') as status_import:
-        rank_check_data["status"][0]['coins']+=coins
-        rank_check_data["avail_eq"][0]['str_based']+=av_str
-        rank_check_data["avail_eq"][0]['int_based']+=av_int
-        rank_check_data["status"][0]['XP']+=xp_pl
-        rank_check_data["status"][0]["fatigue"]+=(thesystem.system.give_fatigue_from_rank(rank)*2)
-        json.dump(rank_check_data, status_import, indent=4)
-        subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
-    window.quit()
-
 
 if other_user:
     # Fetch reps count for the opponent
@@ -213,100 +313,6 @@ if other_user:
 else:
     WinorLoseText = "No opponent found. Please check your current status."
     
-
-
-
-window = Tk()
-
-initial_height = 0
-initial_width = 0
-target_height = 431
-window_width = 712
-
-thesystem.system.make_window_transparent(window)
-
-window.geometry(f"{initial_width}x{initial_height}")
-thesystem.system.animate_window_open_middle(window, target_height, window_width, step=20, delay=1)
-
-thesystem.system.center_window(window,window_width,target_height)
-window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.6)
-window.overrideredirect(True)
-window.wm_attributes("-topmost", True)
-
-def animate_window_close(window, target_height, width, step=2, delay=5):
-    current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height > target_height:
-        new_height = max(current_height - step, target_height)
-    else:
-        new_height = current_height
-    
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
-
-    if new_height > target_height:
-        window.after(delay, animate_window_close, window, target_height, width, step, delay)
-    else:
-        
-        window.quit()
-
-def ex_close(eve):
-    subprocess.Popen(['python', os.path.join(project_root, 'Files/Mod/default/sfx_close.py')])
-    animate_window_close(window, initial_height, window_width, step=45, delay=1)
-
-
-canvas = Canvas(
-    window,
-    bg = "#0678FF",
-    height = 432,
-    width = 712,
-    bd = 0,
-    highlightthickness = 0,
-    relief = "ridge"
-)
-
-canvas.place(x = 0, y = 0)
-image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
-image_1 = canvas.create_image(
-    356.0,
-    216.0,
-    image=image_image_1
-)
-
-image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
-image_2 = canvas.create_image(
-    356.0,
-    216.0,
-    image=image_image_2
-)
-
-button_image_20 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_20 = Button(
-    image=button_image_20,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: ex_close(window),
-    relief="flat"
-)
-button_20.place(
-    x=655.0,
-    y=35.0,
-    width=21.20473861694336,
-    height=24.221660614013672
-)
-
-
-transparent_image = Image.new('RGBA', (1, 1), (0, 0, 0, 0))  # Create a 1x1 transparent image
-transparent_photo = ImageTk.PhotoImage(transparent_image)
-
 
 # Display the initial reps count on the canvas
 reps_text = canvas.create_text(
