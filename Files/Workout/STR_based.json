@@ -2,11 +2,9 @@
     "Shoulder Tap Pushups":[
         {
             "desc":"Tap the right Shoulder with your left hand and vice-versa after one pushup",
-            "time":45,
             "amt":15,
-            
-            "timeval":"Seconds",
-            "amtval":"Times",
+
+            "amtval":"Reps",
             "type":"Common"
         },
         {
@@ -14,14 +12,12 @@
         }
     ],
 
-    "Lunge and Twist":[
+    "Lunges":[
         {
-            "desc":"Step forward with your right foot, lowering your body into a basic lunge position. Twist your upper body to the right from your midsection. Keep your core engaged, squeeze your glutes, and be careful to not rotate your knee",
-            "time":45,
+            "desc":"Take a large step forward and lower your body until your front thigh is parallel with the ground, while keeping your back straight.",
             "amt":15,
 
-            "timeval":"Seconds",
-            "amtval":"Times",
+            "amtval":"Reps",
             "type":"Common"
         },
         {
@@ -32,11 +28,9 @@
     "Mountain Climber":[
         {
             "desc":"Using your abdominals, bend your right knee in toward your chest, then step it back into the plank position. Repeat with your left leg, bringing it toward your chest and then stepping it back",
-            "time":45,
-            "amt":15,
+            "time":30,
 
             "timeval":"Seconds",
-            "amtval":"Times",
             "type":"Common"
         },
         {
@@ -44,14 +38,12 @@
         }
     ],
 
-    "Leg Kickbacks":[
+    "Plank":[
         {
-            "desc":"Lay on your back with your knees bent and raise the straightened leg skyward while keeping contact with the ground",
+            "desc":"Start lying facedown and place elbows directly under shoulders. Then push your body up using your abs. Make sure you keep your back straight so you don't strain on your lower back.",
             "time":45,
-            "amt":15,
 
             "timeval":"Seconds",
-            "amtval":"Times",
             "type":"Common"
         },
         {
@@ -61,53 +53,59 @@
 
     "Leg Lifts":[
         {
-            "desc":"This exercise can be performed lying down or sitting up, and involves lifting the legs off the ground while keeping them straight.",
-            "time":45,
+            "desc":"Lay on your back. With your feet together and with your hands on the ground, and raise your legs straight up. Remember to keep them straight (like a spear).",
             "amt":15,
 
-            "timeval":"Seconds",
-            "amtval":"Times",
+
+            "amtval":"Reps",
             "type":"Common"
         },
         {
             "STRBUFF":1
         }
     ],
-
-    "Planks":[
-        {
-            "desc":"The plank exercise is an isometric core exercise that involves maintaining a position similar to a push-up for the maximum possible time.",
-            "time":45,
-            "amt":1,
-
-            "timeval":"Seconds",
-            "amtval":"Times",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
-        }
-    ],
-
     "Crunches":[
         {
             "desc":"Crunches are exercises that you do to strengthen your stomach muscles. They involve sitting up from a lying position with your legs straight, bent, or raised.",
             "amt":15,
 
-            "amtval":"Times",
+            "amtval":"Reps",
             "type":"Common"
         },
         {
             "STRBUFF":1
         }
     ],
-
-    "Toe Stands":[
+    "Wall Sit":[
         {
-            "desc":"Lie on the floor in a prone position, with your legs straight and your arms extended in front of you. Keeping your head in a neutral position (avoid looking up), slowly lift your arms and legs around 6 inches off the floor, or until you feel your lower back muscles contracting.",
-            "amt":15,
+            "desc":"Sit against a wall with your back flat and knees bent at a 90-degree angle, as if sitting on an invisible chair.",
+            "time":45,
 
-            "amtval":"Times",
+            "timeval":"Seconds",
+            "type":"Common"
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+    "High Knees":[
+        {
+            "desc":"Jog in place while bringing your knees as high as possible toward your chest.",
+            "time":45,
+
+            "timeval":"Seconds",
+            "type":"Common"
+        },
+        {
+            "STRBUFF":1
+        }
+    ],
+    "Superman Hold":[
+        {
+            "desc":"Lie face down, extend your arms and legs, and lift them slightly off the ground, holding the position.",
+            "time":30,
+
+            "timeval":"Seconds",
             "type":"Common"
         },
         {

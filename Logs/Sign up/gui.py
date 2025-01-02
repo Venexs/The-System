@@ -283,7 +283,7 @@ def create_account(email, username, password):
         
         print(f"Logged in successfully for {username}!")
         ex_close(window)
-        subprocess.Popen(['python', 'E:/System/Edited/SystemUpdate3/System_SL-main/First/Info/gui.py'])
+        subprocess.Popen(['python', 'First/Info/gui.py'])
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 

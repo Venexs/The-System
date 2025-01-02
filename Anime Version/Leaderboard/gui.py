@@ -249,7 +249,28 @@ def get_current_user_id():
     except Exception as e:
         print(f"Error getting user: {e}")
         return None
+def get_user_name_from_status_table(access_token: str):
+    try:
+        # Step 1: Get current user ID using the access token
+        user_id = get_current_user_id(access_token)
+        
+        if user_id is None:
+            return None
+        
+        # Step 2: Query the `status` table for the row with the matching user ID
+        response = supabase.table('status').select('name').eq('user_id', user_id).single().execute()
+        
+        if response.error:
+            print(f"Error fetching user name from status table: {response.error.message}")
+            return None
+        
+        # Step 3: Extract the user's name from the response
+        user_name = response.data.get('name', 'No name found')  # Adjust column name if necessary
+        return user_name
     
+    except Exception as e:
+        print(f"Error retrieving user name: {e}")
+        return None
 def get_all_names_and_levels(table_name, name_column, level_column, users_table="status", username_column="name"):
     try:
         # Get the current authenticated user's username
@@ -315,10 +336,10 @@ treeview.heading('Name', text='Username')
 treeview.heading('Level', text='Level')
 treeview.heading('Rank', text='Rank')
 treeview.heading('Guild', text='Guild')
-treeview.column('Name', width=100)
-treeview.column('Level', width=20)
-treeview.column('Rank', width=20)
-treeview.column('Guild', width=30)
+treeview.column('Name', width=60)
+treeview.column('Level', width=5)
+treeview.column('Rank', width=5)
+treeview.column('Guild', width=60)
 
 # Apply style for row borders
 style = ttk.Style()
@@ -326,11 +347,6 @@ style.theme_use('clam')
 style.configure('Treeview', rowheight=15, borderwidth=10, relief="groove")
 style.configure('Treeview', background='black', fieldbackground='black', foreground='white')
 style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
-
-# Add vertical scrollbar
-scrollbar = ttk.Scrollbar(frame, orient='vertical', command=treeview.yview)
-scrollbar.pack(side='right', fill='y')
-treeview.configure(yscrollcommand=scrollbar.set)
 
 
 # Insert names with levels into the listbox

@@ -25,12 +25,38 @@
         }
     ],
 
-    "Cycling":[
+    "Water":[
         {
-            "desc":"Go Cycling",
+            "desc":"Just drink the average glass size at your house. (A liter is the perfect amount to drink each hour.)",
             "amt":2,
 
-            "amtval":"KM",
+            "amtval":"(Approx 500ML) Glasses of Water.",
+            "type":"Common"
+        },
+        {
+            "VITBUFF":1
+        }
+    ],
+
+    "Walk":[
+        {
+            "desc":"Take a walk outside, preferably in nature. And write in a journal 2 beautiful things.",
+            "amt":2,
+
+            "amtval":"Beautiful Things Noticed",
+            "type":"Common"
+        },
+        {
+            "VITBUFF":1
+        }
+    ],
+
+    "Meditate":[
+        {
+            "desc":"Turn off music, minimum sound, and focus on your breath.",
+            "time":5,
+
+            "timeval":"Minutes",
             "type":"Common"
         },
         {

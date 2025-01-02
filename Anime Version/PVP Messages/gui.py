@@ -254,10 +254,10 @@ def get_current_user_id():
 def get_username_from_id(user_id):
     """Fetch the username of a user given their user_id."""
     try:
-        response = supabase.table("status") /
-            .select("name") /
-            .eq("user_id", user_id) /
-            .single() /
+        response = supabase.table("status") \
+            .select("name") \
+            .eq("user_id", user_id) \
+            .single() \
             .execute()
 
         if response.data:
@@ -287,10 +287,10 @@ def get_pending_guild_invites():
             return []
 
         # Query to fetch pending guild invites where the current user is the invitee
-        response = supabase.table("guild_invites") /
-            .select("*") /
-            .eq("invitee_id", current_user_id) /
-            .eq("status", "pending") /
+        response = supabase.table("guild_invites") \
+            .select("*") \
+            .eq("invitee_id", current_user_id) \
+            .eq("status", "pending") \
             .execute()
 
         if response.data:
@@ -310,10 +310,10 @@ def get_pending_invites():
             return []
 
         # Query to fetch pending invites where the current user is the invitee
-        response = supabase.table("pvp_invites") /
-            .select("*") /
-            .eq("invitee_id", current_user_id) /
-            .eq("status", "pending") /
+        response = supabase.table("pvp_invites") \
+            .select("*") \
+            .eq("invitee_id", current_user_id) \
+            .eq("status", "pending") \
             .execute()
 
         if response.data:
@@ -330,9 +330,9 @@ def handle_invite_response(invite_id, response):
     try:
         # Update the invite status to either 'accepted' or 'declined'
         update_data = {"status": response}
-        invite_response = supabase.table("pvp_invites") /
-            .update(update_data) /
-            .eq("id", invite_id) /
+        invite_response = supabase.table("pvp_invites") \
+            .update(update_data) \
+            .eq("id", invite_id) \
             .execute()
 
         if invite_response.data:
@@ -376,9 +376,9 @@ def start_polling(invite_id):
     
 def get_invite_id():
     try:
-        response = supabase.table("pvp_invites") /
-            .select("id") /
-            .eq("status", "pending") /
+        response = supabase.table("pvp_invites") \
+            .select("id") \
+            .eq("status", "pending") \
             .execute()
         
         if response.data:
@@ -394,9 +394,9 @@ def get_invite_id():
 
 def get_invite_sender():
     try:
-        response = supabase.table("pvp_invites") /
-            .select("inviter_id") /
-            .eq("status", "pending") /
+        response = supabase.table("pvp_invites") \
+            .select("inviter_id") \
+            .eq("status", "pending") \
             .execute()
         
         if response.data:

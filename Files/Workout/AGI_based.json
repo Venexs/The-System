@@ -2,7 +2,7 @@
     "Jumping Jacks":[
         {
             "desc":"It is a physical jumping exercise performed by jumping to a position with the legs spread wide and the hands going overhead, sometimes in a clap, and then returning to a position with the feet together and the arms at the sides.",
-            "amt":50,
+            "amt":30,
 
             "amtval":"Times",
             "type":"Common"
@@ -15,7 +15,7 @@
     "Skipping":[
         {
             "desc":"Skipping is a form of exercise that involves swinging a rope around your body and jumping over it as it passes under your feet",
-            "amt":50,
+            "amt":30,
 
             "amtval":"Times",
             "type":"Common"
@@ -51,19 +51,6 @@
         }
     ],
 
-    "Plank Shoulder Taps":[
-        {
-            "desc":"It involves holding a plank position while simultaneously tapping your opposite shoulders.",
-            "amt":15,
-
-            "amtval":"Pairs",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
-        }
-    ],
-
     "High Knees":[
         {
             "desc":"It Involves running in place while lifting one knee up towards the chest at a time, alternating between both legs",
@@ -77,38 +64,12 @@
         }
     ],
 
-    "Side Shuffle":[
+    "Quick Feet (Line Taps)":[
         {
-            "desc":"It involves moving side-to-side on one foot while maintaining a steady rhythm with your arms.",
-            "amt": 15,
+            "desc":"Mark a small line (a real or imaginary line). Step forward and back across the line as quickly as possible.",
+            "time": 45,
 
-            "amtval":"Pairs",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
-        }
-    ],
-
-    "Lateral Side step":[
-        {
-            "desc":"This exercise involves quickly stepping to the side while shifting your weight in the opposite direction. ",
-            "amt": 15,
-
-            "amtval":"Pairs",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
-        }
-    ],
-
-    "Shuttle Runs":[
-        {
-            "desc":"It involves starting a line and sprinting to the finish line and back.",
-            "amt": 15,
-
-            "amtval":"Laps",
+            "timeval":"Seconds",
             "type":"Common"
         },
         {

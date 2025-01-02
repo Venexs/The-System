@@ -249,7 +249,7 @@ def update_guild_status(treeview):
         return
 
     # Check which guild the player is currently in
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', user_id).execute()
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', get_user_name()).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     # Update the Treeview
@@ -272,9 +272,25 @@ def update_guild_status(treeview):
                 "Switch Guild"  # Text for other guilds
             ))
 
+# Function to get the user's name from the `status` table
+def get_user_name():
+    try:
+        # Step 1: Get current user ID using the access token
+        user_id = get_current_user_id()
+        
+        if user_id is None:
+            return None
+        
+        # Step 2: Query the `status` table for the row with the matching user ID
+        response = supabase.table('status').select('name').eq('user_id', user_id).single().execute()
 
+        # Step 3: Extract the user's name from the response
+        user_name = response.data.get('name', 'No name found')  # Adjust column name if necessary
+        return user_name
     
-
+    except Exception as e:
+        print(f"Error retrieving user name: {e}")
+        return None
 
 hovered_item = None
 
@@ -286,7 +302,7 @@ def on_treeview_hover(event):
 
     # Get the current user ID and the player's current guild
     user_id = get_current_user_id()
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', user_id).execute()
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', get_user_name()).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     # Reset previously hovered item if it's different
@@ -328,9 +344,6 @@ def on_treeview_leave(event):
         ))
         hovered_item = None
 
-
-
-
 def on_treeview_click(event):
     # Identify the item clicked
     item_id = treeview.identify_row(event.y)
@@ -342,7 +355,7 @@ def on_treeview_click(event):
 
     # Fetch current user's guild
     user_id = get_current_user_id()
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', user_id).execute()
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', get_user_name()).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     if column == '#4':  # Check if it's the 'Join/Switch' column
@@ -356,7 +369,7 @@ def on_treeview_click(event):
 
 def switch_guild(user_id, new_guild_id):
     # Remove the user from the current guild
-    supabase.table('Members').delete().eq('user_id', user_id).execute()
+    supabase.table('Members').delete().eq('user_id', get_user_name()).execute()
     
     # Add the user to the new guild
     supabase.table('Members').insert({'user_id': user_id, 'guild_id': new_guild_id}).execute()
@@ -462,9 +475,6 @@ treeview.bind("<Enter>", on_treeview_hover)   # On Enter the widget
 treeview.bind("<Leave>", on_treeview_leave)   # On Leave the widget
 treeview.bind('<ButtonRelease-1>', on_treeview_click)  # Click
 # Add vertical scrollbar
-scrollbar = ttk.Scrollbar(frame, orient='vertical', command=treeview.yview)
-scrollbar.pack(side='right', fill='y')
-treeview.configure(yscrollcommand=scrollbar.set)
 
 # Load data into Treeview
 load_guilds(treeview)

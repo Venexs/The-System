@@ -13,7 +13,6 @@ supabase: Client = create_client(URL, KEY)
 
 
 
-print("Opened background file")
 
 SESSION_FILE = "Files/Data/session.json"
 

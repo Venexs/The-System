@@ -1,7 +1,33 @@
 {
-    "Mindfull Meditation":[
+    "Body Scan":[
         {
-            "desc":"Practice mindfulness meditation to increase awareness of sensory experiences and improve attention to the present moment.",
+            "desc":"Perform a mental scan, from the top of the head to the end of your toes. Imagine a photocopier light slowly moving over your body, bringing attention to any discomfort, sensations, tensions, or aches that exist..",
+            "time":2,
+
+            "timeval":"Minutes",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Visualization":[
+        {
+            "desc":"Visualize a flame in your lower belly for the allotted time.",
+            "time":2,
+
+            "timeval":"Minutes",
+            "type":"Learn"
+        },
+        {
+            "PERBUFF":1
+        }
+    ],
+
+    "Time":[
+        {
+            "desc":"Take a moment to look at the clock. Let yourself zone out. Watch as time flows past. It may start to slow or speed up.",
             "time":1,
 
             "timeval":"Minute",
@@ -12,12 +38,12 @@
         }
     ],
 
-    "Mindfull Breathing":[
+    "Mindful Observation":[
         {
-            "desc":"Inhale through your nose and exhaling through your mouth, for a 6-second cycle. Let go of thoughts and distractions, staying mindful of the breath's journey in and out of your body to find peace and relaxation.",
-            "amt":2,
+            "desc":"Take a moment to choose an object around you. Focus on it, and observe it as if you're seeing it for the first time. Allow yourself to be consumed by its presence and connect with its purpose in the natural world.",
+            "time":2,
 
-            "amtval":"Times",
+            "timeval":"Minutes",
             "type":"Learn"
         },
         {
@@ -25,12 +51,12 @@
         }
     ],
 
-    "Mindfull Observation":[
+    "Total Concentration Awareness":[
         {
-            "desc":"Take a moment to choose a natural object around you. Focus on it for a minute or two, observing it as if you're seeing it for the first time. Allow yourself to be consumed by its presence and connect with its purpose in the natural world.",
-            "amt":2,
+            "desc":"Focus on your thoughts. Meditate for 3 minutes to start, and then for the last 3 minutes, ask yourself questions that you want answered and wait for an answer in silence.",
+            "time":6,
 
-            "amtval":"Times",
+            "timeval":"Minutes",
             "type":"Learn"
         },
         {
@@ -38,25 +64,12 @@
         }
     ],
 
-    "Mindfull Awareness":[
-        {
-            "desc":"Choose a touch point that resonates with you today and, instead of going through your daily motions on autopilot, take occasional moments to stop and cultivate purposeful awareness of what you are doing and the blessings these actions brings to your life.",
-            "amt":2,
-
-            "amtval":"Times",
-            "type":"Learn"
-        },
-        {
-            "PERBUFF":1
-        }
-    ],
-
-    "Mindfull Listening":[
+    "Mindful Listening":[
         {
             "desc":"Close your eyes and put on your headphones. Don't judge the music by its genre, title, or artist. Instead, allow yourself to get lost in the sound journey. Explore every aspect of the track, even if you don't like it at first. Listen to each instrument's dynamics separately and focus on the vocals, including tone and range.",
-            "amt":2,
+            "time":2,
 
-            "amtval":"Times",
+            "timeval":"Minutes",
             "type":"Learn"
         },
         {
@@ -64,12 +77,12 @@
         }
     ],
 
-    "Mindfull Immersion":[
+    "Mindful Immersion":[
         {
-            "desc":"Instead of labouring through and constantly thinking about finishing a particular task, become aware of every step and fully immerse yourself in the progress. Take the activity beyond a routine by aligning yourself with it physically, mentally and spiritually.",
-            "amt":2,
+            "desc":"Instead of labouring through and constantly thinking about finishing a particular task, become aware of every step and fully immerse yourself in the progress. Take the activity beyond a routine by aligning yourself with it physically, mentally and spiritually. Some examples of tasks to do are: Drinking water, Washing the dishes, Doing laundry, Eating, Cleaning your room or Decluttering a small area like a shelf or drawer.",
+            "time":2,
 
-            "amtval":"Times",
+            "timeval":"Minutes",
             "type":"Learn"
         },
         {
@@ -77,12 +90,12 @@
         }
     ],
 
-    "Mindfull Appreciation":[
+    "Mindful Appreciation":[
         {
-            "desc":"Have you ever wondered about the origin and function of everyday things? Have you appreciated their benefits to your life and others'? Have you imagined life without them or noticed their intricate details? Have you considered how they're interconnected and support Earth's functioning? Identify five things and learn all you can about their creation and purpose to appreciate their role in your life.",
-            "amt":2,
+            "desc":"Take time to list on physical paper what you are thankful for.",
+            "amt":5,
 
-            "amtval":"Times",
+            "amtval":"Journal (Specific Things)",
             "type":"Learn"
         },
         {
