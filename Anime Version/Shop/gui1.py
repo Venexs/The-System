@@ -23,10 +23,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame1")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -88,7 +88,7 @@ def quests_add(rank,vals):
 
     if activ_quests_vals<13 and activ_quests_vals!=13:
         # ? Quest Name
-        with open("Files\Quests\Quest_Names.json", 'r') as quest_name_file:
+        with open("Files/Quests/Quest_Names.json", 'r') as quest_name_file:
             quest_names=json.load(quest_name_file)
             if random_ab in ["STR","AGI","VIT"]:
                 names_list=quest_names["STR"]
@@ -112,7 +112,7 @@ def quests_add(rank,vals):
                 rew3="INTav"
         
         # ? Quest Description
-        with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
+        with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
             quest_desc=json.load(quest_desc_file)
             if rank in ["E", "D"]:
                 desc_list=quest_desc["Easy"]
@@ -137,7 +137,7 @@ def quests_add(rank,vals):
         
         coinval=amt[rank]
         rew1=f"Coin Bag {coinval}"
-        with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
+        with open("Files/Data/Inventory_List.json", 'r') as rewards_name_file:
             reward_names=json.load(rewards_name_file)
             reward_names_list=list(reward_names.keys())
 
@@ -149,7 +149,7 @@ def quests_add(rank,vals):
             rew2=random.choice(final_rewards_list)
 
         # ? Quest Info
-        file_name=f"Files\Workout\{random_ab}_based.json"
+        file_name=f"Files/Workout/{random_ab}_based.json"
         with open(file_name, 'r') as quest_file_name:
             quest_main_names=json.load(quest_file_name)
             quest_main_names_list=list(quest_main_names.keys())

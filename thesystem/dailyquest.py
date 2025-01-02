@@ -52,7 +52,7 @@ def get_rank():
 
 def get_check_rew():
     reward=False
-    with open("Files\Temp Files\Daily Rewards.csv", 'r') as csv_open:
+    with open("Files/Temp Files/Daily Rewards.csv", 'r') as csv_open:
         fr=csv.reader(csv_open)
         for k in fr:
             type_re=k[0]

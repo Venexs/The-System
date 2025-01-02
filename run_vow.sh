@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3.9 vow.py
+python vow.py

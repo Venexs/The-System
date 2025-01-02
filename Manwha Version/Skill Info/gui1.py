@@ -15,7 +15,7 @@ import cv2
 from PIL import Image, ImageTk
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame1")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -27,7 +27,7 @@ def up():
     screen_tr_txt=canvas_1.itemcget(screen_txt, "text")
     av_tr_txt=canvas_1.itemcget(av_txt, "text")
     if int(av_tr_txt)!=0:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         new=int(screen_tr_txt)+1
         be_new=f"{new:03d}"
         canvas_1.itemconfig(screen_txt, text=be_new)
@@ -42,7 +42,7 @@ def down():
     screen_tr_txt=canvas_1.itemcget(screen_txt, "text")
     av_tr_txt=canvas_1.itemcget(av_txt, "text")
     if int(screen_tr_txt)!=0:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         new=int(screen_tr_txt)-1
         be_new=f"{new:03d}"
         canvas_1.itemconfig(screen_txt, text=be_new)
@@ -94,7 +94,7 @@ def goback():
 
     window.quit()
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -157,7 +157,7 @@ with open("Files/Temp Files/Skill Temp.csv", 'r') as csv_open:
     for k in fr:
         name=k[0]
 
-with open("Files\Data\Skill_Up_Values.json", 'r') as fson:
+with open("Files/Data/Skill_Up_Values.json", 'r') as fson:
     data=json.load(fson)
 
 with open("Files/Skills/Skill.json", 'r') as fron:

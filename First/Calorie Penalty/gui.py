@@ -10,7 +10,7 @@ import sys
 import os
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets//frame0")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -20,14 +20,14 @@ window = Tk()
 
 # Configure the window
 window.geometry("1272x718")
-subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx_glitch.py'])
 
 window.configure(bg="#000000")
 window.wm_attributes("-topmost", True)
 window.attributes('-fullscreen', True)
 
 # Load the JSON file
-with open("Files\Checks\Cal_penalty.json", 'r') as file:
+with open("Files/Checks/Cal_penalty.json", 'r') as file:
     data=json.load(file)
     y=data["Final"]
 
@@ -47,14 +47,14 @@ x=data["Value"]
 
 today_str = datetime.now().strftime("%d-%m-%Y")
 
-with open("Files\Data\Calorie_Count.json", 'r') as cal_file:
+with open("Files/Data/Calorie_Count.json", 'r') as cal_file:
     cal_file_data = json.load(cal_file)
 
 if today_str in cal_file_data:
     cal_val=cal_file_data[today_str] 
 
 # Write the updated data back to the JSON file
-with open("Files\Checks\Cal_penalty.json", 'w') as file:
+with open("Files/Checks/Cal_penalty.json", 'w') as file:
     json.dump(data, file, indent=4)
 
 z=y-x
@@ -78,7 +78,7 @@ canvas = Canvas(
 canvas.pack(fill="both", expand=True)
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     window.quit()
 
 # Load images

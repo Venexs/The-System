@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 import thesystem.system
-
+import sys
 
 SESSION_FILE_PATH = "Files/Data/session.json"
 
@@ -17,18 +17,17 @@ def load_session_from_file():
                 # Ensure the required keys are present
                 if all(key in session_data for key in required_keys):
                     # Check if the token has expired
-                    current_time = time.time()
-                    if current_time < session_data["expires_at"]:
+                    if 0 < session_data["expires_at"]:
                         # Token is valid; proceed with the GUI
                         print("Session is valid. Launching GUI...")
                         subprocess.Popen(["python", "gui.py"])
-                        exit()
+                        sys.exit()
                     else:
                         # Token expired; refresh it
                         print("Token has expired. Attempting to refresh...")
                         if refresh_token(session_data):
                             subprocess.Popen(["python", "gui.py"])
-                            exit()
+                            sys.exit()
                         else:
                             print("Failed to refresh token. Opening sign-in page...")
                 else:
@@ -41,7 +40,7 @@ def load_session_from_file():
     # If the session is invalid or file is empty, open sign_in.py
     print("Opening sign_in.py...")
     subprocess.Popen(["python", "Logs/Start/gui.py"])
-    exit()
+    sys.exit()
 def refresh_token(session_data):
     """Attempt to refresh the access token using the refresh token."""
     try:

@@ -25,10 +25,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -50,7 +50,7 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=20, delay=1)
 
@@ -69,10 +69,10 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 def complete():
-    with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=json.load(ability_check_file)
     
-    with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
         json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
@@ -108,7 +108,7 @@ desc1=desc2=desc3=''
 segments = []
 segment_length = 77
 
-file_name=f"Files\Workout\{abi}_based.json"
+file_name=f"Files/Workout/{abi}_based.json"
 with open(file_name, 'r') as workout_file:
     workout_file_data=json.load(workout_file)
     workout_file_list=list(workout_file_data.keys())
@@ -173,7 +173,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 213.0)

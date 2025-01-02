@@ -15,13 +15,13 @@ import cv2
 from PIL import Image, ImageTk
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -104,7 +104,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = VideoPlayer(canvas, video_path, 478.0, 313.0)
@@ -127,7 +127,7 @@ def second():
     window.after(5000, third)
 
 def third():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Skills/Skill.json', 'r') as skill_file:
         skill_file_data=json.load(skill_file)
         skill_file_data["Strength Augmentation"]=[{
             "lvl":1,
@@ -155,7 +155,7 @@ def third():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Skills/Skill.json', 'w') as fin_skill_file:
         json.dump(skill_file_data, fin_skill_file, indent=6)
 
     with open("Files/status.json", 'r') as fson:

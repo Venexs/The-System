@@ -24,7 +24,7 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -72,7 +72,7 @@ segments = []
 other_seg=[]
 segment_length = 70
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
@@ -99,7 +99,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
@@ -692,7 +692,7 @@ elif typeof == "Common":
         ex_tr_txt=canvas.itemcget(ex_txt, "text")
         new_1=int(ex_tr_txt)+1
         be_new_1=f"{new_1}"
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         canvas.itemconfig(ex_txt, text=be_new_1)
         
 

@@ -15,7 +15,7 @@ from PIL import Image, ImageTk
 import time
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame1")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -123,7 +123,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = VideoPlayer(canvas, video_path, 478.0, 313.0)
@@ -147,7 +147,7 @@ image_3 = canvas.create_image(
 )
 
 prog()
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.resizable(False, False)
 window.mainloop()

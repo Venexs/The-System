@@ -24,7 +24,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -64,7 +64,7 @@ c=0
 
 def final(name0):
     if name0!='':
-        with open("Files\Status.json", 'r') as fina_read_fson:
+        with open("Files/Status.json", 'r') as fina_read_fson:
             fina_read_data=json.load(fina_read_fson)
 
         if fina_read_data["status"][1]["title_bool"]!="True":
@@ -108,10 +108,10 @@ def final(name0):
 
             subprocess.Popen(['python', 'Manwha Version/Status Tab/gui.py'])
 
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
             window.quit()
 
-with open("Files\Titles\Titles.json", 'r') as fson:
+with open("Files/Titles/Titles.json", 'r') as fson:
     data=json.load(fson)
     data_key=list(data.keys())
     try:
@@ -172,7 +172,7 @@ with open("Files\Titles\Titles.json", 'r') as fson:
     except:
         print("", end='')
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -209,7 +209,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0, resize_factor=1)

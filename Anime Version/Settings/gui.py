@@ -28,7 +28,7 @@ import thesystem.system
 import thesystem.settings as settings
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
     tab_son_data=json.load(tab_son)
@@ -40,7 +40,7 @@ with open("Files/Tabs.json",'w') as fin_tab_son:
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -60,7 +60,7 @@ window.wm_attributes("-topmost", True)
 checkbox_var1 = IntVar(value=0)
 checkbox_var0 = IntVar(value=0)
 
-with open("Files\Settings.json", 'r') as settings_open:
+with open("Files/Settings.json", 'r') as settings_open:
     setting_data=json.load(settings_open)
 
 checkbox_var1 = IntVar(value=1 if setting_data["Settings"].get("Calorie_Penalty", "False") == "True" else 0)
@@ -89,7 +89,7 @@ def ex_close(win):
         tab_son_data["Settings"]='Close'
         json.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 def theme_open():
@@ -97,7 +97,7 @@ def theme_open():
         fw=csv.writer(info_open)
         fw.writerow(["True"])
         
-    subprocess.Popen(['python', 'First\Theme Check\gui.py'])
+    subprocess.Popen(['python', 'First/Theme Check/gui.py'])
     ex_close(window)
 
 def info_open():
@@ -105,7 +105,7 @@ def info_open():
         fw=csv.writer(info_open)
         fw.writerow(["True"])
 
-    subprocess.Popen(['python', 'First\Info\gui.py'])
+    subprocess.Popen(['python', 'First/Info/gui.py'])
     ex_close(window)
 
 unchecked_image = PhotoImage(file="assets/frame0/Off.png")
@@ -129,7 +129,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"]["Video"]

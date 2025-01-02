@@ -70,7 +70,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 window = Tk()
 window.geometry("488x0")  # Initial collapsed height
 window.configure(bg="#FFFFFF")
@@ -82,7 +82,7 @@ thesystem.system.make_window_transparent(window)
 # Animate window open
 window_width = 488
 target_height = 716
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
 # Load JSON data once to reduce file I/O
@@ -254,10 +254,10 @@ def get_current_user_id():
 def get_username_from_id(user_id):
     """Fetch the username of a user given their user_id."""
     try:
-        response = supabase.table("status") \
-            .select("name") \
-            .eq("user_id", user_id) \
-            .single() \
+        response = supabase.table("status") /
+            .select("name") /
+            .eq("user_id", user_id) /
+            .single() /
             .execute()
 
         if response.data:
@@ -279,6 +279,29 @@ def get_all_names(table_name, name_column):
     
 names = get_all_names(table_name, name_column)
 
+def get_pending_guild_invites():
+    try:
+        current_user_id = get_current_user_id()
+        if not current_user_id:
+            print("Error", "User is not authenticated.")
+            return []
+
+        # Query to fetch pending guild invites where the current user is the invitee
+        response = supabase.table("guild_invites") /
+            .select("*") /
+            .eq("invitee_id", current_user_id) /
+            .eq("status", "pending") /
+            .execute()
+
+        if response.data:
+            return response.data  # Return list of pending invites
+        else:
+            return []
+    except Exception as e:
+        print("Error", "An error occurred while fetching pending guild invites.")
+        return []
+
+
 def get_pending_invites():
     try:
         current_user_id = get_current_user_id()
@@ -287,10 +310,10 @@ def get_pending_invites():
             return []
 
         # Query to fetch pending invites where the current user is the invitee
-        response = supabase.table("pvp_invites") \
-            .select("*") \
-            .eq("invitee_id", current_user_id) \
-            .eq("status", "pending") \
+        response = supabase.table("pvp_invites") /
+            .select("*") /
+            .eq("invitee_id", current_user_id) /
+            .eq("status", "pending") /
             .execute()
 
         if response.data:
@@ -307,9 +330,9 @@ def handle_invite_response(invite_id, response):
     try:
         # Update the invite status to either 'accepted' or 'declined'
         update_data = {"status": response}
-        invite_response = supabase.table("pvp_invites") \
-            .update(update_data) \
-            .eq("id", invite_id) \
+        invite_response = supabase.table("pvp_invites") /
+            .update(update_data) /
+            .eq("id", invite_id) /
             .execute()
 
         if invite_response.data:
@@ -353,9 +376,9 @@ def start_polling(invite_id):
     
 def get_invite_id():
     try:
-        response = supabase.table("pvp_invites") \
-            .select("id") \
-            .eq("status", "pending") \
+        response = supabase.table("pvp_invites") /
+            .select("id") /
+            .eq("status", "pending") /
             .execute()
         
         if response.data:
@@ -371,9 +394,9 @@ def get_invite_id():
 
 def get_invite_sender():
     try:
-        response = supabase.table("pvp_invites") \
-            .select("inviter_id") \
-            .eq("status", "pending") \
+        response = supabase.table("pvp_invites") /
+            .select("inviter_id") /
+            .eq("status", "pending") /
             .execute()
         
         if response.data:
@@ -389,11 +412,12 @@ def get_invite_sender():
 
 def show_pending_invites():
     """Displays a window with the pending invites for the user to accept or decline."""
-    pending_invites = get_pending_invites()
+    pvp_invites = get_pending_invites()  # PVP invites
+    guild_invites = get_pending_guild_invites()  # Guild invites
     
-    if not pending_invites:
-        print("No Invites", "You have no pending PVP invites.") 
-        
+    if not pvp_invites and not guild_invites:
+        print("No Invites", "You have no pending PVP or Guild invites.") 
+
     listbox_container = Frame(window)
     listbox_container.pack(side="top", fill="y", expand=True, padx=(0, 40), pady=150)
 
@@ -423,12 +447,18 @@ def show_pending_invites():
         
     listbox.config(selectbackground="skyblue", selectforeground="black")  # Customize selection color
 
-    for invite in pending_invites:
+    # Insert PVP invites
+    for invite in pvp_invites:
         inviter_username = get_username_from_id(invite["inviter_id"])  # Assuming you have a method to get the username
         listbox.insert("end", f"Battle invite: {inviter_username}")
+    
+    # Insert Guild invites
+    for invite in guild_invites:
+        inviter_username = get_username_from_id(invite["inviter_id"])  # Assuming you have a method to get the username
+        listbox.insert("end", f"Guild invite: {inviter_username}")
 
     # Initially hide the accept and decline buttons
-    accept_button = Button(window, bg="green", text="Engage", command=lambda: on_accept(listbox))
+    accept_button = Button(window, bg="green", text="Accept", command=lambda: on_accept(listbox))
     decline_button = Button(window, bg="red", text="Decline", command=lambda: on_decline(listbox))
     
     accept_button.pack_forget()
@@ -449,11 +479,8 @@ def show_pending_invites():
         """Handle accept invite action."""
         selected_index = listbox.curselection()
         if selected_index:
-            invite_id = pending_invites[selected_index[0]]["id"]
+            invite_id = pvp_invites[selected_index[0]]["id"] if pvp_invites else guild_invites[selected_index[0]]["id"]
             handle_invite_response(invite_id, "accepted")
-            invite_id = get_invite_id()  # Replace with the actual invite ID
-            sender_id = get_invite_sender
-            start_polling(invite_id, )  # Start monitoring the invite
             window.destroy()  # Close the window after handling
         else:
             messagebox.showwarning("Select an Invite", "Please select an invite to respond to.")
@@ -462,7 +489,7 @@ def show_pending_invites():
         """Handle decline invite action."""
         selected_index = listbox.curselection()
         if selected_index:
-            invite_id = pending_invites[selected_index[0]]["id"]
+            invite_id = pvp_invites[selected_index[0]]["id"] if pvp_invites else guild_invites[selected_index[0]]["id"]
             handle_invite_response(invite_id, "declined")
             window.destroy()  # Close the window after handling
         else:
@@ -470,6 +497,7 @@ def show_pending_invites():
 
     # Bind the listbox selection event to show/hide the buttons
     listbox.bind("<<ListboxSelect>>", on_select)  # Bind the selection event
+
 show_pending_invites()
 
 

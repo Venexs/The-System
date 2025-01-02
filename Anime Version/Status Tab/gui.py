@@ -28,7 +28,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 window = Tk()
 window.geometry("488x0")  # Initial collapsed height
 window.configure(bg="#FFFFFF")
@@ -40,7 +40,7 @@ thesystem.system.make_window_transparent(window)
 # Animate window open
 window_width = 488
 target_height = 716
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
 # Load JSON data once to reduce file I/O
@@ -84,7 +84,7 @@ def update_fatigue_text(canvas, fatigue_val):
             canvas.itemconfig(fatigue_val, text=f"{current_fatigue_percent}%")
             
             # Print the new fatigue value
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
             
             # Update the previous value to the current one
             previous_fatigue_percent = current_fatigue_percent
@@ -250,7 +250,7 @@ if re_check==True:
 
 # ? =====================================================================
 def update_stat(stat_name): 
-    with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=json.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = status_data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else status_data["avail_eq"][0]["int_based"]
@@ -259,13 +259,13 @@ def update_stat(stat_name):
             status_data["status"][0][stat_name] += 1
             val=status_data["status"][0][stat_name]
             canvas.itemconfig(stat_text_widgets[stat_name], text=f"{val:03d}")
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
             status_data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 status_data["status"][0]["fatigue_max"]+=20
             with open("Files/status.json", 'w') as fson:
                 json.dump(status_data, fson, indent=6)
-            with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
+            with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
                 json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':

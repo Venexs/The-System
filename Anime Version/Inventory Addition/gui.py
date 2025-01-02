@@ -13,9 +13,9 @@ import subprocess
 import winsound
 import json
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -112,7 +112,7 @@ canvas.create_text(
     195.0,
     216.0,
     anchor="nw",
-    text="The Ranks and other details\n",
+    text="The Ranks and other details/n",
     fill="#FFFFFF",
     font=("Inter", 13 * -1)
 )

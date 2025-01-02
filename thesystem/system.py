@@ -46,7 +46,7 @@ def fin_pen():
             fout_final_wr.writerow([dates,"DONE","Complete"])
 
     #! ===================================================================
-    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
+    with open("Files/Data/Calorie_Count.json", 'r') as calorie_add_file:
         calorie_add_data=json.load(calorie_add_file)
         calorie_add_key=list(calorie_add_data.keys())[0]
         cal_tdy_val=calorie_add_data[calorie_add_data]
@@ -59,7 +59,7 @@ def fin_pen():
     formatted_date = current_date.strftime("%Y-%m-%d")
     day_of_week = (current_date_t.strftime("%A"))
     try:
-        with open("Files\Workout\Cal_Count.json", 'r') as calorie_val_search_file:
+        with open("Files/Workout/Cal_Count.json", 'r') as calorie_val_search_file:
             calorie_val_search_data=json.load(calorie_val_search_file)
             cal_val=calorie_val_search_data[day_of_week]
             
@@ -197,7 +197,7 @@ def random_skill_check():
         av_int_based = data["avail_eq"][0]['int_based']
         # ? =================================================
     if lvl % 5 == 0:
-        with open("E:\System\Edited\SystemUpdate3\System_SL-main/Files/Skills/Skill_old_check.json", 'r') as check_file:
+        with open("Files/Skills/Skill_old_check.json", 'r') as check_file:
             old_lvl_data = json.load(check_file)
 
         if lvl != old_lvl_data["old_stat"][0]["lvl"]:
@@ -292,7 +292,7 @@ def check_midnight(window,stop_event):
 
 def random_quest():
     # ! The Random Quests thing
-    with open('E:\System\Edited\SystemUpdate3\System_SL-main/Files/Data/Random_Quest_Day.json', 'r') as random_quest:
+    with open('Files/Data/Random_Quest_Day.json', 'r') as random_quest:
         random_quest_data=json.load(random_quest)
         day_num=random_quest_data["Day"]
         tdy_week_num=datetime.today().weekday()
@@ -318,7 +318,7 @@ def random_quest():
 
             if activ_quests_vals<13 and activ_quests_vals!=13:
                 # ? Quest Name
-                with open("Files\Quests\Quest_Names.json", 'r') as quest_name_file:
+                with open("Files/Quests/Quest_Names.json", 'r') as quest_name_file:
                     quest_names=json.load(quest_name_file)
                     if random_ab in ["STR","AGI","VIT"]:
                         names_list=quest_names["STR"]
@@ -342,7 +342,7 @@ def random_quest():
                         rew3="INTav"
                 
                 # ? Quest Description
-                with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
+                with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
                     quest_desc=json.load(quest_desc_file)
                     if rank in ["E", "D"]:
                         desc_list=quest_desc["Easy"]
@@ -367,7 +367,7 @@ def random_quest():
                 
                 coinval=amt[rank]
                 rew1=f"Coin Bag {coinval}"
-                with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
+                with open("Files/Data/Inventory_List.json", 'r') as rewards_name_file:
                     reward_names=json.load(rewards_name_file)
                     reward_names_list=list(reward_names.keys())
 
@@ -379,7 +379,7 @@ def random_quest():
                     rew2=random.choice(final_rewards_list)
 
                 # ? Quest Info
-                file_name=f"Files\Workout\{random_ab}_based.json"
+                file_name=f"Files/Workout/{random_ab}_based.json"
                 with open(file_name, 'r') as quest_file_name:
                     quest_main_names=json.load(quest_file_name)
                     quest_main_names_list=list(quest_main_names.keys())
@@ -574,7 +574,7 @@ def animate_window_open(window, target_height, width, step=2, delay=5, doners=Fa
 
     if round((new_height/target_height), 1)==0.2:
         if doners==False:
-            #subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+            #subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
             done_val=True
 
     if new_height < target_height:
@@ -603,7 +603,7 @@ def animate_window_open_middle(window, target_height, target_width, step=2, dela
     # Trigger the sound effect logic
     done_val = False
     if round((new_height / target_height), 1) == 0.2 and not doners:
-        # subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])  # Uncomment for actual sound trigger
+        # subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])  # Uncomment for actual sound trigger
         done_val = True
 
     # Continue animation if the target size is not reached
@@ -872,7 +872,7 @@ def get_fin_xp_no_win():
             return [xp_str,fin_chk]
 
 def daily_preview(window):
-    with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
             rew_fw=csv.writer(rew_csv_open)
             rew_fw.writerow(["Preview"])
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
@@ -1086,7 +1086,7 @@ def dun_check():
     global e_rank, d_rank, c_rank, b_rank, a_rank, s_rank, red_gate
 
     # Path to the JSON file
-    file_path = "Files\\Data\\Todays_Dungeon.json"
+    file_path = "Files/Data/Todays_Dungeon.json"
     
     # Load the existing data from the file
     try:
@@ -1674,7 +1674,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
 
         id_val=random.randrange(1,999999)
 
-        with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
+        with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
             quest_desc=json.load(quest_desc_file)
             if rank in ["E", "D"]:
                 desc_list=quest_desc["Easy"]
@@ -1698,7 +1698,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
         
         coinval=amt[rank]
         rew1=f"Coin Bag {coinval}"
-        with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
+        with open("Files/Data/Inventory_List.json", 'r') as rewards_name_file:
             reward_names=json.load(rewards_name_file)
             reward_names_list=list(reward_names.keys())
 
@@ -2004,7 +2004,7 @@ def message_open(message):
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=json.load(themefile)
         theme=theme_data["Theme"]
-    subprocess.Popen(['python', f"{theme} Version\Message\gui.py"])
+    subprocess.Popen(['python', f"{theme} Version/Message/gui.py"])
 
 def reduction(val, stre, agi, types):
     if types=="amt":
@@ -2094,7 +2094,7 @@ def xp_curve(x):
         raise ValueError("x must be greater than or equal to 1")
 
 def check_demons():
-    if not os.path.exists("Files\Demons Castle\Demon_Data.json"):
+    if not os.path.exists("Files/Demons Castle/Demon_Data.json"):
         data={
     "Demon Imp": {
         "rank": "E",
@@ -2266,7 +2266,7 @@ def check_demons():
     }
 }
 
-        with open("Files\Demons Castle\Demon_Data.json", "w") as demon_file:
+        with open("Files/Demons Castle/Demon_Data.json", "w") as demon_file:
             json.dump(data, demon_file, indent=6)
 
         # Generate XP values for x between 1 and 100
@@ -2282,14 +2282,14 @@ def check_demons():
         with open("Files/Data/Level_Up_Values.json", 'w') as fron3:
             json.dump({"XP Check": xp_values}, fron3, indent=4)
 
-        with open("Files\Status.json", 'r') as status_file:
+        with open("Files/Status.json", 'r') as status_file:
             status = json.load(status_file)
             lvl=status["status"][0]['level']
         
         xp_of=xp_values[str(lvl)]
 
         status["status"][0]['XP']=xp_of
-        with open("Files\Status.json", 'w') as status_file:
+        with open("Files/Status.json", 'w') as status_file:
             json.dump(status, status_file, indent=8)
 
 def xp_input():

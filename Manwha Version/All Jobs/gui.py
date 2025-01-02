@@ -25,14 +25,14 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -64,7 +64,7 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     win.quit()
 
 
@@ -87,7 +87,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0)
@@ -111,7 +111,7 @@ def second():
     window.after(5000, third)
 
 def third():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Skills/Skill.json', 'r') as skill_file:
         skill_file_data=json.load(skill_file)
         skill_file_data["Strength Augmentation"]=[{
             "lvl":1,
@@ -139,7 +139,7 @@ def third():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Skills/Skill.json', 'w') as fin_skill_file:
         json.dump(skill_file_data, fin_skill_file, indent=6)
 
     with open("Files/status.json", 'r') as fson:

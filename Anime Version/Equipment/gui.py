@@ -27,7 +27,7 @@ import thesystem.system
 import thesystem.equipmentbk as equipment
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
     tab_son_data=json.load(tab_son)
@@ -42,7 +42,7 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 initial_height = 0
 target_height = 555
@@ -139,7 +139,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)

@@ -26,9 +26,9 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
     tab_son_data=json.load(tab_son)
@@ -269,7 +269,7 @@ def ex_close(win):
         tab_son_data["Castle"]='Close'
         json.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
 
 def demon_fight(event, canvas_name):
@@ -277,7 +277,7 @@ def demon_fight(event, canvas_name):
     with open("Files/Demons Castle/Demon_info.csv", "w", newline='') as file_opem:
         writer = csv.writer(file_opem)
         writer.writerow([floor, numeber])
-    subprocess.Popen(['python', 'Anime Version\Demon Castle\gui1.py'])
+    subprocess.Popen(['python', 'Anime Version/Demon Castle/gui1.py'])
     ex_close(window)
 
 canvas = Canvas(
@@ -299,7 +299,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)

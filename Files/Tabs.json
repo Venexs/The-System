@@ -1,9 +1,9 @@
 {
-    "Inventory": "Open",
+    "Inventory": "Close",
     "Daily": "Close",
     "Quest": "Close",
     "Skill": "Close",
-    "Status": "Open",
+    "Status": "Close",
     "Equipment": "Close",
     "Shop": "Close",
     "Dungeons": "Close",

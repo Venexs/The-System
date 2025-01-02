@@ -17,7 +17,7 @@ import thesystem.system  # Assuming you have the system module
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -40,7 +40,7 @@ window.attributes('-alpha', 0.7)
 
 
 # Hosts file path and website list
-hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"  # For Windows
+hosts_path = "C://Windows//System32//drivers//etc//hosts"  # For Windows
 redirect_ip = "127.0.0.1"
 blocked_websites = ["www.pornhub.com", "pornhub.com", "www.hanime.tv", "hanime.tv"]
 
@@ -90,7 +90,7 @@ def block_websites():
         content = hosts_file.read()
         for website in blocked_websites:
             if website not in content:
-                hosts_file.write(f"{redirect_ip} {website}\n")
+                hosts_file.write(f"{redirect_ip} {website}/n")
 
 
 def unblock_websites():
@@ -111,7 +111,7 @@ def countdown_completed():
     window.quit()
     subprocess.Popen(['python', 'Manwha Version/Penalty Quest Rewards/gui.py'])
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
     pen_info_data = json.load(pen_info_file)
@@ -138,7 +138,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)

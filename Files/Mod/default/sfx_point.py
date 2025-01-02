@@ -1,7 +1,7 @@
 import winsound
 import json
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
 
 with open('Files/Data/Theme_Check.json', 'r') as themefile:

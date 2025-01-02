@@ -14,10 +14,10 @@ import csv
 import cv2
 from PIL import Image, ImageTk
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -92,16 +92,16 @@ with open("Files/status.json", 'r') as fson:
     name=data["status"][0]['name'].upper()
     xp_str=data["status"][0]['XP']
 
-with open("Files\Skills\Skill.json", 'r') as skill_fson:
+with open("Files/Skills/Skill.json", 'r') as skill_fson:
     skill_data=json.load(skill_fson)
     rol=list(skill_data.keys())
     num=len(rol)
 
-with open("Files\Data\Streaks.json", 'r') as streak_fson:
+with open("Files/Data/Streaks.json", 'r') as streak_fson:
     streak_data=json.load(streak_fson)
     streak_val=streak_data["Streak"][0]
 
-with open("Files\Data\Statistics.json", 'r') as stats_fson:
+with open("Files/Data/Statistics.json", 'r') as stats_fson:
     stats_data=json.load(stats_fson)
     quest_num=stats_data["Quests"]
     e_rank=stats_data["E Rank"]
@@ -141,7 +141,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = VideoPlayer(canvas, video_path, 321.0, 307.0)

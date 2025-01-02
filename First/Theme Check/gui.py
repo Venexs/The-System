@@ -28,7 +28,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -67,19 +67,19 @@ def move_window(event):
 
 def ex_close(eve):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 
 def name(eve,name):
-    with open("Files\Data\Theme_Check.json", 'r') as file:
+    with open("Files/Data/Theme_Check.json", 'r') as file:
         data = json.load(file)
     
     # Modify the theme from "Anime" to "Manwha"
     data["Theme"] = name
     
     # Write the updated data back to the file
-    with open("Files\Data\Theme_Check.json", 'w') as file:
+    with open("Files/Data/Theme_Check.json", 'w') as file:
         json.dump(data, file, indent=4)
 
     with open("Files/Checks/theme_open.csv", 'r') as info_open:
@@ -112,7 +112,7 @@ window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=60, delay=1)
 
 #center_window(window,window_width,target_height)
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
@@ -138,7 +138,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)

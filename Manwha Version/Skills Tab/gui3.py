@@ -25,10 +25,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH2 = OUTPUT_PATH / Path(r"assets\frame3")
+ASSETS_PATH2 = OUTPUT_PATH / Path(r"assets/frame3")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -66,14 +66,14 @@ def move_window(event):
 
 def ex_close(win):
     subprocess.Popen(['python', 'Manwha Version/Skills Tab/gui.py'])
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=40, delay=1)
     window.quit()
 
 name1=name2=name3=name4='-'
 lvl1=lvl2=lvl3=lvl4='??'
 
-with open("Files\Skills\Skill.json", 'r') as fson:
+with open("Files/Skills/Skill.json", 'r') as fson:
     c=0
     try:
         data=json.load(fson)
@@ -129,7 +129,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 250.0, 150.0)

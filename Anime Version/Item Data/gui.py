@@ -26,9 +26,9 @@ sys.path.insert(0, project_root)
 import thesystem.system
 import thesystem.equipmentbk as equipment
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -81,7 +81,7 @@ def move_window(event):
 def ex_close(win):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    subprocess.Popen(['python', 'Anime Version\Inventory\gui.py'])
+    subprocess.Popen(['python', 'Anime Version/Inventory/gui.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
 typs='Item'
@@ -227,7 +227,7 @@ else:
     debuff_1='-'
     debuff_2='-'
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
@@ -254,7 +254,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)

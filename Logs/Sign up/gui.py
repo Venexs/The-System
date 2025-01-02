@@ -27,10 +27,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 URL = "https://smewvswweqnpwzngdtco.supabase.co"
@@ -82,7 +82,7 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
         window.quit()
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     animate_window_close(window, initial_height, window_width, step=45, delay=1)
 
 
@@ -283,7 +283,7 @@ def create_account(email, username, password):
         
         print(f"Logged in successfully for {username}!")
         ex_close(window)
-        subprocess.Popen(['python', 'E:\System\Edited\SystemUpdate3\System_SL-main\First\Info\gui.py'])
+        subprocess.Popen(['python', 'E:/System/Edited/SystemUpdate3/System_SL-main/First/Info/gui.py'])
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 

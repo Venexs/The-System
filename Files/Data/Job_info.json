@@ -18,7 +18,7 @@
             "plINT": 0,
             "plPER": 0,
             "plMAN": 0,
-            "job_confirm": "False"
+            "job_confirm": "True"
         }
     ]
 }

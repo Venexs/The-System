@@ -23,7 +23,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -46,7 +46,7 @@ def move_window(event):
 
 def ex_close(eve):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     subprocess.Popen(['python', 'First/Theme Check/gui.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=30, delay=1)
 
@@ -58,7 +58,7 @@ window_width = 867
 
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
@@ -75,7 +75,7 @@ with open("Files/status.json", 'r') as first_fson:
     mon=sun=cc
     tue=wed=thu=fri=sat=round(cc*0.85)
 
-with open("Files\Workout\Cal_Count.json", 'w') as cal_fson:
+with open("Files/Workout/Cal_Count.json", 'w') as cal_fson:
     fin={"Monday":mon, "Tuesday":tue, "Wednesday":wed, "Thursday":thu, "Friday":fri, "Saturday":sat, "Sunday":sun}
     json.dump(fin, cal_fson, indent=4)
 
@@ -98,7 +98,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)

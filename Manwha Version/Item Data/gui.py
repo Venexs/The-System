@@ -26,10 +26,10 @@ sys.path.insert(0, project_root)
 import thesystem.system
 import thesystem.equipmentbk as equipment
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -83,7 +83,7 @@ def move_window(event):
 def ex_close(win):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    subprocess.Popen(['python', 'Manwha Version\Inventory\gui.py'])
+    subprocess.Popen(['python', 'Manwha Version/Inventory/gui.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 typs='Item'
 
@@ -247,7 +247,7 @@ image_1 = canvas.create_image(
     284.0,
     image=image_image_1
 )
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 280.0, 300.0, resize_factor=1.2)

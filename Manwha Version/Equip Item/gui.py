@@ -25,7 +25,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -47,11 +47,11 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
-    subprocess.Popen(['python', 'Manwha Version\Equipment\gui.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    subprocess.Popen(['python', 'Manwha Version/Equipment/gui.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=30, delay=1)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -201,7 +201,7 @@ def opens(val, name):
     subprocess.Popen(['python', 'Manwha Version/Equipment/gui.py'])
     window.quit()
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)

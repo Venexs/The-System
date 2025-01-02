@@ -23,10 +23,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame3")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame3")
 
 with open("Files/Tabs.json",'r') as tab_son:
     tab_son_data=json.load(tab_son)
@@ -76,7 +76,7 @@ def ex_close(win):
         tab_son_data["Skill"]='Close'
         json.dump(tab_son_data,fin_tab_son,indent=4)
     thesystem.system.animate_window_close(window, target_height, window_width, step=40, delay=1)
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     win.quit()
 
 
@@ -115,7 +115,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 603.0, 247.0)

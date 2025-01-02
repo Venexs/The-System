@@ -27,10 +27,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -86,7 +86,7 @@ def get_act():
     full_act4_name=full_act3_name=full_act2_name=full_act1_name=''
 
     # Activities
-    str_file_name=f"Files\Workout\STR_based.json"
+    str_file_name=f"Files/Workout/STR_based.json"
     with open(str_file_name, 'r') as str_quest_file_name:
         str_quest_main_names=json.load(str_quest_file_name)
 
@@ -123,7 +123,7 @@ def get_act():
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
 
-    agi_file_name=f"Files\Workout\AGI_based.json"
+    agi_file_name=f"Files/Workout/AGI_based.json"
     with open(agi_file_name, 'r') as agi_quest_file_name:
         agi_quest_main_names=json.load(agi_quest_file_name)
 
@@ -170,7 +170,7 @@ def get():
     global mob
     global type_of_dun
 
-    with open("Files\Data\Dungeon_Rank.csv", 'r') as rank_file:
+    with open("Files/Data/Dungeon_Rank.csv", 'r') as rank_file:
         rank_file_reader=csv.reader(rank_file)
         for k in rank_file_reader:
             rank=k[0]
@@ -187,7 +187,7 @@ def get():
             elif rank=='A':rank='S'
         
         # Waves
-        with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
+        with open("Files/Data/Dungeon_Boss_List.json", 'r') as monster_file:
             monster_file_data=json.load(monster_file)
             monster_names=list(monster_file_data.keys())
 
@@ -307,7 +307,7 @@ def next():
         window.quit()
 
     else:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_glitch.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_glitch.py'])
         mob_fun()
 
 canvas = Canvas(
@@ -329,7 +329,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"]["Video"]
@@ -383,7 +383,7 @@ button_2.place(
     height=22.0
 )
 
-with open("Files\Data\Dungeon_Rank.csv", 'r') as rank_file:
+with open("Files/Data/Dungeon_Rank.csv", 'r') as rank_file:
     rank_file_reader=csv.reader(rank_file)
     for k in rank_file_reader:
         rank=k[0]

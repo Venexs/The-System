@@ -27,7 +27,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -35,7 +35,7 @@ def relative_to_assets(path: str) -> Path:
 
 
 window = Tk()
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 initial_height = 0
 target_height = 109
@@ -67,11 +67,11 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=12, delay=1)
 
 def add_cal(eve=0):
-    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
+    with open("Files/Data/Calorie_Count.json", 'r') as calorie_add_file:
         calorie_add_data=json.load(calorie_add_file)
         calorie_add_key=list(calorie_add_data.keys())[0]
 
@@ -84,12 +84,12 @@ def add_cal(eve=0):
     if calorie_add_key==formatted_date:
         cal_c=float(entry_1.get())
         calorie_add_data[formatted_date][0]+=cal_c
-        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
+        with open("Files/Data/Calorie_Count.json", 'w') as calorie_add_file_write:
             json.dump(calorie_add_data, calorie_add_file_write, indent=4)
 
     else:
         new_data={formatted_date:[0]}
-        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
+        with open("Files/Data/Calorie_Count.json", 'w') as calorie_add_file_write:
             json.dump(new_data, calorie_add_file_write, indent=4)
         add_cal(None)
 
@@ -114,7 +114,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 163.0)

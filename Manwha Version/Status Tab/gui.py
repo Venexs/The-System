@@ -29,7 +29,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
     tab_son_data=json.load(tab_son)
@@ -50,7 +50,7 @@ window_width = 355
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
@@ -79,7 +79,7 @@ def ex_close(eve):
         json.dump(tab_son_data,fin_tab_son,indent=4)
 
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     stop_update_thread_func()
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
@@ -163,7 +163,7 @@ def start_job(event):
     data["status"][1]["plPER"]=int(per)
     data["status"][1]["plMAN"]=int(man)
 
-    with open("Files\Temp Files\Job_Change Date.csv", 'w', newline='') as time_open_csv_file:
+    with open("Files/Temp Files/Job_Change Date.csv", 'w', newline='') as time_open_csv_file:
         fw=csv.writer(time_open_csv_file)
         current_date = datetime.now()
         # Add 10 days to the current date
@@ -196,7 +196,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 180.0, resize_factor=1.2)
@@ -323,7 +323,7 @@ if re_check==True:
 
 
 def update_stat(stat_name): 
-    with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=json.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else data["avail_eq"][0]["int_based"]
@@ -332,13 +332,13 @@ def update_stat(stat_name):
             data["status"][0][stat_name] += 1
             val=data["status"][0][stat_name]
             canvas.itemconfig(stat_text_widgets[stat_name], text=f"{val:03d}")
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
             data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 data["status"][0]["fatigue_max"]+=20
             with open("Files/status.json", 'w') as fson:
                 json.dump(data, fson, indent=6)
-            with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
+            with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
                 json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':

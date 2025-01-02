@@ -87,5 +87,21 @@
                   },
                   "skill": "Books"
             }
+      ],
+      "The Indomitable Human spirit": [
+            {
+                  "desc": "The Unkown Sorcerer has told you to practice these",
+                  "time": 120,
+                  "timeval": "Seconds",
+                  "type": "Learn",
+                  "obj_desc": "Look up different Yoga positions and do them for given time",
+                  "rank": "D",
+                  "ID": 733445,
+                  "Rewards": {
+                        "Coin Bag 500": 1,
+                        "Coin Bag 300": 1
+                  },
+                  "skill": "Yoga"
+            }
       ]
 }
