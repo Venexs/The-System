@@ -25,7 +25,8 @@ COMMANDS = {
     "settings": 10,
     "demon castle": 11,
     "demons castle": 11,
-    "castle": 11
+    "castle": 11,
+    "close window": 12
 }
 
 # A flag to control the listening state
@@ -57,25 +58,31 @@ def recognize_speech():
                         print(f"Hotkey and command '{keyword}' detected. Output: {value}")
                         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
                         if value==1:
-                            subprocess.Popen(['python', f'{theme} Version/Status Tab/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Status Tab/gui.py'])
                         elif value==2:
-                            subprocess.Popen(['python', f'{theme} Version/Inventory/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Inventory/gui.py'])
                         elif value==3:
-                            subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
                         elif value==4:
-                            subprocess.Popen(['python', f'{theme} Version/Daily Quest/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Daily Quest/gui.py'])
                         elif value==5:
-                            subprocess.Popen(['python', f'{theme} Version/Skills Tab/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Skills Tab/gui.py'])
                         elif value==6:
-                            subprocess.Popen(['python', f'{theme} Version/Equipment/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Equipment/gui.py'])
                         elif value==8:
-                            subprocess.Popen(['python', f'{theme} Version/Dungeon/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Dungeon/gui.py'])
                         elif value==9:
-                            subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
                         elif value==10:
-                            subprocess.Popen(['python', f'{theme} Version/Settings/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Settings/gui.py'])
                         elif value==11:
-                            subprocess.Popen(['python', f'{theme} Version/Demon Castle/gui.py'])
+                            process = subprocess.Popen(['python', f'{theme} Version/Demon Castle/gui.py'])
+                        elif value==12:
+                            process.terminate()
+                            break  # Continue listening after processing the command
+                        elif value==7:
+                            process.terminate()
+                            break  # Continue listening after processing the command
                         break  # Continue listening after processing the command
         except sr.UnknownValueError:
             pass  # Ignore unrecognized speech
