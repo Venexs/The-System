@@ -142,9 +142,9 @@
         }
     ],
 
-    "Gatekeepers Necklace": [
+    "Gatekeepers Collar": [
         {
-            "desc":"Necklace worn by the Demon-Door Guardian",
+            "desc":"Collar worn by the Demon-Door Guardian, Cerberus",
             "qty":1,
             "cat":"COLLAR",
             "rank":"A",
@@ -375,23 +375,6 @@
                 "MANdebuff": 10
             },
             "Value": 200000
-        }
-      ],
-
-      "Scepter of Intelligence": [
-        {
-            "desc": "A majestic scepter that enhances intelligence",
-            "qty": 1,
-            "cat": "WEAPON",
-            "rank": "A",
-            "buff": {
-                "INTbuff": 25
-            },
-            "debuff": {
-                "VITdebuff": 5,
-                "AGIdebuff": 5
-            },
-            "Value": 10000
         }
       ],
 
@@ -728,20 +711,6 @@
         }
     ],
 
-    "Blade of Precision": [
-        {
-            "desc": "The Blade of Precision is a weapon of deadly accuracy. Its edge is honed to perfection, allowing its wielder to strike with pinpoint precision, bypassing even the thickest armor.",
-            "qty": 1,
-            "cat": "WEAPON",
-            "rank": "A",
-            "buff": {
-                "STRbuff": 30
-            },
-            "debuff": {},
-            "Value": 500000
-        }
-    ],
-    
     "Dragonscale Boots": [
         {
             "desc": "Crafted from the scales of ancient dragons and infused with the essence of resilience, these boots provide unparalleled protection and durability.",
@@ -816,6 +785,97 @@
             },
             "debuff": {},
             "Value": 1500000
+        }
+    ],
+
+    "E Rank Instance Key": [
+        {
+            "desc":"Instance Key to a E Rank Dungeon",
+            "qty":1,
+            "cat":"Instance Keys",
+            "rank":"E",
+            "buff":"",
+            "debuff":"",
+
+            "Value":10000
+        }
+    ],
+
+    "D Rank Instance Key": [
+        {
+            "desc":"Instance Key to a D Rank Dungeon",
+            "qty":1,
+            "cat":"Instance Keys",
+            "rank":"D",
+            "buff":"",
+            "debuff":"",
+
+            "Value":15000
+        }
+    ],
+
+    "C Rank Instance Key": [
+        {
+            "desc":"Instance Key to a C Rank Dungeon",
+            "qty":1,
+            "cat":"Instance Keys",
+            "rank":"C",
+            "buff":"",
+            "debuff":"",
+
+            "Value":20000
+        }
+    ],
+
+    "B Rank Instance Key": [
+        {
+            "desc":"Instance Key to a B Rank Dungeon",
+            "qty":1,
+            "cat":"Instance Keys",
+            "rank":"B",
+            "buff":"",
+            "debuff":"",
+
+            "Value":25000
+        }
+    ],
+
+    "A Rank Instance Key": [
+        {
+            "desc":"Instance Key to a A Rank Dungeon",
+            "qty":1,
+            "cat":"Instance Keys",
+            "rank":"A",
+            "buff":"",
+            "debuff":"",
+
+            "Value":30000
+        }
+    ],
+
+    "S Rank Instance Key": [
+        {
+            "desc":"Instance Key to a S Rank Dungeon",
+            "qty":1,
+            "cat":"Instance Keys",
+            "rank":"S",
+            "buff":"",
+            "debuff":"",
+
+            "Value":35000
+        }
+    ],
+
+    "The Orb of Order": [
+        {
+            "desc":"Press the Equip Button to Rearrange your Stat Points",
+            "qty":1,
+            "cat":"Orb",
+            "rank":"?",
+            "buff":"",
+            "debuff":"",
+
+            "Value":1000000
         }
     ]
     

@@ -10,21 +10,5 @@
                         "LVLADD": 10
                   }
             }
-      ],
-      "To know all is to control all": [
-            {
-                  "desc": "You have given a mission by the organization.",
-                  "amt": 2,
-                  "amtval": "Times",
-                  "type": "Learn",
-                  "obj_desc": "Have you ever wondered about the origin and function of everyday things? Have you appreciated their benefits to your life and others'? Have you imagined life without them or noticed their intricate details? Have you considered how they're interconnected and support Earth's functioning? Identify five things and learn all you can about their creation and purpose to appreciate their role in your life.",
-                  "rank": "E",
-                  "ID": 778821,
-                  "Rewards": {
-                        "Coin Bag 300": 1,
-                        "Coin Bag 100": 1
-                  },
-                  "skill": "Mindfull Meditation"
-            }
       ]
 }

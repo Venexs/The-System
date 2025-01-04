@@ -1,29 +1,33 @@
 {
     "status": [
         {
-            "name": "SUNG JIN-WOO",
+            "name": "Sung Jin-woo",
             "hp": 100,
-            "mp": 10,
+            "mp": 100,
             "level": 1,
-            "str": 0,
-            "int": 0,
-            "agi": 0,
-            "vit": 0,
-            "per": 0,
-            "man": 0,
-            "XP": 0,
-            "coins": 100
+            "str": 10,
+            "int": 10,
+            "agi": 10,
+            "vit": 10,
+            "per": 10,
+            "man": 10,
+            "XP": 30,
+            "coins": 100,
+            "fatigue_max": 40,
+            "fatigue": 0,
+            "last_level": 1
         },
         {
             "title_bool": "False",
             "title": "None",
-            "job": "None"
+            "job": "None",
+            "patreon": false
         }
     ],
     "avail_eq": [
         {
-            "str_based": 1,
-            "int_based": 1
+            "str_based": 3,
+            "int_based": 3
         }
     ],
     "equipment": [
@@ -34,6 +38,18 @@
             "INT": 0,
             "PER": 0,
             "MAN": 0
+        }
+    ],
+    "cal_data": [
+        {
+            "age": "24",
+            "gender": "M",
+            "height": "180",
+            "weight": "65",
+            "calorie calc": 2631,
+            "final calorie calc": 2920,
+            "result": "MILD WEIGHT GAIN",
+            "BMI": 20
         }
     ]
 }

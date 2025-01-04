@@ -6,22 +6,49 @@
 from pathlib import Path
 
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from datetime import datetime, timedelta, date
 import threading
 import json
 import csv
 import subprocess
 import time
 import sys
-import system
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime
 import pandas as pd
+import thesystem.system
+import os
+
+# Define the folder name
+folder_name = "Demons Castle"
+
+# Create the folder
+
+if not os.path.exists(f"Files/{folder_name}"):
+    os.makedirs(f"Files/{folder_name}")
+
+
+file_path= "Files/Data/Vow_status.json"
+
+if not os.path.exists(file_path):
+    # Create the file
+    with open(file_path, 'w') as file:
+        json.dump({"Vow": False}, file, indent=4)  # Create an empty file
+    
+    thesystem.system.xp_input()
+
+with open(file_path, 'r') as vow_file:
+    vow_status = json.load(vow_file)
+
+thesystem.system.check_demons()
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 thing=txt='None'
+stop_thread = False  # Global flag to control the thread
+
 fin_data={
     "Skills":"False",
     "Quests":"False",
@@ -29,51 +56,117 @@ fin_data={
     "Lines":"False"
 }
 
+tab_data={
+    "Inventory": "Close",
+    "Daily": "Close",
+    "Quest": "Close",
+    "Skill": "Close",
+    "Status": "Close",
+    "Equipment": "Close",
+    "Shop": "Close",
+    "Dungeons": "Close",
+    "Settings": "Close",
+    "Calories": "Close",
+    "Castle": "Close"
+}
+
+with open("Files/Tabs.json", 'w') as tab_reset:
+    json.dump(tab_data,tab_reset, indent=4)
+
 stop_event0 = threading.Event()
 stop_event1 = threading.Event()
-
-class VideoPlayer:
-    def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
-        self.canvas = canvas
-        self.video_path = video_path
-        self.cap = cv2.VideoCapture(video_path)
-        self.x = x
-        self.y = y
-        self.frame_skip = frame_skip  # Number of frames to skip
-        self.resize_factor = resize_factor  # Factor to resize frames
-        self.image_id = self.canvas.create_image(self.x, self.y)
-        self.frame_count = 0
-        self.update_frame()
-
-    def update_frame(self):
-        ret, frame = self.cap.read()
-        
-        if not ret:
-            # If the video has ended, reset the capture object
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, frame = self.cap.read()
-
-        if ret:
-            self.frame_count += 1
-            if self.frame_count % self.frame_skip == 0:  # Skip frames for performance
-                frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                img = Image.fromarray(frame)
-                imgtk = ImageTk.PhotoImage(image=img)
-                self.canvas.itemconfig(self.image_id, image=imgtk)
-                self.canvas.imgtk = imgtk
-
-        self.canvas.after(10, self.update_frame)
-
-    def __del__(self):
-        self.cap.release()
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def make_window_transparent(window):
-    # This function makes the window background transparent
-    window.wm_attributes('-transparentcolor', window['bg'])
+def load_data():
+    with open('Files/status.json', 'r') as file:
+        return json.load(file)
+
+# Function to save the updated JSON data
+def save_data(data):
+    with open('Files/status.json', 'w') as file:
+        json.dump(data, file, indent=4)
+
+# Function to reduce fatigue by 1% of fatigue_max every 3 minutes
+def reduce_fatigue():
+    global stop_thread
+    while not stop_thread:
+        data = load_data()
+        
+        # Access fatigue and fatigue_max for "Sung Jin-Woo"
+        character = data["status"][0]
+        fatigue = character.get("fatigue", 0)
+        fatigue_max = character.get("fatigue_max", 0)
+        
+        # Calculate the reduction amount (1% of fatigue_max, rounded to an integer)
+        reduction_amount = max(1, fatigue_max // 100)
+        
+        # Reduce fatigue, ensuring it doesn't go below zero
+        new_fatigue = max(0, fatigue - reduction_amount)
+        character["fatigue"] = new_fatigue
+        
+        # Save updated data
+        save_data(data)
+        
+        # Wait for 3 minutes, unless stop_thread is set to True
+        for _ in range(180):  # Loop with 1-second checks for faster stopping
+            if stop_thread:
+                return
+            time.sleep(1)
+
+def read_cal_thread():
+    while True:
+        read_cal()
+        # Sleep for a random time between 5 and 6 minutes
+        sleep_time = 5
+        time.sleep(sleep_time)
+
+def read_cal(eve=0):
+    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
+        calorie_add_data=json.load(calorie_add_file)
+        calorie_add_key=list(calorie_add_data.keys())[0]
+
+    # Get today's date
+    current_date = date.today()
+
+    # Format the date as a string
+    formatted_date = current_date.strftime("%Y-%m-%d")
+
+    if calorie_add_key==formatted_date:
+        global pl_cal_txt
+        pl_current_text = canvas.itemcget(pl_cal_txt, "text")
+        pl_current_text=calorie_add_data[formatted_date][0]
+        global pl_new_text
+        pl_new_text = "{:04d}".format(int(pl_current_text))
+        canvas.itemconfig(pl_cal_txt, text=pl_new_text)
+        global sys_cal_txt
+        today = datetime.now().strftime("%A")
+    
+        # Read the JSON file
+        with open("Files/Workout/Cal_Count.json", "r") as file:
+            daily_calories = json.load(file)
+        
+        # Return the calories for today
+        tdy_val=daily_calories.get(today, 0)
+        sys_current_text = canvas.itemcget(sys_cal_txt, "text")
+        sys_current_text = tdy_val
+        global sys_new_text
+        sys_new_text = "{:04d}".format(int(sys_current_text))
+        canvas.itemconfig(sys_cal_txt, text=sys_new_text)
+
+    else:
+        new_data={formatted_date:[0]}
+        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
+            json.dump(new_data, calorie_add_file_write, indent=4)
+        read_cal(None)
+
+def update_cal_display():
+    global pl_new_text, sys_new_text
+    read_cal()
+    canvas.itemconfig(pl_cal_txt, text=pl_new_text)
+    canvas.itemconfig(sys_cal_txt, text=f"/{sys_new_text}")
+    window.after(1000, update_cal_display)  # Schedule the next update in 1 second
 
 def unhide_line(s):
     if s=="Skills":
@@ -144,41 +237,17 @@ def give_job():
         json.dump(data, stfson, indent=4)
 
     if abi=="STR":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui.py'])
+        subprocess.Popen(['python', f'{theme} Version/All Jobs/gui.py'])
     elif abi=="AGI":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui1.py'])
+        subprocess.Popen(['python', f'{theme} Version/All Jobs/gui1.py'])
     elif abi=="VIT":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui2.py'])
+        subprocess.Popen(['python', f'{theme} Version/All Jobs/gui2.py'])
     elif abi=="INT":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui3.py'])
+        subprocess.Popen(['python', f'{theme} Version/All Jobs/gui3.py'])
     elif abi=="PER":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui4.py'])
+        subprocess.Popen(['python', f'{theme} Version/All Jobs/gui4.py'])
     elif abi=="MAN":
-        subprocess.Popen(['python', 'Anime Version/All Jobs/build/gui5.py'])
-
-def check_for_updates(stop_event, pause_event):
-    while not stop_event.is_set():
-        if not pause_event.is_set():
-            try:
-                with open('Files/Data/New_Updates.json', 'r') as updatefile:
-                    check_data = json.load(updatefile)
-                    if check_data["Skills"] == "True":
-                        hide_text_items0()
-                        unhide_line("Skills")
-                    elif check_data["Quests"] == "True":
-                        hide_text_items0()
-                        unhide_line("Quests")
-                    elif check_data["Upgrade"] == "True":
-                        hide_text_items0()
-                        unhide_line("Upgrade")
-                    elif check_data["Lines"] == "True":
-                        hide_text_items0()
-                        unhide_lines()
-            except:
-                print("Error")
-        else:
-            print("", end='')
-        time.sleep(1)
+        subprocess.Popen(['python', f'{theme} Version/All Jobs/gui5.py'])
 
 def check_for_job():
     while not stop_event1.is_set():
@@ -193,7 +262,7 @@ def check_for_job():
                 with open("Files/Data/Job_info.json", 'w') as fina_fson:
                     json.dump(data, fina_fson, indent=4)
         
-                subprocess.Popen(['python', 'D:/Projects/System/Anime Version/Accept Job Change/build/gui.py'])
+                subprocess.Popen(['python', f'D:/Projects/System/{theme} Version/Accept Job Change/gui.py'])
                 canvas.itemconfig("job", state='normal')
                 timer_func()
                 stop_event1.set()
@@ -226,7 +295,7 @@ def code_final(event):
         with open("Files/Titles/Titles.json", 'w') as final_title_import:
             json.dump(data, final_title_import, indent=4)
 
-        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/build/gui.py')])
+        thesystem.system.message_open("Access Code Complete")
 
     elif et1=='I' and et2=='M' and et3=='G' and et4=='O' and et5=='D':
         with open("Files\Titles\Titles.json", 'r') as fson:
@@ -236,11 +305,14 @@ def code_final(event):
         with open("Files/Titles/Titles.json", 'w') as final_title_import:
             json.dump(data, final_title_import, indent=4)
 
-        subprocess.Popen(['python', (f'{theme} Version/Access Code Complete/build/gui.py')])
+        fout=open('Files/Temp Files/Inventory temp.csv', 'w', newline='')
+        fw=csv.writer(fout)
+        rec=["Access Code Complete"]
+        fw.writerow(rec)
+        fout.close()
 
     else:
-        subprocess.Popen(['python', (f'{theme} Version/Access Code Incomplete/build/gui.py')])
-
+        thesystem.system.message_open("Access Code Incomplete")
     hide(0)
 
 def update_sys(eve):
@@ -254,8 +326,25 @@ def update_sys(eve):
             this_ver=float(k[0])
     
     if vers!=this_ver:
-        subprocess.Popen(['python', 'Update System/build/gui.py'])
+        subprocess.Popen(['python', 'Update System/gui.py'])
         window.quit()
+
+def open_cal(eve):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Calories"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Calories"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+    
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
 
 window = Tk()
 
@@ -264,9 +353,9 @@ window.configure(bg = "#505050")
 window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
 #window.update()
-make_window_transparent(window)
+thesystem.system.make_window_transparent(window, window['bg'])
 
-thread0=threading.Thread(target=system.check_midnight(window,stop_event0))
+thread0 = threading.Thread(target=thesystem.system.check_midnight, args=(window, stop_event0))
 thread0.start()
 
 def start_move(event):
@@ -295,18 +384,22 @@ def hide_text_items(event):
     update_file()
     resume_thread()
 
-def hide_text_items0():
+def hide_text_items0(s):
     canvas.itemconfig("text0", state="hidden")
     canvas.itemconfig("text", state="hidden")
     canvas.itemconfig("text1", state="hidden")
     update_file()
     resume_thread()
 
+show_bar_bool = False
 def show_bar(event):
-    canvas.itemconfig("bar", state="normal")
-
-def hide_bar(event):
-    canvas.itemconfig("bar", state="hidden")
+    global show_bar_bool
+    if show_bar_bool == False:
+        canvas.itemconfig("bar", state="normal")
+        show_bar_bool = True
+    else:
+        canvas.itemconfig("bar", state="hidden")
+        show_bar_bool = False
 
 with open('Files/Data/Theme_Check.json', 'r') as themefile:
     theme_data=json.load(themefile)
@@ -339,13 +432,64 @@ with open("Files/status.json", 'r') as fson:
     # ? =================================================
 
 def open_dungeon(event):
-    subprocess.Popen(['python', 'Anime Version/Dungeon/build/gui.py'])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
+
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Dungeons"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Dungeons"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        subprocess.Popen(['python', f'{theme} Version/Dungeon/gui.py'])
+
+def settings_open(event):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Settings"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Settings"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Settings/gui.py"
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', inv_name])
+
+def castle_open(event):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Castle"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Castle"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Demon Castle/gui.py"
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', inv_name])
 
 # ? =====================================================================
 # ! The Every 5th Level Skil Checker
-system.random_skill_check()
+thesystem.system.random_skill_check()
 # ? =====================================================================
-system.random_quest()
+thesystem.system.random_quest()
 # ? =====================================================================
 
 canvas = Canvas(
@@ -360,6 +504,7 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 
+'''
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
@@ -367,7 +512,7 @@ image_1 = canvas.create_image(
     74.0,
     image=image_image_1
 )
-
+'''
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
@@ -376,15 +521,46 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
+cal=canvas.create_text(
+    321.0,
+    40.0,
+    anchor="nw",
+    text="Calories",
+    fill="#FFFFFF",
+    font=("Exo Medium", 14 * -1)
+)
+
+pl_cal_txt=canvas.create_text(
+    321.0,
+    52.0,
+    anchor="nw",
+    text="0000",
+    fill="#FFFFFF",
+    font=("Exo Medium", 30 * -1)
+)
+
+sys_cal_txt=canvas.create_text(
+    321.0,
+    80.0,
+    anchor="nw",
+    text="/0000",
+    fill="#FFFFFF",
+    font=("Exo Medium", 20 * -1)
+)
+
 canvas.tag_bind(image_2, "<ButtonPress-1>", show_bar)
+canvas.tag_bind(cal, "<ButtonPress-1>", show_bar)
+canvas.tag_bind(pl_cal_txt, "<ButtonPress-1>", show_bar)
+canvas.tag_bind(sys_cal_txt, "<ButtonPress-1>", show_bar)
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
-    425.0,
-    10.0,
+    415.0,
+    20.0,
     image=image_image_3
 )
+
 
 canvas.tag_bind(image_3, "<ButtonPress-1>", start_move)
 canvas.tag_bind(image_3, "<B1-Motion>", move_window)
@@ -421,21 +597,17 @@ thing_txt=canvas.create_text(
     state="hidden"
 )
 
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: hide_text_items0(),
-    relief="flat"
+image_image_500 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_500 = canvas.create_image(
+    283.0,
+    32.0,
+    image=image_image_500,
+    tags="text0",
+    state="hidden"
 )
-button_1.place(
-    x=283.0,
-    y=32.0,
-    width=12.0,
-    height=12.0
-)
+
+canvas.tag_bind(image_500, "<ButtonPress-1>", hide_text_items0)
 
 canvas.create_rectangle(
     259.0,
@@ -458,8 +630,23 @@ image_5 = canvas.create_image(
 )
 
 def inv_open(event):
-    inv_name=f"{theme} Version/Inventory/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Inventory"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Inventory"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Inventory/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_5, "<ButtonPress-1>", inv_open)
 
@@ -474,8 +661,23 @@ image_6 = canvas.create_image(
 )
 
 def daily_open(event):
-    inv_name=f"{theme} Version/Daily Quest/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Daily"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Daily"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Daily Quest/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
 
@@ -490,8 +692,23 @@ image_7 = canvas.create_image(
 )
 
 def quest_open(event):
-    inv_name=f"{theme} Version/Quests/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Quest"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Quest"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Quests/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_7, "<ButtonPress-1>", quest_open)
 
@@ -506,8 +723,23 @@ image_8 = canvas.create_image(
 )
 
 def skill_open(event):
-    inv_name=f"{theme} Version/Skills Tab/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Skill"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Skill"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Skills Tab/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_8, "<ButtonPress-1>", skill_open)
 
@@ -522,8 +754,23 @@ image_9 = canvas.create_image(
 )
 
 def status_open(event):
-    inv_name=f"{theme} Version/Status Tab/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Status"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Status"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Status Tab/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_9, "<ButtonPress-1>", status_open)
 
@@ -538,8 +785,23 @@ image_10 = canvas.create_image(
 )
 
 def equip_open(event):
-    inv_name=f"{theme} Version/Equipment/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Equipment"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Equipment"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Equipment/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_10, "<ButtonPress-1>", equip_open)
 
@@ -554,8 +816,23 @@ image_11 = canvas.create_image(
 )
 
 def shop_open(event):
-    inv_name=f"{theme} Version/Shop/build/gui.py"
-    subprocess.Popen(['python', inv_name])
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Shop"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Shop"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
+
+        inv_name=f"{theme} Version/Shop/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
 
 canvas.tag_bind(image_11, "<ButtonPress-1>", shop_open)
 
@@ -570,15 +847,21 @@ image_12 = canvas.create_image(
 )
 
 def close_full(event):
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
     stop_event.set()
     stop_event0.set()
     stop_event1.set()
+    
+    # Remove this part:
+    # if 'read_cal_thread' in globals():
+    #     read_cal_thread.join(timeout=1)
 
-    # Wait for the thread to finish
-    thread.join()
+    # Wait for the threads to finish
     thread1.join()
     thread0.join()
+    stop_fatigue_thread()
 
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     sys.exit()
 
 canvas.tag_bind(image_12, "<ButtonPress-1>", close_full)
@@ -593,7 +876,7 @@ image_13 = canvas.create_image(
     state="hidden"
 )
 
-canvas.tag_bind(image_13, "<ButtonPress-1>", hide_bar)
+canvas.tag_bind(image_13, "<ButtonPress-1>", show_bar)
 
 image_image_14 = PhotoImage(
     file=relative_to_assets("image_14.png"))
@@ -658,6 +941,7 @@ image_16 = canvas.create_image(
 )
 
 def hide(event):
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
     entry_1.place_forget()
     entry_2.place_forget()
     entry_3.place_forget()
@@ -672,6 +956,7 @@ def hide(event):
         print('', end='')
 
 def show(event):
+    subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
     global entry_1
     global entry_2
     global entry_3
@@ -870,7 +1155,7 @@ image_image_18 = PhotoImage(
     file=relative_to_assets("image_18.png"))
 image_18 = canvas.create_image(
     414.0,
-    164.0,
+    174.0,
     image=image_image_18,
     tags="bar",
     state="hidden"
@@ -882,23 +1167,68 @@ image_image_19 = PhotoImage(
     file=relative_to_assets("image_19.png"))
 image_19 = canvas.create_image(
     414.0,
-    187.0,
+    207.0,
     image=image_image_19,
     tags="bar",
     state="hidden"
 )
 
-canvas.tag_bind(image_19, "<ButtonPress-1>", update_sys)
+canvas.tag_bind(image_19, "<ButtonPress-1>", open_cal)
+
+image_image_20 = PhotoImage(
+    file=relative_to_assets("image_20.png"))
+image_20 = canvas.create_image(
+    414.0,
+    237.0,
+    image=image_image_20,
+    tags="bar",
+    state="hidden"
+)
+
+canvas.tag_bind(image_20, "<ButtonPress-1>", settings_open)
+
+image_image_21 = PhotoImage(
+    file=relative_to_assets("image_21.png"))
+image_21 = canvas.create_image(
+    414.0,
+    273.0,
+    image=image_image_21,
+    tags="bar",
+    state="hidden"
+)
+
+canvas.tag_bind(image_21, "<ButtonPress-1>", castle_open)
 
 stop_event = threading.Event()
 pause_event = threading.Event()
-thread = threading.Thread(target=check_for_updates, args=(stop_event,pause_event))
-thread.start()
 
 thread1 = threading.Thread(target=check_for_job)
 thread1.start()
 
-system.run_once_prog(stop_event0, thread0)
+# Remove or comment out these lines:
+# read_cal_thread = threading.Thread(target=read_cal_thread, daemon=True)
+# read_cal_thread.start()
+
+# Add this line after window.mainloop():
+window.after(0, update_cal_display)
+
+thesystem.system.run_once_prog(stop_event0, thread0)
+fatigue_thread = threading.Thread(target=reduce_fatigue, daemon=True)
+
+def start_fatigue_thread():
+    global stop_thread, fatigue_thread
+    stop_thread = False
+    fatigue_thread = threading.Thread(target=reduce_fatigue, daemon=True)
+    fatigue_thread.start()
+
+def stop_fatigue_thread():
+    global stop_thread
+    stop_thread = True
+    if fatigue_thread.is_alive():
+        fatigue_thread.join()  # Wait for the thread to finish
+
+# Example usage:
+start_fatigue_thread() 
 
 window.resizable(False, False)
 window.mainloop()

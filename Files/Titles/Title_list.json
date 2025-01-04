@@ -48,5 +48,10 @@
     {
         "Statbuff":25,
         "Rank":"S"
+    },
+    "Blessed":
+    {
+        "Statbuff":7,
+        "Rank":"D"
     }
 }
