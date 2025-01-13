@@ -1,3 +1,28 @@
 {
-      
+      "Force of Speed": [
+            {
+                  "lvl": 1,
+                  "type": "Job",
+                  "desc": "A certain Force of Speed has bonded with you. Your Agility will improve faster from this point",
+                  "pl_point": 0,
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 10,
+                        "Gauntlet of Lightning": 1
+                  }
+            }
+      ],
+      "Lightweight": [
+            {
+                  "lvl": 1,
+                  "type": "Job",
+                  "desc": "Your body will get lighter and nimble as you get faster",
+                  "pl_point": 0,
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 10,
+                        "Golden Boots of Agility": 1
+                  }
+            }
+      ]
 }

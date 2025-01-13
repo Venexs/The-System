@@ -9,10 +9,11 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import json
+import ujson
 import csv
 import sys
 import os
+import threading
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,6 +22,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.finalpenalty
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -62,31 +64,9 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=30, delay=1)
-
-def decrement_stats():
-    json_file="Files\Status.json"
-    # Load the JSON file
-    with open(json_file, 'r') as file:
-        data = json.load(file)
-
-    # Extract the "status" part of the JSON data
-    status = data["status"][0]
-
-    # List of attributes to decrement
-    attributes_to_decrement = ["level", "str", "int", "agi", "vit", "per", "man"]
-
-    # Decrement each attribute, ensuring no value goes below 0
-    for attr in attributes_to_decrement:
-        if status[attr] > 0:
-            status[attr] -= 1
-        else:
-            print(f"{attr} is already at 0, not decrementing.")
-
-    # Save the updated JSON data back to the file
-    with open(json_file, 'w') as file:
-        json.dump(data, file, indent=4)
 
 canvas = Canvas(
     window,
@@ -108,7 +88,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 250.0, 150.0)
 
@@ -150,6 +130,6 @@ image_5 = canvas.create_image(
 
 canvas.tag_bind(image_5, "<ButtonPress-1>", ex_close)
 
-decrement_stats()
+thesystem.finalpenalty.decrement_stats()
 window.resizable(False, False)
 window.mainloop()

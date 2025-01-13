@@ -10,5 +10,20 @@
                         "LVLADD": 10
                   }
             }
+      ],
+      "Advanced skills are indifferent to Magic": [
+            {
+                  "desc": "A Challenger dared you to do complete these objectives",
+                  "amt": 1,
+                  "amtval": "Chapters",
+                  "type": "Common",
+                  "rank": "E",
+                  "ID": 933848,
+                  "Rewards": {
+                        "Coin Bag 300": 1,
+                        "Coin Bag 100": 1
+                  },
+                  "skill": "Books"
+            }
       ]
 }

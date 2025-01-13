@@ -17,7 +17,7 @@ import threading
 import pandas as pd
 import sys
 import os
-import json
+import ujson
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,10 +26,11 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.calorie
+import thesystem.misc as misc
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
+pres_file_data=misc.load_ujson("Files/Mod/presets.json")
+get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
 
 def get_stuff_path(key):
     full_path=get_stuff_path_str+'/'+key
@@ -43,7 +44,25 @@ target_height = 144
 window_width = 715
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 thesystem.system.center_window(window,window_width,target_height)
 
@@ -51,9 +70,6 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-
-top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (715, 41))
@@ -81,30 +97,6 @@ def ex_close(eve):
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=12, delay=1)
 
-def add_cal(eve=0):
-    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
-        calorie_add_data=json.load(calorie_add_file)
-        calorie_add_key=list(calorie_add_data.keys())[0]
-
-    # Get today's date
-    current_date = date.today()
-
-    # Format the date as a string
-    formatted_date = current_date.strftime("%Y-%m-%d")
-
-    if calorie_add_key==formatted_date:
-        cal_c=float(entry_1.get())
-        calorie_add_data[formatted_date][0]+=cal_c
-        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
-            json.dump(calorie_add_data, calorie_add_file_write, indent=4)
-
-    else:
-        new_data={formatted_date:[0]}
-        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
-            json.dump(new_data, calorie_add_file_write, indent=4)
-        add_cal(None)
-
-    ex_close(0)
 
 canvas = Canvas(
     window,
@@ -125,9 +117,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
@@ -157,6 +147,8 @@ image_4 = canvas.create_image(
 canvas.tag_bind(image_4, "<ButtonPress-1>", ex_close)
 
 side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
 canvas.create_image(677.0, 71.0, image=side)
 canvas.create_image(47.0, 72.0, image=side)
 
@@ -165,7 +157,7 @@ canvas.create_rectangle(
     0.0,
     760.0,
     30.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -173,7 +165,7 @@ canvas.create_rectangle(
     0.0,
     162.0,
     16.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -181,7 +173,7 @@ canvas.create_rectangle(
     123.0,
     715.0,
     144.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (30, 100))
@@ -248,7 +240,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: add_cal(None),
+    command=lambda: thesystem.calorie.add_cal(entry_1, window, initial_height, window_width),
     relief="flat"
 )
 button_1.place(

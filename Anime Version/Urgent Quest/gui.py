@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import random
@@ -58,17 +58,30 @@ initial_height = 0
 target_height = 239
 window_width = 741
 
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
-thesystem.system.make_window_transparent(window)
+thesystem.system.make_window_transparent(window, transp_clr)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (1120, 47))
@@ -78,21 +91,21 @@ subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 def complete():
     with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
-        ability_check_file_data=json.load(ability_check_file)
+        ability_check_file_data=ujson.load(ability_check_file)
     
     with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
-        json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
+        ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
     with open("Files/Data/Job_info.json", 'r') as stat_fson:
-        stat_data=json.load(stat_fson)
+        stat_data=ujson.load(stat_fson)
 
     stat_data["status"][1][abi]+=1
     with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
-        json.dump(stat_data, final_stat_fson, indent=4)
+        ujson.dump(stat_data, final_stat_fson, indent=4)
     
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         abi_l=abi.lower()
 
         if abi_l in ["str",'vit','agi']:
@@ -103,9 +116,8 @@ def complete():
         data["avail_eq"][0][abi_2]-=1
 
     with open("Files/status.json", 'w') as fin_fson:
-        json.dump(data, fin_fson, indent=4)
+        ujson.dump(data, fin_fson, indent=4)
     ex_close(window)
-
 
 with open("Files/Temp Files/Urgent Temp.csv", 'r') as urgent_file:
     fr=csv.reader(urgent_file)
@@ -118,7 +130,7 @@ segment_length = 77
 
 file_name=f"Files\Workout\{abi}_based.json"
 with open(file_name, 'r') as workout_file:
-    workout_file_data=json.load(workout_file)
+    workout_file_data=ujson.load(workout_file)
     workout_file_list=list(workout_file_data.keys())
 
     name=random.choice(workout_file_list)
@@ -162,6 +174,11 @@ with open(file_name, 'r') as workout_file:
             amt1=workout_file_data[name][0]["amt"]
             amt1_val=workout_file_data[name][0]["amtval"]
 
+new_abi=abi
+
+if abi =='MAN':
+    new_abi="CMD"
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -182,8 +199,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 213.0)
 
 image_image_2 = PhotoImage(
@@ -215,7 +232,7 @@ canvas.create_text(
     45.0,
     81.0+10,
     anchor="nw",
-    text=f"to increase the {abi} ability",
+    text=f"to increase the {new_abi} ability",
     fill="#FFFFFF",
     font=("Montserrat Regular", 15 * -1)
 )
@@ -311,6 +328,8 @@ button_1.place(
 )
 
 side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
 canvas.create_image(-5.0, 180.0, image=side)
 canvas.create_image(737.0, 196.0, image=side)
 
@@ -319,7 +338,7 @@ canvas.create_rectangle(
     -30.0,
     957.0,
     30.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -327,12 +346,11 @@ canvas.create_rectangle(
     233.0,
     925.0,
     555.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
-
 image_40 = thesystem.system.side_bar("left_bar.png", (50, 230))
-canvas.create_image(15.0, 130.0, image=image_40)
+canvas.create_image(14.0, 130.0, image=image_40)
 
 image_50 = thesystem.system.side_bar("right_bar.png", (50, 230))
 canvas.create_image(710.0, 140.0, image=image_50)
@@ -342,7 +360,7 @@ bot_image_index = 0
 
 top_image = canvas.create_image(
     510.0,
-    10.0,
+    15.0,
     image=top_preloaded_images[image_index]
 )
 

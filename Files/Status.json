@@ -1,55 +1,55 @@
 {
-    "status": [
-        {
-            "name": "Sung Jin-woo",
-            "hp": 100,
-            "mp": 100,
-            "level": 1,
-            "str": 10,
-            "int": 10,
-            "agi": 10,
-            "vit": 10,
-            "per": 10,
-            "man": 10,
-            "XP": 30,
-            "coins": 100,
-            "fatigue_max": 40,
-            "fatigue": 0,
-            "last_level": 1
-        },
-        {
-            "title_bool": "False",
-            "title": "None",
-            "job": "None",
-            "patreon": false
-        }
-    ],
-    "avail_eq": [
-        {
-            "str_based": 3,
-            "int_based": 3
-        }
-    ],
-    "equipment": [
-        {
-            "STR": 0,
-            "AGI": 0,
-            "VIT": 0,
-            "INT": 0,
-            "PER": 0,
-            "MAN": 0
-        }
-    ],
-    "cal_data": [
-        {
-            "age": "24",
-            "gender": "M",
-            "height": "180",
-            "weight": "65",
-            "calorie calc": 2631,
-            "final calorie calc": 2920,
-            "result": "MILD WEIGHT GAIN",
-            "BMI": 20
-        }
-    ]
+      "status": [
+            {
+                  "name": "Epoch",
+                  "hp": 100,
+                  "mp": 100,
+                  "level": 1,
+                  "str": 10,
+                  "int": 10,
+                  "agi": 10,
+                  "vit": 10,
+                  "per": 10,
+                  "man": 10,
+                  "XP": 10,
+                  "coins": 100,
+                  "fatigue_max": 40,
+                  "fatigue": 0,
+                  "last_level": 1
+            },
+            {
+                  "title_bool": "False",
+                  "title": "None",
+                  "job": "Shadow Monarch",
+                  "patreon": false
+            }
+      ],
+      "avail_eq": [
+            {
+                  "str_based": 0,
+                  "int_based": 0
+            }
+      ],
+      "equipment": [
+            {
+                  "STR": 0,
+                  "AGI": 0,
+                  "VIT": 0,
+                  "INT": 0,
+                  "PER": 0,
+                  "MAN": 0
+            }
+      ],
+      "cal_data": [
+            {
+                  "age": "17",
+                  "gender": "M",
+                  "height": "180",
+                  "weight": "70",
+                  "calorie calc": 3094,
+                  "final calorie calc": 3434,
+                  "result": "MILD WEIGHT GAIN",
+                  "BMI": 22
+            }
+      ]
 }

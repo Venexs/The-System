@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
-import json
+import ujson
 import subprocess
 
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])

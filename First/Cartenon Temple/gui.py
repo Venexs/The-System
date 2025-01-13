@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import random
 import cv2
-import json
+import ujson
 from PIL import Image, ImageTk
 import time
 import csv
@@ -199,7 +199,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0)
 

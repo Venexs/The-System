@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
-import json
+import ujson
 import subprocess
 
 OUTPUT_PATH = Path(__file__).parent
@@ -41,7 +41,7 @@ with open("Files/Temp Files/Shop Sell Temp.csv", 'r') as csv_open:
         name=k[0]
 
 with open("Files/Inventory.json", 'r') as file_check_op:
-    inv_main_data=json.load(file_check_op)
+    inv_main_data=ujson.load(file_check_op)
     inv_main_data_keys=list(inv_main_data.keys())
     
     qty = inv_main_data[name][0]["qty"]
@@ -59,10 +59,10 @@ with open("Files/Inventory.json", 'r') as file_check_op:
 
 def selling():
     with open("Files/status.json", 'r') as read_status_file:
-        read_status_file_data=json.load(read_status_file)
+        read_status_file_data=ujson.load(read_status_file)
 
     with open("Files/Inventory.json", 'r') as fin_inv_fson:
-        fin_inv_data=json.load(fin_inv_fson)
+        fin_inv_data=ujson.load(fin_inv_fson)
 
         fin_inv_data[k][0]["qty"]-=1
         closing=False
@@ -71,11 +71,11 @@ def selling():
             closing=True
 
     with open("Files/Inventory.json", 'w') as finaladdon_inv:
-        json.dump(fin_inv_data, finaladdon_inv, indent=6)
+        ujson.dump(fin_inv_data, finaladdon_inv, indent=6)
 
     with open("Files/status.json", 'w') as write_status_file:
         read_status_file_data["status"][0]['coins']+=int(val)
-        json.dump(read_status_file_data, write_status_file, indent=4)
+        ujson.dump(read_status_file_data, write_status_file, indent=4)
 
     if closing==True:
         subprocess.Popen(['python', 'Anime Version/Shop/gui.py'])

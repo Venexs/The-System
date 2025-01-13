@@ -1,11 +1,13 @@
-import json
+import ujson
+import os
+from PIL import Image, ImageTk
 
 def get_equipment():
     helm=chest=f_gaun=s_gaun=boot=ring=collar='-'
     helmboost_1=chestboost_1=f_gaunboost_1=s_gaunboost_1=bootboost_1=ringboost_1=collarboost_1=''
     helmboost_2=chestboost_2=f_gaunboost_2=s_gaunboost_2=bootboost_2=ringboost_2=collarboost_2=''
     with open('Files/Equipment.json', 'r') as fout:
-        data=json.load(fout)
+        data=ujson.load(fout)
         try:
             helm=list(data['HELM'].keys())[0]
             if type(data["HELM"][helm][0]["buff"]) is dict:
@@ -299,7 +301,7 @@ def finish(qty, equiipment_check):
     if qty == 1:
         with open('Files/Equipment.json', 'r') as first_equipment_file:
             cat=equiipment_check[0]
-            first_equipment_file_data=json.load(first_equipment_file)
+            first_equipment_file_data=ujson.load(first_equipment_file)
             if cat in["HELM","CHESTPLATE","FIRST GAUNTLET","SECOND GAUNTLET", "BOOTS", "RING", "COLLAR"]:
                 if first_equipment_file_data[cat]!={}:
                     item_old_name=list(first_equipment_file_data[cat].keys())[0]
@@ -380,7 +382,7 @@ def finish(qty, equiipment_check):
                         print("",end='')
 
                     with open("Files/status.json", 'r') as status_file_eq:
-                        status_file_eq_data=json.load(status_file_eq)
+                        status_file_eq_data=ujson.load(status_file_eq)
                         try:
                             status_file_eq_data["equipment"][0][oldbuff_1_name]=-(oldbuff1_value/2)
                             status_file_eq_data["equipment"][0][oldbuff_2_name]=-(oldbuff2_value/2)
@@ -397,8 +399,70 @@ def finish(qty, equiipment_check):
                     first_equipment_file_data[cat]={}
 
                     with open('Files/Equipment.json', 'w') as second_write_equipment_file:
-                        json.dump(first_equipment_file_data, second_write_equipment_file, indent=6)
+                        ujson.dump(first_equipment_file_data, second_write_equipment_file, indent=6)
 
                     with open('Files/status.json', 'w') as second_write_status_file:
-                        json.dump(status_file_eq_data, second_write_status_file, indent=4)
+                        ujson.dump(status_file_eq_data, second_write_status_file, indent=4)
+
+def find_item_slot(name, equipment):
+    for slot, items in equipment.items():
+        if name in items:
+            return [slot, True]
+    return ["Item not found in any slot", False]
+
+def process_attributes(attr, attr_type):
+    attr_name_1, attr_value_1 = '', '-'
+    attr_name_2, attr_value_2 = '', '-'
+
+    if isinstance(attr, dict):
+        try:
+            keys = list(attr.keys())
+            mapping = {
+                "AGIbuff": "AGI", "STRbuff": "STR", "VITbuff": "VIT", 
+                "INTbuff": "INT", "PERbuff": "PER", "MANbuff": "MAN",
+                "AGIdebuff": "AGI", "STRdebuff": "STR", "VITdebuff": "VIT",
+                "INTdebuff": "INT", "PERdebuff": "PER", "MANdebuff": "MAN",
+            }
+            
+            attr_name_1 = mapping.get(keys[0], '')
+            attr_value_1 = f"{'+' if attr_type == 'buff' else '-'}{attr[keys[0]]}"
+
+            if len(keys) > 1:
+                attr_name_2 = mapping.get(keys[1], '')
+                attr_value_2 = f"{'+' if attr_type == 'buff' else '-'}{attr[keys[1]]}"
+        except:
+            pass
+    return attr_name_1, attr_value_1, attr_name_2, attr_value_2
+
+def get_armor_image(name, max_width=376, max_height=376):
+    try:
+        # Construct the absolute path to the Images folder
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_loc = os.path.join(script_dir, "Equipment Display")
+        files = os.path.join(file_loc, name + '.png')
+        if not os.path.exists(files):
+            raise FileNotFoundError
+    except:
+        file_loc = os.path.join(script_dir, "Equipment Display")
+        files = os.path.join(file_loc, "unknown.png")
+
+    # Open the image
+    image = Image.open(files)
+    
+    # Calculate the resize ratio
+    width_ratio = max_width / image.width
+    height_ratio = max_height / image.height
+    resize_ratio = min(width_ratio, height_ratio)
+    
+    # Resize the image
+    new_width = int(image.width * resize_ratio)
+    new_height = int(image.height * resize_ratio)
+    resized_image = image.resize((new_width, new_height))
+    
+    # Convert the image to PhotoImage
+    photo_image = ImageTk.PhotoImage(resized_image)
+
+    return photo_image
+
+
 

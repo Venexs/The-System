@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import threading
-import json
+import ujson
 import csv
 import sys
 import os
@@ -89,7 +89,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 

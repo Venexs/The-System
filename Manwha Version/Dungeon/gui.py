@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import threading
@@ -24,6 +24,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.dungeon
 import thesystem.system
 import thesystem.dungeon as dungeonbk
 
@@ -31,11 +32,11 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
+    tab_son_data=ujson.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Dungeons"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+    ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -75,16 +76,16 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Dungeons"]='Close'
-        json.dump(tab_son_data,fin_tab_son,indent=4)
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
-e_rank,d_rank,c_rank,b_rank,a_rank,s_rank=thesystem.system.dun_check()
+e_rank,d_rank,c_rank,b_rank,a_rank,s_rank=thesystem.dungeon.dun_check()
 
 canvas = Canvas(
     window,
@@ -106,7 +107,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 300.0, resize_factor=1.2)
 

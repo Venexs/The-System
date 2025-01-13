@@ -12,7 +12,7 @@ import subprocess
 import threading
 import cv2
 from PIL import Image, ImageTk
-import json
+import ujson
 import time
 import sys
 import os
@@ -111,7 +111,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0)
 

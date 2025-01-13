@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import json
+import ujson
 import threading
 import csv
 import sys
@@ -22,6 +22,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.penalty
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -53,26 +54,6 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-
-def complete(eve=''):
-    hr=entry_1.get()
-    mn=entry_2.get()
-
-    true_file1_name='NONE'
-    true_file2_name='NONE'
-
-    data0={}
-    with open("Files/Data/Penalty_Info.json", "w") as pen_info_file:
-        data0["Penalty Info"]=[true_file1_name,true_file2_name]
-        data0["Penalty Time"]=f"{hr}:{mn}"
-        json.dump(data0, pen_info_file, indent=4)
-
-    with open("Files/Data/First_open.csv", 'w', newline='') as first_open_check_file:
-        fw=csv.writer(first_open_check_file)
-        fw.writerow(["True"])
-
-    subprocess.Popen(['python', 'gui.py'])
-    ex_close()
 
 def start_move(event):
     global lastx, lasty
@@ -113,7 +94,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
@@ -250,7 +231,7 @@ image_11 = canvas.create_image(
     image=image_image_11
 )
 
-canvas.tag_bind(image_11, "<ButtonPress-1>", complete)
+canvas.tag_bind(image_11, "<ButtonPress-1>", lambda event: thesystem.penalty.complete(entry_1, entry_2, window))
 
 window.resizable(False, False)
 window.mainloop()

@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import json
+import ujson
 import csv
 import random
 import sys
@@ -44,7 +44,7 @@ window.wm_attributes("-topmost", True)
 thesystem.system.center_window(window, 475, 163)
 
 with open("Files/status.json", 'r') as read_status_file:
-    read_status_file_data=json.load(read_status_file)
+    read_status_file_data=ujson.load(read_status_file)
     coins=read_status_file_data["status"][0]['coins']
 
 def ex_close(win):
@@ -80,7 +80,7 @@ def quests_add(rank,vals):
     # ? Active Quests
     try:
         with open("Files/Quests/Active_Quests.json", 'r') as active_quests_file:
-            activ_quests=json.load(active_quests_file)
+            activ_quests=ujson.load(active_quests_file)
             name_of_activ_quests=list(activ_quests.keys())
             activ_quests_vals=0
             for k in name_of_activ_quests:
@@ -91,7 +91,7 @@ def quests_add(rank,vals):
     if activ_quests_vals<13 and activ_quests_vals!=13:
         # ? Quest Name
         with open("Files\Quests\Quest_Names.json", 'r') as quest_name_file:
-            quest_names=json.load(quest_name_file)
+            quest_names=ujson.load(quest_name_file)
             if random_ab in ["STR","AGI","VIT"]:
                 names_list=quest_names["STR"]
                 check=True
@@ -115,7 +115,7 @@ def quests_add(rank,vals):
         
         # ? Quest Description
         with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
-            quest_desc=json.load(quest_desc_file)
+            quest_desc=ujson.load(quest_desc_file)
             if rank in ["E", "D"]:
                 desc_list=quest_desc["Easy"]
                 findesc=random.choice(desc_list)
@@ -140,7 +140,7 @@ def quests_add(rank,vals):
         coinval=amt[rank]
         rew1=f"Coin Bag {coinval}"
         with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
-            reward_names=json.load(rewards_name_file)
+            reward_names=ujson.load(rewards_name_file)
             reward_names_list=list(reward_names.keys())
 
             final_rewards_list=[]
@@ -153,7 +153,7 @@ def quests_add(rank,vals):
         # ? Quest Info
         file_name=f"Files\Workout\{random_ab}_based.json"
         with open(file_name, 'r') as quest_file_name:
-            quest_main_names=json.load(quest_file_name)
+            quest_main_names=ujson.load(quest_file_name)
             quest_main_names_list=list(quest_main_names.keys())
             final_quest_main_name=random.choice(quest_main_names_list)
 
@@ -321,11 +321,11 @@ def quests_add(rank,vals):
         activ_quests[quest_name]=[details]
 
         with open("Files/Quests/Active_Quests.json", 'w') as fin_active_quest_file:
-            json.dump(activ_quests, fin_active_quest_file, indent=6)
+            ujson.dump(activ_quests, fin_active_quest_file, indent=6)
 
         with open("Files/status.json", 'w') as write_status_file:
             read_status_file_data["status"][0]['coins']-=int(vals)
-            json.dump(read_status_file_data, write_status_file, indent=4)
+            ujson.dump(read_status_file_data, write_status_file, indent=4)
 
     else:
         thesystem.system.message_open("Quest Slot Filled")

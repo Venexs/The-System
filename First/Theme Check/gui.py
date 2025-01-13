@@ -13,7 +13,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 import random
 import cv2
-import json
+import ujson
 from PIL import Image, ImageTk
 import time
 import csv
@@ -71,14 +71,14 @@ def ex_close(eve):
 
 def name(eve,name):
     with open("Files\Data\Theme_Check.json", 'r') as file:
-        data = json.load(file)
+        data = ujson.load(file)
     
     # Modify the theme from "Anime" to "Manwha"
     data["Theme"] = name
     
     # Write the updated data back to the file
     with open("Files\Data\Theme_Check.json", 'w') as file:
-        json.dump(data, file, indent=4)
+        ujson.dump(data, file, indent=4)
 
     with open("Files/Checks/theme_open.csv", 'r') as info_open:
         info_fr=csv.reader(info_open)
@@ -86,7 +86,7 @@ def name(eve,name):
             istrue=k[0]
 
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
-            theme_data=json.load(themefile)
+            theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
 
     if istrue=='True':
@@ -171,7 +171,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 

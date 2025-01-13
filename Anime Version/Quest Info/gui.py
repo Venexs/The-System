@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import cv2
@@ -22,6 +22,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.quests
 import thesystem.system
 
 window = Tk()
@@ -31,13 +32,30 @@ target_height = 555
 window_width = 898
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
 thesystem.system.center_window(window,window_width,target_height)
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
+job=thesystem.misc.return_status()["status"][1]["job"]
 
-top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (957, 43))
@@ -81,7 +99,7 @@ other_seg=[]
 segment_length = 70
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
 def get_stuff_path(key):
@@ -108,8 +126,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
 
 image_image_2 = PhotoImage(
@@ -161,7 +179,7 @@ if typeof == "Learn":
     segment_length = 70
 
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         for k in data:
             if k==name:
                 obj=objval='-'
@@ -203,7 +221,7 @@ if typeof == "Learn":
                 rewards=data[k][0]["Rewards"]
 
     with open("Files/Status.json", 'r') as data_fson:
-        data_status=json.load(data_fson)
+        data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
 
@@ -564,7 +582,7 @@ if typeof == "Learn":
         image=button_image_6,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.system.abandon_quest(name,window),
+        command=lambda: thesystem.quests.abandon_quest(name,window),
         relief="flat"
     )
     button_6.place(
@@ -582,7 +600,7 @@ if typeof == "Learn":
             image=button_image_7,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: thesystem.system.quest_reward(window,dicts,rank,name),
+            command=lambda: thesystem.quests.quest_reward(window,dicts,rank,name),
             relief="flat"
         )
         button_7.place(
@@ -594,7 +612,7 @@ if typeof == "Learn":
 
 elif typeof == "Common":
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         for k in data:
             if k==name:
                 rank=data[k][0]["rank"]
@@ -623,7 +641,7 @@ elif typeof == "Common":
                     fatigue=thesystem.system.give_fatigue_from_rank(rank)
 
     with open("Files/Status.json", 'r') as data_fson:
-        data_status=json.load(data_fson)
+        data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
 
@@ -644,7 +662,7 @@ elif typeof == "Common":
         
 
         if int(new_1)==int(num):
-            thesystem.system.quest_reward(window,dicts,rank,name)
+            thesystem.quests.quest_reward(window,dicts,rank,name)
     
     canvas.create_text(
         326.023681640625,
@@ -1020,7 +1038,7 @@ elif typeof == "Common":
         image=button_image_7,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.system.abandon_quest(name,window),
+        command=lambda: thesystem.quests.abandon_quest(name,window),
         relief="flat"
     )
     button_7.place(
@@ -1044,7 +1062,7 @@ elif typeof == "Unknown":
     segment_length = 77
 
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         for k in data:
             if k==name:
                 if data[k][0]["ID"]==id:
@@ -1065,7 +1083,7 @@ elif typeof == "Unknown":
                     rewards=data[k][0]["Rewards"]
 
     with open("Files/Status.json", "r") as f:
-        data2=json.load(f)
+        data2=ujson.load(f)
         level=data2["status"][0]["level"]
 
     canvas.create_text(
@@ -1313,7 +1331,7 @@ elif typeof == "Unknown":
             image=button_image_7,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: thesystem.system.quest_reward(window,dicts,rank,name,special=True),
+            command=lambda: thesystem.quests.quest_reward(window,dicts,rank,name,special=True),
             relief="flat"
         )
         button_7.place(
@@ -1396,6 +1414,8 @@ elif typeof == "Unknown":
     )
 
 side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
 canvas.create_image(35.0, 270.0, image=side)
 canvas.create_image(925.0, 294.0, image=side)
 
@@ -1404,7 +1424,7 @@ canvas.create_rectangle(
     0.0,
     240.0,
     24.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -1412,7 +1432,7 @@ canvas.create_rectangle(
     513.0,
     925.0,
     555.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -1420,7 +1440,7 @@ canvas.create_rectangle(
     0.0,
     957.0,
     36.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (60, 490))

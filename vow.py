@@ -1,12 +1,12 @@
-import json
+import ujson
 import subprocess
 import thesystem.system
+import thesystem.misc
 
 try:
     file_path= "Files/Data/Vow_status.json"
-    with open(file_path, 'r') as vow_file:
-        vow_status = json.load(vow_file)
-        vow=vow_status["Vow"]
+    vow_status = thesystem.misc.load_ujson(file_path)
+    vow=vow_status["Vow"]
 except:
     vow=False
 

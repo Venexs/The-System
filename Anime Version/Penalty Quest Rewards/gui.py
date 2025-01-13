@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import json
+import ujson
 import cv2
 from PIL import Image, ImageTk
 import sys
@@ -24,7 +24,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Long Mid Size"]
 
 def get_stuff_path(key):
@@ -86,7 +86,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 380.0)
 

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 import cv2
 from PIL import Image, ImageTk
 import time
-import json
+import ujson
 import sys
 import os
 
@@ -26,15 +26,15 @@ window.configure(bg="#000000")
 window.wm_attributes("-topmost", True)
 window.attributes('-fullscreen', True)
 
-# Load the JSON file
+# Load the ujson file
 with open("Files\Checks\Cal_penalty.json", 'r') as file:
-    data=json.load(file)
+    data=ujson.load(file)
     y=data["Final"]
 
 # Get current week number (ISO week number: 1-53)
 current_week = datetime.now().isocalendar()[1]
 
-# Check if the week number in the JSON file is different from the current week number
+# Check if the week number in the ujson file is different from the current week number
 if data.get("Week") != current_week:
     # If the week is different, reset the value and update the week number
     data["Value"] = 0
@@ -48,14 +48,14 @@ x=data["Value"]
 today_str = datetime.now().strftime("%d-%m-%Y")
 
 with open("Files\Data\Calorie_Count.json", 'r') as cal_file:
-    cal_file_data = json.load(cal_file)
+    cal_file_data = ujson.load(cal_file)
 
 if today_str in cal_file_data:
     cal_val=cal_file_data[today_str] 
 
-# Write the updated data back to the JSON file
+# Write the updated data back to the ujson file
 with open("Files\Checks\Cal_penalty.json", 'w') as file:
-    json.dump(data, file, indent=4)
+    ujson.dump(data, file, indent=4)
 
 z=y-x
 if z<0:
