@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from datetime import datetime, timedelta, date
 import subprocess
 import threading
-import ujson
+import json
 import cv2
 from PIL import Image, ImageTk
 import csv
@@ -26,16 +26,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 import thesystem.dailyquest as dailyquest
-import thesystem.misc as misc
 
-<<<<<<< Updated upstream
 with open("Files\Mod\presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Long Mid Size"]
-=======
-pres_file_data=misc.load_ujson("Files/Mod/presets.json")
-get_stuff_path_str=pres_file_data["Anime"]["Long Mid Size"]
->>>>>>> Stashed changes
 
 def get_stuff_path(key):
     full_path=get_stuff_path_str+'/'+key
@@ -84,30 +78,30 @@ rank = dailyquest.get_rank()
 streak=dailyquest.get_streak()
 title, list_of_titles_data = dailyquest.get_titles()
 
-rank_check_data=misc.return_status()
-
-today = date.today()
-today_date_str = today.strftime("%Y-%m-%d")
+with open("Files/status.json", 'r') as rank_check_file:
+    rank_check_data=json.load(rank_check_file)
 
 if type_re=="Reward":
-    final_rank_check_data=misc.load_ujson("Files/Data/Rank_Rewards.json")
-    rew_list=final_rank_check_data[rank]
+    with open("Files/Data/Rank_Rewards.json", 'r') as final_rank_check_file:
+        final_rank_check_data=json.load(final_rank_check_file)
+        rew_list=final_rank_check_data[rank]
 
-    av_str=av_int=rew_list[0]
-    xp_pl=rew_list[1]
-    coins=rew_list[2]
+        av_str=av_int=rew_list[0]
+        xp_pl=rew_list[1]
+        coins=rew_list[2]
 
 elif type_re=='Secret':
-    final_rank_check_data=misc.load_ujson("Files/Data/Rank_Rewards.json")
-    rew_list=final_rank_check_data[rank]
+    with open("Files/Data/Rank_Rewards.json", 'r') as final_rank_check_file:
+        final_rank_check_data=json.load(final_rank_check_file)
+        rew_list=final_rank_check_data[rank]
 
-    av_str=av_int=(rew_list[0]*2)
-    xp_pl=(rew_list[1]*2)
-    coins=(rew_list[2]*2)
+        av_str=av_int=(rew_list[0]*2)
+        xp_pl=(rew_list[1]*2)
+        coins=(rew_list[2]*2)
 
 elif type_re=='Great Reward':
     with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
-        daily_quest_data = ujson.load(daily_quest_file)
+        daily_quest_data = json.load(daily_quest_file)
         gr_streak=daily_quest_data["Streak"]["Greater_value"]
     
     great_rank=False
@@ -116,19 +110,20 @@ elif type_re=='Great Reward':
     else:
         cr=2
 
-    final_rank_check_data=misc.load_ujson("Files/Data/Rank_Rewards.json")
-    rew_list=final_rank_check_data[rank]
+    with open("Files/Data/Rank_Rewards.json", 'r') as final_rank_check_file:
+        final_rank_check_data=json.load(final_rank_check_file)
+        rew_list=final_rank_check_data[rank]
 
-    av_str=av_int=(rew_list[0]*cr)
-    xp_pl=(rew_list[1]*cr)
-    coins=(rew_list[2]*cr)
+        av_str=av_int=(rew_list[0]*cr)
+        xp_pl=(rew_list[1]*cr)
+        coins=(rew_list[2]*cr)
     
     if cr==3:
         great_rank=True
 
 elif type_re=="Preview":
     with open("Files/Data/Rank_Rewards.json", 'r') as final_rank_check_file:
-        final_rank_check_data=ujson.load(final_rank_check_file)
+        final_rank_check_data=json.load(final_rank_check_file)
         rew_list=final_rank_check_data[rank]
 
         av_str=av_int=rew_list[0]
@@ -136,35 +131,44 @@ elif type_re=="Preview":
         coins=rew_list[2]
 
 def get():
-    rank_check_data["status"][0]['coins']+=coins
-    rank_check_data["status"][0]['XP']+=xp_pl
-    rank_check_data["avail_eq"][0]['str_based']+=av_str
-    rank_check_data["avail_eq"][0]['int_based']+=av_int
-    rank_check_data["status"][0]["fatigue"]+=thesystem.system.give_fatigue_from_rank(rank)
-    misc.dump_ujson("Files/Status.json",rank_check_data, 4)
+    today = date.today()
+    today_date_str = today.strftime("%Y-%m-%d")
+
+    with open("Files/status.json", 'w') as status_import:
+        rank_check_data["status"][0]['coins']+=coins
+        rank_check_data["status"][0]['XP']+=xp_pl
+        rank_check_data["avail_eq"][0]['str_based']+=av_str
+        rank_check_data["avail_eq"][0]['int_based']+=av_int
+        rank_check_data["status"][0]["fatigue"]+=thesystem.system.give_fatigue_from_rank(rank)
+        json.dump(rank_check_data, status_import, indent=4)
 
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
-    tab_son_data=misc.load_ujson("Files/Tabs.json")
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
     if tab_son_data["Status"]=='Close':
         subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
     ex_close(window)
 
 def secret_get():
+    today = date.today()
+    today_date_str = today.strftime("%Y-%m-%d")
+
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
     dupli_title=False
     try:
-        title_import_data=misc.load_ujson("Files/Titles/Titles.json")
-        title_import_data_list=list(title_import_data.keys())
-        for k in title_import_data_list:
-            if k==title:
-                dupli_title=True
+        with open("Files/Titles/Titles.json", 'r') as title_import:
+            title_import_data=json.load(title_import)
+            title_import_data_list=list(title_import_data.keys())
+            for k in title_import_data_list:
+                if k==title:
+                    dupli_title=True
     except:
         dupli_title=False
 
@@ -172,38 +176,51 @@ def secret_get():
         thesystem.system.message_open("Title Exists")
 
     else:
-        title_import_data=misc.load_ujson("Files/Titles/Titles.json")
+        try:
+            with open("Files/Titles/Titles.json", 'r') as title_import:
+                title_import_data=json.load(title_import)
+        except:
+            title_import_data={}
+        
         title_import_data[title]=list_of_titles_data[title]
-        misc.dump_ujson("Files/Titles/Titles.json",title_import_data, indent=4)
+        
+        with open("Files/Titles/Titles.json", 'w') as final_title_import:
+            json.dump(title_import_data, final_title_import, indent=4)
 
-    rank_check_data["status"][0]['coins']+=coins
-    rank_check_data["avail_eq"][0]['str_based']+=av_str
-    rank_check_data["avail_eq"][0]['int_based']+=av_int
-    rank_check_data["status"][0]['XP']+=xp_pl
-    rank_check_data["status"][0]["fatigue"]+=(thesystem.system.give_fatigue_from_rank(rank)*2)
-    misc.dump_ujson("Files/Status.json",rank_check_data, 4)
+    with open("Files/Status.json", 'w') as status_import:
+        rank_check_data["status"][0]['coins']+=coins
+        rank_check_data["avail_eq"][0]['str_based']+=av_str
+        rank_check_data["avail_eq"][0]['int_based']+=av_int
+        rank_check_data["status"][0]['XP']+=xp_pl
+        rank_check_data["status"][0]["fatigue"]+=(thesystem.system.give_fatigue_from_rank(rank)*2)
+        json.dump(rank_check_data, status_import, indent=4)
 
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
-    tab_son_data=misc.load_ujson("Files/Tabs.json")
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
     if tab_son_data["Status"]!='Open':
         subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
     window.quit()
 
 def great_get():
+    today = date.today()
+    today_date_str = today.strftime("%Y-%m-%d")
+
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
     dupli_title=False
     try:
-        title_import_data=misc.load_ujson("Files/Titles/Titles.json")
-        title_import_data_list=list(title_import_data.keys())
-        for k in title_import_data_list:
-            if k=="Blessed":
-                dupli_title=True
+        with open("Files/Titles/Titles.json", 'r') as title_import:
+            title_import_data=json.load(title_import)
+            title_import_data_list=list(title_import_data.keys())
+            for k in title_import_data_list:
+                if k=="Blessed":
+                    dupli_title=True
     except:
         dupli_title=False
 
@@ -211,22 +228,31 @@ def great_get():
         thesystem.system.message_open("Title Exists")
 
     else:
-        title_import_data=misc.load_ujson("Files/Titles/Titles.json")
+        try:
+            with open("Files/Titles/Titles.json", 'r') as title_import:
+                title_import_data=json.load(title_import)
+        except:
+            title_import_data={}
+        
         title_import_data["Blessed"]=list_of_titles_data["Blessed"]
-        misc.dump_ujson("Files/Titles/Titles.json",title_import_data, indent=4)
+        
+        with open("Files/Titles/Titles.json", 'w') as final_title_import:
+            json.dump(title_import_data, final_title_import, indent=4)
 
-    rank_check_data["status"][0]['coins']+=coins
-    rank_check_data["avail_eq"][0]['str_based']+=av_str
-    rank_check_data["avail_eq"][0]['int_based']+=av_int
-    rank_check_data["status"][0]['XP']+=xp_pl
-    rank_check_data["status"][0]["fatigue"]+=(thesystem.system.give_fatigue_from_rank(rank)*2)
-    misc.dump_ujson("Files/Status.json",rank_check_data, 4)
+    with open("Files/Status.json", 'w') as status_import:
+        rank_check_data["status"][0]['coins']+=coins
+        rank_check_data["avail_eq"][0]['str_based']+=av_str
+        rank_check_data["avail_eq"][0]['int_based']+=av_int
+        rank_check_data["status"][0]['XP']+=xp_pl
+        rank_check_data["status"][0]["fatigue"]+=(thesystem.system.give_fatigue_from_rank(rank)*2)
+        json.dump(rank_check_data, status_import, indent=4)
 
     with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as Daily_date_check_file:
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
-    tab_son_data=misc.load_ujson("Files/Tabs.json")
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
     if tab_son_data["Status"]!='Open':
         subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
     window.quit()
@@ -258,9 +284,10 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-pres_file_data=misc.load_ujson("Files/Mod/presets.json")
-normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-video_path=pres_file_data["Anime"]["Video"]
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=json.load(pres_file)
+    normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
+    video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 320.0, resize_factor=0.8)
 
 image_image_2 = PhotoImage(

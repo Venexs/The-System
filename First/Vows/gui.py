@@ -12,7 +12,7 @@ import subprocess
 import threading
 import cv2
 from PIL import Image, ImageTk
-import ujson
+import json
 import time
 import sys
 import os
@@ -108,7 +108,7 @@ def remove(eve):
     file_path= "Files/Data/Vow_status.json"
     # Create the file
     with open(file_path, 'w') as file:
-        ujson.dump({"Vow": True}, file, indent=4)  # Create an empty file
+        json.dump({"Vow": True}, file, indent=4)  # Create an empty file
     thesystem.system.message_open("Final Session")
     window.quit()
 

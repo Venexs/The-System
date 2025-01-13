@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Checkbutton, IntVar
-import ujson
+import json
 import csv
 import subprocess
 import threading
@@ -31,14 +31,16 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=ujson.load(tab_son)
+    tab_son_data=json.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Settings"]='Open'
-    ujson.dump(tab_son_data,fin_tab_son,indent=4)
+    json.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 window = Tk()
 
@@ -47,6 +49,7 @@ target_height = 666
 window_width = 475
 
 window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=35, delay=1)
 
 window.configure(bg = "#FFFFFF")
@@ -54,35 +57,11 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-job=thesystem.misc.return_status()["status"][1]["job"]
-
-top_val='dailyquest.py'
-all_prev=''
-video='Video'
-transp_clr='#0C679B'
-
-if job!='None':
-    top_val=''
-    all_prev='alt_'
-    video='Alt Video'
-    transp_clr='#652AA3'
-
-thesystem.system.make_window_transparent(window,transp_clr)
-
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
-
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (490, 34))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (490, 34))
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
 checkbox_var1 = IntVar(value=0)
 checkbox_var0 = IntVar(value=0)
 
 with open("Files\Settings.json", 'r') as settings_open:
-    setting_data=ujson.load(settings_open)
+    setting_data=json.load(settings_open)
 
 checkbox_var1 = IntVar(value=1 if setting_data["Settings"].get("Calorie_Penalty", "False") == "True" else 0)
 checkbox_var0 = IntVar(value=1 if setting_data["Settings"].get("Main_Penalty", "False") == "True" else 0)
@@ -92,7 +71,7 @@ def start_move(event):
     lastx = event.x_root
     lasty = event.y_root
 
-def move_window(event): 
+def move_window(event):
     global lastx, lasty
     deltax = event.x_root - lastx
     deltay = event.y_root - lasty
@@ -104,11 +83,11 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Settings"]='Close'
-        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+        json.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
@@ -151,9 +130,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"][video]
+    video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 330.0, resize_factor=0.8)
 
 image_image_2 = PhotoImage(
@@ -212,80 +191,40 @@ button_2.place(
     height=34.0
 )
 
-side = PhotoImage(file=relative_to_assets("blue.png"))
-if job.upper()!="NONE":
-    side = PhotoImage(file=relative_to_assets("purple.png"))
-canvas.create_image(-15.0, 348.0, image=side)
-canvas.create_image(490.0, 351.0, image=side)
-
-canvas.create_rectangle(
-    0.0,
-    27.0,
-    101.0,
-    21.0,
-    fill=transp_clr,
-    outline="")
-
-canvas.create_rectangle(
+image_image_16 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_16 = canvas.create_image(
     -10.0,
-    645.0,
-    494.0,
-    716.0,
-    fill=transp_clr,
-    outline="")
+    344.4087829589844,
+    image=image_image_16
+)
 
-canvas.create_rectangle(
-    0.0,
-    0.0,
-    488.0,
-    34.0,
-    fill=transp_clr,
-    outline="")
+image_image_17 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_17 = canvas.create_image(
+    465.0,
+    356.89671325683594,
+    image=image_image_17
+)
 
-image_40 = thesystem.system.side_bar("left_bar.png", (81, 640))
-canvas.create_image(-5.0, 360.0, image=image_40)
-
-image_50 = thesystem.system.side_bar("right_bar.png", (42, 635))
-canvas.create_image(455.0, 340.0, image=image_50)
-
-image_index = 0
-bot_image_index = 0
-
-top_image = canvas.create_image(
-    240.0,
+image_image_18 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_18 = canvas.create_image(
+    326.0,
     27.0,
-    image=top_preloaded_images[image_index]
+    image=image_image_18
 )
 
-canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
-canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+canvas.tag_bind(image_18, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_18, "<B1-Motion>", move_window)
 
-bottom_image = canvas.create_image(
-    240.0,
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_8.png"))
+image_19 = canvas.create_image(
+    310.0,
     660.0,
-    image=bottom_preloaded_images[bot_image_index]
+    image=image_image_19
 )
-
-step,delay=1,1
-
-def update_images():
-    global image_index, bot_image_index
-
-    # Update top image
-    image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
-
-    # Update bottom image
-    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
-
-    # Schedule next update (24 FPS)
-    window.after(1000 // 24, update_images)
-
-# Start the animation
-update_images()
-
-# =================================================================
 
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))

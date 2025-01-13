@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import random
@@ -24,7 +24,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
-import thesystem.dungeon
 import thesystem.system
 
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
@@ -88,7 +87,7 @@ def get_act():
     # Activities
     str_file_name=f"Files\Workout\STR_based.json"
     with open(str_file_name, 'r') as str_quest_file_name:
-        str_quest_main_names=ujson.load(str_quest_file_name)
+        str_quest_main_names=json.load(str_quest_file_name)
 
     str_quest_main_names_list=list(str_quest_main_names.keys())
 
@@ -96,7 +95,7 @@ def get_act():
     act2=random.choice(str_quest_main_names_list)
 
     with open("Files/status.json", 'r') as fson:
-        data=ujson.load(fson)
+        data=json.load(fson)
         lvl=data["status"][0]['level']
 
     try:
@@ -117,15 +116,15 @@ def get_act():
         amtval2=str_quest_main_names[act2][0]["timeval"]
         amt2_check="time"
     
-    amt1=thesystem.dungeon.dungeon_rank_get(rank, amt1, amt1_check)
-    amt2=thesystem.dungeon.dungeon_rank_get(rank, amt2, amt2_check)
+    amt1=thesystem.system.dungeon_rank_get(rank, amt1, amt1_check)
+    amt2=thesystem.system.dungeon_rank_get(rank, amt2, amt2_check)
 
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
 
     agi_file_name=f"Files\Workout\AGI_based.json"
     with open(agi_file_name, 'r') as agi_quest_file_name:
-        agi_quest_main_names=ujson.load(agi_quest_file_name)
+        agi_quest_main_names=json.load(agi_quest_file_name)
 
     agi_quest_main_names_list=list(agi_quest_main_names.keys())
 
@@ -141,7 +140,7 @@ def get_act():
             amt3=agi_quest_main_names[act3][0]["time"]
             amtval3=agi_quest_main_names[act3][0]["timeval"]
             amt3_check="time"
-        amt3=thesystem.dungeon.dungeon_rank_get(rank, amt3, amt3_check)
+        amt3=thesystem.system.dungeon_rank_get(rank, amt3, amt3_check)
         full_act3_name='- '+act3+' '+str(amt3)+' '+amtval3
 
     if thesystem.system.give_ranking(lvl)!="E" and thesystem.system.give_ranking(lvl)!="D" and thesystem.system.give_ranking(lvl)!="C" and thesystem.system.give_ranking(lvl)!="B": 
@@ -154,7 +153,7 @@ def get_act():
             amtval4=agi_quest_main_names[act4][0]["timeval"]
             amt4_check="time"
 
-        amt4=thesystem.dungeon.dungeon_rank_get(rank, amt4, amt4_check)
+        amt4=thesystem.system.dungeon_rank_get(rank, amt4, amt4_check)
         full_act4_name='- '+act4+' '+str(amt4)+' '+amtval4
 
     canvas.itemconfig(activity1, text=full_act1_name)
@@ -188,7 +187,7 @@ def get():
         
         # Waves
         with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
-            monster_file_data=ujson.load(monster_file)
+            monster_file_data=json.load(monster_file)
             monster_names=list(monster_file_data.keys())
 
             waves={}
@@ -257,7 +256,7 @@ def next():
 
     if mob==4:
         with open("Files/Status.json", 'r') as status_read_file:
-            status_read_data=ujson.load(status_read_file)
+            status_read_data=json.load(status_read_file)
 
         if rew_rank=='E':
             coin=100
@@ -284,7 +283,7 @@ def next():
             status_read_data["status"][0]['XP']+=XP_val
             status_read_data["status"][0]['coins']+=coin
             with open("Files/status.json", 'w') as fson:
-                ujson.dump(status_read_data, fson, indent=4)
+                json.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                 check_fw = csv.writer(check_file)
@@ -296,7 +295,7 @@ def next():
             status_read_data["avail_eq"][0]['str_based']+=(avp*2)
             status_read_data["avail_eq"][0]['int_based']+=(avp*2)
             with open("Files/status.json", 'w') as fson:
-                ujson.dump(status_read_data, fson, indent=4)
+                json.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                 check_fw = csv.writer(check_file)
@@ -330,7 +329,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 240.0, resize_factor=1)
 

@@ -8,7 +8,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from datetime import datetime, timedelta, date
 import threading
-import ujson
+import json
 import csv
 import subprocess
 import time
@@ -18,12 +18,11 @@ from PIL import Image, ImageTk
 from datetime import datetime
 import pandas as pd
 import thesystem.system
-import thesystem.misc as misc
 import os
 
 # Define the folder name
+folder_name = "Demons Castle"
 
-<<<<<<< Updated upstream
 # Create the folder
 
 if not os.path.exists(f"Files/{folder_name}"):
@@ -43,8 +42,6 @@ with open(file_path, 'r') as vow_file:
     vow_status = json.load(vow_file)
 
 thesystem.system.check_demons()
-=======
->>>>>>> Stashed changes
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -73,7 +70,8 @@ tab_data={
     "Castle": "Close"
 }
 
-misc.dump_ujson("Files/Tabs.json", tab_data, 4)
+with open("Files/Tabs.json", 'w') as tab_reset:
+    json.dump(tab_data,tab_reset, indent=4)
 
 stop_event0 = threading.Event()
 stop_event1 = threading.Event()
@@ -81,7 +79,6 @@ stop_event1 = threading.Event()
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-<<<<<<< Updated upstream
 def load_data():
     with open('Files/status.json', 'r') as file:
         return json.load(file)
@@ -91,13 +88,11 @@ def save_data(data):
     with open('Files/status.json', 'w') as file:
         json.dump(data, file, indent=4)
 
-=======
->>>>>>> Stashed changes
 # Function to reduce fatigue by 1% of fatigue_max every 3 minutes
 def reduce_fatigue():
     global stop_thread
     while not stop_thread:
-        data = misc.load_ujson("Files/Status.json")
+        data = load_data()
         
         # Access fatigue and fatigue_max for "Sung Jin-Woo"
         character = data["status"][0]
@@ -112,7 +107,7 @@ def reduce_fatigue():
         character["fatigue"] = new_fatigue
         
         # Save updated data
-        misc.dump_ujson("Files/Status.json", data, 6)
+        save_data(data)
         
         # Wait for 3 minutes, unless stop_thread is set to True
         for _ in range(180):  # Loop with 1-second checks for faster stopping
@@ -128,14 +123,9 @@ def read_cal_thread():
         time.sleep(sleep_time)
 
 def read_cal(eve=0):
-<<<<<<< Updated upstream
     with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
         calorie_add_data=json.load(calorie_add_file)
         calorie_add_key=list(calorie_add_data.keys())[0]
-=======
-    calorie_add_data=misc.load_ujson("Files\Data\Calorie_Count.json")
-    calorie_add_key=list(calorie_add_data.keys())[0]
->>>>>>> Stashed changes
 
     # Get today's date
     current_date = date.today()
@@ -153,13 +143,9 @@ def read_cal(eve=0):
         global sys_cal_txt
         today = datetime.now().strftime("%A")
     
-<<<<<<< Updated upstream
         # Read the JSON file
         with open("Files/Workout/Cal_Count.json", "r") as file:
             daily_calories = json.load(file)
-=======
-        daily_calories = misc.load_ujson("Files/Workout/Cal_Count.json")
->>>>>>> Stashed changes
         
         # Return the calories for today
         tdy_val=daily_calories.get(today, 0)
@@ -171,12 +157,8 @@ def read_cal(eve=0):
 
     else:
         new_data={formatted_date:[0]}
-<<<<<<< Updated upstream
         with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
             json.dump(new_data, calorie_add_file_write, indent=4)
-=======
-        misc.dump_ujson("Files\Data\Calorie_Count.json", new_data, 4)  # Save the new_data
->>>>>>> Stashed changes
         read_cal(None)
 
 def update_cal_display():
@@ -237,32 +219,22 @@ def timer_func():
 def give_job():
     canvas.itemconfig("job", state='hidden')
     stop_event1.set()
-<<<<<<< Updated upstream
     with open("Files/Data/Job_info.json", 'r') as fson:
         data=json.load(fson)
         data["status"][0]['job_confirm']='True'
-=======
->>>>>>> Stashed changes
 
-    data=misc.load_ujson("Files/Data/Job_info.json")
-    data["status"][0]['job_confirm']='True'
-
-    a1=data["status"][1]["plSTR"]-data["status"][1]["STR"]
-    a2=data["status"][1]["plINT"]-data["status"][1]["INT"]
-    a3=data["status"][1]["plAGI"]-data["status"][1]["AGI"]
-    a4=data["status"][1]["plVIT"]-data["status"][1]["VIT"]
-    a5=data["status"][1]["plPER"]-data["status"][1]["PER"]
-    a6=data["status"][1]["plMAN"]-data["status"][1]["MAN"]
+        a1=data["status"][1]["plSTR"]-data["status"][1]["STR"]
+        a2=data["status"][1]["plINT"]-data["status"][1]["INT"]
+        a3=data["status"][1]["plAGI"]-data["status"][1]["AGI"]
+        a4=data["status"][1]["plVIT"]-data["status"][1]["VIT"]
+        a5=data["status"][1]["plPER"]-data["status"][1]["PER"]
+        a6=data["status"][1]["plMAN"]-data["status"][1]["MAN"]
 
     ability_dict={"STR":a1, "INT":a2, "AGI":a3, "VIT":a4, "PER":a5, "MAN":a6}
     abi=max(ability_dict)
 
-<<<<<<< Updated upstream
     with open("Files/Data/Job_info.json", 'w') as stfson:
         json.dump(data, stfson, indent=4)
-=======
-    misc.dump_ujson("Files/Data/Job_info.json", data, 4) 
->>>>>>> Stashed changes
 
     if abi=="STR":
         subprocess.Popen(['python', f'{theme} Version/All Jobs/gui.py'])
@@ -279,12 +251,8 @@ def give_job():
 
 def check_for_job():
     while not stop_event1.is_set():
-<<<<<<< Updated upstream
         with open("Files/Data/Job_info.json", 'r') as fson:
             data=json.load(fson)
-=======
-        data = misc.load_ujson('Files/Data/Job_info.json')
->>>>>>> Stashed changes
         job_check=data["status"][0]['job_active']
         job_confim=data["status"][0]['job_confirm']
 
@@ -292,7 +260,7 @@ def check_for_job():
             if data["status"][0]['job_check']=='False':
                 data["status"][0]['job_check']='True'
                 with open("Files/Data/Job_info.json", 'w') as fina_fson:
-                    ujson.dump(data, fina_fson, indent=4)
+                    json.dump(data, fina_fson, indent=4)
         
                 subprocess.Popen(['python', f'D:/Projects/System/{theme} Version/Accept Job Change/gui.py'])
                 canvas.itemconfig("job", state='normal')
@@ -320,23 +288,16 @@ def code_final(event):
     et5=entry_5.get()
 
     if et1=='A' and et2=='R' and et3=='1' and et4=='5' and et5=='E':
-<<<<<<< Updated upstream
         with open("Files\Titles\Titles.json", 'r') as fson:
             data=json.load(fson)
             data["False Ranker"]={"Statbuff":10,"Rank":"?"}
 
         with open("Files/Titles/Titles.json", 'w') as final_title_import:
             json.dump(data, final_title_import, indent=4)
-=======
-        data=misc.load_ujson("Files\Titles\Titles.json")
-        data["False Ranker"]={"Statbuff":10,"Rank":"?"}
->>>>>>> Stashed changes
 
-        misc.dump_ujson("Files\Titles\Titles.json", data, 4)
         thesystem.system.message_open("Access Code Complete")
 
     elif et1=='I' and et2=='M' and et3=='G' and et4=='O' and et5=='D':
-<<<<<<< Updated upstream
         with open("Files\Titles\Titles.json", 'r') as fson:
             data=json.load(fson)
             data["One Above All"]={"Statbuff":50,"Rank":"?"}
@@ -349,37 +310,41 @@ def code_final(event):
         rec=["Access Code Complete"]
         fw.writerow(rec)
         fout.close()
-=======
-        data=misc.load_ujson("Files\Titles\Titles.json")
-        data["One Above All"]={"Statbuff":50,"Rank":"?"}
-
-        misc.dump_ujson("Files\Titles\Titles.json", data, 4)
-        thesystem.system.message_open("Access Code Complete")
->>>>>>> Stashed changes
 
     else:
         thesystem.system.message_open("Access Code Incomplete")
     hide(0)
 
+def update_sys(eve):
+    url='https://raw.githubusercontent.com/Venexs/System_SL/main/Version.csv'
+    columns=pd.read_csv(url, nrows=0).columns.tolist()
+    vers=float(columns[0])
+
+    with open("Version.csv", 'r') as ver_file: 
+        ver_data=csv.reader(ver_file)
+        for k in ver_data:
+            this_ver=float(k[0])
+    
+    if vers!=this_ver:
+        subprocess.Popen(['python', 'Update System/gui.py'])
+        window.quit()
+
 def open_cal(eve):
-<<<<<<< Updated upstream
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=json.load(themefile)
         theme=theme_data["Theme"]
-=======
-    theme=misc.check_theme()
->>>>>>> Stashed changes
 
-    open_check=misc.update_screen("Calories")
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
+
+    if tab_son_data["Calories"]=='Close':
+
+        with open("Files/Tabs.json",'w') as fin_tab_son:
+            tab_son_data["Calories"]='Open'
+            json.dump(tab_son_data,fin_tab_son,indent=4)
     
-<<<<<<< Updated upstream
     subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
     subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
-=======
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
->>>>>>> Stashed changes
 
 window = Tk()
 
@@ -409,7 +374,8 @@ def move_window(event):
     lasty = event.y_root
 
 def update_file():
-    misc.dump_ujson("Files/Data/New_Updates.json", fin_data, 4)
+    with open('Files/Data/New_Updates.json', 'w') as updatefile:
+        json.dump(fin_data, updatefile, indent=4)
 
 def hide_text_items(event):
     canvas.itemconfig("text0", state="hidden")
@@ -435,7 +401,6 @@ def show_bar(event):
         canvas.itemconfig("bar", state="hidden")
         show_bar_bool = False
 
-<<<<<<< Updated upstream
 with open('Files/Data/Theme_Check.json', 'r') as themefile:
     theme_data=json.load(themefile)
     theme=theme_data["Theme"]
@@ -481,23 +446,17 @@ def open_dungeon(event):
         with open("Files/Tabs.json",'w') as fin_tab_son:
             tab_son_data["Dungeons"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
-=======
-theme=misc.check_theme()
 
-def open_dungeon(event):
-    theme=misc.check_theme()
->>>>>>> Stashed changes
-
-    open_check=misc.update_screen("Dungeons")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
         subprocess.Popen(['python', f'{theme} Version/Dungeon/gui.py'])
 
 def settings_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Settings"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -507,18 +466,15 @@ def settings_open(event):
         inv_name=f"{theme} Version/Settings/gui.py"
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
         subprocess.Popen(['python', inv_name])
-=======
-    open_check=misc.update_screen("Settings")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Settings/gui.py'])
->>>>>>> Stashed changes
 
 def castle_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Castle"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -528,13 +484,6 @@ def castle_open(event):
         inv_name=f"{theme} Version/Demon Castle/gui.py"
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
         subprocess.Popen(['python', inv_name])
-=======
-    open_check=misc.update_screen("Castle")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Demon Castle/gui.py'])
->>>>>>> Stashed changes
 
 # ? =====================================================================
 # ! The Every 5th Level Skil Checker
@@ -681,9 +630,13 @@ image_5 = canvas.create_image(
 )
 
 def inv_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Inventory"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -694,13 +647,6 @@ def inv_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Inventory")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Inventory/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_5, "<ButtonPress-1>", inv_open)
 
@@ -715,9 +661,13 @@ image_6 = canvas.create_image(
 )
 
 def daily_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Daily"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -728,13 +678,6 @@ def daily_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Daily")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Daily Quest/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
 
@@ -749,9 +692,13 @@ image_7 = canvas.create_image(
 )
 
 def quest_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Quest"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -762,13 +709,6 @@ def quest_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Quest")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_7, "<ButtonPress-1>", quest_open)
 
@@ -783,9 +723,13 @@ image_8 = canvas.create_image(
 )
 
 def skill_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Skill"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -796,13 +740,6 @@ def skill_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Skill")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Skills Tab/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_8, "<ButtonPress-1>", skill_open)
 
@@ -817,9 +754,13 @@ image_9 = canvas.create_image(
 )
 
 def status_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Status"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -830,13 +771,6 @@ def status_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Status")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Status Tab/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_9, "<ButtonPress-1>", status_open)
 
@@ -851,9 +785,13 @@ image_10 = canvas.create_image(
 )
 
 def equip_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Equipment"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -864,13 +802,6 @@ def equip_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Equipment")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Equipment/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_10, "<ButtonPress-1>", equip_open)
 
@@ -885,9 +816,13 @@ image_11 = canvas.create_image(
 )
 
 def shop_open(event):
-    theme=misc.check_theme()
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+ 
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=json.load(tab_son)
 
-<<<<<<< Updated upstream
     if tab_son_data["Shop"]=='Close':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
@@ -898,13 +833,6 @@ def shop_open(event):
         subprocess.Popen(['python', inv_name])
         window.after(100)
         subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-=======
-    open_check=misc.update_screen("Shop")
-    
-    if open_check:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_button.py'])
-        subprocess.Popen(['python', f'{theme} Version/Shop/gui.py'])
->>>>>>> Stashed changes
 
 canvas.tag_bind(image_11, "<ButtonPress-1>", shop_open)
 

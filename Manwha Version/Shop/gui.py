@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import ujson
+import json
 import csv
 import cv2
 from PIL import Image, ImageTk
@@ -30,11 +30,11 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=ujson.load(tab_son)
+    tab_son_data=json.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Shop"]='Open'
-    ujson.dump(tab_son_data,fin_tab_son,indent=4)
+    json.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -74,7 +74,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 378.0, resize_factor=1.5)
 
@@ -95,16 +95,16 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Shop"]='Close'
-        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+        json.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     win.quit()
 
 with open("Files/status.json", 'r') as fson:
-    data=ujson.load(fson)
+    data=json.load(fson)
     lvl=data["status"][0]['level']
     coins=data["status"][0]['coins']
 

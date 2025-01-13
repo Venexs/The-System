@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import cv2
@@ -23,7 +23,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.job
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame5")
@@ -89,7 +88,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0)
 
@@ -117,7 +116,43 @@ def third():
     canvas.itemconfig("Second", state="hidden")
     canvas.itemconfig("Third", state="normal")
 
-    thesystem.job.commander()
+    with open('Files\Skills\Skill.json', 'r') as skill_file:
+        skill_file_data=json.load(skill_file)
+        skill_file_data["Charismatic Presence"]=[{
+            "lvl":1,
+            "type":"Job",
+            "desc":"Your Charisma and Confidence draws people towards you",
+            "pl_point":0,
+            
+            "base":"INT",
+            "rewards":{
+                "INTav":10,
+                "High-Minister's Amulet":1
+            }
+        }]
+
+        skill_file_data["Rise"]=[{
+            "lvl":1,
+            "type":"Job",
+            "desc":"A unique ability to be a natural leader and have people rise to your aid",
+            "pl_point":0,
+            
+            "base":"INT",
+            "rewards":{
+                "INTav":10,
+                "Ring of Arcane Mastery":1
+            }
+        }]
+
+    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+        json.dump(skill_file_data, fin_skill_file, indent=6)
+
+    with open("Files/status.json", 'r') as fson:
+        data=json.load(fson)
+    data["status"][1]['job']="Commander"
+
+    with open("Files/status.json", 'w') as fson:
+        json.dump(data, fson, indent=6)
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))

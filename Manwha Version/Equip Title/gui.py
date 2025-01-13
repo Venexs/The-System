@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import cv2
 from PIL import Image, ImageTk
 import subprocess
-import ujson
+import json
 import sys
 import os
 
@@ -22,7 +22,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.titleequip
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -49,12 +48,71 @@ def move_window(event):
 def ex_close(win):
     win.quit()
 
+def color(name):
+    if name=="False Ranker":
+        color="#FF2F2F"
+    elif name=="One Above All":
+        color="#FFCF26"
+    else:
+        color="#FFFFFF"
+
+    return color
+
 name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name13=''
 rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13='X'
 c=0
 
+def final(name0):
+    if name0!='':
+        with open("Files\Status.json", 'r') as fina_read_fson:
+            fina_read_data=json.load(fina_read_fson)
+
+        if fina_read_data["status"][1]["title_bool"]!="True":
+            stat_val_add=data[name0]["Statbuff"]
+
+            fina_read_data["status"][0]['str']=fina_read_data["status"][0]['str']+stat_val_add
+            fina_read_data["status"][0]['agi']=fina_read_data["status"][0]['agi']+stat_val_add
+            fina_read_data["status"][0]['vit']=fina_read_data["status"][0]['vit']+stat_val_add
+            fina_read_data["status"][0]['int']=fina_read_data["status"][0]['int']+stat_val_add
+            fina_read_data["status"][0]['per']=fina_read_data["status"][0]['per']+stat_val_add
+            fina_read_data["status"][0]['man']=fina_read_data["status"][0]['man']+stat_val_add
+
+            fina_read_data["status"][1]['title_bool']="True"
+            fina_read_data["status"][1]['title']=name0
+
+            with open("Files/status.json", 'w') as fina_write_fson:
+                json.dump(fina_read_data, fina_write_fson, indent=4)
+
+            subprocess.Popen(['python', 'Manwha Version/Status Tab/gui.py'])
+
+            window.quit()
+
+        elif fina_read_data["status"][1]["title_bool"]=="True":
+            old_name=fina_read_data["status"][1]['title']
+            old_str_val_sub=data[old_name]["Statbuff"]
+
+            stat_val_add=data[name0]["Statbuff"]
+
+            fina_read_data["status"][0]['str']=fina_read_data["status"][0]['str']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['agi']=fina_read_data["status"][0]['agi']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['vit']=fina_read_data["status"][0]['vit']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['int']=fina_read_data["status"][0]['int']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['per']=fina_read_data["status"][0]['per']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['man']=fina_read_data["status"][0]['man']+stat_val_add-old_str_val_sub
+
+            fina_read_data["status"][1]['title_bool']="True"
+            fina_read_data["status"][1]['title']=name0
+
+            with open("Files/status.json", 'w') as fina_write_fson:
+                json.dump(fina_read_data, fina_write_fson, indent=4)
+
+            subprocess.Popen(['python', 'Manwha Version/Status Tab/gui.py'])
+
+            subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+            window.quit()
+
 with open("Files\Titles\Titles.json", 'r') as fson:
-    data=ujson.load(fson)
+    data=json.load(fson)
     data_key=list(data.keys())
     try:
         for k in data_key:
@@ -152,7 +210,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0, resize_factor=1)
 
@@ -185,7 +243,7 @@ canvas.create_text(
     112.0,
     anchor="nw",
     text=name1.upper(),
-    fill=thesystem.titleequip.color(name1),
+    fill=color(name1),
     font=("Exo Medium", 18 * -1)
 )
 
@@ -195,7 +253,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name1,window),
+    command=lambda: final(name1),
     relief="flat"
 )
 button_1.place(
@@ -218,7 +276,7 @@ canvas.create_text(
     240.0,
     anchor="nw",
     text=name5.upper(),
-    fill=thesystem.titleequip.color(name5),
+    fill="#FFD337",
     font=("Exo Medium", 18 * -1)
 )
 
@@ -228,7 +286,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name5,window),
+    command=lambda: final(name5),
     relief="flat"
 )
 button_2.place(
@@ -251,7 +309,7 @@ canvas.create_text(
     208.0,
     anchor="nw",
     text=name4.upper(),
-    fill=thesystem.titleequip.color(name4),
+    fill="#FFD337",
     font=("Exo Medium", 18 * -1)
 )
 
@@ -261,7 +319,7 @@ button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name4,window),
+    command=lambda: final(name4),
     relief="flat"
 )
 button_3.place(
@@ -284,7 +342,7 @@ canvas.create_text(
     176.0,
     anchor="nw",
     text=name3.upper(),
-    fill=thesystem.titleequip.color(name3),
+    fill="#FFD337",
     font=("Exo Medium", 18 * -1)
 )
 
@@ -294,7 +352,7 @@ button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name3,window),
+    command=lambda: final(name3),
     relief="flat"
 )
 button_4.place(
@@ -317,7 +375,7 @@ canvas.create_text(
     144.0,
     anchor="nw",
     text=name2.upper(),
-    fill=thesystem.titleequip.color(name2),
+    fill="#FFD337",
     font=("Exo Medium", 18 * -1)
 )
 
@@ -327,7 +385,7 @@ button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name2,window),
+    command=lambda: final(name2),
     relief="flat"
 )
 button_5.place(

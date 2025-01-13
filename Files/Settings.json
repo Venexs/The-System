@@ -1,6 +1,6 @@
 {
     "Settings": {
-        "Calorie_Penalty": "False",
-        "Main_Penalty": "False"
+        "Calorie_Penalty": "True",
+        "Main_Penalty": "True"
     }
 }

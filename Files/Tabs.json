@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 {
     "Inventory": "Close",
     "Daily": "Close",
@@ -11,18 +10,4 @@
     "Settings": "Close",
     "Calories": "Close",
     "Castle": "Close"
-=======
-{
-    "Inventory": "Close",
-    "Daily": "Close",
-    "Quest": "Close",
-    "Skill": "Close",
-    "Status": "Close",
-    "Equipment": "Close",
-    "Shop": "Close",
-    "Dungeons": "Close",
-    "Settings": "Close",
-    "Calories": "Close",
-    "Castle": "Close"
->>>>>>> Stashed changes
 }

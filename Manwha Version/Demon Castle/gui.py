@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import csv
-import ujson
+import json
 import cv2
 from PIL import Image, ImageTk
 import random
@@ -25,22 +25,20 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.castle
 
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=ujson.load(tab_son)
+    tab_son_data=json.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Castle"]='Open'
-    ujson.dump(tab_son_data,fin_tab_son,indent=4)
+    json.dump(tab_son_data,fin_tab_son,indent=4)
 
 run_once_val=False
 
-<<<<<<< Updated upstream
 def get_priority_key_and_value(contents):
     """
     Returns the key and value of the first "Doing" item in the dictionary.
@@ -182,27 +180,20 @@ def load_image_visibility(file_path, total_images=50, hidden_percentage=0.35):
 
 # Path to the JSON file
 json_file_path = "Files/Demons Castle/image_visibility.json"
-=======
-# Path to the ujson file
-ujson_file_path = "Files/Demons Castle/image_visibility.json"
->>>>>>> Stashed changes
 
 # Load visibility data
-data = thesystem.castle.load_image_visibility(ujson_file_path, run_once_val)
-
-hidden_images=data[0]
-floor=data[1]
+hidden_images = load_image_visibility(json_file_path)
 
 # Create images and set visibility
 file_num=0
 
 try:
     with open("Files/Demons Castle/Demon_Castle.json", 'r') as castle_file:
-        castle_data = ujson.load(castle_file)
+        castle_data = json.load(castle_file)
 except:
     with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
         castle_data={"Souls":0,"XP":0,"Rewards":False,"Final":False}
-        ujson.dump(castle_data,castle_file, indent=4)
+        json.dump(castle_data,castle_file, indent=4)
 
 def relative_to_assets(path: str) -> Path:
     global file_num
@@ -211,8 +202,8 @@ def relative_to_assets(path: str) -> Path:
     if file_num>=53 or file_num<4:
         return ASSETS_PATH / Path(path)
     
-    with open(ujson_file_path, 'r') as fr:
-        reading_data=ujson.load(fr)
+    with open(json_file_path, 'r') as fr:
+        reading_data=json.load(fr)
         fin_data=reading_data["hidden_images"]
     
     int_list = list(map(int, fin_data))
@@ -227,7 +218,6 @@ def relative_to_assets(path: str) -> Path:
         pat = ASSETS_PATH / Path("image_5.png")
         return pat
 
-<<<<<<< Updated upstream
 def reward_castle():
     #print("NO! THE DEMMON CASTLE ISN'T DONE YET!")
     thesystem.system.message_open("Demon Castle Reward")
@@ -275,8 +265,6 @@ def reward_castle():
 
     subprocess.Popen(['python', "Manwha Version\Demon Castle\gui.py"])
 
-=======
->>>>>>> Stashed changes
 window = Tk()
 
 initial_height = 0
@@ -300,9 +288,10 @@ final=castle_data["Final"]
 if soul_count>=10000 and rewards==False:
     with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
         castle_data["Rewards"]=True
-        ujson.dump(castle_data,castle_file, indent=4)
+        json.dump(castle_data,castle_file, indent=4)
     
-    thesystem.castle.reward_castle()
+    reward_castle()
+
 
 def start_move(event):
     global lastx, lasty
@@ -321,15 +310,22 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
-        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+        json.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
 
+def demon_fight(event, canvas_name):
+    numeber=canvas_name.split('_')[-1]
+    with open("Files/Demons Castle/Demon_info.csv", "w", newline='') as file_opem:
+        writer = csv.writer(file_opem)
+        writer.writerow([floor, numeber])
+    subprocess.Popen(['python', 'Manwha Version\Demon Castle\gui1.py'])
+    ex_close(window)
 
 canvas = Canvas(
     window,
@@ -351,7 +347,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0, resize_factor=1.3)
 
@@ -826,8 +822,8 @@ for i in range(4, 54):
     image_canvas_name = f"image_{i}"
 
     # Bind the click event
-    with open(ujson_file_path, 'r') as fr:
-        reading_data=ujson.load(fr)
+    with open(json_file_path, 'r') as fr:
+        reading_data=json.load(fr)
         fin_data=reading_data["hidden_images"]
     
     int_list = list(map(int, fin_data))
@@ -836,7 +832,7 @@ for i in range(4, 54):
         check=reading_data["hidden_images"][str(i)]["Completed"]
     
     if not check:
-        canvas.tag_bind(globals()[image_canvas_name], "<ButtonPress-1>", lambda img=image_canvas_name: thesystem.castle.demon_fight(img,window))
+        canvas.tag_bind(globals()[image_canvas_name], "<ButtonPress-1>", lambda event, img=image_canvas_name: demon_fight(event, img))
     
     hi = list(map(int, hidden_images))
 
@@ -883,7 +879,7 @@ if int(floor)>=100:
     canvas.itemconfig("baaran", state="normal")
 
 if not final:
-    canvas.tag_bind(image_55, "<ButtonPress-1>", lambda event, img=image_55: thesystem.castle.demon_fight("image_55",window))
+    canvas.tag_bind(image_55, "<ButtonPress-1>", lambda event, img=image_55: demon_fight(event, "image_55"))
 
 canvas.create_text(
     38.001220703125,

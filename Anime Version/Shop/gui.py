@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import ujson
+import json
 import csv
 import cv2
 from PIL import Image, ImageTk
@@ -28,11 +28,11 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=ujson.load(tab_son)
+    tab_son_data=json.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Shop"]='Open'
-    ujson.dump(tab_son_data,fin_tab_son,indent=4)
+    json.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -46,34 +46,14 @@ window_width = 555
 
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
-
+thesystem.system.make_window_transparent(window)
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-<<<<<<< Updated upstream
 top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
 bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
-=======
-job=thesystem.misc.return_status()["status"][1]["job"]
-
-top_val='dailyquest.py'
-all_prev=''
-video='Video'
-transp_clr='#0C679B'
-
-if job!='None':
-    top_val=''
-    all_prev='alt_'
-    video='Alt Video'
-    transp_clr='#652AA3'
-
-thesystem.system.make_window_transparent(window,transp_clr)
-
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
->>>>>>> Stashed changes
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (550, 38))
@@ -98,16 +78,16 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Shop"]='Close'
-        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+        json.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     win.quit()
 
 with open("Files/status.json", 'r') as fson:
-    data=ujson.load(fson)
+    data=json.load(fson)
     lvl=data["status"][0]['level']
     coins=data["status"][0]['coins']
 
@@ -148,8 +128,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
-    video_path=pres_file_data["Anime"][video]
+    pres_file_data=json.load(pres_file)
+    video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 478.0, resize_factor=1)
 
 
@@ -842,11 +822,6 @@ canvas.create_text(
 )
 
 side = PhotoImage(file=relative_to_assets("blue.png"))
-<<<<<<< Updated upstream
-=======
-if job.upper()!="NONE":
-    side = PhotoImage(file=relative_to_assets("purple.png"))
->>>>>>> Stashed changes
 canvas.create_image(-10.0, 440.0, image=side)
 canvas.create_image(560.0, 476.0, image=side)
 
@@ -863,11 +838,7 @@ canvas.create_rectangle(
     950.0,
     640.0,
     825.0,
-<<<<<<< Updated upstream
     fill="#0C679B",
-=======
-    fill=transp_clr,
->>>>>>> Stashed changes
     outline="")
 
 canvas.create_rectangle(
@@ -875,11 +846,7 @@ canvas.create_rectangle(
     0.0,
     640.0,
     49.0,
-<<<<<<< Updated upstream
     fill="#0C679B",
-=======
-    fill=transp_clr,
->>>>>>> Stashed changes
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (81, 850))
@@ -890,11 +857,7 @@ canvas.create_rectangle(
     950.0,
     640.0,
     825.0,
-<<<<<<< Updated upstream
     fill="#0C679B",
-=======
-    fill=transp_clr,
->>>>>>> Stashed changes
     outline="")
 
 image_50 = thesystem.system.side_bar("right_bar.png", (81, 820))

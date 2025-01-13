@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import ujson
+import json
 import csv
 import cv2
 from PIL import Image, ImageTk
@@ -88,21 +88,21 @@ def move_window(event):
     lasty = event.y_root
 
 with open("Files/status.json", 'r') as fson:
-    data=ujson.load(fson)
+    data=json.load(fson)
     name=data["status"][0]['name'].upper()
     xp_str=data["status"][0]['XP']
 
 with open("Files\Skills\Skill.json", 'r') as skill_fson:
-    skill_data=ujson.load(skill_fson)
+    skill_data=json.load(skill_fson)
     rol=list(skill_data.keys())
     num=len(rol)
 
 with open("Files\Data\Streaks.json", 'r') as streak_fson:
-    streak_data=ujson.load(streak_fson)
+    streak_data=json.load(streak_fson)
     streak_val=streak_data["Streak"][0]
 
 with open("Files\Data\Statistics.json", 'r') as stats_fson:
-    stats_data=ujson.load(stats_fson)
+    stats_data=json.load(stats_fson)
     quest_num=stats_data["Quests"]
     e_rank=stats_data["E Rank"]
     d_rank=stats_data["D Rank"]
@@ -142,7 +142,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = VideoPlayer(canvas, video_path, 321.0, 307.0)
 

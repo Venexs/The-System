@@ -1,11 +1,9 @@
-import ujson
-import subprocess
-from datetime import datetime
+import json
 import csv
 
 def dailys_init():
     with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
-        daily_quest_data=ujson.load(daily_quest_file)
+        daily_quest_data=json.load(daily_quest_file)
         # ? =======================================================
         # ? Players
         pl_push=daily_quest_data["Player"]["Push"]
@@ -29,7 +27,7 @@ def dailys_init():
 
 def get_rank():
     with open("Files/status.json", 'r') as rank_check_file:
-        rank_check_data=ujson.load(rank_check_file)
+        rank_check_data=json.load(rank_check_file)
         lvl=rank_check_data["status"][0]['level']
 
         if lvl>=1 and lvl<=10:
@@ -64,14 +62,14 @@ def get_check_rew():
 
 def get_streak():
     with open("Files/Data/Daily_Quest.json", 'r') as streak_file:
-        streak_file_data = ujson.load(streak_file)
+        streak_file_data = json.load(streak_file)
         streak=streak_file_data["Streak"]["Value"]
     return streak
 
 def get_titles():
     streak=get_streak()
     with open("Files/Titles/Title_list.json", "r") as list_of_titles:
-        list_of_titles_data=ujson.load(list_of_titles)
+        list_of_titles_data=json.load(list_of_titles)
         list_of_titles_keys=list(list_of_titles_data.keys())
 
         if streak>=0 and streak<=3:
@@ -95,215 +93,3 @@ def get_titles():
         elif streak>=91:
             title=list_of_titles_keys[9]
     return title, list_of_titles_data
-
-def daily_preview(window):
-    with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-            rew_fw=csv.writer(rew_csv_open)
-            rew_fw.writerow(["Preview"])
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
-        theme_data=ujson.load(themefile)
-        theme=theme_data["Theme"]
-    subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
-
-def check_daily_comp(today_date_str, window):
-    with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
-        daily_quest_data = ujson.load(daily_quest_file)
-        
-        # Player's daily progress
-        pl_push = daily_quest_data["Player"]["Push"]
-        pl_sit = daily_quest_data["Player"]["Sit"]
-        pl_sqat = daily_quest_data["Player"]["Squat"]
-        pl_run = daily_quest_data["Player"]["Run"]
-        pl_int = daily_quest_data["Player"]["Int_type"]
-        pl_slp = daily_quest_data["Player"]["Sleep"]
-
-        # Final quest goals
-        fl_push = daily_quest_data["Final"]["Push"]
-        fl_sit = daily_quest_data["Final"]["Sit"]
-        fl_sqat = daily_quest_data["Final"]["Squat"]
-        fl_run = daily_quest_data["Final"]["Run"]
-        fl_int = daily_quest_data["Final"]["Int_type"]
-        fl_slp = daily_quest_data["Final"]["Sleep"]
-
-    with open('Files/Checks/Secret_Quest_Check.json', 'r') as secrer_quest:
-        secrer_quest_data = ujson.load(secrer_quest)
-        day_num = secrer_quest_data["Day"]
-        tdy_week_num = datetime.today().weekday()
-
-    # First check if today is the correct day to check completion
-    if day_num == tdy_week_num:
-        if (pl_push / 2) >= fl_push and (pl_run / 2) >= fl_run and (pl_sqat / 2) >= fl_sqat and (pl_sit / 2) >= fl_sit and (pl_int / 2) >= fl_int:
-            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
-                # Update final quest data with rewards
-                daily_quest_data["Final"]["Push"] += 5
-                daily_quest_data["Final"]["Sit"] += 5
-                daily_quest_data["Final"]["Squat"] += 5
-                daily_quest_data["Final"]["Run"] += 0.5
-                daily_quest_data["Streak"]["Value"] += 1
-
-                # Reset player data
-                daily_quest_data["Player"]["Push"] = 0
-                daily_quest_data["Player"]["Sit"] = 0
-                daily_quest_data["Player"]["Squat"] = 0
-                daily_quest_data["Player"]["Run"] = 0
-                daily_quest_data["Player"]["Int_type"] = 0
-                daily_quest_data["Player"]["Sleep"] = 0
-
-                # Increment intellect if not already at max
-                if round(fl_int, 1) != 10:
-                    daily_quest_data["Final"]["Int_type"] += 0.5
-
-                daily_quest_data["Streak"]["Value"]+=1
-                daily_quest_data["Streak"]["Greater_value"]+=1
-
-                # Save the updated quest data
-                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
-                    ujson.dump(daily_quest_data, final_daily_quest_file, indent=4)
-
-                # Record the completion time check
-                with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as fin_daily_date_check_file:
-                    fw1 = csv.writer(fin_daily_date_check_file)
-                    fw1.writerow([today_date_str, "False", "Complete"])
-
-                # Log reward info
-                with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                    rew_fw = csv.writer(rew_csv_open)
-                    rew_fw.writerow(["Secret"])
-
-                # Execute the reward GUI based on the theme
-                with open('Files/Data/Theme_Check.json', 'r') as themefile:
-                    theme_data = ujson.load(themefile)
-                    theme = theme_data["Theme"]
-                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
-
-                # Close the daily quest tab
-                with open("Files/Tabs.json", 'r') as tab_son:
-                    tab_son_data = ujson.load(tab_son)
-
-                with open("Files/Tabs.json", 'w') as fin_tab_son:
-                    tab_son_data["Daily"] = 'Close'
-                    ujson.dump(tab_son_data, fin_tab_son, indent=4)
-
-                window.quit()
-
-        # Handle the condition where day_num != tdy_week_num
-        if (pl_push) >= fl_push and (pl_run) >= fl_run and (pl_sqat) >= fl_sqat and (pl_sit) >= fl_sit and (pl_int) >= fl_int and (pl_slp) >= fl_slp:
-            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
-                # Update final quest data with rewards
-                daily_quest_data["Final"]["Push"] += 5
-                daily_quest_data["Final"]["Sit"] += 5
-                daily_quest_data["Final"]["Squat"] += 5
-                daily_quest_data["Final"]["Run"] += 0.5
-                daily_quest_data["Streak"]["Value"] += 1
-
-                # Reset player data
-                daily_quest_data["Player"]["Push"] = 0
-                daily_quest_data["Player"]["Sit"] = 0
-                daily_quest_data["Player"]["Squat"] = 0
-                daily_quest_data["Player"]["Run"] = 0
-                daily_quest_data["Player"]["Int_type"] = 0
-                daily_quest_data["Player"]["Sleep"] = 0
-
-                # Increment intellect if not already at max
-                if round(fl_int, 1) != 10:
-                    daily_quest_data["Final"]["Int_type"] += 0.5
-
-                # Log reward info
-                if (pl_push) >= fl_push*3 and (pl_run) >= fl_run*3 and (pl_sqat) >= fl_sqat*3 and (pl_sit) >= fl_sit*3 and (pl_int) >= fl_int*3:
-                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                        rew_fw = csv.writer(rew_csv_open)
-                        rew_fw.writerow(["Great Reward"])
-                        daily_quest_data["Streak"]["Greater_value"] += 1
-                else:
-                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                        rew_fw = csv.writer(rew_csv_open)
-                        rew_fw.writerow(["Reward"])
-                        daily_quest_data["Streak"]["Greater_value"]=0
-                        daily_quest_data["Streak"]["Value"] += 1
-
-                # Save the updated quest data
-                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
-                    ujson.dump(daily_quest_data, final_daily_quest_file, indent=4)
-
-                # Record the completion time check
-                with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as fin_daily_date_check_file:
-                    fw1 = csv.writer(fin_daily_date_check_file)
-                    fw1.writerow([today_date_str, "True", "Complete"])
-
-                # Execute the reward GUI based on the theme
-                with open('Files/Data/Theme_Check.json', 'r') as themefile:
-                    theme_data = ujson.load(themefile)
-                    theme = theme_data["Theme"]
-                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
-
-                # Close the daily quest tab
-                with open("Files/Tabs.json", 'r') as tab_son:
-                    tab_son_data = ujson.load(tab_son)
-
-                with open("Files/Tabs.json", 'w') as fin_tab_son:
-                    tab_son_data["Daily"] = 'Close'
-                    ujson.dump(tab_son_data, fin_tab_son, indent=4)
-
-                window.quit()
-
-    else:
-        # Handle the condition where day_num != tdy_week_num
-        if (pl_push) >= fl_push and (pl_run) >= fl_run and (pl_sqat) >= fl_sqat and (pl_sit) >= fl_sit and (pl_int) >= fl_int and (pl_slp) >= fl_slp:
-            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
-                # Update final quest data with rewards
-                daily_quest_data["Final"]["Push"] += 5
-                daily_quest_data["Final"]["Sit"] += 5
-                daily_quest_data["Final"]["Squat"] += 5
-                daily_quest_data["Final"]["Run"] += 0.5
-                daily_quest_data["Streak"]["Value"] += 1
-
-                # Reset player data
-                daily_quest_data["Player"]["Push"] = 0
-                daily_quest_data["Player"]["Sit"] = 0
-                daily_quest_data["Player"]["Squat"] = 0
-                daily_quest_data["Player"]["Run"] = 0
-                daily_quest_data["Player"]["Int_type"] = 0
-                daily_quest_data["Player"]["Sleep"] = 0
-
-                # Increment intellect if not already at max
-                if round(fl_int, 1) != 10:
-                    daily_quest_data["Final"]["Int_type"] += 0.5
-
-                # Log reward info
-                if (pl_push) >= fl_push*3 and (pl_run) >= fl_run*3 and (pl_sqat) >= fl_sqat*3 and (pl_sit) >= fl_sit*3 and (pl_int) >= fl_int*3:
-                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                        rew_fw = csv.writer(rew_csv_open)
-                        rew_fw.writerow(["Great Reward"])
-                        daily_quest_data["Streak"]["Greater_value"] += 1
-                else:
-                    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
-                        rew_fw = csv.writer(rew_csv_open)
-                        rew_fw.writerow(["Reward"])
-                        daily_quest_data["Streak"]["Greater_value"]=0
-                        daily_quest_data["Streak"]["Value"] += 1
-
-                # Save the updated quest data
-                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
-                    ujson.dump(daily_quest_data, final_daily_quest_file, indent=4)
-
-                # Record the completion time check
-                with open("Files/Checks/Daily_time_check.csv", 'w', newline='') as fin_daily_date_check_file:
-                    fw1 = csv.writer(fin_daily_date_check_file)
-                    fw1.writerow([today_date_str, "True", "Complete"])
-
-                # Execute the reward GUI based on the theme
-                with open('Files/Data/Theme_Check.json', 'r') as themefile:
-                    theme_data = ujson.load(themefile)
-                    theme = theme_data["Theme"]
-                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
-
-                # Close the daily quest tab
-                with open("Files/Tabs.json", 'r') as tab_son:
-                    tab_son_data = ujson.load(tab_son)
-
-                with open("Files/Tabs.json", 'w') as fin_tab_son:
-                    tab_son_data["Daily"] = 'Close'
-                    ujson.dump(tab_son_data, fin_tab_son, indent=4)
-
-                window.quit()
-

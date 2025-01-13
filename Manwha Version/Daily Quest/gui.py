@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, date
 import threading
 import time
 import random
-import ujson
+import json
 import csv
 import subprocess
 import cv2
@@ -27,14 +27,13 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.dailyquest
 import thesystem.dailyquest as dailyquest
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open('Files\Checks\Secret_Quest_Check.json', 'r') as secrer_quest:
-    secrer_quest_data=ujson.load(secrer_quest)
+    secrer_quest_data=json.load(secrer_quest)
     day_num=secrer_quest_data["Day"]
     tdy_week_num=datetime.today().weekday()
 
@@ -72,11 +71,11 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Daily"]='Close'
-        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+        json.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=10, delay=1)
 
@@ -118,11 +117,11 @@ elif date_from_string==today:
 
 if full_check==False:
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Daily"]='Open'
-        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+        json.dump(tab_son_data,fin_tab_son,indent=4)
 
     subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
@@ -160,7 +159,7 @@ if full_check==False:
     )
 
     with open("Files\Mod\presets.json", 'r') as pres_file:
-        pres_file_data=ujson.load(pres_file)
+        pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
     player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 350.0, resize_factor=1.5)
 
@@ -422,7 +421,7 @@ if full_check==False:
         current_text = int(((canvas.itemcget(pushup_txt, "text")).split("/"))[0][1:])
         with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
             daily_quest_data["Player"]["Push"] += 1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
         canvas.itemconfig(pushup_txt, text=f"[{current_text + 1}/{fl_push}]")
     def update_situp():
         subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
@@ -430,7 +429,7 @@ if full_check==False:
         current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
         with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
             daily_quest_data["Player"]["Sit"]+=1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
         canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_sqat():
@@ -439,7 +438,7 @@ if full_check==False:
         current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
         with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
             daily_quest_data["Player"]["Squat"]+=1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
         canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_run():
@@ -448,7 +447,7 @@ if full_check==False:
         current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
         with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
             daily_quest_data["Player"]["Run"]+=0.5
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
         canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
 
     def update_int():
@@ -457,7 +456,7 @@ if full_check==False:
         current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
         with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
             daily_quest_data["Player"]["Int_type"]+=0.5
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
         canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
 
     def update_sleep():
@@ -466,7 +465,7 @@ if full_check==False:
         current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
         with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
             daily_quest_data["Player"]["Sleep"]+=1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+            json.dump(daily_quest_data, write_daily_quest_file, indent=4)
         canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
 
     canvas.create_text(
@@ -484,7 +483,7 @@ if full_check==False:
         image=button_image_7,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: (thesystem.dailyquest.daily_preview(window),ex_close(window)),
+        command=lambda: (thesystem.system.daily_preview(window),ex_close(window)),
         relief="flat"
     )
     button_7.place(

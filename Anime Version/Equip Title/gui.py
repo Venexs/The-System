@@ -12,7 +12,7 @@ import cv2
 from PIL import Image, ImageTk
 import threading
 import subprocess
-import ujson
+import json
 import sys
 import os
 
@@ -23,7 +23,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.titleequip
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -53,13 +52,70 @@ def ex_close(win):
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
 
+def color(name):
+    if name=="False Ranker":
+        color="#FF2F2F"
+    elif name=="One Above All":
+        color="#FFCF26"
+    else:
+        color="#FFFFFF"
+
+    return color
+
 name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name13=''
 rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13='X'
 c=0
 
+def final(name0):
+    if name0!='':
+        with open("Files\Status.json", 'r') as fina_read_fson:
+            fina_read_data=json.load(fina_read_fson)
+
+        if fina_read_data["status"][1]["title_bool"]!="True":
+            stat_val_add=data[name0]["Statbuff"]
+
+            fina_read_data["status"][0]['str']=fina_read_data["status"][0]['str']+stat_val_add
+            fina_read_data["status"][0]['agi']=fina_read_data["status"][0]['agi']+stat_val_add
+            fina_read_data["status"][0]['vit']=fina_read_data["status"][0]['vit']+stat_val_add
+            fina_read_data["status"][0]['int']=fina_read_data["status"][0]['int']+stat_val_add
+            fina_read_data["status"][0]['per']=fina_read_data["status"][0]['per']+stat_val_add
+            fina_read_data["status"][0]['man']=fina_read_data["status"][0]['man']+stat_val_add
+
+            fina_read_data["status"][1]['title_bool']="True"
+            fina_read_data["status"][1]['title']=name0
+
+            with open("Files/status.json", 'w') as fina_write_fson:
+                json.dump(fina_read_data, fina_write_fson, indent=4)
+
+            subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
+
+            window.quit()
+
+        elif fina_read_data["status"][1]["title_bool"]=="True":
+            old_name=fina_read_data["status"][1]['title']
+            old_str_val_sub=data[old_name]["Statbuff"]
+
+            stat_val_add=data[name0]["Statbuff"]
+
+            fina_read_data["status"][0]['str']=fina_read_data["status"][0]['str']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['agi']=fina_read_data["status"][0]['agi']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['vit']=fina_read_data["status"][0]['vit']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['int']=fina_read_data["status"][0]['int']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['per']=fina_read_data["status"][0]['per']+stat_val_add-old_str_val_sub
+            fina_read_data["status"][0]['man']=fina_read_data["status"][0]['man']+stat_val_add-old_str_val_sub
+
+            fina_read_data["status"][1]['title_bool']="True"
+            fina_read_data["status"][1]['title']=name0
+
+            with open("Files/status.json", 'w') as fina_write_fson:
+                json.dump(fina_read_data, fina_write_fson, indent=4)
+
+            subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
+
+            window.quit()
 
 with open("Files\Titles\Titles.json", 'r') as fson:
-    data=ujson.load(fson)
+    data=json.load(fson)
     data_key=list(data.keys())
     try:
         for k in data_key:
@@ -119,6 +175,8 @@ with open("Files\Titles\Titles.json", 'r') as fson:
     except:
         print("", end='')
 
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 window = Tk()
 
 initial_height = 0
@@ -126,37 +184,13 @@ target_height = 531
 window_width = 555
 
 window.geometry(f"{window_width}x{initial_height}")
-
-job=thesystem.misc.return_status()["status"][1]["job"]
-
-top_val='dailyquest.py'
-all_prev=''
-video='Video'
-transp_clr='#0C679B'
-
-if job!='None':
-    top_val=''
-    all_prev='alt_'
-    video='Alt Video'
-    transp_clr='#652AA3'
-
-thesystem.system.make_window_transparent(window,transp_clr)
-
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
-
+thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 canvas = Canvas(
     window,
@@ -178,9 +212,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"][video]
+    video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 350.0, resize_factor=1)
 
 image_image_2 = PhotoImage(
@@ -195,7 +229,7 @@ image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
     274.0,
-    70.0,
+    66.0,
     image=image_image_3
 )
 
@@ -212,7 +246,7 @@ canvas.create_text(
     96.0,
     anchor="nw",
     text=name1.upper(),
-    fill=thesystem.titleequip.color(name1),
+    fill=color(name1),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -231,7 +265,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name1,window),
+    command=lambda: final(name1),
     relief="flat"
 )
 button_1.place(
@@ -254,7 +288,7 @@ canvas.create_text(
     128.0,
     anchor="nw",
     text=name2.upper(),
-    fill=thesystem.titleequip.color(name2),
+    fill=color(name2),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -273,7 +307,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name2,window),
+    command=lambda: final(name2),
     relief="flat"
 )
 button_2.place(
@@ -296,7 +330,7 @@ canvas.create_text(
     160.0,
     anchor="nw",
     text=name3.upper(),
-    fill=thesystem.titleequip.color(name3),
+    fill=color(name3),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -315,7 +349,7 @@ button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name3,window),
+    command=lambda: final(name3),
     relief="flat"
 )
 button_3.place(
@@ -338,7 +372,7 @@ canvas.create_text(
     192.0,
     anchor="nw",
     text=name4.upper(),
-    fill=thesystem.titleequip.color(name4),
+    fill=color(name4),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -357,7 +391,7 @@ button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name4,window),
+    command=lambda: final(name4),
     relief="flat"
 )
 button_4.place(
@@ -380,7 +414,7 @@ canvas.create_text(
     224.0,
     anchor="nw",
     text=name5.upper(),
-    fill=thesystem.titleequip.color(name5),
+    fill=color(name5),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -399,7 +433,7 @@ button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name5,window),
+    command=lambda: final(name5),
     relief="flat"
 )
 button_5.place(
@@ -422,7 +456,7 @@ canvas.create_text(
     256.0,
     anchor="nw",
     text=name6.upper(),
-    fill=thesystem.titleequip.color(name6),
+    fill=color(name6),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -441,7 +475,7 @@ button_6 = Button(
     image=button_image_6,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name6,window),
+    command=lambda: final(name6),
     relief="flat"
 )
 button_6.place(
@@ -464,7 +498,7 @@ canvas.create_text(
     288.0,
     anchor="nw",
     text=name7.upper(),
-    fill=thesystem.titleequip.color(name7),
+    fill=color(name7),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -483,7 +517,7 @@ button_7 = Button(
     image=button_image_7,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name7,window),
+    command=lambda: final(name7),
     relief="flat"
 )
 button_7.place(
@@ -506,7 +540,7 @@ canvas.create_text(
     320.0,
     anchor="nw",
     text=name8.upper(),
-    fill=thesystem.titleequip.color(name8),
+    fill=color(name8),
     font=("Montserrat Regular", 18 * -1)
 )
 
@@ -525,7 +559,7 @@ button_8 = Button(
     image=button_image_8,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name8,window),
+    command=lambda: final(name8),
     relief="flat"
 )
 button_8.place(
@@ -535,81 +569,242 @@ button_8.place(
     height=24.0
 )
 
-
-side = PhotoImage(file=relative_to_assets("blue.png"))
-if job.upper()!="NONE":
-    side = PhotoImage(file=relative_to_assets("purple.png"))
-canvas.create_image(0.0, 197.0, image=side)
-canvas.create_image(553.0, 204.0, image=side)
-
-canvas.create_rectangle(
-    0.0,
-    364.0,
-    640.0,
-    825.0,
-    fill=transp_clr,
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    0.0,
-    640.0,
-    45.0,
-    fill=transp_clr,
-    outline="")
-
-image_40 = thesystem.system.side_bar("left_bar.png", (52, 333))
-canvas.create_image(0.0, 197.0, image=image_40)
-
-canvas.create_rectangle(
-    0.0,
-    950.0,
-    640.0,
-    825.0,
-    fill=transp_clr,
-    outline="")
-
-image_50 = thesystem.system.side_bar("right_bar.png", (52, 320))
-canvas.create_image(540.0, 204.0, image=image_50)
-
-image_index = 0
-bot_image_index = 0
-
-top_image = canvas.create_image(
+image_image_12 = PhotoImage(
+    file=relative_to_assets("image_12.png"))
+image_12 = canvas.create_image(
     280.0,
+    363.0,
+    image=image_image_12
+)
+
+canvas.create_text(
+    68.0,
+    352.0,
+    anchor="nw",
+    text=name9.upper(),
+    fill=color(name9),
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    391.0,
+    352.0,
+    anchor="nw",
+    text=f"{rank9}-Rank",
+    fill=normal_font_col,
+    font=("Montserrat Medium", 18 * -1)
+)
+
+button_image_9 = PhotoImage(
+    file=relative_to_assets("button_9.png"))
+button_9 = Button(
+    image=button_image_9,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: final(name9),
+    relief="flat"
+)
+button_9.place(
+    x=481.0,
+    y=351.0,
+    width=24.0,
+    height=24.0
+)
+
+image_image_13 = PhotoImage(
+    file=relative_to_assets("image_13.png"))
+image_13 = canvas.create_image(
+    280.0,
+    395.0,
+    image=image_image_13
+)
+
+canvas.create_text(
+    68.0,
+    384.0,
+    anchor="nw",
+    text=name10.upper(),
+    fill=color(name10),
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    391.0,
+    384.0,
+    anchor="nw",
+    text=f"{rank10}-Rank",
+    fill=normal_font_col,
+    font=("Montserrat Medium", 18 * -1)
+)
+
+button_image_10 = PhotoImage(
+    file=relative_to_assets("button_10.png"))
+button_10 = Button(
+    image=button_image_10,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: final(name10),
+    relief="flat"
+)
+button_10.place(
+    x=481.0,
+    y=383.0,
+    width=24.0,
+    height=24.0
+)
+
+image_image_14 = PhotoImage(
+    file=relative_to_assets("image_14.png"))
+image_14 = canvas.create_image(
+    280.0,
+    427.0,
+    image=image_image_14
+)
+
+canvas.create_text(
+    68.0,
+    416.0,
+    anchor="nw",
+    text=name11.upper(),
+    fill=color(name11),
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    391.0,
+    416.0,
+    anchor="nw",
+    text=f"{rank11}-Rank",
+    fill=normal_font_col,
+    font=("Montserrat Medium", 18 * -1)
+)
+
+button_image_11 = PhotoImage(
+    file=relative_to_assets("button_11.png"))
+button_11 = Button(
+    image=button_image_11,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: final(name11),
+    relief="flat"
+)
+button_11.place(
+    x=481.0,
+    y=415.0,
+    width=24.0,
+    height=24.0
+)
+
+image_image_15 = PhotoImage(
+    file=relative_to_assets("image_15.png"))
+image_15 = canvas.create_image(
+    280.0,
+    459.0,
+    image=image_image_15
+)
+
+canvas.create_text(
+    68.0,
+    448.0,
+    anchor="nw",
+    text=name12.upper(),
+    fill=color(name12),
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    391.0,
+    448.0,
+    anchor="nw",
+    text=f"{rank12}-Rank",
+    fill=normal_font_col,
+    font=("Montserrat Medium", 18 * -1)
+)
+
+button_image_12 = PhotoImage(
+    file=relative_to_assets("button_12.png"))
+button_12 = Button(
+    image=button_image_12,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: final(name12),
+    relief="flat"
+)
+button_12.place(
+    x=481.0,
+    y=447.0,
+    width=24.0,
+    height=24.0
+)
+
+image_image_16 = PhotoImage(
+    file=relative_to_assets("image_16.png"))
+image_16 = canvas.create_image(
+    280.0,
+    491.0,
+    image=image_image_16
+)
+
+canvas.create_text(
+    68.0,
+    480.0,
+    anchor="nw",
+    text=name13.upper(),
+    fill=color(name13),
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    391.0,
+    480.0,
+    anchor="nw",
+    text=f"{rank13}-Rank",
+    fill=normal_font_col,
+    font=("Montserrat Medium", 18 * -1)
+)
+
+button_image_13 = PhotoImage(
+    file=relative_to_assets("button_13.png"))
+button_13 = Button(
+    image=button_image_13,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: final(name13),
+    relief="flat"
+)
+button_13.place(
+    x=481.0,
+    y=479.0,
+    width=24.0,
+    height=24.0
+)
+
+image_0=canvas.create_rectangle(
+    0.0,
+    0.0,
+    570.0,
     35.0,
-    image=top_preloaded_images[image_index]
+    fill="#212121",
+    outline="")
+
+canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_0, "<B1-Motion>", move_window)
+
+button_image_0 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_0 = Button(
+    image=button_image_0,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
 )
-
-canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
-canvas.tag_bind(top_image, "<B1-Motion>", move_window)
-
-bottom_image = canvas.create_image(
-    300.0,
-    364.0,
-    image=bottom_preloaded_images[bot_image_index]
+button_0.place(
+    x=520.0,
+    y=3.0,
+    width=28.0,
+    height=28.0
 )
-
-step,delay=1,1
-
-def update_images():
-    global image_index, bot_image_index
-
-    # Update top image
-    image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
-
-    # Update bottom image
-    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
-
-    # Schedule next update (24 FPS)
-    window.after(1000 // 24, update_images)
-
-# Start the animation
-update_images()
-
-# =================================================================================================
 
 window.resizable(False, False)
 window.mainloop()

@@ -5,7 +5,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
-import ujson
+import json
 import subprocess
 import threading
 import cv2
@@ -20,19 +20,17 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.equipmentbk
 import thesystem.equipmentbk as equipment
-import thesystem.inventory
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=ujson.load(tab_son)
+    tab_son_data=json.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Equipment"]='Open'
-    ujson.dump(tab_son_data,fin_tab_son,indent=4)
+    json.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -72,13 +70,13 @@ def move_window(event):
 
 def ex_close():
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+        tab_son_data=json.load(tab_son)
 
     if tab_son_data["Equipment"]=='Open':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
             tab_son_data["Equipment"]='Close'
-            ujson.dump(tab_son_data,fin_tab_son,indent=4)
+            json.dump(tab_son_data,fin_tab_son,indent=4)
 
     #threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
@@ -138,7 +136,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 370.0, 200.0, resize_factor=1)
 
@@ -153,7 +151,7 @@ image_2 = canvas.create_image(
 
 
 # ! ============================================================================
-# ! INFO ujson RETREVAL
+# ! INFO JSON RETREVAL
 # ! ============================================================================
 
 
@@ -193,49 +191,49 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
-boot_image = (thesystem.equipmentbk.get_armor_image(boot))
+boot_image = (thesystem.system.get_armor_image(boot))
 boot_im = canvas.create_image(
     401.0,
     234.0,
     image=boot_image
 )
 
-sgaun_image = (thesystem.equipmentbk.get_armor_image(s_gaun))
+sgaun_image = (thesystem.system.get_armor_image(s_gaun))
 sgaun_im = canvas.create_image(
     401.0,
     234.0,
     image=sgaun_image
 )
 
-fgaun_image = (thesystem.equipmentbk.get_armor_image(f_gaun))
+fgaun_image = (thesystem.system.get_armor_image(f_gaun))
 fgaun_im = canvas.create_image(
     401.0,
     234.0,
     image=fgaun_image
 )
 
-ring_image = (thesystem.equipmentbk.get_armor_image(ring))
+ring_image = (thesystem.system.get_armor_image(ring))
 ring_im = canvas.create_image(
     401.0,
     234.0,
     image=ring_image
 )
 
-helm_image = (thesystem.equipmentbk.get_armor_image(helm))
+helm_image = (thesystem.system.get_armor_image(helm))
 helm_im = canvas.create_image(
     401.0,
     234.0,
     image=helm_image
 )
 
-chest_image = (thesystem.equipmentbk.get_armor_image(chest))
+chest_image = (thesystem.system.get_armor_image(chest))
 chest_im = canvas.create_image(
     401.0,
     234.0,
     image=chest_image
 )
 
-collar_image = (thesystem.equipmentbk.get_armor_image(collar))
+collar_image = (thesystem.system.get_armor_image(collar))
 collar_im = canvas.create_image(
     401.0,
     234.0,
@@ -256,7 +254,7 @@ canvas.create_text(
 # ? Helmet Part
 # ? ====================================================================
 
-image_image_4 = thesystem.inventory.get_item_button_image(helm, max_width, max_height)
+image_image_4 = thesystem.system.get_item_button_image(helm, max_width, max_height)
 image_4 = canvas.create_image(
     86.0,
     145.0,
@@ -310,7 +308,7 @@ button_1.place(
 # ? Chestplate Part
 # ? ====================================================================
 
-image_image_5 = thesystem.inventory.get_item_button_image(chest, max_width, max_height)
+image_image_5 = thesystem.system.get_item_button_image(chest, max_width, max_height)
 image_5 = canvas.create_image(
     184.0,
     241.0,
@@ -364,7 +362,7 @@ button_2.place(
 # ? First Gauntlet Part
 # ? ====================================================================
 
-image_image_6 = thesystem.inventory.get_item_button_image(f_gaun, max_width, max_height)
+image_image_6 = thesystem.system.get_item_button_image(f_gaun, max_width, max_height)
 image_6 = canvas.create_image(
     86.0,
     337.0,
@@ -418,7 +416,7 @@ button_3.place(
 # ? Boots Part
 # ? ====================================================================
 
-image_image_7 = thesystem.inventory.get_item_button_image(boot, max_width, max_height)
+image_image_7 = thesystem.system.get_item_button_image(boot, max_width, max_height)
 image_7 = canvas.create_image(
     729.0,
     374.0,
@@ -472,7 +470,7 @@ button_4.place(
 # ? Collar Part
 # ? ====================================================================
 
-image_image_8 = thesystem.inventory.get_item_button_image(collar, max_width, max_height)
+image_image_8 = thesystem.system.get_item_button_image(collar, max_width, max_height)
 image_8 = canvas.create_image(
     728.0,
     81.0,
@@ -549,7 +547,7 @@ button_5.place(
 # ? Ring Part
 # ? ====================================================================
 
-image_image_9 = thesystem.inventory.get_item_button_image(ring, max_width, max_height)
+image_image_9 = thesystem.system.get_item_button_image(ring, max_width, max_height)
 image_9 = canvas.create_image(
     606.0,
     274.0,
@@ -602,7 +600,7 @@ button_6.place(
 # ? ====================================================================
 # ? Second Gauntlet Part
 # ? ====================================================================
-image_image_10 = thesystem.inventory.get_item_button_image(s_gaun, max_width, max_height)
+image_image_10 = thesystem.system.get_item_button_image(s_gaun, max_width, max_height)
 image_10 = canvas.create_image(
     606.0,
     182.0,

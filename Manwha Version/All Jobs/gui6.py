@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import cv2
@@ -23,7 +23,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.job
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame6")
@@ -89,7 +88,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0)
 
@@ -145,7 +144,44 @@ def sixth():
     canvas.itemconfig("Fifth", state="hidden")
     canvas.itemconfig("Sixth", state="normal")
 
-    thesystem.job.shadow_monarch()
+    with open('Files\Skills\Skill.json', 'r') as skill_file:
+        skill_file_data=json.load(skill_file)
+        skill_file_data["Shadow Extraction"]=[{
+            "lvl":1,
+            "type":"Job",
+            "desc":"Extracts Mana from a fallen body and transforms them into a shadow",
+            "pl_point":0,
+            
+            "base":"INT",
+            "rewards":{
+                "INTav":10,
+                "Red Knights Helmet":1
+            }
+        }]
+
+        skill_file_data["Shadow Storage"]=[{
+            "lvl":1,
+            "type":"Job",
+            "desc":"Allows one to store the Extracted Shadows for later uses",
+            "pl_point":0,
+            
+            "base":"STR",
+            "rewards":{
+                "STRav":10,
+                "Gauntlet of Lightning":1
+            }
+        }]
+
+    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+        json.dump(skill_file_data, fin_skill_file, indent=6)
+
+    with open("Files/status.json", 'r') as fson:
+        data=json.load(fson)
+    data["status"][1]['job']="Shadow Monarch"
+
+    with open("Files/status.json", 'w') as fson:
+        json.dump(data, fson, indent=6)
+
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))

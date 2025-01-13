@@ -10,11 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import threading
-<<<<<<< Updated upstream
 import json
-=======
-import ujson
->>>>>>> Stashed changes
 import csv
 import sys
 import os
@@ -84,11 +80,7 @@ canvas = Canvas(
 )
 
 with open("Files/status.json", 'r') as fson:
-<<<<<<< Updated upstream
     data=json.load(fson)
-=======
-    data=ujson.load(fson)
->>>>>>> Stashed changes
     stre=data["status"][0]['str']
     intel=data["status"][0]['int']
     agi=data["status"][0]['agi']
@@ -116,11 +108,7 @@ def finale():
             data["status"][0]['man']=int(man)
 
             with open("Files/status.json", 'w') as fson:
-<<<<<<< Updated upstream
                 json.dump(data, fson, indent=6)
-=======
-                ujson.dump(data, fson, indent=6)
->>>>>>> Stashed changes
 
             ex_close(window)
     except:
@@ -136,11 +124,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-<<<<<<< Updated upstream
     pres_file_data=json.load(pres_file)
-=======
-    pres_file_data=ujson.load(pres_file)
->>>>>>> Stashed changes
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 

@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import cv2
@@ -23,7 +23,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.quests
 
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
@@ -69,7 +68,7 @@ with open("Files/Temp Files/Quest Temp.csv", 'r') as csv_open:
         typeof=k[2]
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     get_stuff_path_str=pres_file_data["Manwha"]["Mid Size Screen"]
 
 def get_stuff_path(key):
@@ -101,7 +100,7 @@ if typeof == "Learn":
     segment_length = 52
 
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
-        data=ujson.load(fson)
+        data=json.load(fson)
         for k in data:
             if k==name:
                 obj=objval='-'
@@ -153,7 +152,7 @@ if typeof == "Learn":
                 rewards=data[k][0]["Rewards"]
 
     with open("Files/Status.json", 'r') as data_fson:
-        data_status=ujson.load(data_fson)
+        data_status=json.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
 
@@ -185,7 +184,7 @@ if typeof == "Learn":
     )
 
     with open("Files\Mod\presets.json", 'r') as pres_file:
-        pres_file_data=ujson.load(pres_file)
+        pres_file_data=json.load(pres_file)
         video_path=pres_file_data["Manwha"]["Video"]
     player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 180.0)
 
@@ -619,7 +618,7 @@ if typeof == "Learn":
         image=button_image_6,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.quests.abandon_quest(name,window),
+        command=lambda: thesystem.system.abandon_quest(name,window),
         relief="flat"
     )
     button_6.place(
@@ -637,7 +636,7 @@ if typeof == "Learn":
             image=button_image_7,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: thesystem.quests.quest_reward(window,dicts,rank,name),
+            command=lambda: thesystem.system.quest_reward(window,dicts,rank,name),
             relief="flat"
         )
         button_7.place(
@@ -682,7 +681,7 @@ elif typeof == "Common":
     segment_length = 77
 
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
-        data=ujson.load(fson)
+        data=json.load(fson)
         for k in data:
             if k==name:
                 rank=data[k][0]["rank"]
@@ -711,7 +710,7 @@ elif typeof == "Common":
                 rewards=data[k][0]["Rewards"]
 
     with open("Files/Status.json", 'r') as data_fson:
-        data_status=ujson.load(data_fson)
+        data_status=json.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
 
@@ -731,7 +730,7 @@ elif typeof == "Common":
         canvas.itemconfig(ex_txt, text=be_new_1)
 
         if int(new_1)==int(num):
-            thesystem.quests.quest_reward(window,dicts,rank,name)
+            thesystem.system.quest_reward(window,dicts,rank,name)
 
     canvas = Canvas(
         window,
@@ -753,7 +752,7 @@ elif typeof == "Common":
     )
 
     with open("Files\Mod\presets.json", 'r') as pres_file:
-        pres_file_data=ujson.load(pres_file)
+        pres_file_data=json.load(pres_file)
         video_path=pres_file_data["Manwha"]["Video"]
     player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 180.0)
 
@@ -1113,7 +1112,7 @@ elif typeof == "Common":
         image=button_image_6,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.quests.abandon_quest(name,window),
+        command=lambda: thesystem.system.abandon_quest(name,window),
         relief="flat"
     )
     button_6.place(
@@ -1206,7 +1205,7 @@ elif typeof == "Unknown":
     segment_length = 77
 
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
-        data=ujson.load(fson)
+        data=json.load(fson)
         for k in data:
             if k==name:
                 if data[k][0]["ID"]==id:
@@ -1227,7 +1226,7 @@ elif typeof == "Unknown":
                     rewards=data[k][0]["Rewards"]
 
     with open("Files/Status.json", "r") as f:
-        data2=ujson.load(f)
+        data2=json.load(f)
         level=data2["status"][0]["level"]
 
     canvas = Canvas(
@@ -1250,7 +1249,7 @@ elif typeof == "Unknown":
     )
 
     with open("Files\Mod\presets.json", 'r') as pres_file:
-        pres_file_data=ujson.load(pres_file)
+        pres_file_data=json.load(pres_file)
         video_path=pres_file_data["Manwha"]["Video"]
     player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 180.0)
 
@@ -1496,7 +1495,7 @@ elif typeof == "Unknown":
             image=button_image_7,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: thesystem.quests.quest_reward(window,dicts,rank,name,special=True),
+            command=lambda: thesystem.system.quest_reward(window,dicts,rank,name,special=True),
             relief="flat"
         )
         button_7.place(

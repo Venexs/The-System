@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import random
@@ -106,7 +106,7 @@ lvl1=lvl2=lvl3=lvl4=lvl5=lvl6='??'
 with open("Files\Skills\Skill.json", 'r') as fson:
     c=0
     try:
-        data=ujson.load(fson)
+        data=json.load(fson)
         data_key=list(data.keys())
         for k in data_key:
             if data[k][0]["type"]=='Active':
@@ -168,7 +168,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = VideoPlayer(canvas, video_path, 603.0, 447.0)
 

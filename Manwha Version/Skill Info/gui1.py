@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
-import ujson
+import json
 import subprocess
 import cv2
 from PIL import Image, ImageTk
@@ -76,14 +76,14 @@ def confirm():
         status_data["avail_eq"][0]['int_based']=status_data["avail_eq"][0]['int_based']-int(screen_tr_txt)
 
     with open("Files/status.json", 'w') as fin_status:
-        ujson.dump(status_data, fin_status, indent=4)
+        json.dump(status_data, fin_status, indent=4)
 
     data_main[name][0]["pl_point"]=pl_points
     if level_up==True:
         data_main[name][0]["lvl"]=lvl+1
 
     with open("Files/Skills/Skill.json", 'w') as fin_skill:
-        ujson.dump(data_main, fin_skill, indent=6)
+        json.dump(data_main, fin_skill, indent=6)
 
     subprocess.Popen(['python', 'Manwha Version/Skill Info/gui.py'])
 
@@ -158,10 +158,10 @@ with open("Files/Temp Files/Skill Temp.csv", 'r') as csv_open:
         name=k[0]
 
 with open("Files\Data\Skill_Up_Values.json", 'r') as fson:
-    data=ujson.load(fson)
+    data=json.load(fson)
 
 with open("Files/Skills/Skill.json", 'r') as fron:
-    data_main=ujson.load(fron)
+    data_main=json.load(fron)
     data_main_key=list(data_main.keys())
 
     for k in data_main_key:
@@ -174,7 +174,7 @@ if lvl!="MAX":
     get=data['Values'][0][str(lvl+1)]
 
 with open("Files/status.json", 'r') as status:
-    status_data=ujson.load(status)
+    status_data=json.load(status)
 
     if base=='STR':
         av_data=status_data["avail_eq"][0]['str_based']

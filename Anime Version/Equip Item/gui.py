@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import threading
@@ -24,8 +24,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.itemequip
-import thesystem.misc
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -61,6 +59,9 @@ def ex_close(win):
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 window = Tk()
 
 initial_height = 0
@@ -68,36 +69,13 @@ target_height = 373
 window_width = 553
 
 window.geometry(f"{window_width}x{initial_height}")
-
-job=thesystem.misc.return_status()["status"][1]["job"]
-
-top_val='dailyquest.py'
-all_prev=''
-video='Video'
-transp_clr='#0C679B'
-
-if job!='None':
-    top_val=''
-    all_prev='alt_'
-    video='Alt Video'
-    transp_clr='#652AA3'
-
-thesystem.system.make_window_transparent(window,transp_clr)
-
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 canvas = Canvas(
     window,
@@ -133,7 +111,7 @@ with open('Files/Temp Files/Equipment Temp.csv', 'r') as fop:
         break
     
 with open('Files/Inventory.json', 'r') as fout:
-    data=ujson.load(fout)
+    data=json.load(fout)
     rol=list(data.keys())
 c = 0
 for k in rol:
@@ -155,17 +133,155 @@ for k in rol:
             dat5 = {k: data[k]}
         c += 1
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
-    normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 300.0)
-
 
 # ! ======================================================================
 # ! FILE INJECTION
 # ! ======================================================================
 
+def opens(val, name):
+    def load_json(file_path):
+        with open(file_path, 'r') as file:
+            return json.load(file)
+
+    def save_json(file_path, data):
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=6)
+
+    def resolve_buff_name(buff_key):
+        buff_map = {
+            "AGIbuff": "AGI",
+            "STRbuff": "STR",
+            "VITbuff": "VIT",
+            "INTbuff": "INT",
+            "PERbuff": "PER",
+            "MANbuff": "MAN",
+            "AGIdebuff": "AGI",
+            "STRdebuff": "STR",
+            "VITdebuff": "VIT",
+            "INTdebuff": "INT",
+            "PERdebuff": "PER",
+            "MANdebuff": "MAN",
+        }
+        return buff_map.get(buff_key, None)
+
+    def process_item_buffs(item_data, status_data, sign=1):
+        buffs = (item_data).get("buff", {})
+        debuffs = (item_data).get("debuff", {})
+        try:
+            for key, value in buffs.items():
+                buff_name = resolve_buff_name(key)
+                if buff_name:
+                    status_data["equipment"][0][buff_name] += sign * value
+        except:
+                print()
+        try:
+            for key, value in debuffs.items():
+                debuff_name = resolve_buff_name(key)
+                if debuff_name:
+                    status_data["equipment"][0][debuff_name] -= sign * value
+        except:
+            print()
+
+    # Load equipment and status files
+    equipment_data = load_json('Files/Equipment.json')
+    status_data = load_json('Files/status.json')
+
+    # Process the currently equipped item if it exists
+    if equipment_data.get(cat):
+        current_item_name = list(equipment_data[cat].keys())[0]
+        current_item_data = equipment_data[cat][current_item_name]
+        process_item_buffs(current_item_data[0], status_data, sign=-1)  # Remove current item buffs
+
+    # Save updated status data after removing old buffs
+    save_json('Files/status.json', status_data) 
+
+    # Update equipment data with the new item
+    if name != '-':
+        new_item_data_map = {1: dat1, 2: dat2, 3: dat3, 4: dat4, 5: dat5}
+        equipment_data[cat] = (new_item_data_map[val])
+        save_json('Files/Equipment.json', equipment_data)
+
+
+        # Process the new item's buffs
+        new_item_name = list(equipment_data[cat].keys())[0]
+        new_item_data = equipment_data[cat][new_item_name][0]
+        process_item_buffs(new_item_data, status_data, sign=1)  # Add new item buffs
+
+        # Save updated status data after applying new buffs
+        save_json('Files/status.json', status_data)
+
+    # Launch the GUI and close the current window
+    subprocess.Popen(['python', 'Anime Version/Equipment/gui.py'])
+    window.quit()
+
+
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=json.load(pres_file)
+    normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
+    video_path=pres_file_data["Anime"]["Video"]
+player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 300.0)
+
+# Utility Functions
+def relative_to_assets(path: str) -> Path:
+    """Returns the relative path to assets."""
+    return ASSETS_PATH / path
+
+def load_json(file_path):
+    """Loads JSON data from a file."""
+    try:
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print(f"Error: {file_path} not found.")
+        return {}
+
+def save_json(file_path, data):
+    """Saves JSON data to a file."""
+    try:
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=6)
+    except Exception as e:
+        print(f"Error saving to {file_path}: {e}")
+
+def resolve_buff_name(buff_key):
+    """Maps buff/debuff keys to corresponding attribute names."""
+    buff_map = {
+        "AGIbuff": "AGI", "STRbuff": "STR", "VITbuff": "VIT",
+        "INTbuff": "INT", "PERbuff": "PER", "MANbuff": "MAN",
+        "AGIdebuff": "AGI", "STRdebuff": "STR", "VITdebuff": "VIT",
+        "INTdebuff": "INT", "PERdebuff": "PER", "MANdebuff": "MAN",
+    }
+    return buff_map.get(buff_key)
+
+def process_item_buffs(item_data, status_data, sign=1):
+    """Applies or removes buffs/debuffs to/from the status data."""
+    for buff_type in ("buff", "debuff"):
+        items = item_data.get(buff_type, {})
+        for key, value in items.items():
+            attribute = resolve_buff_name(key)
+            if attribute:
+                status_data["equipment"][0][attribute] += sign * value
+
+# Command to open and handle equipment selection
+def handle_selection(val, name):
+    equipment_data = load_json(EQUIPMENT_FILE)
+    status_data = load_json(STATUS_FILE)
+
+    if equipment_data.get(cat):
+        current_item = list(equipment_data[cat].keys())[0]
+        process_item_buffs(equipment_data[cat][current_item][0], status_data, sign=-1)
+
+    if name != '-':
+        new_item_data = {1: dat1, 2: dat2, 3: dat3, 4: dat4, 5: dat5}.get(val)
+        equipment_data[cat] = new_item_data
+        save_json(EQUIPMENT_FILE, equipment_data)
+
+        new_item_name = list(new_item_data.keys())[0]
+        process_item_buffs(new_item_data[new_item_name][0], status_data, sign=1)
+
+    save_json(STATUS_FILE, status_data)
+    subprocess.Popen(['python', 'Anime Version/Equipment/gui.py'])
+    window.quit()
 
 # GUI Initialization
 canvas = Canvas(
@@ -188,9 +304,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"][video]
+    video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 350.0, resize_factor=1)
 
 image_image_2 = PhotoImage(
@@ -211,8 +327,8 @@ image_3 = canvas.create_image(
 
 
 # Load dynamic data
-inventory_data = thesystem.misc.load_ujson(INVENTORY_FILE)
-presets = thesystem.misc.load_ujson(PRESETS_FILE)
+inventory_data = load_json(INVENTORY_FILE)
+presets = load_json(PRESETS_FILE)
 
 # Populate Equipment List
 names = ["-", "-", "-", "-", "-"]
@@ -243,93 +359,44 @@ for i, (name, rank) in enumerate(zip(names, ranks)):
     canvas.create_text(391.0, y_offset, anchor="nw", text=f"{rank}-Rank", fill=normal_font_col, font=("Montserrat Medium", 18 * -1))
     button = Button(
         image=button_image_1,
-        borderwidth=0, highlightthickness=0, command=lambda i=i: thesystem.itemequip.handle_selection(i + 1, names[i], cat, window, dat1, dat2, dat3, dat4, dat5), relief="flat"
+        borderwidth=0, highlightthickness=0, command=lambda i=i: handle_selection(i + 1, names[i]), relief="flat"
     )
     button.place(x=481.0, y=y_offset, width=24.0, height=24.0)
 
-side = PhotoImage(file=relative_to_assets("blue.png"))
-if job.upper()!="NONE":
-    side = PhotoImage(file=relative_to_assets("purple.png"))
-canvas.create_image(0.0, 197.0, image=side)
-canvas.create_image(553.0, 204.0, image=side)
-
-canvas.create_rectangle(
+image_image_9 = PhotoImage(
+    file=relative_to_assets("image_9.png"))
+image_9 = canvas.create_image(
     0.0,
-    0.0,
-    200.0,
-    34.0,
-    fill=transp_clr,
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    364.0,
-    640.0,
-    825.0,
-    fill=transp_clr,
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    0.0,
-    640.0,
-    49.0,
-    fill=transp_clr,
-    outline="")
-
-image_40 = thesystem.system.side_bar("left_bar.png", (52, 333))
-canvas.create_image(0.0, 197.0, image=image_40)
-
-canvas.create_rectangle(
-    0.0,
-    950.0,
-    640.0,
-    825.0,
-    fill=transp_clr,
-    outline="")
-
-image_50 = thesystem.system.side_bar("right_bar.png", (52, 320))
-canvas.create_image(540.0, 204.0, image=image_50)
-
-image_index = 0
-bot_image_index = 0
-
-top_image = canvas.create_image(
-    280.0,
-    35.0,
-    image=top_preloaded_images[image_index]
+    197.29241943359375,
+    image=image_image_9
 )
 
-canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
-canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    553.8004760742188,
+    204.6931381225586,
+    image=image_image_10
+)
 
-bottom_image = canvas.create_image(
+image_image_11 = PhotoImage(
+    file=relative_to_assets("image_11.png"))
+image_11 = canvas.create_image(
+    280.0,
+    22.0,
+    image=image_image_11
+)
+
+canvas.tag_bind(image_11, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_11, "<B1-Motion>", move_window)
+
+image_image_12 = PhotoImage(
+    file=relative_to_assets("image_12.png"))
+image_12 = canvas.create_image(
     300.0,
     364.0,
-    image=bottom_preloaded_images[bot_image_index]
+    image=image_image_12
 )
-
-step,delay=1,1
-
-def update_images():
-    global image_index, bot_image_index
-
-    # Update top image
-    image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
-
-    # Update bottom image
-    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
-
-    # Schedule next update (24 FPS)
-    window.after(1000 // 24, update_images)
-
-# Start the animation
-update_images()
-
-# =================================================================================================
-
 
 button_image_6 = PhotoImage(
     file=relative_to_assets("button_6.png"))

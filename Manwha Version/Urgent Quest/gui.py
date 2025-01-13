@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import random
@@ -49,21 +49,21 @@ window.wm_attributes("-topmost", True)
 
 def complete():
     with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
-        ability_check_file_data=ujson.load(ability_check_file)
+        ability_check_file_data=json.load(ability_check_file)
     
     with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
-        ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
+        json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
     with open("Files/Data/Job_info.json", 'r') as stat_fson:
-        stat_data=ujson.load(stat_fson)
+        stat_data=json.load(stat_fson)
 
     stat_data["status"][1][abi]+=1
     with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
-        ujson.dump(stat_data, final_stat_fson, indent=4)
+        json.dump(stat_data, final_stat_fson, indent=4)
     
     with open("Files/status.json", 'r') as fson:
-        data=ujson.load(fson)
+        data=json.load(fson)
         abi_l=abi.lower()
 
         if abi_l in ["str",'vit','agi']:
@@ -74,7 +74,7 @@ def complete():
         data["avail_eq"][0][abi_2]-=1
 
     with open("Files/status.json", 'w') as fin_fson:
-        ujson.dump(data, fin_fson, indent=4)
+        json.dump(data, fin_fson, indent=4)
     ex_close(window)
 
 def start_move(event):
@@ -108,7 +108,7 @@ segment_length = 77
 
 file_name=f"Files\Workout\{abi}_based.json"
 with open(file_name, 'r') as workout_file:
-    workout_file_data=ujson.load(workout_file)
+    workout_file_data=json.load(workout_file)
     workout_file_list=list(workout_file_data.keys())
 
     name=random.choice(workout_file_list)
@@ -172,7 +172,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 360.0, 180.0, resize_factor=0.8)
 

@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 from PIL import Image, ImageDraw, ImageTk
-import ujson
+import json
 import threading
 import sys
 import os
@@ -46,6 +46,15 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+def fade_out(window, alpha):
+    if alpha > 0:
+        window.attributes('-alpha', alpha)
+        alpha -= 0.05
+        window.after(1, fade_out, window, alpha)
+    else:
+        window.attributes('-alpha', 0)
+
+
 def start_move(event):
     global lastx, lasty
     lastx = event.x_root
@@ -62,7 +71,7 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    threading.Thread(target=fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=5, delay=1)
 
@@ -86,7 +95,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 163.0)
 

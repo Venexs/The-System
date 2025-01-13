@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 from datetime import datetime, timedelta
 import subprocess
@@ -24,7 +24,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.dungeon
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -71,16 +70,62 @@ def ex_close(win):
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=35, delay=1)
 
+def get_item_name_from_csv():
+    # Read the item name from the CSV file
+    with open('Files/Data/lowest_rank_item.csv', 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            return row['Name']
 
-item_name = thesystem.dungeon.get_item_name_from_csv()
+item_name = get_item_name_from_csv()
 with open('Files/Inventory.json', 'r') as file:
-    data = ujson.load(file)
+    data = json.load(file)
 
 # Find the item and update or remove it
 if item_name in data:
     for item in data[item_name]:
         rank=item["rank"]
         
+def update_inventory():
+    # Get the item name from the CSV file
+    item_name = get_item_name_from_csv()
+
+    # Load the JSON data from the file
+    with open('Files/Inventory.json', 'r') as file:
+        data = json.load(file)
+    
+    # Find the item and update or remove it
+    if item_name in data:
+        for item in data[item_name]:
+            if item['qty'] == 1:
+                # Remove the item if quantity is 1
+                data[item_name].remove(item)
+            elif item['qty'] > 1:
+                # Decrease quantity by 1 if greater than 1
+                item['qty'] -= 1
+
+        # If all instances are removed, delete the item from inventory
+        if not data[item_name]:
+            del data[item_name]
+
+    # Write the updated data back to inventory.json
+    with open('Files/Inventory.json', 'w') as file:
+        json.dump(data, file, indent=4)
+
+    rank=item["rank"]
+    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+        dun_full_data=json.load(dun_full)
+
+    with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        fw=csv.writer(rank_file)
+        fw.writerow([rank,"Instance"])
+
+    with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        json.dump(dun_full_data, final_dun_full, indent=6)
+
+    subprocess.Popen(['python', 'Manwha Version/Dungeon Runs/gui.py'])
+    window.quit()
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -101,7 +146,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 163.0)
 
@@ -136,7 +181,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.dungeon.update_inventory(window),
+    command=lambda: update_inventory(),
     relief="flat"
 )
 button_1.place(

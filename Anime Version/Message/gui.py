@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from PIL import Image, ImageTk
 import subprocess
 import threading
-import ujson
+import json
 import csv
 import sys
 import os
@@ -23,14 +23,9 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.misc
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-<<<<<<< Updated upstream
     pres_file_data=json.load(pres_file)
-=======
-    pres_file_data=ujson.load(pres_file)
->>>>>>> Stashed changes
     get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
 
 def get_stuff_path(key):
@@ -44,28 +39,9 @@ initial_height = 0
 target_height = 144
 window_width = 715
 
-job=thesystem.misc.return_status()["status"][1]["job"]
-
-top_val='dailyquest.py'
-all_prev=''
-video='Video'
-transp_clr='#0C679B'
-
-if job!='None':
-    top_val=''
-    all_prev='alt_'
-    video='Alt Video'
-    transp_clr='#652AA3'
-
-thesystem.system.make_window_transparent(window,transp_clr)
-
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
-
-thesystem.system.center_window(window,window_width,target_height)
-
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.animate_window_open(window, target_height, window_width,  step=20, delay=1)
+thesystem.system.make_window_transparent(window)
+thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
 thesystem.system.center_window(window,window_width,target_height)
 
 window.configure(bg = "#FFFFFF")
@@ -73,22 +49,15 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-<<<<<<< Updated upstream
 
 top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
 bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
-=======
->>>>>>> Stashed changes
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (715, 41))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (715, 41))
 
-<<<<<<< Updated upstream
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-=======
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])             
->>>>>>> Stashed changes
 
 def start_move(event):
     global lastx, lasty
@@ -130,8 +99,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
-    video_path=pres_file_data["Anime"][video]
+    pres_file_data=json.load(pres_file)
+    video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
@@ -148,7 +117,7 @@ with open("Files/Checks/Message.csv", 'r') as check_file:
         message=k[0]
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     file_path=pres_file_data["Message"][message][0]
 
 canvas_center_x = window_width // 2
@@ -180,11 +149,6 @@ image_4 = canvas.create_image(
 canvas.tag_bind(image_4, "<ButtonPress-1>", ex_close)
 
 side = PhotoImage(file=get_stuff_path("blue.png"))
-<<<<<<< Updated upstream
-=======
-if job.upper()!="NONE":
-    side = PhotoImage(file=get_stuff_path("purple.png"))
->>>>>>> Stashed changes
 canvas.create_image(677.0, 71.0, image=side)
 canvas.create_image(47.0, 72.0, image=side)
 
@@ -193,11 +157,7 @@ canvas.create_rectangle(
     0.0,
     760.0,
     30.0,
-<<<<<<< Updated upstream
     fill="#0C679B",
-=======
-    fill=transp_clr,    
->>>>>>> Stashed changes
     outline="")
 
 canvas.create_rectangle(
@@ -205,7 +165,7 @@ canvas.create_rectangle(
     0.0,
     162.0,
     16.0,
-    fill=transp_clr,    
+    fill="#0C679B",
     outline="")
 
 canvas.create_rectangle(
@@ -213,11 +173,7 @@ canvas.create_rectangle(
     123.0,
     715.0,
     144.0,
-<<<<<<< Updated upstream
     fill="#0C679B",
-=======
-    fill=transp_clr,    
->>>>>>> Stashed changes
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (30, 100))

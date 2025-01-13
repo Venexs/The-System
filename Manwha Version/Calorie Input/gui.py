@@ -16,8 +16,7 @@ from datetime import datetime
 import pandas as pd
 import sys
 import os
-import ujson
-import threading
+import json
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,7 +25,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-import thesystem.calorie
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -69,9 +67,33 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=12, delay=1)
+
+def add_cal(eve=0):
+    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
+        calorie_add_data=json.load(calorie_add_file)
+        calorie_add_key=list(calorie_add_data.keys())[0]
+
+    # Get today's date
+    current_date = date.today()
+
+    # Format the date as a string
+    formatted_date = current_date.strftime("%Y-%m-%d")
+
+    if calorie_add_key==formatted_date:
+        cal_c=float(entry_1.get())
+        calorie_add_data[formatted_date][0]+=cal_c
+        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
+            json.dump(calorie_add_data, calorie_add_file_write, indent=4)
+
+    else:
+        new_data={formatted_date:[0]}
+        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
+            json.dump(new_data, calorie_add_file_write, indent=4)
+        add_cal(None)
+
+    ex_close()
 
 canvas = Canvas(
     window,
@@ -93,7 +115,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
+    pres_file_data=json.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 163.0)
 
@@ -144,7 +166,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.calorie.add_cal(entry_1, window, initial_height, window_width),
+    command=lambda: add_cal(None),
     relief="flat"
 )
 button_1.place(

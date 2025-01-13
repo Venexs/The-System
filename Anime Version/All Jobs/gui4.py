@@ -8,21 +8,11 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import ujson
+import json
 import csv
 import subprocess
 import cv2
 from PIL import Image, ImageTk
-import sys
-import os
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_dir, '../../'))
-sys.path.insert(0, project_root)
-
-import thesystem.system
-import thesystem.job
-import thesystem.misc as misc
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame4")
@@ -31,6 +21,8 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame4")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 window = Tk()
 
 window.geometry("696x449")
@@ -38,16 +30,42 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-thesystem.system.make_window_transparent(window)
 
-top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+class VideoPlayer:
+    def __init__(self, canvas, video_path, x, y, frame_skip=2, resize_factor=0.8):
+        self.canvas = canvas
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(video_path)
+        self.x = x
+        self.y = y
+        self.frame_skip = frame_skip  # Number of frames to skip
+        self.resize_factor = resize_factor  # Factor to resize frames
+        self.image_id = self.canvas.create_image(self.x, self.y)
+        self.frame_count = 0
+        self.update_frame()
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (695, 39))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (702, 36))
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        
+        if not ret:
+            # If the video has ended, reset the capture object
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+        if ret:
+            self.frame_count += 1
+            if self.frame_count % self.frame_skip == 0:  # Skip frames for performance
+                frame = cv2.resize(frame, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(frame)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.canvas.itemconfig(self.image_id, image=imgtk)
+                self.canvas.imgtk = imgtk
+
+        self.canvas.after(10, self.update_frame)
+
+    def __del__(self):
+        self.cap.release()
 
 def start_move(event):
     global lastx, lasty
@@ -86,9 +104,10 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-pres_file_data=misc.load_ujson("Files/Mod/presets.json")
-video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0)
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=json.load(pres_file)
+    video_path=pres_file_data["Anime"]["Video"]
+player = VideoPlayer(canvas, video_path, 478.0, 313.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -114,7 +133,43 @@ def third():
     canvas.itemconfig("Second", state="hidden")
     canvas.itemconfig("Third", state="normal")
 
-    thesystem.job.observer()
+    with open('Files\Skills\Skill.json', 'r') as skill_file:
+        skill_file_data=json.load(skill_file)
+        skill_file_data["Heightened Perception"]=[{
+            "lvl":1,
+            "type":"Job",
+            "desc":"Your keen eyes and senses allow you to capture everything that happens around you",
+            "pl_point":0,
+            
+            "base":"INT",
+            "rewards":{
+                "INTav":10,
+                "Chameleon Cloak":1
+            }
+        }]
+
+        skill_file_data["Puzzle Snap"]=[{
+            "lvl":1,
+            "type":"Job",
+            "desc":"Even with limited information, You can puzzle togeather a full picture with limited information",
+            "pl_point":0,
+            
+            "base":"INT",
+            "rewards":{
+                "INTav":10,
+                "Ring of Arcane Mastery":1
+            }
+        }]
+
+    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+        json.dump(skill_file_data, fin_skill_file, indent=6)
+
+    with open("Files/status.json", 'r') as fson:
+        data=json.load(fson)
+    data["status"][1]['job']="Observer"
+
+    with open("Files/status.json", 'w') as fson:
+        json.dump(data, fson, indent=6)
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
@@ -162,110 +217,16 @@ image_7 = canvas.create_image(
     state="hidden"
 )
 
-canvas.create_rectangle(
-    0.0,
-    5.0,
-    60.0,
-    455.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
+image_0=canvas.create_rectangle(
     0.0,
     0.0,
     696.0,
     29.0,
-    fill="#0C679B",
+    fill="#333333",
     outline="")
 
-canvas.create_rectangle(
-    1.0,
-    5.0,
-    60.0,
-    455.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    647.0,
-    0.0,
-    696.0,
-    458.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    119.0,
-    0.0,
-    381.0,
-    38.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    56.0,
-    421.0,
-    923.0,
-    460.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    50.0,
-    19.0,
-    643.0,
-    44.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    137.0,
-    -10.0,
-    765.0,
-    50.0,
-    fill="#0C679B",
-    outline="")
-
-image_40 = thesystem.system.side_bar("left_bar.png", (47, 393))
-canvas.create_image(33.0, 235.0, image=image_40)
-
-image_50 = thesystem.system.side_bar("right_bar.png", (46, 385))
-canvas.create_image(666.0, 235.0, image=image_50)
-
-image_index = 0
-bot_image_index = 0
-
-top_image = canvas.create_image(
-    348.0,
-    29.0,
-    image=top_preloaded_images[image_index]
-)
-
-canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
-canvas.tag_bind(top_image, "<B1-Motion>", move_window)
-
-bottom_image = canvas.create_image(
-    357.0,
-    437.0,
-    image=bottom_preloaded_images[bot_image_index]
-)
-
-step,delay=1,1
-
-def update_images():
-    global image_index, bot_image_index
-
-    # Update top image
-    image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
-
-    # Update bottom image
-    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
-
-    # Schedule next update (24 FPS)
-    window.after(1000 // 24, update_images)
-
+canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_0, "<B1-Motion>", move_window)
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
@@ -283,7 +244,6 @@ button_1.place(
     height=23.0
 )
 
-update_images()
 prog()
 window.resizable(False, False)
 window.mainloop()
