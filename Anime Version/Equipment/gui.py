@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
-import json
+import ujson
 import subprocess
 import threading
 import cv2
@@ -17,12 +17,15 @@ from PIL import Image, ImageTk
 import sys
 import os
 
+import thesystem.inventory
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.equipmentbk
 import thesystem.system
 import thesystem.equipmentbk as equipment
 
@@ -30,11 +33,11 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
+    tab_son_data=ujson.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Equipment"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+    ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -42,20 +45,41 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
 initial_height = 0
 target_height = 555
 window_width = 957
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
-thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (970, 40))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (970, 40))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 def start_move(event):
     global lastx, lasty
@@ -74,13 +98,13 @@ def move_window(event):
 
 def ex_close():
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     if tab_son_data["Equipment"]=='Open':
 
         with open("Files/Tabs.json",'w') as fin_tab_son:
             tab_son_data["Equipment"]='Close'
-            json.dump(tab_son_data,fin_tab_son,indent=4)
+            ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
@@ -140,8 +164,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
 
 image_image_2 = PhotoImage(
@@ -182,7 +206,7 @@ canvas.create_text(
 )
 
 # ! ============================================================================
-# ! INFO JSON RETREVAL
+# ! INFO ujson RETREVAL
 # ! ============================================================================
 
 helm = chest = f_gaun = s_gaun = boot = ring = collar = '-'
@@ -221,49 +245,49 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-boot_image = (thesystem.system.get_armor_image(boot))
+boot_image = (thesystem.equipmentbk.get_armor_image(boot))
 boot_im = canvas.create_image(
     479.0,
     278.0,
     image=boot_image
 )
 
-sgaun_image = (thesystem.system.get_armor_image(s_gaun))
+sgaun_image = (thesystem.equipmentbk.get_armor_image(s_gaun))
 sgaun_im = canvas.create_image(
     479.0,
     278.0,
     image=sgaun_image
 )
 
-fgaun_image = (thesystem.system.get_armor_image(f_gaun))
+fgaun_image = (thesystem.equipmentbk.get_armor_image(f_gaun))
 fgaun_im = canvas.create_image(
     479.0,
     278.0,
     image=fgaun_image
 )
 
-ring_image = (thesystem.system.get_armor_image(ring))
+ring_image = (thesystem.equipmentbk.get_armor_image(ring))
 ring_im = canvas.create_image(
     479.0,
     278.0,
     image=ring_image
 )
 
-helm_image = (thesystem.system.get_armor_image(helm))
+helm_image = (thesystem.equipmentbk.get_armor_image(helm))
 helm_im = canvas.create_image(
     479.0,
     278.0,
     image=helm_image
 )
 
-chest_image = (thesystem.system.get_armor_image(chest))
+chest_image = (thesystem.equipmentbk.get_armor_image(chest))
 chest_im = canvas.create_image(
     479.0,
     278.0,
     image=chest_image
 )
 
-collar_image = (thesystem.system.get_armor_image(collar))
+collar_image = (thesystem.equipmentbk.get_armor_image(collar))
 collar_im = canvas.create_image(
     479.0,
     278.0,
@@ -274,7 +298,7 @@ collar_im = canvas.create_image(
 # ? Helmet Part
 # ? ====================================================================
 
-image_image_6 = thesystem.system.get_item_button_image(helm, max_width, max_height)
+image_image_6 = thesystem.inventory.get_item_button_image(helm, max_width, max_height)
 image_6 = canvas.create_image(
     164.0,
     189.0,
@@ -328,7 +352,7 @@ button_1.place(
 # ? Chestplate Part
 # ? ====================================================================
 
-image_image_7 = thesystem.system.get_item_button_image(chest, max_width, max_height)
+image_image_7 = thesystem.inventory.get_item_button_image(chest, max_width, max_height)
 image_7 = canvas.create_image(
     262.0,
     285.0,
@@ -382,7 +406,7 @@ button_2.place(
 # ? First Gauntlet Part
 # ? ====================================================================
 
-image_image_8 = thesystem.system.get_item_button_image(f_gaun, max_width, max_height)
+image_image_8 = thesystem.inventory.get_item_button_image(f_gaun, max_width, max_height)
 image_8 = canvas.create_image(
     164.0,
     381.0,
@@ -436,7 +460,7 @@ button_3.place(
 # ? Boots Part
 # ? ====================================================================
 
-image_image_9 = thesystem.system.get_item_button_image(boot, max_width, max_height)
+image_image_9 = thesystem.inventory.get_item_button_image(boot, max_width, max_height)
 image_9 = canvas.create_image(
     807.0,
     418.0,
@@ -490,7 +514,7 @@ button_4.place(
 # ? Collar Part
 # ? ====================================================================
 
-image_image_10 = thesystem.system.get_item_button_image(collar, max_width, max_height)
+image_image_10 = thesystem.inventory.get_item_button_image(collar, max_width, max_height)
 image_10 = canvas.create_image(
     806.0,
     125.0,
@@ -567,7 +591,7 @@ button_5.place(
 # ? Ring Part
 # ? ====================================================================
 
-image_image_11 = thesystem.system.get_item_button_image(ring, max_width, max_height)
+image_image_11 = thesystem.inventory.get_item_button_image(ring, max_width, max_height)
 image_11 = canvas.create_image(
     684.0,
     318.0,
@@ -621,7 +645,7 @@ button_6.place(
 # ? Second Gauntlet Part
 # ? ====================================================================
 
-image_image_12 = thesystem.system.get_item_button_image(s_gaun, max_width, max_height)
+image_image_12 = thesystem.inventory.get_item_button_image(s_gaun, max_width, max_height)
 image_12 = canvas.create_image(
     684.0,
     226.0,
@@ -803,40 +827,81 @@ button_26.place(
 
 '''
 
-image_image_21 = PhotoImage(
-    file=relative_to_assets("image_21.png"))
-image_21 = canvas.create_image(
-    36.0,
-    275.0,
-    image=image_image_21
-)
 
-image_image_22 = PhotoImage(
-    file=relative_to_assets("image_22.png"))
-image_22 = canvas.create_image(
-    926.0,
-    290.0,
-    image=image_image_22
-)
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
+canvas.create_image(36.0, 275.0, image=side)
+canvas.create_image(926.0, 290.0, image=side)
 
-image_image_23 = PhotoImage(
-    file=relative_to_assets("image_23.png"))
-image_23 = canvas.create_image(
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    101.0,
+    21.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    520.0,
+    1000.0,
+    716.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    1000.0,
+    34.0,
+    fill=transp_clr,
+    outline="")
+
+image_40 = thesystem.system.side_bar("left_bar.png", (101, 500))
+canvas.create_image(36.0, 275.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (80, 505))
+canvas.create_image(910.0, 278.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
     472.0,
     20.0,
-    image=image_image_23
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_23, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_23, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_24 = PhotoImage(
-    file=relative_to_assets("image_24.png"))
-image_24 = canvas.create_image(
+bottom_image = canvas.create_image(
     470.0,
-    540.0,
-    image=image_image_24
+    530.0,
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
+# ===========================================================
 
 button_image_9 = PhotoImage(
     file=relative_to_assets("button_9.png"))

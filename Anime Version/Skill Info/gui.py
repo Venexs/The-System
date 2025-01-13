@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import cv2
@@ -27,7 +27,11 @@ import thesystem.system
 check=False
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
+<<<<<<< Updated upstream
     pres_file_data=json.load(pres_file)
+=======
+    pres_file_data=ujson.load(pres_file)
+>>>>>>> Stashed changes
     get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
 def get_stuff_path(key):
@@ -43,11 +47,36 @@ window_width = 898
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
+thesystem.system.make_window_transparent(window, transp_clr)
+
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-thesystem.system.make_window_transparent(window)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (957, 43))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1026, 47))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
 bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
@@ -87,7 +116,7 @@ segments = []
 segment_length = 60
 
 with open("Files/Skills/Skill.json", 'r') as fson:
-    data=json.load(fson)
+    data=ujson.load(fson)
     data_key=list(data.keys())
     for k in data_key:
         if k==name:
@@ -227,12 +256,12 @@ def preview(nameob,quantity):
 
 def delete():
     with open("Files/Skills/Skill.json", 'r') as fols:
-        skills=json.load(fols)
+        skills=ujson.load(fols)
 
     del skills[name]
 
     with open("Files/Skills/Skill.json", 'w') as fols:
-        json.dump(skills, fols, indent=6)
+        ujson.dump(skills, fols, indent=6)
 
     subprocess.Popen(['python', 'Anime Version/Skills Tab/gui.py'])
 
@@ -250,7 +279,7 @@ def reward():
         if k=="LVLADD":
             for k in range(dicts[k]):
                 with open("Files/Status.json", 'r') as fson:
-                    data_status=json.load(fson)
+                    data_status=ujson.load(fson)
                     
                     data_status["status"][0]['level']+=1
                     data_status["status"][0]['str']+=1
@@ -263,37 +292,37 @@ def reward():
                     data_status["status"][0]['fatigue_max']+=40
                 
                 with open("Files/status.json", 'w') as fson:
-                    json.dump(data_status, fson, indent=4)
+                    ujson.dump(data_status, fson, indent=4)
 
         elif k=="STRav":
             for k in range(dicts[k]):
                 with open("Files/Status.json", 'r') as fson:
-                    data_status_2=json.load(fson)
+                    data_status_2=ujson.load(fson)
                     
                     data_status_2["avail_eq"][0]['str_based']+=1
 
                 with open("Files/status.json", 'w') as fson:
-                    json.dump(data_status_2, fson, indent=4)
+                    ujson.dump(data_status_2, fson, indent=4)
 
         elif k=="INTav":
             for k in range(dicts[k]):
                 with open("Files/Status.json", 'r') as fson:
-                    data_status_3=json.load(fson)
+                    data_status_3=ujson.load(fson)
                     
                     data_status_3["avail_eq"][0]['int_based']+=1
 
                 with open("Files/status.json", 'w') as fson:
-                    json.dump(data_status_3, fson, indent=4)
+                    ujson.dump(data_status_3, fson, indent=4)
 
         else:
             check=False
             with open("Files/Data/Inventory_list.json", 'r') as fson:
-                data_inv=json.load(fson)
+                data_inv=ujson.load(fson)
                 item=data_inv[k]
                 name_of_item=k
             
             with open("Files/Inventory.json", 'r') as fson:
-                data_fininv=json.load(fson)
+                data_fininv=ujson.load(fson)
                 key_data=list(data_fininv.keys())
 
                 for k in key_data:
@@ -307,7 +336,7 @@ def reward():
                 data_fininv[name_of_item]=item
 
             with open("Files/Inventory.json", 'w') as finaladdon:
-                json.dump(data_fininv, finaladdon, indent=6)
+                ujson.dump(data_fininv, finaladdon, indent=6)
 
 if main_lvl==10:
     new_lvl="MAX"
@@ -315,10 +344,10 @@ if main_lvl==10:
 
     main_lvl=new_lvl
     with open("Files/Skills/Skill.json", 'w') as fin_skill:
-        json.dump(data, fin_skill, indent=6)
+        ujson.dump(data, fin_skill, indent=6)
 
     with open("Files/status.json", 'r') as status:
-        status_data=json.load(status)
+        status_data=ujson.load(status)
 
     if base=='STR':
         status_data["avail_eq"][0]['str_based']=status_data["avail_eq"][0]['str_based']+pl_points
@@ -327,7 +356,7 @@ if main_lvl==10:
         status_data["avail_eq"][0]['int_based']=status_data["avail_eq"][0]['int_based']+pl_points
 
     with open("Files/status.json", 'w') as fin_status:
-        json.dump(status_data, fin_status, indent=4)
+        ujson.dump(status_data, fin_status, indent=4)
 
     reward()
 
@@ -351,8 +380,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]  # Replace with your video path
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]  # Replace with your video path
 player = thesystem.system.VideoPlayer(canvas, video_path, 450.0, 277.0)
 
 image_image_2 = PhotoImage(
@@ -574,6 +603,11 @@ canvas.create_text(
 )
 
 side = PhotoImage(file=get_stuff_path("blue.png"))
+<<<<<<< Updated upstream
+=======
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+>>>>>>> Stashed changes
 canvas.create_image(35.0, 270.0, image=side)
 canvas.create_image(925.0, 294.0, image=side)
 
@@ -582,7 +616,7 @@ canvas.create_rectangle(
     0.0,
     240.0,
     24.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -590,7 +624,7 @@ canvas.create_rectangle(
     513.0,
     925.0,
     555.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -598,7 +632,7 @@ canvas.create_rectangle(
     0.0,
     957.0,
     36.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (60, 490))

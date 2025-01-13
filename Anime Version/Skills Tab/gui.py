@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import cv2
 from PIL import Image, ImageTk
-import json
+import ujson
 import sys
 import os
 
@@ -29,11 +29,11 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame3")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
+    tab_son_data=ujson.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Skill"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+    ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -70,11 +70,11 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Skill"]='Close'
-        json.dump(tab_son_data,fin_tab_son,indent=4)
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
     thesystem.system.animate_window_close(window, target_height, window_width, step=40, delay=1)
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     win.quit()
@@ -116,7 +116,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 603.0, 247.0)
 

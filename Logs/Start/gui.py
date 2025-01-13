@@ -12,7 +12,7 @@ import subprocess
 import threading
 import cv2
 from PIL import Image, ImageTk
-import json
+import ujson
 import time
 import sys
 import os

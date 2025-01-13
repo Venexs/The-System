@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import csv
-import json
+import ujson
 import cv2
 from PIL import Image, ImageTk
 import random
@@ -25,20 +25,17 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.castle
+import thesystem.misc as misc
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
-
-with open("Files/Tabs.json",'w') as fin_tab_son:
-    tab_son_data["Castle"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+open_check=misc.update_screen("Castle")
 
 run_once_val=False
 
+<<<<<<< Updated upstream
 def get_priority_key_and_value(contents):
     """
     Returns the key and value of the first "Doing" item in the dictionary.
@@ -180,20 +177,27 @@ def load_image_visibility(file_path, total_images=50, hidden_percentage=0.35):
 
 # Path to the JSON file
 json_file_path = "Files/Demons Castle/image_visibility.json"
+=======
+# Path to the ujson file
+ujson_file_path = "Files/Demons Castle/image_visibility.json"
+>>>>>>> Stashed changes
 
 # Load visibility data
-hidden_images = load_image_visibility(json_file_path)
+data = thesystem.castle.load_image_visibility(ujson_file_path, run_once_val)
+
+hidden_images=data[0]
+floor=data[1]
 
 # Create images and set visibility
 file_num=0
 
 try:
     with open("Files/Demons Castle/Demon_Castle.json", 'r') as castle_file:
-        castle_data = json.load(castle_file)
+        castle_data = ujson.load(castle_file)
 except:
     with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
         castle_data={"Souls":0,"XP":0,"Rewards":False,"Final":False}
-        json.dump(castle_data,castle_file, indent=4)
+        ujson.dump(castle_data,castle_file, indent=4)
 
 def relative_to_assets(path: str) -> Path:
     global file_num
@@ -202,8 +206,8 @@ def relative_to_assets(path: str) -> Path:
     if file_num>=53 or file_num<4:
         return ASSETS_PATH / Path(path)
     
-    with open(json_file_path, 'r') as fr:
-        reading_data=json.load(fr)
+    with open(ujson_file_path, 'r') as fr:
+        reading_data=ujson.load(fr)
         fin_data=reading_data["hidden_images"]
     
     int_list = list(map(int, fin_data))
@@ -218,6 +222,7 @@ def relative_to_assets(path: str) -> Path:
         pat = ASSETS_PATH / Path("image_5.png")
         return pat
 
+<<<<<<< Updated upstream
 def reward_castle():
     #print("NO! THE DEMMON CASTLE ISN'T DONE YET!")
     thesystem.system.message_open("Demon Castle Reward")
@@ -265,6 +270,8 @@ def reward_castle():
 
     subprocess.Popen(['python', "Anime Version\Demon Castle\gui.py"])
 
+=======
+>>>>>>> Stashed changes
 window = Tk()
 
 initial_height = 0
@@ -272,7 +279,31 @@ target_height = 602
 window_width = 1102
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window, transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (1229, 47))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1229, 47))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
@@ -288,9 +319,9 @@ final=castle_data["Final"]
 if soul_count>=10000 and rewards==False:
     with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
         castle_data["Rewards"]=True
-        json.dump(castle_data,castle_file, indent=4)
+        ujson.dump(castle_data,castle_file, indent=4)
     
-    reward_castle()
+    thesystem.castle.reward_castle()
 
 def start_move(event):
     global lastx, lasty
@@ -309,22 +340,14 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
-        json.dump(tab_son_data,fin_tab_son,indent=4)
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
-
-def demon_fight(event, canvas_name):
-    numeber=canvas_name.split('_')[-1]
-    with open("Files/Demons Castle/Demon_info.csv", "w", newline='') as file_opem:
-        writer = csv.writer(file_opem)
-        writer.writerow([floor, numeber])
-    subprocess.Popen(['python', 'Anime Version\Demon Castle\gui1.py'])
-    ex_close(window)
 
 canvas = Canvas(
     window,
@@ -346,8 +369,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
 
 image_image_2 = PhotoImage(
@@ -824,8 +847,8 @@ for i in range(4, 54):
     image_canvas_name = f"image_{i}"
 
     # Bind the click event
-    with open(json_file_path, 'r') as fr:
-        reading_data=json.load(fr)
+    with open(ujson_file_path, 'r') as fr:
+        reading_data=ujson.load(fr)
         fin_data=reading_data["hidden_images"]
     
     int_list = list(map(int, fin_data))
@@ -834,7 +857,7 @@ for i in range(4, 54):
         check=reading_data["hidden_images"][str(i)]["Completed"]
     
     if not check:
-        canvas.tag_bind(globals()[image_canvas_name], "<ButtonPress-1>", lambda event, img=image_canvas_name: demon_fight(event, img))
+        canvas.tag_bind(globals()[image_canvas_name], "<ButtonPress-1>", lambda event, img=image_canvas_name: thesystem.castle.demon_fight(img,window))
     
     hi = list(map(int, hidden_images))
 
@@ -880,7 +903,7 @@ if int(floor)>=100:
     canvas.itemconfig("baaran", state="normal")
 
 if not final:
-    canvas.tag_bind(image_55, "<ButtonPress-1>", lambda event, img=image_55: demon_fight(event, "image_55"))
+    canvas.tag_bind(image_55, "<ButtonPress-1>", lambda event, img=image_55: thesystem.castle.demon_fight("image_55",window))
 
 canvas.create_text(
     74.0,
@@ -1018,41 +1041,76 @@ else:
         font=("Montserrat Medium", 16 * -1)
     )
 
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
 
-image_image_56 = PhotoImage(
-    file=relative_to_assets("image_56.png"))
-image_56 = canvas.create_image(
-    0,
-    300.678466796875,
-    image=image_image_56
-)
+canvas.create_image(0.0, 300.0, image=side)
+canvas.create_image(1085.0, 310.0, image=side)
 
-image_image_57 = PhotoImage(
-    file=relative_to_assets("image_57.png"))
-image_57 = canvas.create_image(
-    1085.5823974609375,
-    326.41552734375,
-    image=image_image_57
-)
+image_image_58 = PhotoImage(file=relative_to_assets("image_58.png"))
+if job.upper()!="NONE":
+    image_image_58 = PhotoImage(file=relative_to_assets("image_58_alt.png"))
 
-image_image_58 = PhotoImage(
-    file=relative_to_assets("image_58.png"))
 image_58 = canvas.create_image(
     550.0,
     23.0,
     image=image_image_58
 )
 
-canvas.tag_bind(image_58, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_58, "<B1-Motion>", move_window)
-
-image_image_59 = PhotoImage(
-    file=relative_to_assets("image_59.png"))
+image_image_59 = PhotoImage(file=relative_to_assets("image_59.png"))
+if job.upper()!="NONE":
+    image_image_59 = PhotoImage(file=relative_to_assets("image_59_alt.png"))
 image_59 = canvas.create_image(
     570.0,
     592.0,
     image=image_image_59
 )
+
+image_40 = thesystem.system.side_bar("left_bar.png", (63, 568))
+canvas.create_image(0.0, 300.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (58, 550))
+canvas.create_image(1075.0, 310.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0 
+
+top_image = canvas.create_image(
+    550.0,
+    25.0,
+    image=top_preloaded_images[image_index]
+)
+
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+bottom_image = canvas.create_image(
+    570.0,
+    580.0,
+    image=bottom_preloaded_images[bot_image_index]
+)
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
+# ===========================================================
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))

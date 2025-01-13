@@ -10,12 +10,14 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import csv
-import json
+import ujson
 import cv2
 from PIL import Image, ImageTk
 import threading
 import sys
 import os
+
+import thesystem.inventory
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,9 +25,16 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.equipmentbk
+import thesystem.misc
 import thesystem.system
 import thesystem.equipmentbk as equipment
+import thesystem.itemequip
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 window = Tk()
 
 initial_height = 0
@@ -33,7 +42,23 @@ target_height = 555
 window_width = 957
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
@@ -41,9 +66,12 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+<<<<<<< Updated upstream
 top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
 bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
+=======
+>>>>>>> Stashed changes
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (957, 43))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1026, 47))
@@ -98,25 +126,19 @@ with open('Files/Temp Files/Inventory temp.csv', 'r') as fout:
             typs='Item'
 
 with open('Files/Equipment.json', 'r') as eq_fout:
-    eq_data=json.load(eq_fout)
+    eq_data=ujson.load(eq_fout)
 
-def find_item_slot(name, equipment):
-    for slot, items in equipment.items():
-        if name in items:
-            return [slot, True]
-    return ["Item not found in any slot", False]
-
-equiipment_check = find_item_slot(name, eq_data)
+equiipment_check = equipment.find_item_slot(name, eq_data)
 equiipment_check_bool=equiipment_check[1]
 
 if typs=='Item':
     with open("Files/Inventory.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         dat_keys=list(data.keys())
 
 elif typs=='Preview':
     with open("Files/Data/Inventory_List.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         dat_keys=list(data.keys())
 
 item_full_data={}
@@ -142,94 +164,15 @@ val=data[name][0]['Value']
 
 item_full_data[name]=data[name]
 
-if type(data[name][0]["buff"]) is dict:
-    try:
-        buff_main=data[name][0]["buff"]
-        rol=list(buff_main.keys())
+buff = data[name][0].get("buff", {})
+buff_1_name, buff_1, buff_2_name, buff_2 = thesystem.equipmentbk.process_attributes(buff, "buff")
 
-        if rol[0]=="AGIbuff":
-            buff_1_name="AGI"
-        elif rol[0]=="STRbuff":
-            buff_1_name="STR"
-        elif rol[0]=="VITbuff":
-            buff_1_name="VIT"
-        elif rol[0]=="INTbuff":
-            buff_1_name="INT"
-        elif rol[0]=="PERbuff":
-            buff_1_name="PER"
-        elif rol[0]=="MANbuff":
-            buff_1_name="MAN"
-
-        buff_1="+"+str(data[name][0]["buff"][rol[0]])
-
-        if rol[1]=="AGIbuff":
-            buff_2_name="AGI"
-        elif rol[1]=="STRbuff":
-            buff_2_name="STR"
-        elif rol[1]=="VITbuff":
-            buff_2_name="VIT"
-        elif rol[1]=="INTbuff":
-            buff_2_name="INT"
-        elif rol[1]=="PERbuff":
-            buff_2_name="PER"
-        elif rol[1]=="MANbuff":
-            buff_2_name="MAN"
-
-        buff_2="+"+str(data[name][0]["buff"][rol[1]])
-    except:
-        buff_2_name=''
-        buff_2='-'
-else:
-    buff_1_name=''
-    buff_2_name=''
-    buff_1='-'
-    buff_2='-'
-
-if type(data[name][0]["debuff"]) is dict:
-    try:
-        debuff_main=data[name][0]["debuff"]
-        rol_2=list(debuff_main.keys())
-
-        if rol_2[0]=="AGIdebuff" or rol_2[0]=="AGIbuff":
-            debuff_1_name="AGI"
-        elif rol_2[0]=="STRdebuff" or rol_2[0]=="STRbuff":
-            debuff_1_name="STR"
-        elif rol_2[0]=="VITdebuff" or rol_2[0]=="VITbuff":
-            debuff_1_name="VIT"
-        elif rol_2[0]=="INTdebuff" or rol_2[0]=="INTbuff":
-            debuff_1_name="INT"
-        elif rol_2[0]=="PERdebuff" or rol_2[0]=="PERbuff":
-            debuff_1_name="PER"
-        elif rol_2[0]=="MANdebuff" or rol_2[0]=="MANbuff":
-            debuff_1_name="MAN"
-
-        debuff_1="-"+str(data[name][0]["debuff"][rol_2[0]])
-
-        if rol_2[1]=="AGIdebuff" or rol_2[1]=="AGIbuff":
-            debuff_2_name="AGI"
-        elif rol_2[1]=="STRdebuff" or rol_2[1]=="STRbuff":
-            debuff_2_name="STR"
-        elif rol_2[1]=="VITdebuff" or rol_2[1]=="VITbuff":
-            debuff_2_name="VIT"
-        elif rol_2[1]=="INTdebuff" or rol_2[1]=="INTbuff":
-            debuff_2_name="INT"
-        elif rol_2[1]=="PERdebuff" or rol_2[1]=="PERbuff":
-            debuff_2_name="PER"
-        elif rol_2[1]=="MANdebuff" or rol_2[1]=="MANbuff":
-            debuff_2_name="MAN"
-
-        debuff_2="-"+str(data[name][0]["debuff"][rol_2[1]])
-    except:
-        debuff_2_name=''
-        debuff_2='-'
-else:
-    debuff_1_name=''
-    debuff_2_name=''
-    debuff_1='-'
-    debuff_2='-'
+# Debuff processing
+debuff = data[name][0].get("debuff", {})
+debuff_1_name, debuff_1, debuff_2_name, debuff_2 = thesystem.equipmentbk.process_attributes(debuff, "debuff")
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
 def get_stuff_path(key):
@@ -256,8 +199,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
 
 image_image_2 = PhotoImage(
@@ -457,7 +400,7 @@ canvas.create_rectangle(
 
 max_width, max_height = 164.615385, 126.153846
 
-image_image_3 = thesystem.system.get_item_button_image(name, max_width, max_height)
+image_image_3 = thesystem.inventory.get_item_button_image(name, max_width, max_height)
 image_3 = canvas.create_image(
     214.0,
     164.0,
@@ -472,7 +415,7 @@ if typs=='Item':
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: (equipment.finish(qty=qty, equiipment_check=equiipment_check),thesystem.system.selling_item(name,window,val)),
+        command=lambda: (equipment.finish(qty=qty, equiipment_check=equiipment_check),thesystem.inventory.selling_item(name,window,val)),
         relief="flat"
     )
     button_1.place(
@@ -498,7 +441,7 @@ if typs=='Item':
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.system.equip_item(cat,item_full_data,window),
+        command=lambda: thesystem.itemequip.equip_item(cat,item_full_data,window),
         relief="flat"
     )
     button_2.place(
@@ -541,7 +484,15 @@ else:
         height=40.0
     )
 
+<<<<<<< Updated upstream
 side = PhotoImage(file=get_stuff_path("blue.png"))
+=======
+
+side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+
+>>>>>>> Stashed changes
 canvas.create_image(35.0, 270.0, image=side)
 canvas.create_image(925.0, 294.0, image=side)
 
@@ -550,7 +501,7 @@ canvas.create_rectangle(
     0.0,
     240.0,
     24.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -558,7 +509,7 @@ canvas.create_rectangle(
     513.0,
     925.0,
     555.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -566,7 +517,7 @@ canvas.create_rectangle(
     0.0,
     957.0,
     36.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (60, 490))

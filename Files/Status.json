@@ -11,7 +11,11 @@
             "vit": 10,
             "per": 10,
             "man": 10,
+<<<<<<< Updated upstream
             "XP": 30,
+=======
+            "XP": 10,
+>>>>>>> Stashed changes
             "coins": 100,
             "fatigue_max": 40,
             "fatigue": 0,
@@ -20,14 +24,18 @@
         {
             "title_bool": "False",
             "title": "None",
+<<<<<<< Updated upstream
             "job": "None",
+=======
+            "job": "Shadow Monarch",
+>>>>>>> Stashed changes
             "patreon": false
         }
     ],
     "avail_eq": [
         {
-            "str_based": 3,
-            "int_based": 3
+            "str_based": 0,
+            "int_based": 0
         }
     ],
     "equipment": [

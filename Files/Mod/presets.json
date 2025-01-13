@@ -95,6 +95,10 @@
         "Courage of the Weak":
         [
             "Files/Mod/default/messages/Courage of the Weak.png"
+        ],
+        "Anti Cheat Active":
+        [
+            "Files/Mod/default/messages/Anti Cheat Active.png"
         ]
     }
 }

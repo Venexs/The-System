@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 from datetime import datetime, timedelta
 import subprocess
@@ -24,9 +24,14 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.dungeon
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
+<<<<<<< Updated upstream
     pres_file_data=json.load(pres_file)
+=======
+    pres_file_data=ujson.load(pres_file)
+>>>>>>> Stashed changes
     get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
 
 def get_stuff_path(key):
@@ -40,7 +45,25 @@ target_height = 144
 window_width = 715
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=35, delay=1)
 
 window.configure(bg = "#FFFFFF")
@@ -48,9 +71,12 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+<<<<<<< Updated upstream
 top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
 bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
+=======
+>>>>>>> Stashed changes
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (715, 35))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (715, 41))
@@ -77,63 +103,22 @@ def ex_close(win):
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=35, delay=1)
 
-def get_item_name_from_csv():
-    # Read the item name from the CSV file
-    with open('Files/Data/lowest_rank_item.csv', 'r') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            return row['Name']
+rank='X'
 
+<<<<<<< Updated upstream
 rank='X'
 
 item_name = get_item_name_from_csv()
+=======
+item_name = thesystem.dungeon.get_item_name_from_csv()
+>>>>>>> Stashed changes
 with open('Files/Inventory.json', 'r') as file:
-    data = json.load(file)
+    data = ujson.load(file)
 
 # Find the item and update or remove it
 if item_name in data:
     for item in data[item_name]:
         rank=item["rank"]
-
-def update_inventory():
-    # Get the item name from the CSV file
-    item_name = get_item_name_from_csv()
-
-    # Load the JSON data from the file
-    with open('Files/Inventory.json', 'r') as file:
-        data = json.load(file)
-    
-    # Find the item and update or remove it
-    if item_name in data:
-        for item in data[item_name]:
-            if item['qty'] == 1:
-                # Remove the item if quantity is 1
-                data[item_name].remove(item)
-            elif item['qty'] > 1:
-                # Decrease quantity by 1 if greater than 1
-                item['qty'] -= 1
-
-        # If all instances are removed, delete the item from inventory
-        if not data[item_name]:
-            del data[item_name]
-
-    # Write the updated data back to inventory.json
-    with open('Files/Inventory.json', 'w') as file:
-        json.dump(data, file, indent=4)
-
-    rank=item["rank"]
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
-        dun_full_data=json.load(dun_full)
-
-    with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
-        fw=csv.writer(rank_file)
-        fw.writerow([rank,"Instance"])
-
-    with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
-        json.dump(dun_full_data, final_dun_full, indent=6)
-
-    subprocess.Popen(['python', 'Anime Version/Dungeon Runs/gui.py'])
-    window.quit()
 
 canvas = Canvas(
     window,
@@ -155,9 +140,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"]["Video"]
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 330.0, resize_factor=0.8)
 
 image_image_2 = PhotoImage(
@@ -201,7 +186,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: update_inventory(),
+    command=lambda: thesystem.dungeon.update_inventory(window),
     relief="flat"
 )
 button_1.place(
@@ -228,6 +213,11 @@ button_2.place(
 )
 
 side = PhotoImage(file=get_stuff_path("blue.png"))
+<<<<<<< Updated upstream
+=======
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+>>>>>>> Stashed changes
 canvas.create_image(677.0, 71.0, image=side)
 canvas.create_image(47.0, 72.0, image=side)
 
@@ -236,7 +226,11 @@ canvas.create_rectangle(
     0.0,
     760.0,
     30.0,
+<<<<<<< Updated upstream
     fill="#0C679B",
+=======
+    fill=transp_clr,
+>>>>>>> Stashed changes
     outline="")
 
 canvas.create_rectangle(
@@ -244,7 +238,11 @@ canvas.create_rectangle(
     0.0,
     162.0,
     16.0,
+<<<<<<< Updated upstream
     fill="#0C679B",
+=======
+    fill=transp_clr,
+>>>>>>> Stashed changes
     outline="")
 
 canvas.create_rectangle(
@@ -252,7 +250,11 @@ canvas.create_rectangle(
     123.0,
     715.0,
     144.0,
+<<<<<<< Updated upstream
     fill="#0C679B",
+=======
+    fill=transp_clr,
+>>>>>>> Stashed changes
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (30, 100))

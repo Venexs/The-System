@@ -3,7 +3,7 @@ from tkinter import Tk, Canvas, PhotoImage
 from datetime import datetime
 import time
 import subprocess
-import json
+import ujson
 import os
 import threading
 import ctypes
@@ -13,8 +13,9 @@ import sys
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
-import thesystem.system  # Assuming you have the system module
 
+import thesystem.system 
+import thesystem.penalty
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -44,31 +45,7 @@ hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"  # For Windows
 redirect_ip = "127.0.0.1"
 blocked_websites = ["www.pornhub.com", "pornhub.com", "www.hanime.tv", "hanime.tv"]
 
-
-def is_admin():
-    """Check if the script is running with admin privileges."""
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-def run_as_admin():
-    """Re-launch the script as an administrator if it's not already running with admin privileges."""
-    if not is_admin():
-        # Try to relaunch the script with administrator privileges
-        try:
-            # ShellExecuteW will re-run the script with elevated privileges
-            ctypes.windll.shell32.ShellExecuteW(
-                None, "runas", sys.executable, " ".join(sys.argv), None, 1
-            )
-            sys.exit()  # Exit the original process
-        except Exception as e:
-            print(f"Failed to run as admin: {str(e)}")
-            sys.exit()
-
-
-# Check and request admin rights
-# run_as_admin()
+# thesystem.penalty.run_as_admin()
 
 
 def block_websites():
@@ -101,7 +78,7 @@ def countdown_completed():
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
-    pen_info_data = json.load(pen_info_file)
+    pen_info_data = ujson.load(pen_info_file)
     info = pen_info_data["Penalty Info"]
     pr_name1 = info[0]
     pr_name2 = info[1]
@@ -127,7 +104,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)
 
@@ -188,7 +165,6 @@ def update_countdown(duration_in_seconds):
         time.sleep(1)
         duration_in_seconds -= 1
 
-
 # Blocking function to run for 4 hours
 def run_blocking_for_duration(duration_in_seconds):
     """Block websites for a specific duration, then unblock them."""
@@ -199,7 +175,6 @@ def run_blocking_for_duration(duration_in_seconds):
 
     unblock_websites()  # Unblock the websites after 4 hours
     print("Websites have been unblocked after the specified duration.")
-
 
 # Set blocking duration (4 hours = 14400 seconds)
 blocking_duration = 4 * 60 * 60  # 4 hours

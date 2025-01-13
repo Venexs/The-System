@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import threading
@@ -24,23 +24,24 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.dungeon
 import thesystem.system
 import thesystem.dungeon as dungeonbk
+import thesystem.misc
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
+    tab_son_data=ujson.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Dungeons"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+    ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 window = Tk()
 
@@ -49,13 +50,39 @@ target_height = 666
 window_width = 475
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=35, delay=1)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (490, 34))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (490, 34))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+presets_data = thesystem.misc.load_ujson("Files/Mod/presets.json")
+
 
 e_rank=d_rank=c_rank=b_rank=a_rank=s_rank=red_gate=0
 
@@ -76,16 +103,16 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Dungeons"]='Close'
-        json.dump(tab_son_data,fin_tab_son,indent=4)
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
-e_rank,d_rank,c_rank,b_rank,a_rank,s_rank=thesystem.system.dun_check()
+e_rank,d_rank,c_rank,b_rank,a_rank,s_rank=thesystem.dungeon.dun_check()
 
 canvas = Canvas(
     window,
@@ -107,9 +134,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"]["Video"]
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 330.0, resize_factor=0.8)
 
 image_image_2 = PhotoImage(
@@ -290,40 +317,80 @@ canvas.create_text(
     font=("Montserrat Medium", 11 * -1)
 )
 
-image_image_16 = PhotoImage(
-    file=relative_to_assets("image_16.png"))
-image_16 = canvas.create_image(
-    -10.0,
-    344.4087829589844,
-    image=image_image_16
-)
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
+canvas.create_image(-15.0, 348.0, image=side)
+canvas.create_image(490.0, 351.0, image=side)
 
-image_image_17 = PhotoImage(
-    file=relative_to_assets("image_17.png"))
-image_17 = canvas.create_image(
-    465.0,
-    356.89671325683594,
-    image=image_image_17
-)
-
-image_image_18 = PhotoImage(
-    file=relative_to_assets("image_18.png"))
-image_18 = canvas.create_image(
-    326.0,
+canvas.create_rectangle(
+    0.0,
     27.0,
-    image=image_image_18
+    101.0,
+    21.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    -10.0,
+    645.0,
+    494.0,
+    716.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    488.0,
+    34.0,
+    fill=transp_clr,
+    outline="")
+
+image_40 = thesystem.system.side_bar("left_bar.png", (81, 640))
+canvas.create_image(-5.0, 360.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (42, 635))
+canvas.create_image(455.0, 340.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
+    240.0,
+    27.0,
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_18, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_18, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_19 = PhotoImage(
-    file=relative_to_assets("image_19.png"))
-image_19 = canvas.create_image(
-    310.0,
+bottom_image = canvas.create_image(
+    240.0,
     660.0,
-    image=image_image_19
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
+# =================================================================
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))

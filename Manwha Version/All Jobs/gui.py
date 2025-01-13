@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import cv2
@@ -22,6 +22,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.job
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
@@ -88,7 +89,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0)
 
@@ -111,43 +112,7 @@ def second():
     window.after(5000, third)
 
 def third():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
-        skill_file_data=json.load(skill_file)
-        skill_file_data["Strength Augmentation"]=[{
-            "lvl":1,
-            "type":"Job",
-            "desc":"You have a Greater Strength Augumentation than the Average Man",
-            "pl_point":0,
-            
-            "base":"STR",
-            "rewards":{
-                "STRav":10,
-                "Gauntlet of the Eternal Guardian":1
-            }
-        }]
-
-        skill_file_data["Exponential Strength"]=[{
-            "lvl":1,
-            "type":"Job",
-            "desc":"All Strength Gains are faster than they were before. Results show faster as well",
-            "pl_point":0,
-            
-            "base":"STR",
-            "rewards":{
-                "STRav":10,
-                "Amulet of Protection":1
-            }
-        }]
-
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
-        json.dump(skill_file_data, fin_skill_file, indent=6)
-
-    with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
-    data["status"][1]['job']="Beserker"
-
-    with open("Files/status.json", 'w') as fson:
-        json.dump(data, fson, indent=6)
+    thesystem.job.beserker()
 
     canvas.itemconfig("First", state="hidden")
     canvas.itemconfig("Second", state="hidden")

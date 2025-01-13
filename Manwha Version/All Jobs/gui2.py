@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import cv2
@@ -23,6 +23,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.job
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame2")
@@ -88,7 +89,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0)
 
@@ -116,43 +117,7 @@ def third():
     canvas.itemconfig("Second", state="hidden")
     canvas.itemconfig("Third", state="normal")
 
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
-        skill_file_data=json.load(skill_file)
-        skill_file_data["Quick Heal"]=[{
-            "lvl":1,
-            "type":"Job",
-            "desc":"Your Body will heal itself quicker than normal and your pain reduces",
-            "pl_point":0,
-            
-            "base":"STR",
-            "rewards":{
-                "STRav":10,
-                "Gauntlet of Lightning":1
-            }
-        }]
-
-        skill_file_data["Detox"]=[{
-            "lvl":1,
-            "type":"Job",
-            "desc":"Your body slowly but surely removes Toxins from the body the more VIT is increased",
-            "pl_point":0,
-            
-            "base":"STR",
-            "rewards":{
-                "STRav":10,
-                "Golden Boots of Agility":1
-            }
-        }]
-
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
-        json.dump(skill_file_data, fin_skill_file, indent=6)
-
-    with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
-    data["status"][1]['job']="Tank"
-
-    with open("Files/status.json", 'w') as fson:
-        json.dump(data, fson, indent=6)
+    thesystem.job.tank()
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))

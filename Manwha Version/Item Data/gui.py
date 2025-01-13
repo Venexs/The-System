@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import csv
-import json
+import ujson
 import cv2
 from PIL import Image, ImageTk
 import threading
@@ -23,8 +23,10 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.itemequip
 import thesystem.system
 import thesystem.equipmentbk as equipment
+import thesystem.inventory
 
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
@@ -98,26 +100,20 @@ with open('Files/Temp Files/Inventory temp.csv', 'r') as fout:
             typs='Item'
 
 with open('Files/Equipment.json', 'r') as eq_fout:
-    eq_data=json.load(eq_fout)
-
-def find_item_slot(name, equipment):
-    for slot, items in equipment.items():
-        if name in items:
-            return [slot, True]
-    return ["Item not found in any slot", False]
+    eq_data=ujson.load(eq_fout)
 
 # Example usage:
-equiipment_check = find_item_slot(name, eq_data)
+equiipment_check = equipment.find_item_slot(name, eq_data)
 equiipment_check_bool=equiipment_check[1]
 
 if typs=='Item':
     with open("Files/Inventory.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         dat_keys=list(data.keys())
 
 elif typs=='Preview':
     with open("Files/Data/Inventory_List.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         dat_keys=list(data.keys())
 
 item_full_data={}
@@ -143,91 +139,12 @@ val=data[name][0]['Value']
 
 item_full_data[name]=data[name]
 
-if type(data[name][0]["buff"]) is dict:
-    try:
-        buff_main=data[name][0]["buff"]
-        rol=list(buff_main.keys())
+buff = data[name][0].get("buff", {})
+buff_1_name, buff_1, buff_2_name, buff_2 = thesystem.equipmentbk.process_attributes(buff, "buff")
 
-        if rol[0]=="AGIbuff":
-            buff_1_name="AGI"
-        elif rol[0]=="STRbuff":
-            buff_1_name="STR"
-        elif rol[0]=="VITbuff":
-            buff_1_name="VIT"
-        elif rol[0]=="INTbuff":
-            buff_1_name="INT"
-        elif rol[0]=="PERbuff":
-            buff_1_name="PER"
-        elif rol[0]=="MANbuff":
-            buff_1_name="MAN"
-
-        buff_1="+"+str(data[name][0]["buff"][rol[0]])
-
-        if rol[1]=="AGIbuff":
-            buff_2_name="AGI"
-        elif rol[1]=="STRbuff":
-            buff_2_name="STR"
-        elif rol[1]=="VITbuff":
-            buff_2_name="VIT"
-        elif rol[1]=="INTbuff":
-            buff_2_name="INT"
-        elif rol[1]=="PERbuff":
-            buff_2_name="PER"
-        elif rol[1]=="MANbuff":
-            buff_2_name="MAN"
-
-        buff_2="+"+str(data[name][0]["buff"][rol[1]])
-    except:
-        buff_2_name=''
-        buff_2='-'
-else:
-    buff_1_name=''
-    buff_2_name=''
-    buff_1='-'
-    buff_2='-'
-
-if type(data[name][0]["debuff"]) is dict:
-    try:
-        debuff_main=data[name][0]["debuff"]
-        rol_2=list(debuff_main.keys())
-
-        if rol_2[0]=="AGIdebuff" or rol_2[0]=="AGIbuff":
-            debuff_1_name="AGI"
-        elif rol_2[0]=="STRdebuff" or rol_2[0]=="STRbuff":
-            debuff_1_name="STR"
-        elif rol_2[0]=="VITdebuff" or rol_2[0]=="VITbuff":
-            debuff_1_name="VIT"
-        elif rol_2[0]=="INTdebuff" or rol_2[0]=="INTbuff":
-            debuff_1_name="INT"
-        elif rol_2[0]=="PERdebuff" or rol_2[0]=="PERbuff":
-            debuff_1_name="PER"
-        elif rol_2[0]=="MANdebuff" or rol_2[0]=="MANbuff":
-            debuff_1_name="MAN"
-
-        debuff_1="-"+str(data[name][0]["debuff"][rol_2[0]])
-
-        if rol_2[1]=="AGIdebuff" or rol_2[1]=="AGIbuff":
-            debuff_2_name="AGI"
-        elif rol_2[1]=="STRdebuff" or rol_2[1]=="STRbuff":
-            debuff_2_name="STR"
-        elif rol_2[1]=="VITdebuff" or rol_2[1]=="VITbuff":
-            debuff_2_name="VIT"
-        elif rol_2[1]=="INTdebuff" or rol_2[1]=="INTbuff":
-            debuff_2_name="INT"
-        elif rol_2[1]=="PERdebuff" or rol_2[1]=="PERbuff":
-            debuff_2_name="PER"
-        elif rol_2[1]=="MANdebuff" or rol_2[1]=="MANbuff":
-            debuff_2_name="MAN"
-
-        debuff_2="-"+str(data[name][0]["debuff"][rol_2[1]])
-    except:
-        debuff_2_name=''
-        debuff_2='-'
-else:
-    debuff_1_name=''
-    debuff_2_name=''
-    debuff_1='-'
-    debuff_2='-'
+# Debuff processing
+debuff = data[name][0].get("debuff", {})
+debuff_1_name, debuff_1, debuff_2_name, debuff_2 = thesystem.equipmentbk.process_attributes(debuff, "debuff")
 
 canvas = Canvas(
     window,
@@ -248,7 +165,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 280.0, 300.0, resize_factor=1.2)
 
@@ -406,7 +323,7 @@ canvas.create_rectangle(
 
 max_width, max_height = 164.615385, 126.153846
 
-image_image_3 =thesystem.system.get_item_button_image(name, max_width, max_height)
+image_image_3 =thesystem.inventory.get_item_button_image(name, max_width, max_height)
 image_3 = canvas.create_image(
     144.0,
     147.0,
@@ -420,7 +337,7 @@ if typs=='Item':
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: (equipment.finish(qty=qty, equiipment_check=equiipment_check),thesystem.system.selling_item(name,window,val)),
+        command=lambda: (equipment.finish(qty=qty, equiipment_check=equiipment_check),thesystem.inventory.selling_item(name,window,val)),
         relief="flat"
     )
     button_1.place(
@@ -446,7 +363,7 @@ if typs=='Item':
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.system.equip_item(cat,item_full_data,window),
+        command=lambda: thesystem.itemequip.equip_item(cat,item_full_data,window),
         relief="flat"
     )
     button_2.place(

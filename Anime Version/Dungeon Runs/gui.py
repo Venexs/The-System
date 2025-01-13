@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import random
@@ -25,6 +25,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.dungeon
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
@@ -41,7 +42,25 @@ target_height = 369
 window_width = 879
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
@@ -49,9 +68,12 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+<<<<<<< Updated upstream
 top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
 bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
+=======
+>>>>>>> Stashed changes
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (1167, 47))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1053, 43))
@@ -95,7 +117,7 @@ def get_act():
     # Activities
     str_file_name=f"Files\Workout\STR_based.json"
     with open(str_file_name, 'r') as str_quest_file_name:
-        str_quest_main_names=json.load(str_quest_file_name)
+        str_quest_main_names=ujson.load(str_quest_file_name)
 
     str_quest_main_names_list=list(str_quest_main_names.keys())
 
@@ -103,7 +125,7 @@ def get_act():
     act2=random.choice(str_quest_main_names_list)
 
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         lvl=data["status"][0]['level']
 
     try:
@@ -124,15 +146,15 @@ def get_act():
         amtval2=str_quest_main_names[act2][0]["timeval"]
         amt2_check="time"
     
-    amt1=thesystem.system.dungeon_rank_get(rank, amt1, amt1_check)
-    amt2=thesystem.system.dungeon_rank_get(rank, amt2, amt2_check)
+    amt1=thesystem.dungeon.dungeon_rank_get(rank, amt1, amt1_check)
+    amt2=thesystem.dungeon.dungeon_rank_get(rank, amt2, amt2_check)
 
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
 
     agi_file_name=f"Files\Workout\AGI_based.json"
     with open(agi_file_name, 'r') as agi_quest_file_name:
-        agi_quest_main_names=json.load(agi_quest_file_name)
+        agi_quest_main_names=ujson.load(agi_quest_file_name)
 
     agi_quest_main_names_list=list(agi_quest_main_names.keys())
 
@@ -148,7 +170,7 @@ def get_act():
             amt3=agi_quest_main_names[act3][0]["time"]
             amtval3=agi_quest_main_names[act3][0]["timeval"]
             amt3_check="time"
-        amt3=thesystem.system.dungeon_rank_get(rank, amt3, amt3_check)
+        amt3=thesystem.dungeon.dungeon_rank_get(rank, amt3, amt3_check)
         full_act3_name='- '+act3+' '+str(amt3)+' '+amtval3
 
     if thesystem.system.give_ranking(lvl)!="E" and thesystem.system.give_ranking(lvl)!="D" and thesystem.system.give_ranking(lvl)!="C" and thesystem.system.give_ranking(lvl)!="B": 
@@ -161,7 +183,7 @@ def get_act():
             amtval4=agi_quest_main_names[act4][0]["timeval"]
             amt4_check="time"
 
-        amt4=thesystem.system.dungeon_rank_get(rank, amt4, amt4_check)
+        amt4=thesystem.dungeon.dungeon_rank_get(rank, amt4, amt4_check)
         full_act4_name='- '+act4+' '+str(amt4)+' '+amtval4
 
     canvas.itemconfig(activity1, text=full_act1_name)
@@ -195,7 +217,7 @@ def get():
         
         # Waves
         with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
-            monster_file_data=json.load(monster_file)
+            monster_file_data=ujson.load(monster_file)
             monster_names=list(monster_file_data.keys())
 
             waves={}
@@ -264,7 +286,7 @@ def next():
 
     if mob==4:
         with open("Files/Status.json", 'r') as status_read_file:
-            status_read_data=json.load(status_read_file)
+            status_read_data=ujson.load(status_read_file)
 
         if rew_rank=='E':
             coin=100
@@ -291,7 +313,7 @@ def next():
             status_read_data["status"][0]['XP']+=XP_val
             status_read_data["status"][0]['coins']+=coin
             with open("Files/status.json", 'w') as fson:
-                json.dump(status_read_data, fson, indent=4)
+                ujson.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                 check_fw = csv.writer(check_file)
@@ -303,7 +325,7 @@ def next():
             status_read_data["avail_eq"][0]['str_based']+=(avp*2)
             status_read_data["avail_eq"][0]['int_based']+=(avp*2)
             with open("Files/status.json", 'w') as fson:
-                json.dump(status_read_data, fson, indent=4)
+                ujson.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                 check_fw = csv.writer(check_file)
@@ -337,9 +359,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"]["Video"]
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 213.0)
 
 image_image_2 = PhotoImage(
@@ -491,6 +513,7 @@ canvas.create_text(
 )
 
 side = PhotoImage(file=relative_to_assets("blue.png"))
+<<<<<<< Updated upstream
 canvas.create_image(2.0, 180.0, image=side)
 canvas.create_image(850.0, 196.0, image=side)
 
@@ -508,6 +531,28 @@ canvas.create_rectangle(
     925.0,
     555.0,
     fill="#0c679b",
+=======
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
+
+canvas.create_image(4.0, 180.0, image=side)
+canvas.create_image(850.0, 196.0, image=side)
+
+canvas.create_rectangle(
+    0.0,
+    -30.0,
+    957.0,
+    30.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    353.0,
+    925.0,
+    555.0,
+    fill=transp_clr,
+>>>>>>> Stashed changes
     outline="")
 
 
