@@ -8,15 +8,15 @@
         "Sleep": 0
     },
     "Final": {
-        "Push": 10,
-        "Sit": 10,
-        "Squat": 10,
-        "Run": 10,
-        "Int_type": 1,
+        "Push": 65,
+        "Sit": 65,
+        "Squat": 65,
+        "Run": 6.5,
+        "Int_type": 6.5,
         "Sleep": 1
     },
     "Streak": {
-        "Value": 0,
+        "Value": 22,
         "Greater_value": 0
     }
 }

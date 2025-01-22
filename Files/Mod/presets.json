@@ -2,6 +2,7 @@
     "Active Theme":["Anime"],
     "Anime":{
         "Video":"Files/Mod/default/Anime/0001-0200.mp4",
+        "DungeonVideo":"Files/Mod/default/Anime/dungeonvideov2.mp4",
         "Close SFX":"Files/Mod/default/Anime/Close.wav",
         "Open SFX":"Files/Mod/default/Anime/Open.wav",
         "Glitch SFX":"Files/Mod/default/Anime/Glitch.wav",

@@ -10,9 +10,10 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label
 import subprocess
 import threading
+from concurrent.futures import ThreadPoolExecutor
 import random
 import cv2
-import json
+import ujson
 from PIL import Image, ImageTk
 import time
 import csv
@@ -34,8 +35,6 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def make_window_transparent(window):
-    window.wm_attributes('-transparentcolor', "#0C679B")
 
 def center_window(root, width, height):
     # Get screen width and height
@@ -70,17 +69,16 @@ def ex_close(eve):
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
-
 def name(eve,name):
     with open("Files\Data\Theme_Check.json", 'r') as file:
-        data = json.load(file)
+        data = ujson.load(file)
     
     # Modify the theme from "Anime" to "Manwha"
     data["Theme"] = name
     
     # Write the updated data back to the file
     with open("Files\Data\Theme_Check.json", 'w') as file:
-        json.dump(data, file, indent=4)
+        ujson.dump(data, file, indent=4)
 
     with open("Files/Checks/theme_open.csv", 'r') as info_open:
         info_fr=csv.reader(info_open)
@@ -88,7 +86,7 @@ def name(eve,name):
             istrue=k[0]
 
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
-            theme_data=json.load(themefile)
+            theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
 
     if istrue=='True':
@@ -109,15 +107,49 @@ target_height = 592
 window_width = 934
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.animate_window_open(window, target_height, window_width, step=60, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 #center_window(window,window_width,target_height)
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-make_window_transparent(window)
+thesystem.system.make_window_transparent(window)
+
+top_folder_path = "thesystem/top_bar"
+bottom_folder_path = "thesystem/bottom_bar"
+
+top_images = [f"{top_folder_path}/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"{bottom_folder_path}/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+def resize_image(image_path, size):
+    """Resize an image and return the processed PIL Image."""
+    if os.path.exists(image_path):
+        return Image.open(image_path).resize(size)
+    return None
+
+def preload_images(image_paths, size):
+    """Preload images by resizing them in parallel and converting them on the main thread."""
+    resized_images = []
+
+    # Resize images in parallel
+    with ThreadPoolExecutor() as executor:
+        resized_images = list(executor.map(lambda path: resize_image(path, size), image_paths))
+
+    # Create PhotoImage objects on the main thread
+    preloaded_images = [
+        ImageTk.PhotoImage(img) for img in resized_images if img is not None
+    ]
+    return preloaded_images
+
+# Define the size for each set of images
+top_size = (861, 43)
+bottom_size = (850, 47)
+
+# Preload top and bottom images
+top_preloaded_images = preload_images(top_images, top_size)
+bottom_preloaded_images = preload_images(bottom_images, bottom_size)
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 canvas = Canvas(
     window,
@@ -139,7 +171,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
@@ -147,7 +179,7 @@ image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
     471.0,
-    308.0,
+    312.1454162597656,
     image=image_image_2
 )
 
@@ -183,7 +215,7 @@ image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
     540.0,
-    318.0,
+    319.0,
     image=image_image_6
 )
 
@@ -201,39 +233,15 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: ex_close(window),
+    command=lambda: ex_close(0),
     relief="flat"
 )
 button_1.place(
-    x=759.0,
-    y=73.0,
+    x=756.0,
+    y=92.0,
     width=25.0,
     height=25.0
 )
-
-canvas.create_rectangle(
-    33.0,
-    7.0,
-    906.0,
-    45.0,
-    fill="#333333",
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    0.0,
-    336.0,
-    50.0,
-    fill="#0C679B",
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    541.0,
-    934.0,
-    592.0,
-    fill="#0C679B",
-    outline="")
 
 image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
@@ -252,6 +260,30 @@ image_9 = canvas.create_image(
 )
 
 canvas.create_rectangle(
+    0.0,
+    0.0,
+    336.0,
+    50.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    139.0,
+    23.0,
+    793.0,
+    76.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    541.0,
+    1300.0,
+    592.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
     235.0,
     0.0,
     934.0,
@@ -259,23 +291,54 @@ canvas.create_rectangle(
     fill="#0C679B",
     outline="")
 
-image_image_10 = PhotoImage(
-    file=relative_to_assets("image_10.png"))
-image_10 = canvas.create_image(
-    452.0,
-    47.0,
-    image=image_image_10
+
+# Create the initial canvas image
+image_index = 0
+bot_image_index = 0
+
+# Top bar animation
+top_image = canvas.create_image(452.0, 56.0, image=top_preloaded_images[image_index])
+
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+# Bottom bar animation
+bottom_image = canvas.create_image(459.0, 562.0, image=bottom_preloaded_images[bot_image_index])
+
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_2 clicked"),
+    relief="flat"
+)
+button_2.place(
+    x=597.0,
+    y=498.0,
+    width=180.0,
+    height=26.0
 )
 
-canvas.tag_bind(image_10, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_10, "<B1-Motion>", move_window)
+# Function to update the image
+def update_images():
+    global image_index, bot_image_index
 
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_11.png"))
-image_11 = canvas.create_image(
-    458.0,
-    556.0,
-    image=image_image_11
-)
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
 window.resizable(False, False)
 window.mainloop()

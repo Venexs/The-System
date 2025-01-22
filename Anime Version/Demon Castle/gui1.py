@@ -10,8 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import csv
-import json
-import cv2
+import ujson
 from PIL import Image, ImageTk
 import csv
 import random
@@ -27,8 +26,10 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.castle
+import thesystem.dungeon
+import thesystem.misc
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
 
@@ -44,7 +45,30 @@ target_height = 365
 window_width = 643
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window, transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (840, 47))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (723, 47))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
@@ -78,19 +102,9 @@ with open("Files/Demons Castle/Demon_info.csv", "r") as file_opem:
         floor = int(row[0])
         num = int(row[1])
 
-def choose_demon_by_rank(rank_of):
-    with open("Files/Demons Castle/Demon_Data.json", "r") as demon_file:
-        demons = json.load(demon_file)
-    # Filter demons by the given rank
-    filtered_demons = [name for name, details in demons.items() if details["rank"] == rank_of]
-    if not filtered_demons:
-        return f"No demons found for rank {rank_of}."
-    # Choose a random demon from the filtered list
-    return random.choice(filtered_demons)
-
 # Example usage
 floor_rank = thesystem.system.give_ranking(floor)
-name = choose_demon_by_rank(floor_rank)
+name = thesystem.castle.choose_demon_by_rank(floor_rank)
 final_boss=False
 
 if floor==25 and num==53:
@@ -126,7 +140,7 @@ def get_act():
     # Activities
     str_file_name=f"Files\Workout\STR_based.json"
     with open(str_file_name, 'r') as str_quest_file_name:
-        str_quest_main_names=json.load(str_quest_file_name)
+        str_quest_main_names=ujson.load(str_quest_file_name)
 
     str_quest_main_names_list=list(str_quest_main_names.keys())
 
@@ -134,7 +148,7 @@ def get_act():
     act2=random.choice(str_quest_main_names_list)
 
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         lvl=data["status"][0]['level']
 
     try:
@@ -155,15 +169,15 @@ def get_act():
         amtval2=str_quest_main_names[act2][0]["timeval"]
         amt2_check="time"
     
-    amt1=thesystem.system.dungeon_rank_get(floor_rank, amt1, amt1_check)
-    amt2=thesystem.system.dungeon_rank_get(floor_rank, amt2, amt2_check)
+    amt1=thesystem.dungeon.dungeon_rank_get(floor_rank, amt1, amt1_check)
+    amt2=thesystem.dungeon.dungeon_rank_get(floor_rank, amt2, amt2_check)
 
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
 
     agi_file_name=f"Files\Workout\AGI_based.json"
     with open(agi_file_name, 'r') as agi_quest_file_name:
-        agi_quest_main_names=json.load(agi_quest_file_name)
+        agi_quest_main_names=ujson.load(agi_quest_file_name)
 
     agi_quest_main_names_list=list(agi_quest_main_names.keys())
 
@@ -179,7 +193,7 @@ def get_act():
             amt3=agi_quest_main_names[act3][0]["time"]
             amtval3=agi_quest_main_names[act3][0]["timeval"]
             amt3_check="time"
-        amt3=thesystem.system.dungeon_rank_get(floor_rank, amt3, amt3_check)
+        amt3=thesystem.dungeon.dungeon_rank_get(floor_rank, amt3, amt3_check)
         full_act3_name='- '+act3+' '+str(amt3)+' '+amtval3
 
     if floor_rank!="E" and floor_rank!="D" and floor_rank!="C" and floor_rank!="B": 
@@ -192,7 +206,7 @@ def get_act():
             amtval4=agi_quest_main_names[act4][0]["timeval"]
             amt4_check="time"
 
-        amt4=thesystem.system.dungeon_rank_get(floor_rank, amt4, amt4_check)
+        amt4=thesystem.dungeon.dungeon_rank_get(floor_rank, amt4, amt4_check)
         full_act4_name='- '+act4+' '+str(amt4)+' '+amtval4
 
     canvas.itemconfig(activity1, text=full_act1_name)
@@ -226,7 +240,7 @@ def get():
         
         # Waves
         with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
-            monster_file_data=json.load(monster_file)
+            monster_file_data=ujson.load(monster_file)
             monster_names=list(monster_file_data.keys())
 
             waves={}
@@ -294,36 +308,36 @@ def next():
 
     if mob==2:
         with open("Files/Status.json", 'r') as status_read_file:
-            status_read_data=json.load(status_read_file)
+            status_read_data=ujson.load(status_read_file)
 
         if (floor==25 or floor==50 or floor==75 or floor==100) and (num==53 or num==55):
             XP_val=1000
         else:
             with open("Files/Demons Castle/Demon_Data.json", "r") as demon_file:
-                demons = json.load(demon_file)
+                demons = ujson.load(demon_file)
                 XP_val=demons[name]["XP"]
                 soul_count=demons[name]["soul"]
 
         if final_boss==False:
             with open("Files/Demons Castle/image_visibility.json", 'r') as f:
-                data = json.load(f)
+                data = ujson.load(f)
                 data['hidden_images'][str(num)]["Completed"]=True
             with open("Files/Demons Castle/image_visibility.json", 'w') as f:
-                json.dump(data, f, indent=4)
+                ujson.dump(data, f, indent=4)
 
         status_read_data["status"][0]['XP']+=XP_val
         with open("Files/Demons Castle/Demon_Castle.json", 'r') as fson_fin:
-            findata = json.load(fson_fin)
+            findata = ujson.load(fson_fin)
             findata['XP']+=XP_val
             findata['Souls']+=soul_count
             if final_boss==True:
                 findata['Final']=True
         
         with open("Files/Demons Castle/Demon_Castle.json", 'w') as fson_fin:
-            json.dump(findata, fson_fin, indent=6)
+            ujson.dump(findata, fson_fin, indent=6)
 
         with open("Files/status.json", 'w') as fson:
-            json.dump(status_read_data, fson, indent=4)
+            ujson.dump(status_read_data, fson, indent=4)
 
 
         thesystem.system.get_fin_xp()
@@ -345,17 +359,10 @@ canvas = Canvas(
 )
 
 with open("Files/Status.json", 'r') as fson:
-    data=json.load(fson)
+    data=ujson.load(fson)
     lvl=data["status"][0]['level']
 
-if lvl<=(int(floor)-10):
-    color="#FF2F2F"
-elif lvl>=(int(floor)+10):
-    color="#ffee2f"
-elif lvl>=(int(floor)+20):
-    color="#ffffff"
-else:
-    color="#FFFFFF"
+color=thesystem.castle.color(lvl,floor)
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
@@ -367,8 +374,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
 
 image_image_2 = PhotoImage(
@@ -513,40 +520,76 @@ canvas.create_text(
     state="hidden"
 )
 
-image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
-image_4 = canvas.create_image(
-    0.17083740234375,
-    195.25450134277344,
-    image=image_image_4
-)
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
+canvas.create_image(0.0, 195.0, image=side)
+canvas.create_image(640.0, 185.0, image=side)
+
+image_image_58 = PhotoImage(file=relative_to_assets("image_5.png"))
+if job.upper()!="NONE":
+    image_image_58 = PhotoImage(file=relative_to_assets("image_5_alt.png"))
+
+image_58 = canvas.create_image(
     370.0,
     10.0,
-    image=image_image_5
+    image=image_image_58
 )
 
-canvas.tag_bind(image_5, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_5, "<B1-Motion>", move_window)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
+image_image_59 = PhotoImage(file=relative_to_assets("image_6.png"))
+if job.upper()!="NONE":
+    image_image_59 = PhotoImage(file=relative_to_assets("image_6_alt.png"))
+image_59 = canvas.create_image(
     350.7275085449219,
     353.0,
-    image=image_image_6
+    image=image_image_59
 )
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
-    640.0,
-    185.0,
-    image=image_image_7
+image_40 = thesystem.system.side_bar("left_bar.png", (82, 365))
+canvas.create_image(0.2, 195.25, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (70, 356))
+canvas.create_image(620.0, 200.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0 
+
+top_image = canvas.create_image(
+    370.0,
+    10.0,
+    image=top_preloaded_images[image_index]
 )
+
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+bottom_image = canvas.create_image(
+    350.7,
+    353.0,
+    image=bottom_preloaded_images[bot_image_index]
+)
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
+# ===========================================================
 
 get()
 

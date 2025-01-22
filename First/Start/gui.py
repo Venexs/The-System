@@ -12,7 +12,7 @@ import subprocess
 import threading
 import cv2
 from PIL import Image, ImageTk
-import json
+import ujson
 import time
 import sys
 import os
@@ -24,8 +24,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -40,9 +38,18 @@ initial_height = 0
 target_height = 449
 window_width = 696
 
-thesystem.system.make_window_transparent(window)
+top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (695, 39))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (702, 36))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.make_window_transparent(window)
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=25, delay=1)
 
 thesystem.system.center_window(window,window_width,target_height)
@@ -111,7 +118,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0)
 
@@ -193,48 +200,104 @@ canvas.create_rectangle(
     fill="#0C679B",
     outline="")
 
-image_image_80 = PhotoImage(
-    file=relative_to_assets("side1.png"))
-image_80 = canvas.create_image(
-    43.0,
-    222.13719177246094,
-    image=image_image_80
-)
-
-image_image_90 = PhotoImage(
-    file=relative_to_assets("side2.png"))
-image_90 = canvas.create_image(
-    652.0,
-    230.52886962890625,
-    image=image_image_90
-)
-
 canvas.create_rectangle(
-    178.0,
-    6.0,
+    0.0,
+    0.0,
     696.0,
-    52.0,
+    29.0,
     fill="#0C679B",
     outline="")
 
-image_image_100 = PhotoImage(
-    file=relative_to_assets("bar1.png"))
-image_100 = canvas.create_image(
-    345.0,
-    35.0,
-    image=image_image_100
+canvas.create_rectangle(
+    0.0,
+    5.0,
+    60.0,
+    455.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    647.0,
+    0.0,
+    696.0,
+    458.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    119.0,
+    0.0,
+    381.0,
+    38.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    56.0,
+    421.0,
+    923.0,
+    460.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    50.0,
+    19.0,
+    643.0,
+    44.0,
+    fill="#0C679B",
+    outline="")
+
+canvas.create_rectangle(
+    137.0,
+    -10.0,
+    765.0,
+    50.0,
+    fill="#0C679B",
+    outline="")
+
+image_40 = thesystem.system.side_bar("left_bar.png", (47, 393))
+canvas.create_image(33.0, 235.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (46, 385))
+canvas.create_image(666.0, 235.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
+    348.0,
+    29.0,
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_100, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_100, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_110 = PhotoImage(
-    file=relative_to_assets("bar2.png"))
-image_110 = canvas.create_image(
-    347.0,
-    415.0,
-    image=image_image_110
+bottom_image = canvas.create_image(
+    357.0,
+    437.0,
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+update_images()
+
 
 button_image_20 = PhotoImage(
     file=relative_to_assets("close.png"))

@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import threading
-import json
+import ujson
 import sys
 import os
 
@@ -67,7 +67,7 @@ window.wm_attributes("-topmost", True)
 thesystem.system.make_window_transparent(window)
 
 with open("Files/status.json", 'r') as first_fson:
-    data=json.load(first_fson)
+    data=ujson.load(first_fson)
     cc=data["cal_data"][0]["calorie calc"]
     r1=data["cal_data"][0]["final calorie calc"]
     bmi=data["cal_data"][0]["BMI"]
@@ -77,7 +77,7 @@ with open("Files/status.json", 'r') as first_fson:
 
 with open("Files\Workout\Cal_Count.json", 'w') as cal_fson:
     fin={"Monday":mon, "Tuesday":tue, "Wednesday":wed, "Thursday":thu, "Friday":fri, "Saturday":sat, "Sunday":sun}
-    json.dump(fin, cal_fson, indent=4)
+    ujson.dump(fin, cal_fson, indent=4)
 
 canvas = Canvas(
     window,
@@ -99,7 +99,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 

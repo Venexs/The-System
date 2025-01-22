@@ -1,17 +1,17 @@
 {
     "status": [
         {
-            "job_active": "False",
-            "job_check": "False",
-            "job_confirm": "False"
+            "job_active": "True",
+            "job_check": "True",
+            "job_confirm": "True"
         },
         {
-            "STR": 1,
-            "AGI": 0,
-            "VIT": 0,
-            "INT": 0,
-            "PER": 0,
-            "MAN": 0,
+            "STR": 44,
+            "AGI": 6,
+            "VIT": 54,
+            "INT": 1,
+            "PER": 1,
+            "MAN": 1,
             "plSTR": 0,
             "plAGI": 0,
             "plVIT": 0,

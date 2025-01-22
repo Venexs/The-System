@@ -1,5 +1,5 @@
 @echo off
 
-py -3.9 vow.py
+py vow.py
 
 PAUSE

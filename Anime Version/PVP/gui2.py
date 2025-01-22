@@ -32,10 +32,10 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 client = InfisicalClient(ClientSettings(
     auth=AuthenticationOptions(
@@ -66,8 +66,10 @@ def get_key():
     ))
     return f"{name.secret_value}"
 
-URL = get_url()
-KEY = get_key()
+
+URL = "https://smewvswweqnpwzngdtco.supabase.co"
+KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
+
 SESSION_FILE = "Files/Data/session.json"
 
 supabase: Client = create_client(URL, KEY)
@@ -270,7 +272,7 @@ def update_reps_display():
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 window = Tk()
 window.geometry("488x0")  # Initial collapsed height
 window.configure(bg="#FFFFFF")
@@ -282,7 +284,7 @@ thesystem.system.make_window_transparent(window)
 # Animate window open
 window_width = 488
 target_height = 716
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
 # Load JSON data once to reduce file I/O

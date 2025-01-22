@@ -17,7 +17,7 @@ import threading
 import pandas as pd
 import sys
 import os
-import json
+import ujson
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,24 +26,43 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.calorie
+import thesystem.misc as misc
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+pres_file_data=misc.load_ujson("Files/Mod/presets.json")
+get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
 
-
-def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
 
 
 window = Tk()
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 initial_height = 0
 target_height = 144
 window_width = 715
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 thesystem.system.center_window(window,window_width,target_height)
 
@@ -51,6 +70,12 @@ window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (715, 41))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (715, 41))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 def start_move(event):
     global lastx, lasty
@@ -73,31 +98,6 @@ def ex_close(eve):
     thesystem.system.animate_window_close(window, 0, window_width, step=12, delay=1)
 
 
-def add_cal(eve=0):
-    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
-        calorie_add_data=json.load(calorie_add_file)
-        calorie_add_key=list(calorie_add_data.keys())[0]
-
-    # Get today's date
-    current_date = date.today()
-
-    # Format the date as a string
-    formatted_date = current_date.strftime("%Y-%m-%d")
-
-    if calorie_add_key==formatted_date:
-        cal_c=float(entry_1.get())
-        calorie_add_data[formatted_date][0]+=cal_c
-        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
-            json.dump(calorie_add_data, calorie_add_file_write, indent=4)
-
-    else:
-        new_data={formatted_date:[0]}
-        with open("Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
-            json.dump(new_data, calorie_add_file_write, indent=4)
-        add_cal(None)
-
-    ex_close(0)
-
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -110,20 +110,18 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=get_stuff_path("back.png"))
 image_1 = canvas.create_image(
     448.0,
     277.0,
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=get_stuff_path("frame.png"))
 image_2 = canvas.create_image(
     369.0,
     78.0,
@@ -131,7 +129,7 @@ image_2 = canvas.create_image(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=get_stuff_path("cal_txt.png"))
 image_3 = canvas.create_image(
     362.0,
     55.291961669921875,
@@ -139,7 +137,7 @@ image_3 = canvas.create_image(
 )
 
 image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
+    file=get_stuff_path("close.png"))
 image_4 = canvas.create_image(
     604.0,
     47.0,
@@ -148,28 +146,18 @@ image_4 = canvas.create_image(
 
 canvas.tag_bind(image_4, "<ButtonPress-1>", ex_close)
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    47.0,
-    72.0,
-    image=image_image_5
-)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    677.0,
-    71.0,
-    image=image_image_6
-)
+side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+canvas.create_image(677.0, 71.0, image=side)
+canvas.create_image(47.0, 72.0, image=side)
 
 canvas.create_rectangle(
-    158.0,
     0.0,
-    732.0,
-    20.0,
-    fill="#0C679B",
+    0.0,
+    760.0,
+    30.0,
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -177,7 +165,7 @@ canvas.create_rectangle(
     0.0,
     162.0,
     16.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -185,27 +173,51 @@ canvas.create_rectangle(
     123.0,
     715.0,
     144.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
+image_40 = thesystem.system.side_bar("left_bar.png", (30, 100))
+canvas.create_image(82.0, 76.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (30, 114))
+canvas.create_image(640.0, 75.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
     357.0,
-    18.0,
-    image=image_image_7
+    20.0,
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_7, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_7, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
-image_8 = canvas.create_image(
-    380.0,
-    130.0,
-    image=image_image_8
+bottom_image = canvas.create_image(
+    370.0,
+    128.0,
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
 
 entry_1 = Entry(
     bd=0,
@@ -223,12 +235,12 @@ entry_1.place(
 )
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=get_stuff_path("enter.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: add_cal(None),
+    command=lambda: thesystem.calorie.add_cal(entry_1, window, initial_height, window_width),
     relief="flat"
 )
 button_1.place(

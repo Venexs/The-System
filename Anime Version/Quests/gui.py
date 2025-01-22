@@ -10,7 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import subprocess
-import json
+import ujson
 import cv2
 from PIL import Image, ImageTk
 import sys
@@ -24,17 +24,15 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
+    tab_son_data=ujson.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Quest"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+    ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -49,9 +47,33 @@ target_height = 729
 window_width = 555
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
 thesystem.system.center_window(window,window_width,target_height)
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
@@ -75,11 +97,11 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Quest"]='Close'
-        json.dump(tab_son_data,fin_tab_son,indent=4)
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=30, delay=1)
 
@@ -107,8 +129,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 360.0, resize_factor=0.9)
 
 image_image_2 = PhotoImage(
@@ -136,7 +158,7 @@ image_4 = canvas.create_image(
 )
 
 with open("Files/Quests/Active_Quests.json", 'r') as fson:
-    main_data=json.load(fson)
+    main_data=ujson.load(fson)
     main_keys=list(main_data.keys())
 
 name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name13='-'
@@ -736,40 +758,88 @@ button_0.place(
 )
 '''
 
-image_image_18 = PhotoImage(
-    file=relative_to_assets("image_18.png"))
-image_18 = canvas.create_image(
-    24.0,
-    363.8757019042969,
-    image=image_image_18
-)
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
+canvas.create_image(24.0, 363.0, image=side)
+canvas.create_image(542.0, 367.0, image=side)
 
-image_image_19 = PhotoImage(
-    file=relative_to_assets("image_19.png"))
-image_19 = canvas.create_image(
-    542.0,
-    367.0,
-    image=image_image_19
-)
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    200.0,
+    34.0,
+    fill=transp_clr,
+    outline="")
 
-image_image_20 = PhotoImage(
-    file=relative_to_assets("image_20.png"))
-image_20 = canvas.create_image(
-    283.0,
-    22.0,
-    image=image_image_20
-)
-
-canvas.tag_bind(image_20, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_20, "<B1-Motion>", move_window)
-
-image_image_21 = PhotoImage(
-    file=relative_to_assets("image_21.png"))
-image_21 = canvas.create_image(
-    330.0,
+canvas.create_rectangle(
+    0.0,
     710.0,
-    image=image_image_21
+    640.0,
+    825.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    640.0,
+    49.0,
+    fill=transp_clr,
+    outline="")
+
+image_40 = thesystem.system.side_bar("left_bar.png", (92, 680))
+canvas.create_image(24.0, 375.0, image=image_40)
+
+canvas.create_rectangle(
+    0.0,
+    950.0,
+    640.0,
+    825.0,
+    fill="#0C679B",
+    outline="")
+
+image_50 = thesystem.system.side_bar("right_bar.png", (81, 680))
+canvas.create_image(535.0, 367.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
+    283.0,
+    32.0,
+    image=top_preloaded_images[image_index]
 )
+
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+bottom_image = canvas.create_image(
+    280.0,
+    710.0,
+    image=bottom_preloaded_images[bot_image_index]
+)
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
+# =================================================================================================
 
 button_image_15 = PhotoImage(
     file=relative_to_assets("button_15.png"))

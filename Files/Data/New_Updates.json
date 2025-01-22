@@ -1,6 +1,6 @@
 {
     "Skills": "False",
-    "Quests": "True",
-    "Upgrade": "False",
+    "Quests": "False",
+    "Upgrade": "True",
     "Lines": "False"
 }

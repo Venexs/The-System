@@ -13,7 +13,6 @@ supabase: Client = create_client(URL, KEY)
 
 
 
-print("Opened background file")
 
 SESSION_FILE = "Files/Data/session.json"
 
@@ -62,7 +61,7 @@ def refresh_token_loop():
         if session_data:
             expires_in = session_data.get("expires_in", 3600)  # Default to 1 hour if not found
             # Refresh 5 minutes before expiration
-            sleep_time = max(0, expires_in - 300)
+            sleep_time = max(500, 1000)
             print(f"Sleeping for {sleep_time} seconds before next refresh.")
             time.sleep(sleep_time)
             refresh_token()

@@ -8,6 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Listbox, Scrollbar, Frame, Y, TOP, BOTH, X
+from tkinter import ttk
 import threading
 import json
 import csv
@@ -55,8 +56,8 @@ def get_key():
     ))
     return f"{name.secret_value}"
 
-URL = get_url()
-KEY = get_key()
+URL = "https://smewvswweqnpwzngdtco.supabase.co"
+KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
 
 supabase: Client = create_client(URL, KEY)
 
@@ -67,7 +68,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 window = Tk()
 window.geometry("488x0")  # Initial collapsed height
 window.configure(bg="#FFFFFF")
@@ -79,7 +80,7 @@ thesystem.system.make_window_transparent(window)
 # Animate window open
 window_width = 488
 target_height = 716
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
 # Load JSON data once to reduce file I/O
@@ -237,7 +238,39 @@ table_name = "status"  # Replace with the actual table name
 name_column = "name"  # Replace with the actual name column name
 level_column = "level"  # Replace with the actual level column name
 
-
+def get_current_user_id():
+    try:
+        user_response = supabase.auth.get_user(session["access_token"])  # Synchronous call
+        if user_response and user_response.user:
+            return user_response.user.id
+        else:
+            print("User is not authenticated.")  # Add logging for better debugging
+            return None
+    except Exception as e:
+        print(f"Error getting user: {e}")
+        return None
+def get_user_name_from_status_table(access_token: str):
+    try:
+        # Step 1: Get current user ID using the access token
+        user_id = get_current_user_id(access_token)
+        
+        if user_id is None:
+            return None
+        
+        # Step 2: Query the `status` table for the row with the matching user ID
+        response = supabase.table('status').select('name').eq('user_id', user_id).single().execute()
+        
+        if response.error:
+            print(f"Error fetching user name from status table: {response.error.message}")
+            return None
+        
+        # Step 3: Extract the user's name from the response
+        user_name = response.data.get('name', 'No name found')  # Adjust column name if necessary
+        return user_name
+    
+    except Exception as e:
+        print(f"Error retrieving user name: {e}")
+        return None
 def get_all_names_and_levels(table_name, name_column, level_column, users_table="status", username_column="name"):
     try:
         # Get the current authenticated user's username
@@ -253,10 +286,6 @@ def get_all_names_and_levels(table_name, name_column, level_column, users_table=
                 .execute()
 
             if user_status.data:  # Access the 'data' attribute directly
-                current_username = user_status.data[username_column]
-                print(f"Current username: {current_username}")  # Debugging
-
-                # Query to exclude the current user's username and fetch name and level
                 response = supabase.table(table_name) \
                     .select(f"{name_column}, {level_column}") \
                     .order(level_column, desc=True) \
@@ -284,46 +313,66 @@ def get_all_names_and_levels(table_name, name_column, level_column, users_table=
         return []  # Return an empty list on error
 
 
+
 def main():
     global names_and_levels
     names_and_levels = get_all_names_and_levels(table_name, name_column, level_column)
 
 
 main()
-listbox_container = Frame(window)
-listbox_container.pack(side="top", fill="y", expand=True, padx=(0, 40), pady=150)
 
-# Configure the Frame to not propagate its size to the Listbox
-listbox_container.pack_propagate(False)
-listbox_container.config(width=350)  # Set the desired width for the Frame
 
-# Populate the listbox
-listbox = Listbox(
-    listbox_container,  # Place the Listbox inside the Frame
-    bg='#010616',
-    width=350,  # Set the desired width for the Listbox (will be constrained by the Frame)
-    height=10,  # Set an initial height - it will expand with fill="y"
-    highlightthickness=0,
-    bd=0,
-    selectmode="single",  # Disables selection mode
-    font=("Montserrat Bold", 12),
-    fg="white",  # Set the font color to white (or any color you prefer)
-    activestyle="none",
-)
+# Create a frame for the Treeview
+frame = Frame(window, bg='#010616')
+frame.pack(padx=75, pady=150, fill='both', expand=True)
 
-listbox.pack(side="right", fill="y", expand=True, anchor="center") # Pack the Listbox to the RIGHT
+columns = ('Name', 'Level', 'Rank', 'Guild')
 
-scrollbar = Scrollbar(listbox_container, command=listbox.yview)
-scrollbar.pack(side="left", fill="y", padx=(0, 5))  # Pack the Scrollbar to the LEFT
+treeview = ttk.Treeview(frame, columns=columns, show='headings', selectmode='browse')
+treeview.pack(side='left', fill='both', expand=True)
 
-listbox.config(yscrollcommand=scrollbar.set)
-scrollbar.config(command=listbox.yview)
+# Define headings and column widths
+treeview.heading('Name', text='Username')
+treeview.heading('Level', text='Level')
+treeview.heading('Rank', text='Rank')
+treeview.heading('Guild', text='Guild')
+treeview.column('Name', width=60)
+treeview.column('Level', width=5)
+treeview.column('Rank', width=5)
+treeview.column('Guild', width=60)
+
+# Apply style for row borders
+style = ttk.Style()
+style.theme_use('clam')
+style.configure('Treeview', rowheight=15, borderwidth=10, relief="groove")
+style.configure('Treeview', background='black', fieldbackground='black', foreground='white')
+style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
+
 
 # Insert names with levels into the listbox
 for level, name in names_and_levels:
-    listbox.insert("end", f"Level {level}: {name}")
-    
-listbox.config(selectbackground="skyblue", selectforeground="black")  # Customize selection color
+    # Fetch the guild_id for the current user (if applicable, fetch based on `name` instead of `get_current_user_id`)
+    try:
+        guild_response = supabase.table('Members').select('guild_id').eq('user_id', name).execute()
+
+        if guild_response.data and len(guild_response.data) > 0:
+            guild_id = guild_response.data[0]['guild_id']  # Extract the guild_id
+
+            # Fetch the guild name using the guild_id
+            guild_info_response = supabase.table('Guilds').select('name').eq('id', guild_id).execute()
+
+            if guild_info_response.data and len(guild_info_response.data) > 0:
+                guild_name = guild_info_response.data[0]['name']
+            else:
+                guild_name = "N/A"  # Default if no guild name is found
+        else:
+            guild_name = "N/A"  # Default if no guild ID is found
+    except Exception as e:
+        guild_name = "N/A"  # In case of any error (e.g., network or database issues)
+
+    # Insert the row into the Treeview
+    treeview.insert("", "end", values=(name, f"{level}", thesystem.system.give_ranking(level), guild_name))
+
 
 
 window.resizable(False, False)

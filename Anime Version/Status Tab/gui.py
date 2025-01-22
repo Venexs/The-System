@@ -5,11 +5,11 @@
 
 from pathlib import Path
 
-# from tkinter import *
+import tkinter as tk
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Event
 import threading
-import json
+import ujson
 import csv
 import subprocess
 import time
@@ -18,7 +18,6 @@ from PIL import Image, ImageTk
 from datetime import datetime, timedelta
 import pandas as pd
 import sys
-import math
 import os
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,31 +25,51 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.misc
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+
 window = Tk()
 window.geometry("488x0")  # Initial collapsed height
 window.configure(bg="#FFFFFF")
 window.attributes('-alpha', 0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window, transp_clr)
 
 # Animate window open
 window_width = 488
 target_height = 716
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
-# Load JSON data once to reduce file I/O
-def load_json(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
 
-status_data = load_json("Files/status.json")
-job_data = load_json("Files/Data/Job_info.json")
-presets_data = load_json("Files/Mod/presets.json")
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (488, 38))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (609, 33))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+presets_data = thesystem.misc.load_ujson("Files/Mod/presets.json")
+
+
+status_data = thesystem.misc.load_ujson("Files/status.json")
+job_data = thesystem.misc.load_ujson("Files/Data/Job_info.json")
 
 def title_chng(event):
     subprocess.Popen(['python', 'Anime Version/Equip Title/gui.py'])
@@ -58,12 +77,13 @@ def title_chng(event):
     ex_close(0)
 
 # Helper Functions
+# Helper Functions
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def load_fatigue_value():
     with open('Files/status.json', 'r') as file:
-        data = json.load(file)
+        data = ujson.load(file)
         fatigue = data["status"][0].get("fatigue", 0)
         fatigue_max = data["status"][0].get("fatigue_max", 1)  # Avoid division by zero
         # Calculate fatigue percentage
@@ -72,29 +92,22 @@ def load_fatigue_value():
 
 # Function to update the text on the canvas every 3 minutes
 def update_fatigue_text(canvas, fatigue_val):
-    previous_fatigue_percent = None  # Store the previous value
-    
+    loaded_fatigue_value = load_fatigue_value()  # Load fatigue value once
+
     while not stop_update_thread:
-        # Load the current fatigue value as a percentage
         current_fatigue_percent = load_fatigue_value()
-        
-        # Update the canvas text if the fatigue value has changed
-        if current_fatigue_percent != previous_fatigue_percent:
-            # Update the canvas text with the new fatigue percentage
+
+        # Update canvas text only if fatigue value has changed
+        if current_fatigue_percent != loaded_fatigue_value:
             canvas.itemconfig(fatigue_val, text=f"{current_fatigue_percent}%")
-            
-            # Print the new fatigue value
             subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
-            
-            # Update the previous value to the current one
-            previous_fatigue_percent = current_fatigue_percent
-        
+            loaded_fatigue_value = current_fatigue_percent
+
         # Wait for 3 minutes before updating again
-        for _ in range(180):  # Loop with 1-second checks for faster stopping
+        for _ in range(180):
             if stop_update_thread:
                 return
             time.sleep(1)
-# Function to start and stop the update thread
 
 update_thread = None
 stop_update_thread = False
@@ -111,47 +124,35 @@ def stop_update_thread_func():
     if update_thread.is_alive():
         update_thread.join()  # Wait for the thread to finish
 
-def update_tabs_json(status='Open'):
-    tabs_json_path = "Files/Tabs.json"
-    with open(tabs_json_path, 'r+') as tab_json:
-        tab_data = json.load(tab_json)
+def update_tabs_ujson(status='Open'):
+    tabs_ujson_path = "Files/Tabs.json"
+    with open(tabs_ujson_path, 'r+') as tab_ujson:
+        tab_data = ujson.load(tab_ujson)
         tab_data["Status"] = status
-        tab_json.seek(0)
-        json.dump(tab_data, tab_json, indent=4)
-        tab_json.truncate()
-
-# Window Movement
-def start_move(event):
-    global lastx, lasty
-    lastx, lasty = event.x_root, event.y_root
-
-def move_window(event):
-    global lastx, lasty
-    x = window.winfo_x() + (event.x_root - lastx)
-    y = window.winfo_y() + (event.y_root - lasty)
-    window.geometry(f"+{x}+{y}")
-    lastx, lasty = event.x_root, event.y_root
+        tab_ujson.seek(0)
+        ujson.dump(tab_data, tab_ujson, indent=4)
+        tab_ujson.truncate()
 
 # Update and Close Functions
 def ex_close(event=None):
-    update_tabs_json('Close')
+    update_tabs_ujson('Close')
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     stop_update_thread_func()
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
 def start_job(event):
-    data = load_json("Files/Data/Job_info.json")
+    data = thesystem.misc.load_ujson("Files/Data/Job_info.json")
     data["status"][0]["job_active"] = 'True'
     date_format = "%Y-%m-%d"
     future_date = (datetime.now() + timedelta(days=1)).strftime(date_format)
     with open("Files/Temp Files/Job_Change Date.csv", 'w', newline='') as file:
         csv.writer(file).writerow([future_date])
     with open("Files/Data/Job_info.json", 'w') as fson:
-        json.dump(data, fson, indent=4)
+        ujson.dump(data, fson, indent=4)
 
 # Title color assignment
-def title_color(name):
+def title_color(name):  
     color_map = {"False Ranker": "#FF2F2F", "One Above All": "#FFCF26"}
     return color_map.get(name, "#FFFFFF")
 
@@ -159,17 +160,24 @@ def title_color(name):
 canvas = Canvas(window, bg="#FFFFFF", height=716, width=488, bd=0, highlightthickness=0, relief="ridge")
 canvas.place(x=0, y=0)
 
-# Load images once to avoid redundant processing
-images = {
-    "background": PhotoImage(file=relative_to_assets("image_1.png")),
-    "stats": [
-        PhotoImage(file=relative_to_assets(f"image_{i}.png")) for i in range(2, 6)
-    ]
-}
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
 
 # Background image and character attributes
-canvas.create_image(430.0, 363.0, image=images["background"])
-player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"]["Video"], 430.0, 363.0)
+canvas.create_image(430.0, 363.0, image=PhotoImage(file=relative_to_assets("image_1.png")))
+player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"][video], 430.0, 363.0, resize_factor=0.3)
 
 # Display Character Status
 name, hp, mp, lvl = status_data["status"][0]["name"].upper(), status_data["status"][0]["hp"], status_data["status"][0]["mp"], status_data["status"][0]["level"]
@@ -201,7 +209,7 @@ for i, stat in enumerate(stat_attributes):
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    230.0,
+    239.0,
     367.0,
     image=image_image_2
 )
@@ -251,7 +259,7 @@ if re_check==True:
 # ? =====================================================================
 def update_stat(stat_name): 
     with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
-        ability_check_file_data=json.load(ability_check_file)
+        ability_check_file_data=ujson.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = status_data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else status_data["avail_eq"][0]["int_based"]
     if val<3 and available_points > 0:
@@ -264,10 +272,10 @@ def update_stat(stat_name):
             if stat_name=='vit':
                 status_data["status"][0]["fatigue_max"]+=20
             with open("Files/status.json", 'w') as fson:
-                json.dump(status_data, fson, indent=6)
+                ujson.dump(status_data, fson, indent=6)
             with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
-                json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
+                ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':
                 #update_fatigue_text(canvas,fatigue_val)
     elif val>=3 and available_points > 0:
@@ -296,7 +304,7 @@ for stat in stat_attributes:
 def de_update_str():
     global av_str_based
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         check_value=data["avail_eq"][0]['str_based']
     if check_value>0:
         global av_str_based_txt
@@ -309,7 +317,7 @@ def de_update_str():
 def de_update_int():
     global av_int_based
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         check_value=data["avail_eq"][0]['int_based']
     if check_value>0:
         global av_int_based_txt
@@ -594,12 +602,20 @@ button_7.place(
     height=23.0
 )
 '''
+
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
+
+canvas.create_image(-15.0, 348.0, image=side)
+canvas.create_image(490.0, 351.0, image=side)
+
 canvas.create_rectangle(
     0.0,
     0.0,
     101.0,
     21.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -607,32 +623,61 @@ canvas.create_rectangle(
     678.0,
     494.0,
     716.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
-image_image_19 = PhotoImage(
-    file=relative_to_assets("image_19.png"))
-image_19 = canvas.create_image(
-    -15.0,
-    348.0,
-    image=image_image_19
-)
-
-image_image_20 = PhotoImage(
-    file=relative_to_assets("image_20.png"))
-image_20 = canvas.create_image(
-    462.0,
-    351.0,
-    image=image_image_20
-)
-
 canvas.create_rectangle(
-    92.0,
+    0.0,
     0.0,
     488.0,
     34.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
+
+image_40 = thesystem.system.side_bar("left_bar.png", (101, 659))
+canvas.create_image(0.0, 352.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (80, 653))
+canvas.create_image(462.0, 351.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
+    244.0,
+    19.0,
+    image=top_preloaded_images[image_index]
+)
+
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+bottom_image = canvas.create_image(
+    295.0,
+    680.0,
+    image=bottom_preloaded_images[bot_image_index]
+)
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
+# ===========================================================
 
 button_image_8 = PhotoImage(
     file=relative_to_assets("button_8.png"))
@@ -650,27 +695,8 @@ button_8.place(
     height=20.0
 )
 
-image_image_21 = PhotoImage(
-    file=relative_to_assets("image_21.png"))
-image_21 = canvas.create_image(
-    244.0,
-    (19),
-    image=image_image_21
-)
-
-canvas.tag_bind(image_21, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_21, "<B1-Motion>", move_window)
-
-image_image_22 = PhotoImage(
-    file=relative_to_assets("image_22.png"))
-image_22 = canvas.create_image(
-    295.0,
-    680,
-    image=image_image_22
-)
-
 with open("Files/Data/Job_info.json", 'r') as stat_fson:
-    stat_data=json.load(stat_fson)
+    stat_data=ujson.load(stat_fson)
 
 if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
     print()

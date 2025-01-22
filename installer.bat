@@ -1,3 +1,5 @@
 @echo off
 
-python Installer/installer.py
+py Installer/installer.py
+
+PAUSE

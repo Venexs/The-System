@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import random
@@ -25,9 +25,8 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.dungeon
 import thesystem.system
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -43,13 +42,37 @@ target_height = 369
 window_width = 879
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (1167, 47))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1053, 43))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 waves={}
 XP_val=0
@@ -88,7 +111,7 @@ def get_act():
     # Activities
     str_file_name=f"Files\Workout\STR_based.json"
     with open(str_file_name, 'r') as str_quest_file_name:
-        str_quest_main_names=json.load(str_quest_file_name)
+        str_quest_main_names=ujson.load(str_quest_file_name)
 
     str_quest_main_names_list=list(str_quest_main_names.keys())
 
@@ -96,7 +119,7 @@ def get_act():
     act2=random.choice(str_quest_main_names_list)
 
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         lvl=data["status"][0]['level']
 
     try:
@@ -117,15 +140,15 @@ def get_act():
         amtval2=str_quest_main_names[act2][0]["timeval"]
         amt2_check="time"
     
-    amt1=thesystem.system.dungeon_rank_get(rank, amt1, amt1_check)
-    amt2=thesystem.system.dungeon_rank_get(rank, amt2, amt2_check)
+    amt1=thesystem.dungeon.dungeon_rank_get(rank, amt1, amt1_check)
+    amt2=thesystem.dungeon.dungeon_rank_get(rank, amt2, amt2_check)
 
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
 
     agi_file_name=f"Files\Workout\AGI_based.json"
     with open(agi_file_name, 'r') as agi_quest_file_name:
-        agi_quest_main_names=json.load(agi_quest_file_name)
+        agi_quest_main_names=ujson.load(agi_quest_file_name)
 
     agi_quest_main_names_list=list(agi_quest_main_names.keys())
 
@@ -141,7 +164,7 @@ def get_act():
             amt3=agi_quest_main_names[act3][0]["time"]
             amtval3=agi_quest_main_names[act3][0]["timeval"]
             amt3_check="time"
-        amt3=thesystem.system.dungeon_rank_get(rank, amt3, amt3_check)
+        amt3=thesystem.dungeon.dungeon_rank_get(rank, amt3, amt3_check)
         full_act3_name='- '+act3+' '+str(amt3)+' '+amtval3
 
     if thesystem.system.give_ranking(lvl)!="E" and thesystem.system.give_ranking(lvl)!="D" and thesystem.system.give_ranking(lvl)!="C" and thesystem.system.give_ranking(lvl)!="B": 
@@ -154,7 +177,7 @@ def get_act():
             amtval4=agi_quest_main_names[act4][0]["timeval"]
             amt4_check="time"
 
-        amt4=thesystem.system.dungeon_rank_get(rank, amt4, amt4_check)
+        amt4=thesystem.dungeon.dungeon_rank_get(rank, amt4, amt4_check)
         full_act4_name='- '+act4+' '+str(amt4)+' '+amtval4
 
     canvas.itemconfig(activity1, text=full_act1_name)
@@ -188,7 +211,7 @@ def get():
         
         # Waves
         with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
-            monster_file_data=json.load(monster_file)
+            monster_file_data=ujson.load(monster_file)
             monster_names=list(monster_file_data.keys())
 
             waves={}
@@ -257,7 +280,7 @@ def next():
 
     if mob==4:
         with open("Files/Status.json", 'r') as status_read_file:
-            status_read_data=json.load(status_read_file)
+            status_read_data=ujson.load(status_read_file)
 
         if rew_rank=='E':
             coin=100
@@ -284,7 +307,7 @@ def next():
             status_read_data["status"][0]['XP']+=XP_val
             status_read_data["status"][0]['coins']+=coin
             with open("Files/status.json", 'w') as fson:
-                json.dump(status_read_data, fson, indent=4)
+                ujson.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                 check_fw = csv.writer(check_file)
@@ -296,7 +319,7 @@ def next():
             status_read_data["avail_eq"][0]['str_based']+=(avp*2)
             status_read_data["avail_eq"][0]['int_based']+=(avp*2)
             with open("Files/status.json", 'w') as fson:
-                json.dump(status_read_data, fson, indent=4)
+                ujson.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                 check_fw = csv.writer(check_file)
@@ -330,9 +353,9 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"]["Video"]
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 213.0)
 
 image_image_2 = PhotoImage(
@@ -483,40 +506,72 @@ canvas.create_text(
     state="hidden"
 )
 
-image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
-image_4 = canvas.create_image(
-    2.0,
-    180.25450134277344,
-    image=image_image_4
-)
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    850.1459350585938,
-    196.4259796142578,
-    image=image_image_5
-)
+canvas.create_image(4.0, 180.0, image=side)
+canvas.create_image(850.0, 196.0, image=side)
 
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
+canvas.create_rectangle(
+    0.0,
+    -30.0,
+    957.0,
+    30.0,
+    fill=transp_clr,
+    outline="")
+
+canvas.create_rectangle(
+    0.0,
+    353.0,
+    925.0,
+    555.0,
+    fill=transp_clr,
+    outline="")
+
+
+image_40 = thesystem.system.side_bar("left_bar.png", (75, 320))
+canvas.create_image(12.0, 180.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (80, 340))
+canvas.create_image(833.0, 190.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
     510.0,
     10.0,
-    image=image_image_6
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_6, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_6, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
+bottom_image = canvas.create_image(
     500.0,
     353.0,
-    image=image_image_7
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
 
 get()
 

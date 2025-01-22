@@ -3,7 +3,7 @@
 
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import cv2
@@ -19,16 +19,17 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.inventory
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 with open("Files/Tabs.json",'r') as tab_son:
-    tab_son_data=json.load(tab_son)
+    tab_son_data=ujson.load(tab_son)
 
 with open("Files/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Inventory"]='Open'
-    json.dump(tab_son_data,fin_tab_son,indent=4)
+    ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -67,11 +68,11 @@ def move_window(event):
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
-        tab_son_data=json.load(tab_son)
+        tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Inventory"]='Close'
-        json.dump(tab_son_data,fin_tab_son,indent=4)
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
@@ -96,7 +97,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 400.0, 300.0, resize_factor=1.2)
 
@@ -133,7 +134,7 @@ image_4 = canvas.create_image(
 )
 
 with open("Files/Inventory.json", 'r') as fson:
-    data=json.load(fson)
+    data=ujson.load(fson)
 
 rol=list(data.keys())
 
@@ -144,43 +145,12 @@ x_start, y_start = 49, 171
 spacing_x, spacing_y = 100, 100
 buttons_per_row = 8
 
-def create_inventory_item(canvas, window, item_data, x, y):
-    tr_n = item_data.get('name', '')
-    name = item_data.get('tr_n', '')
-    qt = item_data.get('qty', '')
-    cat = item_data.get('cat', '')
-    r = item_data.get('rank', '')
-    d = item_data.get('desc', '')
-    b = item_data.get('buff', '')
-    db = item_data.get('debuff', '')
-
-    # Load button image
-    button_image = thesystem.system.get_inventory_button_image(tr_n)
-    button_images.append(button_image)  # Prevent garbage collection
-
-    button = Button(
-        image=button_image,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: (thesystem.system.inventory_item_data(tr_n, r, cat, d, b, db, window),ex_close(window)),
-        relief="flat"
-    )
-    button.place(x=x, y=y, width=68, height=82)
-
-    # Load item image and add to canvas
-    item_image = PhotoImage(file=relative_to_assets("image_5.png"))
-    item_images.append(item_image)  # Prevent garbage collection
-    canvas.create_image(x - 7, y + 42, image=item_image)
-
-    # Background rectangle and text
-    canvas.create_rectangle(x - 20, y + 84, x + 73, y + 98, fill="#3B3B3B", outline="")
-    canvas.create_text(x - 20, y + 85, anchor="nw", text=name, fill="#FFD337", font=("Exo Medium", 10 * -1))
-    canvas.create_text(x + 7, y + 68, anchor="nw", text=qt, fill="#FFD337", font=("Exo Medium", 10 * -1))
+image5=relative_to_assets("image_5.png")
 
 for i, key in enumerate(rol[:24]):
     item_data = {
         "name": key,
-        "tr_n":thesystem.system.inventory_name_cut(key),
+        "tr_n":thesystem.inventory.inventory_name_cut(key),
         "qty": data[key][0].get('qty', ''),
         "cat": data[key][0].get('cat', ''),
         "rank": data[key][0].get('rank', ''),
@@ -190,7 +160,7 @@ for i, key in enumerate(rol[:24]):
     }
     x = x_start + (i % buttons_per_row) * spacing_x
     y = y_start + (i // buttons_per_row) * spacing_y
-    create_inventory_item(canvas, window, item_data, x, y)
+    thesystem.inventory.create_inventory_item(canvas, window, item_data, x, y, button_images, item_images, image5)
 
 image_image_29 = PhotoImage(
     file=relative_to_assets("image_29.png"))

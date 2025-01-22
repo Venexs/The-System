@@ -10,11 +10,10 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 from PIL import Image, ImageDraw, ImageTk
-import json
+import ujson
 import threading
 import sys
 import os
-from supabase import create_client, Client
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,12 +23,13 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
 
-def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
-
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
 
 window = Tk()
 
@@ -37,15 +37,40 @@ initial_height = 0
 target_height = 144
 window_width = 715
 
-window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
 thesystem.system.center_window(window,window_width,target_height)
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
+window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.animate_window_open(window, target_height, window_width,  step=20, delay=1)
+thesystem.system.center_window(window,window_width,target_height)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (715, 41))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (715, 41))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 canvas = Canvas(
     window,
@@ -57,13 +82,6 @@ canvas = Canvas(
     relief = "ridge"
 )
 
-def fade_out(window, alpha):
-    if alpha > 0:
-        window.attributes('-alpha', alpha)
-        alpha -= 0.05
-        window.after(1, fade_out, window, alpha)
-    else:
-        window.attributes('-alpha', 0)
 
 def move_rectangle_up(rectangle_id, final_y, step_y, delay):
     current_coords = canvas.coords(rectangle_id)
@@ -119,13 +137,13 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(eve):
-    threading.Thread(target=fade_out, args=(window, 0.8)).start()
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=5, delay=1)
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=get_stuff_path("back.png"))
 image_1 = canvas.create_image(
     430.0,
     163.0,
@@ -133,12 +151,12 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=get_stuff_path("level_up.png"))
 image_2 = canvas.create_image(
     363.0,
     77.0,
@@ -151,7 +169,7 @@ text_color="#FFFFFF",
 font=("Montserrat", 40 * -1)
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=get_stuff_path("close.png"))
 image_3 = canvas.create_image(
     596.0,
     53.0,
@@ -160,28 +178,19 @@ image_3 = canvas.create_image(
 
 canvas.tag_bind(image_3, "<ButtonPress-1>", ex_close)
 
-image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
-image_4 = canvas.create_image(
-    47.0,
-    72.0,
-    image=image_image_4
-)
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    677.0,
-    71.0,
-    image=image_image_5
-)
+side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+canvas.create_image(677.0, 71.0, image=side)
+canvas.create_image(47.0, 72.0, image=side)
 
 canvas.create_rectangle(
     158.0,
     0.0,
     732.0,
     30.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -189,7 +198,7 @@ canvas.create_rectangle(
     0.0,
     162.0,
     16.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -197,7 +206,7 @@ canvas.create_rectangle(
     123.0,
     715.0,
     144.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 rectangle1_id=canvas.create_rectangle(
@@ -205,7 +214,7 @@ rectangle1_id=canvas.create_rectangle(
     73.0,
     715.0,
     144.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 rectangle2_id=canvas.create_rectangle(
@@ -213,181 +222,55 @@ rectangle2_id=canvas.create_rectangle(
     0.0,
     715.0,
     73.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
+image_40 = thesystem.system.side_bar("left_bar.png", (30, 100))
+canvas.create_image(82.0, 76.0, image=image_40)
 
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
+image_50 = thesystem.system.side_bar("right_bar.png", (30, 114))
+canvas.create_image(640.0, 75.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
     357.0,
-    50.0,
-    image=image_image_6
+    20.0,
+    image=top_preloaded_images[image_index]
 )
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
-    357.0,
-    100.0,
-    image=image_image_7
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+bottom_image = canvas.create_image(
+    370.0,
+    128.0,
+    image=bottom_preloaded_images[bot_image_index]
 )
-
-from dotenv import load_dotenv, set_key
-from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
-
-client = InfisicalClient(ClientSettings(
-    auth=AuthenticationOptions(
-        universal_auth=UniversalAuthMethod(
-            client_id="0fa8dbf8-92ee-4889-bd48-1b5dd2d22e87",
-            client_secret="a2c9a58bda26c914e333e6c0f7c35e019b30c3afa67b5dc8419a142ee8b2aec8",
-        )
-    )
-))
-
-
-def get_url():
-    # access value
-    name = client.getSecret(options=GetSecretOptions(
-        environment="dev",
-        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
-        secret_name="SUPABASE_URL"
-    ))
-    return f"{name.secret_value}"
-def get_key():
-    # access value
-    name = client.getSecret(options=GetSecretOptions(
-        environment="dev",
-        project_id="a7b312a2-feb6-42bc-92cb-387e37463076",
-        secret_name="SUPABASE_KEY"
-    ))
-    return f"{name.secret_value}"
-
-URL = get_url()
-KEY = get_key()
-
-supabase: Client = create_client(URL, KEY)
-
-
-SESSION_FILE = "Files/Data/session.json"
-
-def load_session():
-    """Load session data from the session file."""
-    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
-        with open(SESSION_FILE, "r") as f:
-            session_data = json.load(f)
-            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
-                return session_data
-
-session = load_session()
-
-
-table_name = "status"  # Replace with the actual table name
-name_column = "name"  # Replace with the actual name column name
-
-
-def get_current_user_id():
-    try:
-        user_response = supabase.auth.get_user(session["access_token"])  # Synchronous call
-        if user_response and user_response.user:
-            return user_response.user.id
-        else:
-            print("User is not authenticated.")  # Add logging for better debugging
-            return None
-    except Exception as e:
-        print(f"Error getting user: {e}")
-        subprocess.Popen(["python", "Logs/Start/gui.py"])
-        exit()
-        return None
-current_user = get_current_user_id()
-
-current_level = supabase.table("status").select("level").eq("user_id", current_user).execute()
-current_hp = supabase.table("status").select("hp").eq("user_id", current_user).execute()
-current_mp = supabase.table("status").select("mp").eq("user_id", current_user).execute()
-
-if current_level.data:
-    current_level = current_level.data[0]["level"]
-else:
-    current_level = 0
-
-if current_hp.data:
-    current_hp = current_hp.data[0]["hp"]
-else:
-    current_hp = 0
-
-if current_mp.data:
-    current_mp = current_mp.data[0]["mp"]
-else:
-    current_mp = 0
-
-
-if current_user:
-    # Fetch the user's current stats
-    response = supabase.table("status").select("str, int, agi, vit, per, man").eq("user_id", current_user).execute()
-
-    if response.data:
-        user_stats = response.data[0]  # Get the first (and likely only) result
-
-        # Increment stats by 10
-        updated_stats = {
-            "str": user_stats["str"] + 1,
-            "int": user_stats["int"] + 1,
-            "agi": user_stats["agi"] + 1,
-            "vit": user_stats["vit"] + 1,
-            "per": user_stats["per"] + 1,
-            "man": user_stats["man"] + 1,
-        }
-
-        # Update the stats in the database
-        update_response = (
-            supabase.table("status")
-            .update(updated_stats)
-            .eq("user_id", current_user)
-            .execute()
-        )
-
-        print(f"Updated stats for user {current_user}: {update_response}")
-    else:
-        print(f"No stats found for user {current_user}.")
-else:
-    print("Could not retrieve current user ID.")
-
-
-# Increment the level and update the database
-response = (
-    supabase.table("status")
-    .update({"level": current_level + 1})
-    .eq("user_id", current_user)
-    .execute()
-)
-response = (
-    supabase.table("status")
-    .update({"hp": current_hp + 10})
-    .eq("user_id", current_user)
-    .execute()
-)
-
-response = (
-    supabase.table("status")
-    .update({"mp": current_mp + 10})
-    .eq("user_id", current_user)
-    .execute()
-)
-
-
-print(f"Update Response: {response}")
-
-
-()
-
-canvas.tag_bind(image_6, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_6, "<B1-Motion>", move_window)
 
 step,delay=1,1
 
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
+
 def start_animations():
-    threading.Thread(target=move_image_up, args=(image_6, canvas, step, 1)).start()
-    threading.Thread(target=move_image_down, args=(image_7, canvas, step, 1)).start()
+    threading.Thread(target=move_image_up, args=(top_image, canvas, step, 1)).start()
+    threading.Thread(target=move_image_down, args=(bottom_image, canvas, step, 1)).start()
     threading.Thread(target=move_rectangle_down, args=(rectangle1_id, 300, 2, delay)).start()
     threading.Thread(target=move_rectangle_up, args=(rectangle2_id, -177, 2, delay)).start()
 

@@ -7,7 +7,7 @@
             "Completed": true
         },
         "53": {
-            "Completed": false
+            "Completed": true
         },
         "20": {
             "Completed": true
@@ -19,7 +19,7 @@
             "Completed": false
         },
         "7": {
-            "Completed": false
+            "Completed": true
         },
         "19": {
             "Completed": true
@@ -31,7 +31,7 @@
             "Completed": false
         },
         "33": {
-            "Completed": true
+            "Completed": false
         },
         "30": {
             "Completed": true
@@ -73,13 +73,13 @@
             "Completed": true
         },
         "16": {
-            "Completed": true
+            "Completed": false
         },
         "12": {
-            "Completed": false
+            "Completed": true
         },
         "44": {
-            "Completed": false
+            "Completed": true
         },
         "8": {
             "Completed": false

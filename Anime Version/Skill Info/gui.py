@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import cv2
@@ -24,16 +24,15 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
-
 check=False
 
-def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
 
 window = Tk()
 
@@ -44,11 +43,36 @@ window_width = 898
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
+thesystem.system.make_window_transparent(window, transp_clr)
+
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-thesystem.system.make_window_transparent(window)
+
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (957, 43))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1026, 47))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 def start_move(event):
     global lastx, lasty
@@ -79,7 +103,7 @@ segments = []
 segment_length = 60
 
 with open("Files/Skills/Skill.json", 'r') as fson:
-    data=json.load(fson)
+    data=ujson.load(fson)
     data_key=list(data.keys())
     for k in data_key:
         if k==name:
@@ -219,12 +243,12 @@ def preview(nameob,quantity):
 
 def delete():
     with open("Files/Skills/Skill.json", 'r') as fols:
-        skills=json.load(fols)
+        skills=ujson.load(fols)
 
     del skills[name]
 
     with open("Files/Skills/Skill.json", 'w') as fols:
-        json.dump(skills, fols, indent=6)
+        ujson.dump(skills, fols, indent=6)
 
     subprocess.Popen(['python', 'Anime Version/Skills Tab/gui.py'])
 
@@ -242,7 +266,7 @@ def reward():
         if k=="LVLADD":
             for k in range(dicts[k]):
                 with open("Files/Status.json", 'r') as fson:
-                    data_status=json.load(fson)
+                    data_status=ujson.load(fson)
                     
                     data_status["status"][0]['level']+=1
                     data_status["status"][0]['str']+=1
@@ -255,37 +279,37 @@ def reward():
                     data_status["status"][0]['fatigue_max']+=40
                 
                 with open("Files/status.json", 'w') as fson:
-                    json.dump(data_status, fson, indent=4)
+                    ujson.dump(data_status, fson, indent=4)
 
         elif k=="STRav":
             for k in range(dicts[k]):
                 with open("Files/Status.json", 'r') as fson:
-                    data_status_2=json.load(fson)
+                    data_status_2=ujson.load(fson)
                     
                     data_status_2["avail_eq"][0]['str_based']+=1
 
                 with open("Files/status.json", 'w') as fson:
-                    json.dump(data_status_2, fson, indent=4)
+                    ujson.dump(data_status_2, fson, indent=4)
 
         elif k=="INTav":
             for k in range(dicts[k]):
                 with open("Files/Status.json", 'r') as fson:
-                    data_status_3=json.load(fson)
+                    data_status_3=ujson.load(fson)
                     
                     data_status_3["avail_eq"][0]['int_based']+=1
 
                 with open("Files/status.json", 'w') as fson:
-                    json.dump(data_status_3, fson, indent=4)
+                    ujson.dump(data_status_3, fson, indent=4)
 
         else:
             check=False
             with open("Files/Data/Inventory_list.json", 'r') as fson:
-                data_inv=json.load(fson)
+                data_inv=ujson.load(fson)
                 item=data_inv[k]
                 name_of_item=k
             
             with open("Files/Inventory.json", 'r') as fson:
-                data_fininv=json.load(fson)
+                data_fininv=ujson.load(fson)
                 key_data=list(data_fininv.keys())
 
                 for k in key_data:
@@ -299,7 +323,7 @@ def reward():
                 data_fininv[name_of_item]=item
 
             with open("Files/Inventory.json", 'w') as finaladdon:
-                json.dump(data_fininv, finaladdon, indent=6)
+                ujson.dump(data_fininv, finaladdon, indent=6)
 
 if main_lvl==10:
     new_lvl="MAX"
@@ -307,10 +331,10 @@ if main_lvl==10:
 
     main_lvl=new_lvl
     with open("Files/Skills/Skill.json", 'w') as fin_skill:
-        json.dump(data, fin_skill, indent=6)
+        ujson.dump(data, fin_skill, indent=6)
 
     with open("Files/status.json", 'r') as status:
-        status_data=json.load(status)
+        status_data=ujson.load(status)
 
     if base=='STR':
         status_data["avail_eq"][0]['str_based']=status_data["avail_eq"][0]['str_based']+pl_points
@@ -319,7 +343,7 @@ if main_lvl==10:
         status_data["avail_eq"][0]['int_based']=status_data["avail_eq"][0]['int_based']+pl_points
 
     with open("Files/status.json", 'w') as fin_status:
-        json.dump(status_data, fin_status, indent=4)
+        ujson.dump(status_data, fin_status, indent=4)
 
     reward()
 
@@ -335,7 +359,7 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=get_stuff_path("image_1.png"))
 image_1 = canvas.create_image(
     450.0,
     277.0,
@@ -343,12 +367,12 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]  # Replace with your video path
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]  # Replace with your video path
 player = thesystem.system.VideoPlayer(canvas, video_path, 450.0, 277.0)
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=get_stuff_path("frame.png"))
 image_2 = canvas.create_image(
     449.0,
     283.0,
@@ -356,7 +380,7 @@ image_2 = canvas.create_image(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=get_stuff_path("skills_title.png"))
 image_3 = canvas.create_image(
     449.023681640625,
     116.0,
@@ -364,7 +388,7 @@ image_3 = canvas.create_image(
 )
 
 image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
+    file=get_stuff_path("name_box.png"))
 image_4 = canvas.create_image(
     513.6856384277344,
     225.34335327148438,
@@ -372,7 +396,7 @@ image_4 = canvas.create_image(
 )
 
 image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
+    file=get_stuff_path("image_box.png"))
 image_5 = canvas.create_image(
     236.40396118164062,
     251.2617950439453,
@@ -380,7 +404,7 @@ image_5 = canvas.create_image(
 )
 
 image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
+    file=get_stuff_path("image.png"))
 image_6 = canvas.create_image(
     236.023681640625,
     251.0,
@@ -406,7 +430,7 @@ canvas.create_text(
 )
 
 image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
+    file=get_stuff_path("image_7.png"))
 image_7 = canvas.create_image(
     448.023681640625,
     308.0,
@@ -459,7 +483,7 @@ canvas.create_text(
 )
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=get_stuff_path("return.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
@@ -475,7 +499,7 @@ button_1.place(
 )
 
 button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
+    file=get_stuff_path("delete.png"))
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
@@ -491,7 +515,7 @@ button_2.place(
 )
 
 button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
+    file=get_stuff_path("upgrade.png"))
 button_3 = Button(
     image=button_image_3,
     borderwidth=0,
@@ -516,7 +540,7 @@ canvas.create_text(
 )
 
 button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
+    file=get_stuff_path("gift.png"))
 button_4 = Button(
     image=button_image_4,
     borderwidth=0,
@@ -541,7 +565,7 @@ canvas.create_text(
 )
 
 button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
+    file=get_stuff_path("gift.png"))
 button_5 = Button(
     image=button_image_5,
     borderwidth=0,
@@ -564,64 +588,79 @@ canvas.create_text(
     fill="#FFFFFF",
     font=("Montserrat Light", 12 * -1)
 )
+
+side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+canvas.create_image(35.0, 270.0, image=side)
+canvas.create_image(925.0, 294.0, image=side)
+
 canvas.create_rectangle(
     0.0,
     0.0,
     240.0,
     24.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
     0.0,
-    525.0,
+    513.0,
     925.0,
     555.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
-image_image_40 = PhotoImage(
-    file=relative_to_assets("Side1.png"))
-image_40 = canvas.create_image(
-    20.0,
-    270.0,
-    image=image_image_40
-)
-
-image_image_50 = PhotoImage(
-    file=relative_to_assets("Side2.png"))
-image_50 = canvas.create_image(
-    880.0,
-    294.0,
-    image=image_image_50
-)
-
 canvas.create_rectangle(
-    240.0,
+    0.0,
     0.0,
     957.0,
     36.0,
-    fill="#0c679b",
+    fill=transp_clr,
     outline="")
 
-image_image_60 = PhotoImage(
-    file=relative_to_assets("Bar1.png"))
-image_60 = canvas.create_image(
+image_40 = thesystem.system.side_bar("left_bar.png", (60, 490))
+canvas.create_image(50.0, 270.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (60, 490))
+canvas.create_image(900.0, 275.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
     478.0,
     21.0,
-    image=image_image_60
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_60, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_60, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_70 = PhotoImage(
-    file=relative_to_assets("Bar2.png"))
-image_70 = canvas.create_image(
+bottom_image = canvas.create_image(
     480.0,
     530.0,
-    image=image_image_70
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
 
 # ! ============================================================
 window.resizable(False, False)

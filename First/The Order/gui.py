@@ -8,10 +8,24 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import subprocess
+import threading
+import ujson
+import csv
+import sys
+import os
+import webbrowser
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+
+sys.path.insert(0, project_root)
+
+import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"D:\Projects\System_SL-main\First\The Order\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -19,10 +33,41 @@ def relative_to_assets(path: str) -> Path:
 
 
 window = Tk()
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
-window.geometry("371x510")
+initial_height = 0
+target_height = 510
+window_width = 371
+
+window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.make_window_transparent(window)
+thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
+thesystem.system.center_window(window,window_width,target_height)
+
 window.configure(bg = "#FFFFFF")
+window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
 
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = window.winfo_x() + deltax
+    y = window.winfo_y() + deltay
+    window.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+def ex_close(win):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, 0, window_width, step=30, delay=1)
 
 canvas = Canvas(
     window,
@@ -34,6 +79,41 @@ canvas = Canvas(
     relief = "ridge"
 )
 
+with open("Files/status.json", 'r') as fson:
+    data=ujson.load(fson)
+    stre=data["status"][0]['str']
+    intel=data["status"][0]['int']
+    agi=data["status"][0]['agi']
+    vit=data["status"][0]['vit']
+    per=data["status"][0]['per']
+    man=data["status"][0]['man']
+
+    full_point=stre+intel+agi+vit+per+man
+
+def finale():
+    stre=entry_1.get()
+    intel=entry_2.get()
+    agi=entry_3.get()
+    vit=entry_4.get()
+    per=entry_5.get()
+    man=entry_6.get()
+
+    try:
+        if full_point==(int(stre)+int(intel)+int(agi)+int(vit)+int(per)+int(man)):
+            data["status"][0]['str']=int(stre)
+            data["status"][0]['int']=int(intel)
+            data["status"][0]['agi']=int(agi)
+            data["status"][0]['vit']=int(vit)
+            data["status"][0]['per']=int(per)
+            data["status"][0]['man']=int(man)
+
+            with open("Files/status.json", 'w') as fson:
+                ujson.dump(data, fson, indent=6)
+
+            ex_close(window)
+    except:
+        pass
+
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
@@ -42,6 +122,11 @@ image_1 = canvas.create_image(
     413.0,
     image=image_image_1
 )
+
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"]["Video"]
+player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -73,7 +158,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=lambda: finale(),
     relief="flat"
 )
 button_1.place(
@@ -86,7 +171,7 @@ button_1.place(
 image_image_5 = PhotoImage(
     file=relative_to_assets("image_5.png"))
 image_5 = canvas.create_image(
-    87.0,
+    0.0,
     344.4087829589844,
     image=image_image_5
 )
@@ -102,10 +187,13 @@ image_6 = canvas.create_image(
 image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
-    318.0,
-    58.0,
+    270.0,
+    20.0,
     image=image_image_7
 )
+
+canvas.tag_bind(image_7, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_7, "<B1-Motion>", move_window)
 
 image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
@@ -121,7 +209,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: ex_close(window),
     relief="flat"
 )
 button_2.place(
@@ -135,7 +223,25 @@ canvas.create_text(
     64.0,
     124.0,
     anchor="nw",
-    text="Ensure that all points add up the below points or the Program will not Allow you to Change Points",
+    text="Ensure that all points add up to ",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 13 * -1)
+)
+
+canvas.create_text(
+    64.0,
+    140.0,
+    anchor="nw",
+    text="below points or the Program will",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 13 * -1)
+)
+
+canvas.create_text(
+    64.0,
+    156.0,
+    anchor="nw",
+    text="not Allow you to Change Points",
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )
@@ -144,7 +250,7 @@ canvas.create_text(
     64.0,
     193.0,
     anchor="nw",
-    text="Points Available: XXXXX",
+    text=f"Points Available: {full_point}",
     fill="#FFFFFF",
     font=("Montserrat Bold", 13 * -1)
 )
@@ -158,13 +264,6 @@ canvas.create_text(
     font=("Montserrat Bold", 13 * -1)
 )
 
-entry_image_1 = PhotoImage(
-    file=relative_to_assets("entry_1.png"))
-entry_bg_1 = canvas.create_image(
-    132.5,
-    244.0,
-    image=entry_image_1
-)
 entry_1 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -187,13 +286,6 @@ canvas.create_text(
     font=("Montserrat Bold", 13 * -1)
 )
 
-entry_image_2 = PhotoImage(
-    file=relative_to_assets("entry_2.png"))
-entry_bg_2 = canvas.create_image(
-    132.5,
-    269.0,
-    image=entry_image_2
-)
 entry_2 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -216,13 +308,6 @@ canvas.create_text(
     font=("Montserrat Bold", 13 * -1)
 )
 
-entry_image_3 = PhotoImage(
-    file=relative_to_assets("entry_3.png"))
-entry_bg_3 = canvas.create_image(
-    132.5,
-    293.0,
-    image=entry_image_3
-)
 entry_3 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -245,13 +330,7 @@ canvas.create_text(
     font=("Montserrat Bold", 13 * -1)
 )
 
-entry_image_4 = PhotoImage(
-    file=relative_to_assets("entry_4.png"))
-entry_bg_4 = canvas.create_image(
-    132.5,
-    318.0,
-    image=entry_image_4
-)
+
 entry_4 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -274,13 +353,7 @@ canvas.create_text(
     font=("Montserrat Bold", 13 * -1)
 )
 
-entry_image_5 = PhotoImage(
-    file=relative_to_assets("entry_5.png"))
-entry_bg_5 = canvas.create_image(
-    132.5,
-    343.0,
-    image=entry_image_5
-)
+
 entry_5 = Entry(
     bd=0,
     bg="#FFFFFF",
@@ -303,13 +376,7 @@ canvas.create_text(
     font=("Montserrat Bold", 13 * -1)
 )
 
-entry_image_6 = PhotoImage(
-    file=relative_to_assets("entry_6.png"))
-entry_bg_6 = canvas.create_image(
-    132.5,
-    367.0,
-    image=entry_image_6
-)
+
 entry_6 = Entry(
     bd=0,
     bg="#FFFFFF",

@@ -2,9 +2,9 @@
     "Jumping Jacks":[
         {
             "desc":"It is a physical jumping exercise performed by jumping to a position with the legs spread wide and the hands going overhead, sometimes in a clap, and then returning to a position with the feet together and the arms at the sides.",
-            "amt":50,
+            "time": 45,
 
-            "amtval":"Times",
+            "timeval":"Seconds",
             "type":"Common"
         },
         {
@@ -15,9 +15,9 @@
     "Skipping":[
         {
             "desc":"Skipping is a form of exercise that involves swinging a rope around your body and jumping over it as it passes under your feet",
-            "amt":50,
+            "time": 60,
 
-            "amtval":"Times",
+            "timeval":"Seconds",
             "type":"Common"
         },
         {
@@ -28,9 +28,9 @@
     "Windwill Toe Touch":[
         {
             "desc":"It involves standing on the toes and arms extended with palms facing forward, turning around to touch the opposite toe with the hand and then returning to the starting position.",
-            "amt":15,
+            "time": 45,
 
-            "amtval":"Times",
+            "timeval":"Seconds",
             "type":"Common"
         },
         {
@@ -41,22 +41,9 @@
     "Tuck Jumps":[
         {
             "desc":"It is a progression upon the bodyweight squat jump that entails a lifter to tuck their legs up into the chest once in flight, then fully place them back into the landing position each and every jump",
-            "amt":15,
+            "time": 45,
 
-            "amtval":"Times",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
-        }
-    ],
-
-    "Plank Shoulder Taps":[
-        {
-            "desc":"It involves holding a plank position while simultaneously tapping your opposite shoulders.",
-            "amt":15,
-
-            "amtval":"Pairs",
+            "timeval":"Seconds",
             "type":"Common"
         },
         {
@@ -77,38 +64,12 @@
         }
     ],
 
-    "Side Shuffle":[
+    "Quick Feet (Line Taps)":[
         {
-            "desc":"It involves moving side-to-side on one foot while maintaining a steady rhythm with your arms.",
-            "amt": 15,
+            "desc":"Mark a small line (a real or imaginary line). Step forward and back across the line as quickly as possible.",
+            "time": 45,
 
-            "amtval":"Pairs",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
-        }
-    ],
-
-    "Lateral Side step":[
-        {
-            "desc":"This exercise involves quickly stepping to the side while shifting your weight in the opposite direction. ",
-            "amt": 15,
-
-            "amtval":"Pairs",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
-        }
-    ],
-
-    "Shuttle Runs":[
-        {
-            "desc":"It involves starting a line and sprinting to the finish line and back.",
-            "amt": 15,
-
-            "amtval":"Laps",
+            "timeval":"Seconds",
             "type":"Common"
         },
         {

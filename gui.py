@@ -25,11 +25,11 @@ folder_name = "Demons Castle"
 
 # Create the folder
 
-if not os.path.exists(f"Files\\{folder_name}"):
-    os.makedirs(f"Files\\{folder_name}")
+if not os.path.exists(f"Files/{folder_name}"):
+    os.makedirs(f"Files/{folder_name}")
 
 
-file_path= r"Files\Data\Vow_status.json"
+file_path= r"Files/Data/Vow_status.json"
 
 if not os.path.exists(file_path):
     # Create the file
@@ -44,7 +44,7 @@ with open(file_path, 'r') as vow_file:
 thesystem.system.check_demons()
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 thing=txt='None'
 stop_thread = False  # Global flag to control the thread
@@ -85,35 +85,70 @@ def load_data():
 
 # Function to save the updated JSON data
 def save_data(data):
-    with open(r'Files\status.json', 'w') as file:
+    with open(r'Files/status.json', 'w') as file:
         json.dump(data, file, indent=4)
 
 # Function to reduce fatigue by 1% of fatigue_max every 3 minutes
 def reduce_fatigue():
     global stop_thread
     while not stop_thread:
-        data = load_data()
-        
-        # Access fatigue and fatigue_max for "Sung Jin-Woo"
-        character = data["status"][0]
-        fatigue = character.get("fatigue", 0)
-        fatigue_max = character.get("fatigue_max", 0)
-        
-        # Calculate the reduction amount (1% of fatigue_max, rounded to an integer)
-        reduction_amount = max(1, fatigue_max // 100)
-        
-        # Reduce fatigue, ensuring it doesn't go below zero
-        new_fatigue = max(0, fatigue - reduction_amount)
-        character["fatigue"] = new_fatigue
-        
-        # Save updated data
-        save_data(data)
-        
-        # Wait for 3 minutes, unless stop_thread is set to True
-        for _ in range(180):  # Loop with 1-second checks for faster stopping
-            if stop_thread:
-                return
-            time.sleep(1)
+        with open('Files/Skills/Skill.json', 'r') as skill_file:
+            skill_file_data = json.load(skill_file)
+            if "Quick Heal" in skill_file_data:
+    
+                skill_data = skill_file_data["Quick Heal"]
+                if isinstance(skill_data, list) and len(skill_data) > 0:
+                    lvl = skill_data[0].get("lvl", None)
+                    if lvl is not None:
+                        data = load_data()
+                        # Access fatigue and fatigue_max for "Sung Jin-Woo"
+                        character = data["status"][0]
+                        fatigue = character.get("fatigue", 0)
+                        fatigue_max = character.get("fatigue_max", 0)
+                        
+                        # Calculate the reduction amount (1% of fatigue_max, rounded to an integer)
+                        percent_to_remove_fatigue = 100 + lvl * 2
+                        print(percent_to_remove_fatigue)
+                        reduction_amount = max(fatigue_max // percent_to_remove_fatigue, 1)
+                        
+                        # Reduce fatigue, ensuring it doesn't go below zero
+                        new_fatigue = max(0, fatigue - reduction_amount)
+                        character["fatigue"] = new_fatigue
+                        
+                        # Save updated data
+                        save_data(data)
+                        time_between_fatigue = 180 / (lvl + 1)
+
+                        # Wait for 3 minutes, unless stop_thread is set to True
+                        for _ in range(int(time_between_fatigue)):  # Loop with 1-second checks for faster stopping
+                            if stop_thread:
+                                return
+                            time.sleep(1)
+
+            else:
+    
+                data = load_data()
+                
+                # Access fatigue and fatigue_max for "Sung Jin-Woo"
+                character = data["status"][0]
+                fatigue = character.get("fatigue", 0)
+                fatigue_max = character.get("fatigue_max", 0)
+                
+                # Calculate the reduction amount (1% of fatigue_max, rounded to an integer)
+                reduction_amount = max(1, fatigue_max // 100)
+                
+                # Reduce fatigue, ensuring it doesn't go below zero
+                new_fatigue = max(0, fatigue - reduction_amount)
+                character["fatigue"] = new_fatigue
+                
+                # Save updated data
+                save_data(data)
+                
+                # Wait for 3 minutes, unless stop_thread is set to True
+                for _ in range(180):  # Loop with 1-second checks for faster stopping
+                    if stop_thread:
+                        return
+                    time.sleep(1)
 
 def read_cal_thread():
     while True:
@@ -123,7 +158,7 @@ def read_cal_thread():
         time.sleep(sleep_time)
 
 def read_cal(eve=0):
-    with open(r"Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
+    with open(r"Files/Data/Calorie_Count.json", 'r') as calorie_add_file:
         calorie_add_data=json.load(calorie_add_file)
         calorie_add_key=list(calorie_add_data.keys())[0]
 
@@ -144,7 +179,7 @@ def read_cal(eve=0):
         today = datetime.now().strftime("%A")
     
         # Read the JSON file
-        with open(r"Files\Workout\Cal_Count.json", "r") as file:
+        with open(r"Files/Workout/Cal_Count.json", "r") as file:
             daily_calories = json.load(file)
         
         # Return the calories for today
@@ -157,7 +192,7 @@ def read_cal(eve=0):
 
     else:
         new_data={formatted_date:[0]}
-        with open(r"Files\Data\Calorie_Count.json", 'w') as calorie_add_file_write:
+        with open(r"Files/Data/Calorie_Count.json", 'w') as calorie_add_file_write:
             json.dump(new_data, calorie_add_file_write, indent=4)
         read_cal()
 
@@ -180,7 +215,7 @@ def unhide_line(s):
     pause_thread()
 
 def unhide_lines():
-    txt="LINE - 1\nLINE - 2\nLINE - 3"
+    txt="LINE - 1/nLINE - 2/nLINE - 3"
     canvas.itemconfig(line_txt, text=txt)
     canvas.itemconfig("text0", state="normal")
     canvas.itemconfig("tex2", state="normal")
@@ -188,7 +223,7 @@ def unhide_lines():
 
 def timer_func():
     date_format = "%Y-%m-%d"
-    with open(r"Files\Temp Files\Job_Change Date.csv", 'r') as time_open_csv_file:
+    with open(r"Files/Temp Files/Job_Change Date.csv", 'r') as time_open_csv_file:
         fr=csv.reader(time_open_csv_file)
         for k in fr:
             end_time_str=k[0]
@@ -219,7 +254,7 @@ def timer_func():
 def give_job():
     canvas.itemconfig("job", state='hidden')
     stop_event1.set()
-    with open(r"Files\Data\Job_info.json", 'r') as fson:
+    with open(r"Files/Data/Job_info.json", 'r') as fson:
         data=json.load(fson)
         data["status"][0]['job_confirm']='True'
 
@@ -233,7 +268,7 @@ def give_job():
     ability_dict={"STR":a1, "INT":a2, "AGI":a3, "VIT":a4, "PER":a5, "MAN":a6}
     abi=max(ability_dict)
 
-    with open(r"Files\Data\Job_info.json", 'w') as stfson:
+    with open(r"Files/Data/Job_info.json", 'w') as stfson:
         json.dump(data, stfson, indent=4)
 
     if abi=="STR":
@@ -251,7 +286,7 @@ def give_job():
 
 def check_for_job():
     while not stop_event1.is_set():
-        with open(r"Files\Data\Job_info.json", 'r') as fson:
+        with open(r"Files/Data/Job_info.json", 'r') as fson:
             data=json.load(fson)
         job_check=data["status"][0]['job_active']
         job_confim=data["status"][0]['job_confirm']
@@ -288,7 +323,7 @@ def code_final(event):
     et5=entry_5.get()
 
     if et1=='A' and et2=='R' and et3=='1' and et4=='5' and et5=='E':
-        with open(r"Files\Titles\Titles.json", 'r') as fson:
+        with open(r"Files/Titles/Titles.json", 'r') as fson:
             data=json.load(fson)
             data["False Ranker"]={"Statbuff":10,"Rank":"?"}
 
@@ -298,11 +333,11 @@ def code_final(event):
         thesystem.system.message_open("Access Code Complete")
 
     elif et1=='I' and et2=='M' and et3=='G' and et4=='O' and et5=='D':
-        with open(r"Files\Titles\Titles.json", 'r') as fson:
+        with open(r"Files/Titles/Titles.json", 'r') as fson:
             data=json.load(fson)
             data["One Above All"]={"Statbuff":50,"Rank":"?"}
 
-        with open(r"Files\Titles\Titles.json", 'w') as final_title_import:
+        with open(r"Files/Titles/Titles.json", 'w') as final_title_import:
             json.dump(data, final_title_import, indent=4)
 
         fout=open('Files/Temp Files/Inventory temp.csv', 'w', newline='')
@@ -330,7 +365,7 @@ def update_sys(eve):
         window.quit()
 
 def open_cal(eve):
-    with open(r'Files\Data\Theme_Check.json', 'r') as themefile:
+    with open(r'Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=json.load(themefile)
         theme=theme_data["Theme"]
 
@@ -343,7 +378,7 @@ def open_cal(eve):
             tab_son_data["Calories"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
     
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
     subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
 
 window = Tk()
@@ -407,7 +442,7 @@ with open(r'Files/Data/Theme_Check.json', 'r') as themefile:
     theme_data=json.load(themefile)
     theme=theme_data["Theme"]
 
-with open(r"Files\status.json", 'r') as fson:
+with open(r"Files/status.json", 'r') as fson:
     data=json.load(fson)
     name=data["status"][0]['name'].upper()
     # ? =================================================
@@ -438,7 +473,7 @@ def open_dungeon(event):
         theme_data=json.load(themefile)
         theme=theme_data["Theme"]
 
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
     with open("Files/Tabs.json",'r') as tab_son:
         tab_son_data=json.load(tab_son)
@@ -457,7 +492,7 @@ def open_requests(event):
         theme_data=json.load(themefile)
         theme=theme_data["Theme"] 
 
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
     with open("Files/Tabs.json",'r') as tab_son:
         tab_son_data=json.load(tab_son)
@@ -478,7 +513,7 @@ def settings_open(event):
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
         inv_name=f"{theme} Version/Settings/gui.py"
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
         subprocess.Popen(['python', inv_name])
 
 def castle_open(event):
@@ -496,7 +531,7 @@ def castle_open(event):
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
         inv_name=f"{theme} Version/Demon Castle/gui.py"
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
         subprocess.Popen(['python', inv_name])
 
 # ? =====================================================================
@@ -593,7 +628,7 @@ line_txt=canvas.create_text(
     11.0,
     55.0,
     anchor="nw",
-    text="LINE - 1\nLINE - 2\nLINE - 3",
+    text="LINE - 1/nLINE - 2/nLINE - 3",
     fill="#000000",
     font=("MontserratItalic Medium", 10 * -1),
     tags="text1",
@@ -627,7 +662,7 @@ canvas.create_rectangle(
     259.0,
     133.0,
     425.0,
-    460.0,
+    500.0,
     fill="#1A1A1A",
     outline="",
     tags="bar",
@@ -657,10 +692,10 @@ def inv_open(event):
             tab_son_data["Inventory"]='Open'
             json.dump(tab_son_data,fin_tab_son,indent=4)
 
-        inv_name=rf"{theme} Version\Inventory\gui.py"
+        inv_name=rf"{theme} Version/Inventory/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_5, "<ButtonPress-1>", inv_open)
 
@@ -691,7 +726,7 @@ def daily_open(event):
         inv_name=f"{theme} Version/Daily Quest/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
 
@@ -722,7 +757,7 @@ def quest_open(event):
         inv_name=f"{theme} Version/Quests/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_7, "<ButtonPress-1>", quest_open)
 
@@ -753,7 +788,7 @@ def skill_open(event):
         inv_name=f"{theme} Version/Skills Tab/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_8, "<ButtonPress-1>", skill_open)
 
@@ -783,8 +818,9 @@ def status_open(event):
 
         inv_name=f"{theme} Version/Status Tab/gui.py"
         subprocess.Popen(['python', inv_name])
+        subprocess.Popen(['python', "Files/supabaseedit.py"])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_9, "<ButtonPress-1>", status_open)
 
@@ -815,7 +851,7 @@ def equip_open(event):
         inv_name=f"{theme} Version/Equipment/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_10, "<ButtonPress-1>", equip_open)
 
@@ -846,7 +882,7 @@ def leader_open(event):
         inv_name=f"{theme} Version/Leaderboard/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
         
 canvas.tag_bind(image_23, "<ButtonPress-1>", leader_open)
 
@@ -868,7 +904,7 @@ def shop_open(event):
         inv_name=f"{theme} Version/Shop/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_11, "<ButtonPress-1>", shop_open)
 
@@ -876,14 +912,14 @@ image_image_12 = PhotoImage(
     file=relative_to_assets("image_12.png"))
 image_12 = canvas.create_image(
     364.0,
-    425.0,
+    470.0,
     image=image_image_12,
     tags="bar",
     state="hidden"
 )
 
 def close_full(event):
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
     stop_event.set()
     stop_event0.set()
     stop_event1.set()
@@ -897,7 +933,7 @@ def close_full(event):
     thread0.join()
     stop_fatigue_thread()
 
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_close.py'])
     sys.exit()
 
 canvas.tag_bind(image_12, "<ButtonPress-1>", close_full)
@@ -977,7 +1013,7 @@ image_16 = canvas.create_image(
 )
 
 def hide(event):
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
     entry_1.place_forget()
     entry_2.place_forget()
     entry_3.place_forget()
@@ -992,7 +1028,7 @@ def hide(event):
         print('', end='')
 
 def show(event):
-    subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+    subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
     global entry_1
     global entry_2
     global entry_3
@@ -1227,10 +1263,30 @@ def messagesopen(event):
         inv_name=f"{theme} Version/PVP Messages/gui.py"
         subprocess.Popen(['python', inv_name])
         window.after(100)
-        subprocess.Popen(['python', r'Files\Mod\default\sfx_button.py'])
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
 
 canvas.tag_bind(image_22, "<ButtonPress-1>", messagesopen)
 
+image_image_123 = PhotoImage(
+    file=relative_to_assets("image_232.png"))
+image_123 = canvas.create_image(
+    332.0,
+    430.0,
+    image=image_image_123,
+    tags="bar",
+    state="hidden"
+)
+
+def guild_menu_open(event):
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        theme_data=json.load(themefile)
+        theme=theme_data["Theme"]
+        inv_name=f"{theme} Version/Guild Menu/gui.py"
+        subprocess.Popen(['python', inv_name])
+        window.after(100)
+        subprocess.Popen(['python', r'Files/Mod/default/sfx_button.py'])
+
+canvas.tag_bind(image_123, "<ButtonPress-1>", guild_menu_open)
 
 image_image_19 = PhotoImage(
     file=relative_to_assets("image_19.png"))

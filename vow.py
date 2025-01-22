@@ -3,45 +3,17 @@ import os
 import subprocess
 import time
 import thesystem.system
+import sys
+from datetime import datetime, timedelta
+
+
+
 
 
 SESSION_FILE_PATH = "Files/Data/session.json"
 
-def load_session_from_file():
-    try:
-        if os.path.exists(SESSION_FILE_PATH) and os.path.getsize(SESSION_FILE_PATH) > 0:
-            with open(SESSION_FILE_PATH, 'r') as f:
-                session_data = json.load(f)
-                required_keys = ["access_token", "refresh_token", "expires_at"]
-                
-                # Ensure the required keys are present
-                if all(key in session_data for key in required_keys):
-                    # Check if the token has expired
-                    current_time = time.time()
-                    if current_time < session_data["expires_at"]:
-                        # Token is valid; proceed with the GUI
-                        print("Session is valid. Launching GUI...")
-                        subprocess.Popen(["python", "gui.py"])
-                        exit()
-                    else:
-                        # Token expired; refresh it
-                        print("Token has expired. Attempting to refresh...")
-                        if refresh_token(session_data):
-                            subprocess.Popen(["python", "gui.py"])
-                            exit()
-                        else:
-                            print("Failed to refresh token. Opening sign-in page...")
-                else:
-                    print("Invalid session structure in file.")
-        else:
-            print(f"Session file is empty or missing: {SESSION_FILE_PATH}.")
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error loading session file: {e}")
 
-    # If the session is invalid or file is empty, open sign_in.py
-    print("Opening sign_in.py...")
-    subprocess.Popen(["python", "Logs/Start/gui.py"])
-    exit()
+
 def refresh_token(session_data):
     """Attempt to refresh the access token using the refresh token."""
     try:
@@ -69,6 +41,47 @@ def refresh_token(session_data):
     except Exception as e:
         print(f"Error refreshing token: {e}")
         return False
+    
+def load_session_from_file():
+    try:
+        if os.path.exists(SESSION_FILE_PATH) and os.path.getsize(SESSION_FILE_PATH) > 0:
+            with open(SESSION_FILE_PATH, 'r') as f:
+                session_data = json.load(f)
+                
+                required_keys = ["access_token", "refresh_token", "expires_in"]
+                if all(key in session_data for key in required_keys):
+                    # Calculate expires_at if missing
+                    if "expires_in" not in session_data:
+                        expires_at = datetime.now() + timedelta(seconds=session_data["expires_in"])
+                        session_data["expires_in"] = expires_at.timestamp()  # Store as a timestamp
+                    
+                    # Check if the token has expired
+                    current_time = datetime.now().timestamp()
+                    if session_data["expires_in"] > current_time:
+                        subprocess.Popen(["python", "gui.py"])
+                        sys.exit()  # Exit this script after launching GUI
+                    else:
+                        print("Token has expired. Attempting to refresh...")
+                        if refresh_token(session_data):
+                            print("Token refreshed successfully. Launching GUI...")
+                            subprocess.Popen(["python", "gui.py"])
+                            sys.exit()
+                        else:
+                            print("Failed to refresh token. Opening sign-in page...")
+                else:
+                    print("Invalid session structure in file.")
+        else:
+            print(f"Session file is empty or missing: {SESSION_FILE_PATH}.")
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Error loading session file: {e}")
+
+
+    # If the session is invalid or file is empty, open sign_in.py
+    subprocess.Popen(["python", "Logs/Start/gui.py"])  # Replace with the correct path to sign_in.py
+    sys.exit()
+
+# Call the function to test it
+
 
 def save_session_to_json(file_path, session_data):
     """Save session data to a JSON file."""
@@ -93,7 +106,6 @@ except:
 
 if vow==False:
     load_session_from_file()
-
 
 else:
     thesystem.system.message_open("System Deleted")

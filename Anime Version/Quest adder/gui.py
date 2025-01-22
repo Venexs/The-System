@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import json
+import ujson
 import csv
 import cv2
 from PIL import Image, ImageTk
@@ -23,6 +23,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.quests
 import thesystem.system
 
 subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
@@ -90,7 +91,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 278.0)
 
@@ -262,7 +263,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window),
+    command=lambda: thesystem.quests.quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window),
     relief="flat"
 )
 button_1.place(

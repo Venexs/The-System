@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import random
@@ -80,7 +80,7 @@ lvl1=lvl2=lvl3=lvl4=lvl5=lvl6='??'
 with open("Files\Skills\Skill.json", 'r') as fson:
     c=0
     try:
-        data=json.load(fson)
+        data=ujson.load(fson)
         data_key=list(data.keys())
         for k in data_key:
             if data[k][0]["type"]=='Passive':
@@ -143,7 +143,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 250.0, 150.0)
 
@@ -177,7 +177,7 @@ canvas.create_text(
     anchor="nw",
     text=name6,
     fill="#FFD337",
-    font=("ExoRoman Regular", 18 * -1)
+    font=("Exo Regular", 18 * -1)
 )
 
 canvas.create_text(
@@ -186,7 +186,7 @@ canvas.create_text(
     anchor="nw",
     text=f"Lvl.{lvl6}",
     fill="#FFD337",
-    font=("ExoRoman Medium", 18 * -1)
+    font=("Exo Medium", 18 * -1)
 )
 
 button_image_1 = PhotoImage(
@@ -219,7 +219,7 @@ canvas.create_text(
     anchor="nw",
     text=name5,
     fill="#FFD337",
-    font=("ExoRoman Regular", 18 * -1)
+    font=("Exo Regular", 18 * -1)
 )
 
 canvas.create_text(
@@ -228,7 +228,7 @@ canvas.create_text(
     anchor="nw",
     text=f"Lvl.{lvl5}",
     fill="#FFD337",
-    font=("ExoRoman Medium", 18 * -1)
+    font=("Exo Medium", 18 * -1)
 )
 
 button_image_2 = PhotoImage(
@@ -261,7 +261,7 @@ canvas.create_text(
     anchor="nw",
     text=name4,
     fill="#FFD337",
-    font=("ExoRoman Regular", 18 * -1)
+    font=("Exo Regular", 18 * -1)
 )
 
 canvas.create_text(
@@ -270,7 +270,7 @@ canvas.create_text(
     anchor="nw",
     text=f"Lvl.{lvl4}",
     fill="#FFD337",
-    font=("ExoRoman Medium", 18 * -1)
+    font=("Exo Medium", 18 * -1)
 )
 
 button_image_3 = PhotoImage(
@@ -303,7 +303,7 @@ canvas.create_text(
     anchor="nw",
     text=name3,
     fill="#FFD337",
-    font=("ExoRoman Regular", 18 * -1)
+    font=("Exo Regular", 18 * -1)
 )
 
 canvas.create_text(
@@ -312,7 +312,7 @@ canvas.create_text(
     anchor="nw",
     text=f"Lvl.{lvl3}",
     fill="#FFD337",
-    font=("ExoRoman Medium", 18 * -1)
+    font=("Exo Medium", 18 * -1)
 )
 
 button_image_4 = PhotoImage(
@@ -345,7 +345,7 @@ canvas.create_text(
     anchor="nw",
     text=name2,
     fill="#FFD337",
-    font=("ExoRoman Regular", 18 * -1)
+    font=("Exo Regular", 18 * -1)
 )
 
 canvas.create_text(
@@ -354,7 +354,7 @@ canvas.create_text(
     anchor="nw",
     text=f"Lvl.{lvl2}",
     fill="#FFD337",
-    font=("ExoRoman Medium", 18 * -1)
+    font=("Exo Medium", 18 * -1)
 )
 
 button_image_5 = PhotoImage(
@@ -387,7 +387,7 @@ canvas.create_text(
     anchor="nw",
     text=name1,
     fill="#FFD337",
-    font=("ExoRoman Regular", 18 * -1)
+    font=("Exo Regular", 18 * -1)
 )
 
 canvas.create_text(
@@ -396,7 +396,7 @@ canvas.create_text(
     anchor="nw",
     text=f"Lvl.{lvl1}",
     fill="#FFD337",
-    font=("ExoRoman Medium", 18 * -1)
+    font=("Exo Medium", 18 * -1)
 )
 
 button_image_6 = PhotoImage(

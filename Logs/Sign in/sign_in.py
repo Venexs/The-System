@@ -7,19 +7,28 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label
 import subprocess
 import threading
+import random
 import cv2
-from PIL import Image, ImageTk
 import json
+from PIL import Image, ImageTk
 import time
+import csv
 import sys
 import os
-from supabase import create_client, Client
-import asyncio
-from dotenv import load_dotenv, set_key
+from supabase import create_client
 from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+
+sys.path.insert(0, project_root)
+
+import thesystem.online
+import thesystem.system
 
 client = InfisicalClient(ClientSettings(
     auth=AuthenticationOptions(
@@ -29,22 +38,6 @@ client = InfisicalClient(ClientSettings(
         )
     )
 ))
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-project_root = os.path.abspath(os.path.join(current_dir, '../../'))
-
-sys.path.insert(0, project_root)
-
-import thesystem.system
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
-
-
-def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
 
 
 def get_url():
@@ -64,29 +57,53 @@ def get_key():
     ))
     return f"{name.secret_value}"
 
+URL = "https://smewvswweqnpwzngdtco.supabase.co"
+KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
 
-URL = get_url()
-KEY = get_key()
+supabase = create_client(URL, KEY)
 
-supabase: Client = create_client(URL, KEY)
+SESSION_FILE = "Files/Data/session.json"
 
-window = Tk()
+def load_session():
+    """Load session data from the session file."""
+    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
+        with open(SESSION_FILE, "r") as f:
+            session_data = json.load(f)
+            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
+                return session_data
 
-initial_height = 0
-initial_width = 0
-target_height = 431
-window_width = 712
+session = load_session()
 
-thesystem.system.make_window_transparent(window)
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-window.geometry(f"{initial_width}x{initial_height}")
-thesystem.system.animate_window_open_middle(window, target_height, window_width, step=20, delay=1)
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
-thesystem.system.center_window(window,window_width,target_height)
-window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
-window.overrideredirect(True)
-window.wm_attributes("-topmost", True)
+sys.path.insert(0, project_root)
+
+import thesystem.online
+import thesystem.system
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
+
+
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
+
+def make_window_transparent(window):
+    window.wm_attributes('-transparentcolor', "#0C679B")
+
+def center_window(root, width, height):
+    # Get screen width and height
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    
+    # Calculate position x, y to center the window
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    
+    # Set the dimensions of the window and the position
+    root.geometry(f'{width}x{height}+{x}+{y}')
 
 def start_move(event):
     global lastx, lasty
@@ -104,16 +121,36 @@ def move_window(event):
     lasty = event.y_root
 
 
-def ex_close(win):
+def ex_close(eve):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
+    
+
+
+window = Tk()
+
+initial_height = 0
+target_height = 592
+window_width = 934
+
+window.geometry(f"{window_width}x{initial_height}")
+thesystem.system.animate_window_open(window, target_height, window_width, step=60, delay=1)
+
+#center_window(window,window_width,target_height)
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
+window.configure(bg = "#FFFFFF")
+window.attributes('-alpha',0.8)
+window.overrideredirect(True)
+window.wm_attributes("-topmost", True)
+make_window_transparent(window)
 
 canvas = Canvas(
     window,
-    bg = "#0678FF",
-    height = 432,
-    width = 712,
+    bg = "#FFFFFF",
+    height = 592,
+    width = 934,
     bd = 0,
     highlightthickness = 0,
     relief = "ridge"
@@ -123,61 +160,126 @@ canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    356.0,
-    216.0,
+    731.0,
+    384.0,
     image=image_image_1
 )
+
+with open("Files/Mod/presets.json", 'r') as pres_file:
+    pres_file_data=json.load(pres_file)
+    video_path=pres_file_data["Anime"]["Video"]
+player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
-    356.0,
-    216.0,
+    471.0,
+    308.0,
     image=image_image_2
 )
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
-    356.0,
-    241.0,
+    236.0,
+    113.0,
     image=image_image_3
 )
 
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    356.0,
-    68.0,
-    image=image_image_5
+user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
+
+
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+button_1 = Button(
+    image=button_image_1,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_1.place(
+    x=759.0,
+    y=73.0,
+    width=25.0,
+    height=25.0
 )
 
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    356.0,
-    142.0,
-    image=image_image_6
-)
+canvas.create_rectangle(
+    33.0,
+    7.0,
+    906.0,
+    45.0,
+    fill="#333333",
+    outline="")
 
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_11.png"))
-image_11 = canvas.create_image(
-    356.0,
-    20.0,
-    image=image_image_11
-)
+canvas.create_rectangle(
+    0.0,
+    0.0,
+    336.0,
+    50.0,
+    fill="#0C679B",
+    outline="")
 
-canvas.tag_bind(image_11, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_11, "<B1-Motion>", move_window)
+canvas.create_rectangle(
+    0.0,
+    541.0,
+    934.0,
+    592.0,
+    fill="#0C679B",
+    outline="")
 
 image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
-    162.0,
-    178.0,
+    70.0,
+    313.0,
     image=image_image_8
+)
+
+image_image_9 = PhotoImage(
+    file=relative_to_assets("image_9.png"))
+image_9 = canvas.create_image(
+    865.0,
+    325.0,
+    image=image_image_9
+)
+
+canvas.create_rectangle(
+    235.0,
+    0.0,
+    934.0,
+    69.0,
+    fill="#0C679B",
+    outline="")
+
+image_image_10 = PhotoImage(
+    file=relative_to_assets("image_10.png"))
+image_10 = canvas.create_image(
+    452.0,
+    47.0,
+    image=image_image_10
+)
+
+canvas.tag_bind(image_10, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_10, "<B1-Motion>", move_window)
+
+image_image_11 = PhotoImage(
+    file=relative_to_assets("image_11.png"))
+image_11 = canvas.create_image(
+    458.0,
+    556.0,
+    image=image_image_11
+)
+
+
+image_image_28 = PhotoImage(
+    file=relative_to_assets("image_28.png"))
+image_28 = canvas.create_image(
+    233.0,
+    178.0,
+    image=image_image_28
 )
 
 entry_1 = Entry(
@@ -187,28 +289,22 @@ entry_1 = Entry(
     highlightthickness=0
 )
 entry_1.place(
-    x=133.0,
+    x=233.0,
     y=194.0,
     width=427.0,
     height=23.0
 )
 
 
-image_image_10 = PhotoImage(
-    file=relative_to_assets("image_10.png"))
-image_10 = canvas.create_image(
-    180.0,
-    292.0,
-    image=image_image_10
+
+image_image_30 = PhotoImage(
+    file=relative_to_assets("image_30.png"))
+image_30 = canvas.create_image(
+    250.0,
+    280.0,
+    image=image_image_30
 )
 
-entry_image_3 = PhotoImage(
-    file=relative_to_assets("entry_3.png"))
-entry_bg_3 = canvas.create_image(
-    346.5,
-    320.5,
-    image=entry_image_3
-)
 entry_3 = Entry(
     bd=0,
     bg="#D9D9D9",
@@ -216,11 +312,12 @@ entry_3 = Entry(
     highlightthickness=0
 )
 entry_3.place(
-    x=133.0,
+    x=233.0,
     y=308.0,
     width=427.0,
     height=23.0
 )
+
 
 
 SESSION_FILE = "Files/Data/session.json"
@@ -242,7 +339,6 @@ def load_session_from_file():
         print(f"No session file found at {SESSION_FILE}")
     return None
 
-# Sign-in function
 def Signin():
     email = entry_1.get()
     password = entry_3.get()
@@ -268,67 +364,40 @@ def Signin():
             print("Sign-in failed.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-def CallSignIn():
-    Signin()
-    
-    
-    
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-
-# Create the button
-button = Button(
-    image=image_image_7, 
-    borderwidth=0, 
-    highlightthickness=0,
-    command=CallSignIn
-)
-
-button.place(x=150.0, y=356.0) 
-
-
-button_image_20 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_20 = Button(
-    image=button_image_20,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: ex_close(window),
-    relief="flat"
-)
-button_20.place(
-    x=655.0,
-    y=35.0,
-    width=21.20473861694336,
-    height=24.221660614013672
-)
 
 def SignUp():
     subprocess.Popen(["python", "Logs/Sign up/gui.py"])
     ex_close(window)
 
-image_image_12 = PhotoImage(
-    file=relative_to_assets("image_12.png"))
+
+image_image_57 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+
 # Create the button
 button = Button(
-    image=image_image_12, 
+    image=image_image_57, 
     borderwidth=0, 
     highlightthickness=0,
+    bg="#0C679B",
+    command=Signin
+)
+
+button.place(x=233.0, y=356.0) 
+
+
+button_image_3 = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+
+# Create the button
+button1 = Button(
+    image=button_image_3, 
+    borderwidth=0, 
+    highlightthickness=0,
+    bg="#0C679B",
     command=SignUp
 )
 
-button.place(x=400.0, y=356.0) 
-
-
-
-
-
-
-
-
-
-
-
+button1.place(x=440.0, y=356.0) 
 
 
 

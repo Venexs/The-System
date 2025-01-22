@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import json
+import ujson
 import csv
 import subprocess
 import random
@@ -24,8 +24,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -60,31 +58,54 @@ initial_height = 0
 target_height = 239
 window_width = 741
 
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
+thesystem.system.make_window_transparent(window, transp_clr)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
+bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (1120, 47))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1053, 43))
+
+subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
 def complete():
     with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
-        ability_check_file_data=json.load(ability_check_file)
+        ability_check_file_data=ujson.load(ability_check_file)
     
     with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
-        json.dump(ability_check_file_data, fin_ability_check_file, indent=4)
+        ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
     with open("Files/Data/Job_info.json", 'r') as stat_fson:
-        stat_data=json.load(stat_fson)
+        stat_data=ujson.load(stat_fson)
 
     stat_data["status"][1][abi]+=1
     with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
-        json.dump(stat_data, final_stat_fson, indent=4)
+        ujson.dump(stat_data, final_stat_fson, indent=4)
     
     with open("Files/status.json", 'r') as fson:
-        data=json.load(fson)
+        data=ujson.load(fson)
         abi_l=abi.lower()
 
         if abi_l in ["str",'vit','agi']:
@@ -95,9 +116,8 @@ def complete():
         data["avail_eq"][0][abi_2]-=1
 
     with open("Files/status.json", 'w') as fin_fson:
-        json.dump(data, fin_fson, indent=4)
+        ujson.dump(data, fin_fson, indent=4)
     ex_close(window)
-
 
 with open("Files/Temp Files/Urgent Temp.csv", 'r') as urgent_file:
     fr=csv.reader(urgent_file)
@@ -110,7 +130,7 @@ segment_length = 77
 
 file_name=f"Files\Workout\{abi}_based.json"
 with open(file_name, 'r') as workout_file:
-    workout_file_data=json.load(workout_file)
+    workout_file_data=ujson.load(workout_file)
     workout_file_list=list(workout_file_data.keys())
 
     name=random.choice(workout_file_list)
@@ -154,6 +174,11 @@ with open(file_name, 'r') as workout_file:
             amt1=workout_file_data[name][0]["amt"]
             amt1_val=workout_file_data[name][0]["amtval"]
 
+new_abi=abi
+
+if abi =='MAN':
+    new_abi="CMD"
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -174,8 +199,8 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
+    pres_file_data=ujson.load(pres_file)
+    video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 213.0)
 
 image_image_2 = PhotoImage(
@@ -190,13 +215,13 @@ image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
     378.0,
-    37.0,
+    55.0,
     image=image_image_3
 )
 
 canvas.create_text(
     45.0,
-    62.0,
+    62.0+10,
     anchor="nw",
     text="Do the below mentioned exercise for as much as it is mentioned within the time-limit ",
     fill="#FFFFFF",
@@ -205,16 +230,16 @@ canvas.create_text(
 
 canvas.create_text(
     45.0,
-    81.0,
+    81.0+10,
     anchor="nw",
-    text=f"to increase the {abi} ability",
+    text=f"to increase the {new_abi} ability",
     fill="#FFFFFF",
     font=("Montserrat Regular", 15 * -1)
 )
 
 canvas.create_text(
     45.0,
-    101.0,
+    101.0+10,
     anchor="nw",
     text=f"[{name}]",
     fill="#FFFFFF",
@@ -224,7 +249,7 @@ canvas.create_text(
 if one_check==True and both_check==False:
     canvas.create_text(
         45.0,
-        130.0,
+        130.0+10,
         anchor="nw",
         text=f"For, {amt1} {amt1_val}",
         fill="#FFFFFF",
@@ -234,7 +259,7 @@ if one_check==True and both_check==False:
 elif time_check==True and both_check==False:
     canvas.create_text(
         45.0,
-        130.0,
+        130.0+10,
         anchor="nw",
         text=f"For, {amt2} {amt2_val}",
         fill="#FFFFFF",
@@ -244,7 +269,7 @@ elif time_check==True and both_check==False:
 elif both_check==True:
     canvas.create_text(
         45.0,
-        130.0,
+        130.0+10,
         anchor="nw",
         text=f"For, {amt1} {amt1_val}",
         fill="#FFFFFF",
@@ -252,7 +277,7 @@ elif both_check==True:
     )
     canvas.create_text(
         225.0,
-        130.0,
+        130.0+10,
         anchor="nw",
         text=f"And for {amt2} {amt2_val}",
         fill="#FFFFFF",
@@ -261,7 +286,7 @@ elif both_check==True:
 
 canvas.create_text(
     45.0,
-    151.0,
+    151.0+10,
     anchor="nw",
     text=desc1,
     fill="#FFFFFF",
@@ -270,7 +295,7 @@ canvas.create_text(
 
 canvas.create_text(
     45.0,
-    165.0,
+    165.0+10,
     anchor="nw",
     text=desc2,
     fill="#FFFFFF",
@@ -279,7 +304,7 @@ canvas.create_text(
 
 canvas.create_text(
     45.0,
-    179.0,
+    179.0+10,
     anchor="nw",
     text=desc3,
     fill="#FFFFFF",
@@ -297,22 +322,75 @@ button_1 = Button(
 )
 button_1.place(
     x=551.0,
-    y=207.0,
+    y=190.0,
     width=137.0,
     height=19.0
 )
 
-imag0=canvas.create_rectangle(
+side = PhotoImage(file=relative_to_assets("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=relative_to_assets("purple.png"))
+canvas.create_image(-5.0, 180.0, image=side)
+canvas.create_image(737.0, 196.0, image=side)
+
+canvas.create_rectangle(
     0.0,
-    0.0,
-    804.0,
-    20.0,
-    fill="#262626",
+    -30.0,
+    957.0,
+    30.0,
+    fill=transp_clr,
     outline="")
 
-canvas.tag_bind(imag0, "<ButtonPress-1>", start_move)
-canvas.tag_bind(imag0, "<B1-Motion>", move_window)
+canvas.create_rectangle(
+    0.0,
+    233.0,
+    925.0,
+    555.0,
+    fill=transp_clr,
+    outline="")
 
+image_40 = thesystem.system.side_bar("left_bar.png", (50, 230))
+canvas.create_image(14.0, 130.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (50, 230))
+canvas.create_image(710.0, 140.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
+    510.0,
+    15.0,
+    image=top_preloaded_images[image_index]
+)
+
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
+
+bottom_image = canvas.create_image(
+    500.0,
+    233.0,
+    image=bottom_preloaded_images[bot_image_index]
+)
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+update_images()
 button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
 button_2 = Button(
@@ -324,7 +402,7 @@ button_2 = Button(
 )
 button_2.place(
     x=660.0,
-    y=25.0,
+    y=40.0,
     width=28.0,
     height=28.0
 )

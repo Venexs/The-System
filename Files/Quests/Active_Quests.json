@@ -1,89 +1,134 @@
 {
-      "Courage of the Weak": [
+      "What is light with the Dark": [
             {
-                  "ID": 0,
-                  "obj": "Become a Player",
-                  "rank": "?",
-                  "type": "Unknown",
-                  "desc": "Quest given by [Unknown]",
-                  "Rewards": {
-                        "LVLADD": 10
-                  }
-            }
-      ],
-      "Fight. Just Fight": [
-            {
-                  "desc": "An elder delivers a bundle of scrolls, each containing instructions",
-                  "amt": 30,
-                  "amtval": "Pairs",
-                  "type": "Common",
-                  "rank": "C",
-                  "ID": 82373,
-                  "Rewards": {
-                        "Coin Bag 5000": 1,
-                        "Coin Bag 2000": 1
-                  },
-                  "skill": "Jumping Jacks"
-            }
-      ],
-      "To know all is to control all": [
-            {
-                  "desc": "A commander shares a list of exercise, these will prove to be useful in the upcoming campaign",
+                  "desc": "You have given a mission by the organization.",
                   "amt": 3,
-                  "amtval": "Book",
-                  "type": "Learn",
-                  "obj_desc": "Read a biography of a renowned leader",
-                  "rank": "C",
-                  "ID": 726002,
-                  "Rewards": {
-                        "Coin Bag 5000": 1,
-                        "Coin Bag 2000": 1
-                  },
-                  "skill": "Read Biographies"
-            }
-      ],
-      "Time to make some Miracles": [
-            {
-                  "desc": "A Challenger dared you to do complete these objectives",
-                  "amt": 3,
-                  "amtval": "Times",
+                  "amtval": "Chapters",
                   "type": "Common",
                   "rank": "D",
-                  "ID": 245882,
+                  "ID": 250341,
                   "Rewards": {
                         "Coin Bag 500": 1,
-                        "D Rank Instance Key": 1
-                  },
-                  "skill": "Hobbies"
-            }
-      ],
-      "The Master of ones fate": [
-            {
-                  "desc": "A mysterious figure has left behind a list of tasks",
-                  "time": 180,
-                  "timeval": "Minutes",
-                  "type": "Learn",
-                  "obj_desc": "Find something out that you didn't know about a subject",
-                  "rank": "C",
-                  "ID": 802779,
-                  "Rewards": {
-                        "Coin Bag 5000": 1,
-                        "Coin Bag 1000": 1
+                        "Coin Bag 300": 1
                   },
                   "skill": "Books"
             }
       ],
-      "The Work of The King of Curses": [
+      "The Wings of an Angel": [
             {
-                  "desc": "You were Challenged",
+                  "desc": "The Unkown Sorcerer has told you to practice these",
+                  "time": 120,
+                  "timeval": "Seconds",
+                  "type": "Learn",
+                  "obj_desc": "Look up different Yoga positions and do them for given time",
+                  "rank": "D",
+                  "ID": 348387,
+                  "Rewards": {
+                        "Coin Bag 500": 1,
+                        "Coin Bag 300": 1
+                  },
+                  "skill": "Yoga"
+            }
+      ],
+      "To know all is to control all": [
+            {
+                  "desc": "The Order requires you to complete this training",
+                  "amt": 10,
+                  "amtval": "Chapters",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 84402,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Dragonscale Boots": 1,
+                        "LVLADD": 8,
+                        "INTav": 10
+                  },
+                  "skill": "Books"
+            }
+      ],
+      "Smarter-Bettter-Faster": [
+            {
+                  "desc": "The Unkown Sorcerer returns to give you a quest",
+                  "amt": 7,
+                  "amtval": "Chapters",
+                  "type": "Common",
+                  "rank": "A",
+                  "ID": 749777,
+                  "Rewards": {
+                        "Coin Bag 130000": 1,
+                        "Mystic Hood": 1,
+                        "LVLADD": 5,
+                        "INTav": 8
+                  },
+                  "skill": "Books"
+            }
+      ],
+      "Legacy of the Sacred Treasure": [
+            {
+                  "desc": "The Order requires you to complete this training",
+                  "amt": 100,
+                  "amtval": "Pairs",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 579139,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Dragonscale Boots": 1,
+                        "LVLADD": 8,
+                        "STRav": 10
+                  },
+                  "skill": "Plank Shoulder Taps"
+            }
+      ],
+      "Kindness is valuable": [
+            {
+                  "desc": "A Monarch has given you a task",
+                  "amt": 10,
+                  "amtval": "Times",
+                  "type": "Learn",
+                  "obj_desc": "Have you ever wondered about the origin and function of everyday things? Have you appreciated their benefits to your life and others'? Have you imagined life without them or noticed their intricate details? Have you considered how they're interconnected and support Earth's functioning? Identify five things and learn all you can about their creation and purpose to appreciate their role in your life.",
+                  "rank": "S",
+                  "ID": 868091,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Archmage's Robes": 1,
+                        "LVLADD": 8,
+                        "INTav": 10
+                  },
+                  "skill": "Mindfull Appreciation"
+            }
+      ],
+      "Forward. Don't look Back": [
+            {
+                  "desc": "A Monarch has given you a task",
+                  "time": 45,
+                  "amt": 100,
+                  "timeval": "Seconds",
+                  "amtval": "Times",
+                  "type": "Common",
+                  "rank": "S",
+                  "ID": 770546,
+                  "Rewards": {
+                        "Coin Bag 250000": 1,
+                        "Demon Monarch's Crown": 1,
+                        "LVLADD": 8,
+                        "STRav": 10
+                  },
+                  "skill": "Leg Lifts"
+            }
+      ],
+      "With Great Power comes-": [
+            {
+                  "desc": "The Unkown Sorcerer has told you to practice these",
                   "amt": 3,
                   "amtval": "Chapters",
                   "type": "Common",
-                  "rank": "C",
-                  "ID": 612362,
+                  "rank": "D",
+                  "ID": 72700,
                   "Rewards": {
-                        "Coin Bag 5000": 1,
-                        "Archers Gauntlet": 1
+                        "Coin Bag 500": 1,
+                        "Ironclad Gauntlet": 1
                   },
                   "skill": "Books"
             }

@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
-import json
+import ujson
 import cv2
 from PIL import Image, ImageTk
 import sys
@@ -23,12 +23,13 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+with open("Files\Mod\presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["Long Mid Size"]
 
-
-def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
 
 def start_move(event):
     global lastx, lasty
@@ -77,7 +78,7 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=get_stuff_path("image_1.png"))
 image_1 = canvas.create_image(
     277.0,
     478.0,
@@ -85,12 +86,12 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 380.0)
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=get_stuff_path("image_2.png"))
 image_2 = canvas.create_image(
     287.0,
     364.0,
@@ -98,7 +99,7 @@ image_2 = canvas.create_image(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=get_stuff_path("image_3.png"))
 image_3 = canvas.create_image(
     286.0,
     175.0,
@@ -143,7 +144,7 @@ canvas.tag_bind(image_0, "<ButtonPress-1>", start_move)
 canvas.tag_bind(image_0, "<B1-Motion>", move_window)
 
 button_image_8 = PhotoImage(
-    file=relative_to_assets("button_0.png"))
+    file=get_stuff_path("button_0.png"))
 button_8 = Button(
     image=button_image_8,
     borderwidth=0,

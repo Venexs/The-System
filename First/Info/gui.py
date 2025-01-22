@@ -14,7 +14,7 @@ import random
 import cv2
 from PIL import Image, ImageTk
 import time
-import json
+import ujson
 import csv
 import sys
 import os
@@ -55,6 +55,7 @@ def ex_close(eve):
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 def get():
+    name=entry_1.get()
     age=entry_2.get()
     gen=entry_2_5.get()
     height=entry_3.get()
@@ -83,7 +84,8 @@ def get():
     bmi=round(float(weight)/((float(height)/100)**2))
 
     with open("Files/status.json", 'r') as first_fson:
-        data=json.load(first_fson)
+        data=ujson.load(first_fson)
+        data["status"][0]['name']=name
 
         data["cal_data"][0]["age"]=age
         data["cal_data"][0]["gender"]=gen
@@ -95,7 +97,7 @@ def get():
         data["cal_data"][0]["BMI"]=bmi
     
     with open("Files/status.json", 'w') as fson:
-        json.dump(data, fson, indent=4)
+        ujson.dump(data, fson, indent=4)
 
     with open("Files/Checks/info_open.csv", 'r') as info_open:
         info_fr=csv.reader(info_open)
@@ -104,7 +106,7 @@ def get():
 
     if istrue=='True':
         with open('Files/Data/Theme_Check.json', 'r') as themefile:
-            theme_data=json.load(themefile)
+            theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
 
         subprocess.Popen(['Python', f'{theme} Version/Settings/gui.py'])
@@ -153,7 +155,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 
@@ -181,6 +183,27 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
+canvas.create_text(
+    321.0,
+    137.0,
+    anchor="nw",
+    text="Name:",
+    fill="#FFFFFF",
+    font=("Montserrat Medium", 16 * -1)
+)
+
+entry_1 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_1.place(
+    x=321.0,
+    y=159.0,
+    width=331.0,
+    height=21.0
+)
 
 canvas.create_text(
     321.0,

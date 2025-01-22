@@ -13,7 +13,7 @@ import sys
 from PIL import Image, ImageTk
 from datetime import datetime
 import pandas as pd
-import json
+import ujson
 import sys
 import os
 
@@ -91,7 +91,7 @@ image_1 = canvas.create_image(
 )
 
 with open("Files\Mod\presets.json", 'r') as pres_file:
-    pres_file_data=json.load(pres_file)
+    pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
 

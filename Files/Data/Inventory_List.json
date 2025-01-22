@@ -864,19 +864,6 @@
 
             "Value":35000
         }
-    ],
-
-    "The Orb of Order": [
-        {
-            "desc":"Press the Equip Button to Rearrange your Stat Points",
-            "qty":1,
-            "cat":"Orb",
-            "rank":"?",
-            "buff":"",
-            "debuff":"",
-
-            "Value":1000000
-        }
     ]
     
     
