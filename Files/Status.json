@@ -5,38 +5,39 @@
             "hp": 100,
             "mp": 100,
             "level": 1,
-            "str": 11,
-            "int": 11,
+            "str": 17,
+            "int": 17,
             "agi": 10,
             "vit": 10,
             "per": 10,
             "man": 10,
-            "XP": 10,
-            "coins": 100,
+            "XP": 20,
+            "coins": 200,
             "fatigue_max": 40,
-            "fatigue": 40,
+            "fatigue": 78,
             "last_level": 0
         },
         {
             "title_bool": "False",
             "title": "None",
-            "job": "None"
+            "job": "None",
+            "patreon": false
         }
     ],
     "avail_eq": [
         {
-            "str_based": 3,
-            "int_based": 3
+            "str_based": 0,
+            "int_based": 0
         }
     ],
     "equipment": [
         {
-            "STR": 6,
-            "AGI": 3,
+            "STR": 0,
+            "AGI": 0,
             "VIT": 0,
-            "INT": 15,
-            "PER": 9,
-            "MAN": 2
+            "INT": 0,
+            "PER": 0,
+            "MAN": 0
         }
     ],
     "cal_data": [
@@ -45,8 +46,8 @@
             "gender": "M",
             "height": "180",
             "weight": "70",
-            "calorie calc": 3408,
-            "final calorie calc": 3783,
+            "calorie calc": 3094,
+            "final calorie calc": 3434,
             "result": "MILD WEIGHT GAIN",
             "BMI": 22
         }

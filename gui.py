@@ -41,8 +41,6 @@ if not os.path.exists(file_path):
 with open(file_path, 'r') as vow_file:
     vow_status = json.load(vow_file)
 
-thesystem.system.check_demons()
-
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 

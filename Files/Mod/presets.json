@@ -2,7 +2,8 @@
     "Active Theme":["Anime"],
     "Anime":{
         "Video":"Files/Mod/default/Anime/0001-0200.mp4",
-        "DungeonVideo":"Files/Mod/default/Anime/dungeonvideov2.mp4",
+        "Alt Video":"Files/Mod/default/Anime/alt.mp4",
+        
         "Close SFX":"Files/Mod/default/Anime/Close.wav",
         "Open SFX":"Files/Mod/default/Anime/Open.wav",
         "Glitch SFX":"Files/Mod/default/Anime/Glitch.wav",
@@ -10,6 +11,8 @@
         "Button SFX":"Files/Mod/default/Anime/Button Press.wav",
 
         "Mid Size Screen":"Files/Mod/default/Anime/Mid Size Screen",
+        "Message Box":"Files/Mod/default/Anime/Message Box",
+        "Long Mid Size":"Files/Mod/default/Anime/Long Mid Size",
 
         "Normal Font Color":"#FFFFFF"
     },
@@ -92,6 +95,10 @@
         "Courage of the Weak":
         [
             "Files/Mod/default/messages/Courage of the Weak.png"
+        ],
+        "Anti Cheat Active":
+        [
+            "Files/Mod/default/messages/Anti Cheat Active.png"
         ]
     }
 }

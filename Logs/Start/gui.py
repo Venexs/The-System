@@ -45,7 +45,7 @@ window_width = 712
 thesystem.system.make_window_transparent(window)
 
 window.geometry(f"{initial_width}x{initial_height}")
-thesystem.system.animate_window_open_middle(window, target_height, window_width, step=20, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
 
 thesystem.system.center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")

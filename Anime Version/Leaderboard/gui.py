@@ -308,8 +308,6 @@ def get_all_names_and_levels(table_name, name_column, level_column, users_table=
             return []  # Return an empty list if no user is logged in
     except Exception as e:
         print(f"An error occurred: {e}")
-        subprocess.Popen(["python", "Logs/Start/gui.py"])
-        quit()
         return []  # Return an empty list on error
 
 

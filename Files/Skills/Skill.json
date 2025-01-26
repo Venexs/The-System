@@ -1,23 +1,10 @@
 {
-      "Dash": [
+      "Force of Speed": [
             {
-                  "lvl": 7,
-                  "type": "Active",
-                  "desc": "Gives the User the ability to get a faster start in a sprint / run",
-                  "base": "STR",
-                  "rewards": {
-                        "STRav": 5,
-                        "Gauntlet of Lightning": 1
-                  },
-                  "pl_point": 5
-            }
-      ],
-      "Quick Heal": [
-            {
-                  "lvl": 5,
+                  "lvl": 1,
                   "type": "Job",
-                  "desc": "Your Body will heal itself quicker than normal and your pain reduces",
-                  "pl_point": 43,
+                  "desc": "A certain Force of Speed has bonded with you. Your Agility will improve faster from this point",
+                  "pl_point": 0,
                   "base": "STR",
                   "rewards": {
                         "STRav": 10,
@@ -25,11 +12,11 @@
                   }
             }
       ],
-      "Detox": [
+      "Lightweight": [
             {
                   "lvl": 1,
                   "type": "Job",
-                  "desc": "Your body slowly but surely removes Toxins from the body the more VIT is increased",
+                  "desc": "Your body will get lighter and nimble as you get faster",
                   "pl_point": 0,
                   "base": "STR",
                   "rewards": {

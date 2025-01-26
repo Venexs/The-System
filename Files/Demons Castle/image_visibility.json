@@ -1,55 +1,25 @@
 {
     "hidden_images": {
-        "21": {
-            "Completed": true
+        "38": {
+            "Completed": false
+        },
+        "25": {
+            "Completed": false
+        },
+        "27": {
+            "Completed": false
+        },
+        "32": {
+            "Completed": false
+        },
+        "50": {
+            "Completed": false
+        },
+        "40": {
+            "Completed": false
         },
         "22": {
-            "Completed": true
-        },
-        "53": {
-            "Completed": true
-        },
-        "20": {
-            "Completed": true
-        },
-        "13": {
             "Completed": false
-        },
-        "39": {
-            "Completed": false
-        },
-        "7": {
-            "Completed": true
-        },
-        "19": {
-            "Completed": true
-        },
-        "10": {
-            "Completed": false
-        },
-        "46": {
-            "Completed": false
-        },
-        "33": {
-            "Completed": false
-        },
-        "30": {
-            "Completed": true
-        },
-        "37": {
-            "Completed": false
-        },
-        "29": {
-            "Completed": true
-        },
-        "14": {
-            "Completed": false
-        },
-        "49": {
-            "Completed": false
-        },
-        "31": {
-            "Completed": true
         },
         "5": {
             "Completed": false
@@ -57,43 +27,73 @@
         "42": {
             "Completed": false
         },
-        "52": {
+        "45": {
             "Completed": false
         },
-        "34": {
+        "46": {
             "Completed": false
         },
-        "17": {
+        "7": {
             "Completed": false
         },
-        "48": {
-            "Completed": false
-        },
-        "26": {
-            "Completed": true
-        },
-        "16": {
-            "Completed": false
-        },
-        "12": {
-            "Completed": true
-        },
-        "44": {
-            "Completed": true
-        },
-        "8": {
-            "Completed": false
-        },
-        "18": {
-            "Completed": true
-        },
-        "9": {
+        "31": {
             "Completed": false
         },
         "6": {
             "Completed": false
         },
+        "33": {
+            "Completed": false
+        },
+        "30": {
+            "Completed": false
+        },
+        "48": {
+            "Completed": false
+        },
+        "8": {
+            "Completed": false
+        },
+        "14": {
+            "Completed": false
+        },
+        "44": {
+            "Completed": false
+        },
+        "43": {
+            "Completed": false
+        },
+        "35": {
+            "Completed": false
+        },
+        "19": {
+            "Completed": false
+        },
+        "23": {
+            "Completed": false
+        },
         "51": {
+            "Completed": false
+        },
+        "13": {
+            "Completed": false
+        },
+        "20": {
+            "Completed": false
+        },
+        "34": {
+            "Completed": false
+        },
+        "26": {
+            "Completed": false
+        },
+        "11": {
+            "Completed": false
+        },
+        "9": {
+            "Completed": false
+        },
+        "49": {
             "Completed": false
         }
     }
