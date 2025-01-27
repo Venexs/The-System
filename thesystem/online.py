@@ -79,12 +79,17 @@ def join_guild(guild_id, supabase_client, session): # Add supabase_client parame
             return
 
         # Check if the user is already a member
-        membership_check = supabase_client.table('Members').select('*').eq('user_id', user_id).eq('guild_id', guild_id).execute()
+        membership_check = supabase_client.table('status').select('*').eq('user_id', user_id).eq('guild_id', guild_id).execute()
         if membership_check.data:
             return
 
-        # Add user to the guild
-        insert_response = supabase_client.table('Members').insert({'user_id': user_id, 'guild_id': guild_id}).execute()
+        response = (
+            supabase_client.table("status")
+            .update({"guild_id": guild_id})
+            .eq("user_id", user_id)
+            .execute()
+        )
+        
     else:
         print("Guild not found.")
 
@@ -125,10 +130,12 @@ def get_current_user_guild_leader_id(supabase_client, session):
 
 def switch_guild(user_id, new_guild_id, supabase_client, session): # Add supabase_client parameter
     # Remove the user from the current guild
-    supabase_client.table('Members').delete().eq('user_id', thesystem.online.get_user_name(supabase_client=supabase_client, session=session)).execute()
-    
-    # Add the user to the new guild
-    supabase_client.table('Members').insert({'user_id': user_id, 'guild_id': new_guild_id}).execute()
+    response = (
+        supabase_client.table("status")
+        .update({"guild_id": new_guild_id})
+        .eq("user_id", user_id)
+        .execute()
+    )
     print(f"Switched to guild with ID: {new_guild_id}")
 
 # Fetch guilds and populate listbox
@@ -175,7 +182,7 @@ def update_guild_status(supabase_client, session, treeview): # Add supabase_clie
         return
 
     # Check which guild the player is currently in
-    membership_response = supabase_client.table('Members').select('guild_id').eq('user_id', get_user_name(supabase_client=supabase_client, session=session)).execute()
+    membership_response = supabase_client.table('status').select('guild_id').eq('user_id', get_user_name(supabase_client=supabase_client, session=session)).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     # Update the Treeview
@@ -201,7 +208,7 @@ def update_guild_status(supabase_client, session, treeview): # Add supabase_clie
 def get_current_guild_id(supabase_client, session):
     # Fetch current user's guild
     user_id = get_current_user_id(supabase_client=supabase_client, session=session)
-    membership_response = supabase_client.table('Members').select('guild_id').eq('user_id', get_user_name(supabase_client=supabase_client, session=session)).execute()
+    membership_response = supabase_client.table('status').select('guild_id').eq('user_id', get_user_name(supabase_client=supabase_client, session=session)).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
     return current_guild_id
 

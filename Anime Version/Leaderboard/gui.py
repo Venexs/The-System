@@ -351,7 +351,7 @@ style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('select
 for level, name in names_and_levels:
     # Fetch the guild_id for the current user (if applicable, fetch based on `name` instead of `get_current_user_id`)
     try:
-        guild_response = supabase.table('Members').select('guild_id').eq('user_id', name).execute()
+        guild_response = supabase.table('status').select('guild_id').eq('user_id', name).execute()
 
         if guild_response.data and len(guild_response.data) > 0:
             guild_id = guild_response.data[0]['guild_id']  # Extract the guild_id

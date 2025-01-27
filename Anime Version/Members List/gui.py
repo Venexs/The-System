@@ -150,7 +150,7 @@ def get_current_user_guild():
     user_data = get_user_data()
     if not user_data:
         return None
-    response = supabase.table('Members').select('guild_id').eq('user_id', user_data.id).execute()
+    response = supabase.table('status').select('guild_id').eq('user_id', user_data.id).execute()
     return response.data[0]['guild_id'] if response.data else None
 
 def get_all_names_and_levels():
@@ -191,7 +191,7 @@ def on_treeview_hover(event, treeview):  # Pass treeview as an argument
     # Check if the guild ID has been cached, if not, fetch it once
     if current_guild_id is None:
         user_id = get_current_user_id()
-        membership_response = supabase.table('Members').select('guild_id').eq('user_id', user_id).execute()
+        membership_response = supabase.table('status').select('guild_id').eq('user_id', user_id).execute()
         current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     # Identify the item and column under the mouse cursor
@@ -307,7 +307,7 @@ def on_treeview_click(event, treeview):  # Pass treeview as an argument
 
     # Fetch current user's guild
     user_id = get_current_user_id()
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', user_id).execute()
+    membership_response = supabase.table('status').select('guild_id').eq('user_id', user_id).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     if column == '#4':  # Check if it's the 'Join/Switch' column
