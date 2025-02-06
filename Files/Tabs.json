@@ -7,7 +7,7 @@
     "Equipment": "Close",
     "Shop": "Close",
     "Dungeons": "Close",
-    "Settings": "Close",
+    "Settings": "Open",
     "Calories": "Close",
-    "Castle": "Close"
+    "Castle": "Open"
 }

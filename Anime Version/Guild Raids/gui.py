@@ -7,7 +7,7 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Listbox, Frame, Scrollbar, ttk
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Listbox, Frame, Scrollbar, ttk, Label
 from tkinter import ttk
 import json
 import csv
@@ -44,8 +44,8 @@ client = InfisicalClient(ClientSettings(
     )
 ))
 
-URL = thesystem.online.get_url(client)
-KEY = thesystem.online.get_key(client)
+URL = "https://smewvswweqnpwzngdtco.supabase.co"
+KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
 
 supabase = create_client(URL, KEY)
 
@@ -212,137 +212,106 @@ rank_priority = {
     'E': 8
 }
 
-hovered_item = None
-
-def on_treeview_hover(event):
-    global hovered_item
-    # Identify the item and column under the mouse cursor
-    item_id = treeview.identify_row(event.y)
-    column = treeview.identify_column(event.x)
-
-    # Get the current user ID and the player's current guild
-    user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
-    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
-
-    # Reset previously hovered item if it's different
-    if hovered_item and hovered_item != item_id:
-        # Clear the text completely for previously hovered item
-        treeview.item(hovered_item, values=(
-            treeview.item(hovered_item, "values")[0],  # Name
-            treeview.item(hovered_item, "values")[1],  # Rank
-            treeview.item(hovered_item, "values")[2],  # Members
-            ""  # Clear text for previously hovered item
-        ))
-        hovered_item = None
-
-    # Only process hover events over the 'Join' column
-    if item_id and column == '#4':
-        # Update the hovered item
-        hovered_item = item_id
-
-        # Determine the hover text
-        hover_text = "In Guild" if item_id == current_guild_id else "Switch Guild"
-
-        # Change the text dynamically when hovered
-        treeview.item(item_id, values=(
-            treeview.item(item_id, "values")[0],  # Name
-            treeview.item(item_id, "values")[1],  # Rank
-            treeview.item(item_id, "values")[2],  # Members
-            hover_text  # Dynamic hover text
-        ))
-
-def on_treeview_leave(event):
-    global hovered_item
-    # Reset the last hovered item's text to be empty when mouse leaves
-    if hovered_item:
-        treeview.item(hovered_item, values=(
-            treeview.item(hovered_item, "values")[0],  # Name
-            treeview.item(hovered_item, "values")[1],  # Rank
-            treeview.item(hovered_item, "values")[2],  # Members
-            ""  # Clear the text when mouse leaves
-        ))
-        hovered_item = None
-
-def on_treeview_click(event):
-    # Identify the item clicked
-    item_id = treeview.identify_row(event.y)
-    column = treeview.identify_column(event.x)
-
-    if not item_id:
-        print("No guild selected.")
-        return
-
-    # Fetch current user's guild
-    user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
-    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
-
-    if column == '#4':  # Check if it's the 'Join/Switch' column
-        if item_id == current_guild_id:
-            pass
-        else:
-            if current_guild_id != None:
-                thesystem.online.switch_guild(thesystem.online.get_user_name(supabase_client=supabase, session=session), item_id, supabase=supabase, session=session)
-                thesystem.online.update_guild_status(session=session, treeview=treeview)
-            else:
-                thesystem.online.join_guild(item_id, supabase_client=supabase, session=session)
-
-
-
-
-
-button = Button(
-    image=image_image_11, 
-    borderwidth=0, 
-    highlightthickness=0,
-    command=lambda:thesystem.online.CreateGuild(name=entry_1, leader_id=current_user_id, window=window, supabaseclient=supabaseclient, session=session)
-)
-
-        
 def successclose():
     subprocess.Popen(['python', f'Anime Version/Guild List/success.py'])
     thesystem.online.ex_close(window)
+
+# Custom Scrollable Frame Class
+class ScrollableFrame(Frame):
+    def __init__(self, container, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        self.canvas = Canvas(self, bg="#010616", highlightthickness=0)
+        scrollbar = Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = Frame(self.canvas, bg="#010616")
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
+
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+
+        self.canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+# Create main scrollable frame
+main_frame = ScrollableFrame(window)
+main_frame.place(x=80, y=100, width=720, height=200)
+
+# Style configuration
+entry_style = {"bg": "#010616", "fg": "white", "font": ("Montserrat Bold", 10)}
+button_style = {
+    "bg": "#1a237e", 
+    "fg": "white",
+    "activebackground": "#534bae",
+    "font": ("Montserrat Bold", 10),
+    "relief": "flat"
+}
+
+def create_dungeon_entry(parent, dungeon):
+    frame = Frame(parent, bg="#010616")
     
+    # Dungeon information
+    Label(frame, text=dungeon["Name"], **entry_style).pack(side="left", padx=10)
+    Label(frame, text=dungeon["Rank"], **entry_style).pack(side="left", padx=10)
+    Label(frame, text=str(dungeon["created_at"]), **entry_style).pack(side="left", padx=10)
+    
+    # Join button
+    join_btn = Button(frame, text="Join", **button_style,
+                    command=lambda: join_dungeon(dungeon["id"]))
+    join_btn.pack(side="right", padx=10)
+    
+    # Hover effects
+    def on_enter(e):
+        join_btn.config(bg="#534bae")
+        frame.config(bg="#1a1a2d")
+        
+    def on_leave(e):
+        join_btn.config(bg="#1a237e")
+        frame.config(bg="#010616")
+    
+    frame.bind("<Enter>", on_enter)
+    frame.bind("<Leave>", on_leave)
+    join_btn.bind("<Enter>", on_enter)
+    join_btn.bind("<Leave>", on_leave)
+    
+    return frame
+
+def load_dungeons():
+    # Fetch dungeons from Supabase
+    response = supabase.table("dungeons").select("*").execute()
+    dungeons = response.data
+    
+    # Clear existing entries
+    for widget in main_frame.scrollable_frame.winfo_children():
+        widget.destroy()
+    
+    # Create new entries
+    for dungeon in dungeons:
+        entry = create_dungeon_entry(main_frame.scrollable_frame, dungeon)
+        entry.pack(fill="x", pady=2)
+
+def join_dungeon(dungeon_id):
+    # Your join logic here
+    #GroupDungeon
+    messagebox.showinfo("Success", "Joined dungeon successfully!")
+
+# Load initial data
+load_dungeons()
+
+# Add refresh button (place this where your Treeview was)
+refresh_btn = Button(
+    window,
+    text="Refresh List",
+    command=load_dungeons,
+    **button_style
+)
+refresh_btn.place(x=700, y=310)
 
 
-
-# Create a frame for the Treeview
-frame = Frame(window, bg='#010616')
-frame.pack(padx=80, pady=100, fill='both', expand=True)
-
-columns = ('Name', 'Rank', 'Members', 'Join')
-
-treeview = ttk.Treeview(frame, columns=columns, show='headings', selectmode='extended')
-treeview.pack(side='left', fill='both', expand=True)
-
-# Define headings and column widths
-treeview.heading('Name', text='Guild Name')
-treeview.heading('Rank', text='Rank')
-treeview.heading('Members', text='Members')
-treeview.heading('Join', text='')
-treeview.column('Name', width=150)
-treeview.column('Rank', width=25)
-treeview.column('Members', width=25)
-treeview.column('Join', width=25)
-
-# Apply style for row borders
-style = ttk.Style()
-style.theme_use('clam')
-style.configure('Treeview', rowheight=15, borderwidth=10, relief="groove", font=('Montserrat Bold', 10))
-style.configure('Treeview', background='black', fieldbackground='black', foreground='white')
-style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
-style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
-
-
-treeview.bind("<Motion>", on_treeview_hover)  # Hover
-treeview.bind("<Enter>", on_treeview_hover)   # On Enter the widget
-treeview.bind("<Leave>", on_treeview_leave)   # On Leave the widget
-treeview.bind('<ButtonRelease-1>', on_treeview_click)  # Click
-# Add vertical scrollbar
-
-# Load data into Treeview
-thesystem.online.load_guilds(treeview, supabase=supabase, rank_priority=rank_priority)
     
 window.resizable(False, False)
 window.mainloop()

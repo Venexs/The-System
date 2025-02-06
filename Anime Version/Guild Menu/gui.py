@@ -208,28 +208,32 @@ image_5 = canvas.create_image(
 canvas.tag_bind(image_4, "<ButtonPress-1>", lambda event: thesystem.online.GuildOption(event, "Create", window=window))
 canvas.tag_bind(image_5, "<ButtonPress-1>", lambda event: thesystem.online.GuildOption(event, "Join", window=window))
 
-    
+
 leader_id = thesystem.online.get_current_user_guild_leader_id(supabase_client=supabase_client, session=session)
 
 user_id = thesystem.online.get_current_user_id(supabase_client=supabase_client, session=session)  # Pass client here
 
-if user_id == leader_id:
-    image_image_6 = PhotoImage(
-        file=relative_to_assets("image_6.png"))
-    image_6 = canvas.create_image(
-        540.0,
-        318.0,
-        image=image_image_6
-    )
-    image_image_7 = PhotoImage(
-        file=relative_to_assets("image_7.png"))
-    image_7 = canvas.create_image(
-        686.0,
-        318.0,
-        image=image_image_7
-    )
-    canvas.tag_bind(image_6, "<ButtonPress-1>", lambda event: thesystem.online.GuildOption(event, "Invite", window=window))
-    canvas.tag_bind(image_7, "<ButtonPress-1>", lambda event: thesystem.online.GuildOption(event, "Guild Raid", window=window))
+
+if leader_id == None:
+    print("No guild")
+else:
+    if user_id == leader_id:
+        image_image_6 = PhotoImage(
+            file=relative_to_assets("image_6.png"))
+        image_6 = canvas.create_image(
+            540.0,
+            318.0,
+            image=image_image_6
+        )
+        image_image_7 = PhotoImage(
+            file=relative_to_assets("image_7.png"))
+        image_7 = canvas.create_image(
+            686.0,
+            318.0,
+            image=image_image_7
+        )
+        canvas.tag_bind(image_6, "<ButtonPress-1>", lambda event: thesystem.online.GuildOption(event, "Invite", window=window))
+        canvas.tag_bind(image_7, "<ButtonPress-1>", lambda event: thesystem.online.GuildOption(event, "Guild Raid", window=window))
 
 
 

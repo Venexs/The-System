@@ -40,8 +40,8 @@ client = InfisicalClient(ClientSettings(
     )
 ))
 
-URL = thesystem.online.get_url(client)
-KEY = thesystem.online.get_key(client)
+URL = "https://smewvswweqnpwzngdtco.supabase.co"
+KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZXd2c3d3ZXFucHd6bmdkdGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyMDY2NjcsImV4cCI6MjA0OTc4MjY2N30.0SSN0bbwzFMCGC47XUuwqyKfF__Zikm_rJHqXWf78PU"
 
 supabaseclient = create_client(URL, KEY)
 
@@ -224,7 +224,7 @@ def load_session():
 
 session = load_session()
 
-current_user_id = thesystem.online.get_current_user_id(session)
+current_user_id = thesystem.online.get_current_user_id(supabase_client=supabaseclient, session=session)
 
 
 image_image_11 = PhotoImage(
@@ -234,7 +234,7 @@ button = Button(
     image=image_image_11, 
     borderwidth=0, 
     highlightthickness=0,
-    command=lambda:thesystem.online.CreateGuild(name=entry_1, leader_id=current_user_id, window=window, supabaseclient=supabaseclient, session=session)
+    command=lambda:thesystem.online.CreateGuild(name=entry_1.get(), leader_id=current_user_id, window=window, supabaseclient=supabaseclient, session=session)
 )
 
 button.place(x=100.0, y=250.0) 

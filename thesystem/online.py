@@ -156,7 +156,7 @@ def load_guilds(treeview, supabase, rank_priority): # Add supabase_client parame
         
         
 def CreateGuild(name, leader_id, window, supabaseclient, session):
-    guild_name = name.get()
+    guild_name = name
     leader_id = get_current_user_id(supabase_client=supabaseclient, session=session)
 
     # Check for existing guild
@@ -164,7 +164,7 @@ def CreateGuild(name, leader_id, window, supabaseclient, session):
     
     if check_response.data:
         subprocess.Popen(['python', 'Anime Version/Create Guild/error.py'])
-        print("issue 1")
+        pass
     else:
         try:
             # 1. CREATE THE GUILD FIRST
