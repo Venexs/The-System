@@ -7,7 +7,8 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Listbox, Frame, Scrollbar, Toplevel, Label
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Listbox, Frame, Scrollbar, ttk
+from tkinter import ttk
 import json
 import csv
 import subprocess
@@ -21,6 +22,9 @@ import os
 from supabase import create_client
 import os
 from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
+from tkinter import messagebox
+import asyncio
+import threading
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -28,8 +32,8 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.system
 import thesystem.online
-
 
 client = InfisicalClient(ClientSettings(
     auth=AuthenticationOptions(
@@ -43,9 +47,8 @@ client = InfisicalClient(ClientSettings(
 URL = thesystem.online.get_url(client)
 KEY = thesystem.online.get_key(client)
 
-supabaseclient = create_client(URL, KEY)
+supabase = create_client(URL, KEY)
 
-import thesystem.system
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -72,6 +75,18 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 
+SESSION_FILE = "Files/Data/session.json"
+
+def load_session():
+    """Load session data from the session file."""
+    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
+        with open(SESSION_FILE, "r") as f:
+            session_data = json.load(f)
+            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
+                return session_data
+
+session = load_session()
+
 def start_move(event):
     global lastx, lasty
     lastx = event.x_root
@@ -87,8 +102,10 @@ def move_window(event):
     lastx = event.x_root
     lasty = event.y_root
 
-
-
+def close():
+    subprocess.Popen(['python', f'Anime Version/Guild Menu/gui.py'])
+    thesystem.online.ex_close(window)
+    
 
 canvas = Canvas(
     window,
@@ -108,12 +125,6 @@ image_1 = canvas.create_image(
     375.0,
     image=image_image_1
 )
-
-
-def close_guild_raids():
-    thesystem.online.ex_close(win=window)
-    subprocess.Popen(['python', f'Anime Version/Guild Menu/gui.py'])
-    
 
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
@@ -137,16 +148,16 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
+
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_8.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda:close_guild_raids(),
+    command=close,
     relief="flat"
 )
-
 button_1.place(
     x=750.0,
     y=40.0
@@ -187,57 +198,151 @@ image_7 = canvas.create_image(
     image=image_image_7
 )
 
+rank_priority = {
+    'X': -2,
+    'Z': -1,
+    'National': 0,
+    'SSS': 1,
+    'SS': 2,
+    'S': 3,
+    'A': 4,
+    'B': 5,
+    'C': 6,
+    'D': 7,
+    'E': 8
+}
 
-entry_1 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0,
-    font=('Montserrat', 13)
-)
-entry_1.place(
-    x=100.0,
-    y=116.0,
-    width=369.0,
-    height=20.0
-)
+hovered_item = None
 
-canvas.create_text(
-    100.0,
-    98.0,
-    anchor="nw",
-    text="Enter Guild Name:",
-    fill="#FFFFFF",
-    font=("Montserrat Medium", 13 * -1)
-)
+def on_treeview_hover(event):
+    global hovered_item
+    # Identify the item and column under the mouse cursor
+    item_id = treeview.identify_row(event.y)
+    column = treeview.identify_column(event.x)
 
-SESSION_FILE = "Files/Data/session.json"
+    # Get the current user ID and the player's current guild
+    user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
+    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
-def load_session():
-    """Load session data from the session file."""
-    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
-        with open(SESSION_FILE, "r") as f:
-            session_data = json.load(f)
-            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
-                return session_data
+    # Reset previously hovered item if it's different
+    if hovered_item and hovered_item != item_id:
+        # Clear the text completely for previously hovered item
+        treeview.item(hovered_item, values=(
+            treeview.item(hovered_item, "values")[0],  # Name
+            treeview.item(hovered_item, "values")[1],  # Rank
+            treeview.item(hovered_item, "values")[2],  # Members
+            ""  # Clear text for previously hovered item
+        ))
+        hovered_item = None
+
+    # Only process hover events over the 'Join' column
+    if item_id and column == '#4':
+        # Update the hovered item
+        hovered_item = item_id
+
+        # Determine the hover text
+        hover_text = "In Guild" if item_id == current_guild_id else "Switch Guild"
+
+        # Change the text dynamically when hovered
+        treeview.item(item_id, values=(
+            treeview.item(item_id, "values")[0],  # Name
+            treeview.item(item_id, "values")[1],  # Rank
+            treeview.item(item_id, "values")[2],  # Members
+            hover_text  # Dynamic hover text
+        ))
+
+def on_treeview_leave(event):
+    global hovered_item
+    # Reset the last hovered item's text to be empty when mouse leaves
+    if hovered_item:
+        treeview.item(hovered_item, values=(
+            treeview.item(hovered_item, "values")[0],  # Name
+            treeview.item(hovered_item, "values")[1],  # Rank
+            treeview.item(hovered_item, "values")[2],  # Members
+            ""  # Clear the text when mouse leaves
+        ))
+        hovered_item = None
+
+def on_treeview_click(event):
+    # Identify the item clicked
+    item_id = treeview.identify_row(event.y)
+    column = treeview.identify_column(event.x)
+
+    if not item_id:
+        print("No guild selected.")
+        return
+
+    # Fetch current user's guild
+    user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
+    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
+
+    if column == '#4':  # Check if it's the 'Join/Switch' column
+        if item_id == current_guild_id:
+            pass
+        else:
+            if current_guild_id != None:
+                thesystem.online.switch_guild(thesystem.online.get_user_name(supabase_client=supabase, session=session), item_id, supabase=supabase, session=session)
+                thesystem.online.update_guild_status(session=session, treeview=treeview)
+            else:
+                thesystem.online.join_guild(item_id, supabase_client=supabase, session=session)
 
 
-session = load_session()
-
-current_user_id = thesystem.online.get_current_user_id(session)
 
 
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_12.png"))
 
 button = Button(
     image=image_image_11, 
     borderwidth=0, 
     highlightthickness=0,
-    command=lambda:thesystem.online.CreateGuild(name=entry_1, leader_id=current_user_id, window=window, supabaseclient=supabaseclient)
+    command=lambda:thesystem.online.CreateGuild(name=entry_1, leader_id=current_user_id, window=window, supabaseclient=supabaseclient, session=session)
 )
 
-button.place(x=100.0, y=250.0) 
+        
+def successclose():
+    subprocess.Popen(['python', f'Anime Version/Guild List/success.py'])
+    thesystem.online.ex_close(window)
+    
 
+
+
+# Create a frame for the Treeview
+frame = Frame(window, bg='#010616')
+frame.pack(padx=80, pady=100, fill='both', expand=True)
+
+columns = ('Name', 'Rank', 'Members', 'Join')
+
+treeview = ttk.Treeview(frame, columns=columns, show='headings', selectmode='extended')
+treeview.pack(side='left', fill='both', expand=True)
+
+# Define headings and column widths
+treeview.heading('Name', text='Guild Name')
+treeview.heading('Rank', text='Rank')
+treeview.heading('Members', text='Members')
+treeview.heading('Join', text='')
+treeview.column('Name', width=150)
+treeview.column('Rank', width=25)
+treeview.column('Members', width=25)
+treeview.column('Join', width=25)
+
+# Apply style for row borders
+style = ttk.Style()
+style.theme_use('clam')
+style.configure('Treeview', rowheight=15, borderwidth=10, relief="groove", font=('Montserrat Bold', 10))
+style.configure('Treeview', background='black', fieldbackground='black', foreground='white')
+style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
+style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
+
+
+treeview.bind("<Motion>", on_treeview_hover)  # Hover
+treeview.bind("<Enter>", on_treeview_hover)   # On Enter the widget
+treeview.bind("<Leave>", on_treeview_leave)   # On Leave the widget
+treeview.bind('<ButtonRelease-1>', on_treeview_click)  # Click
+# Add vertical scrollbar
+
+# Load data into Treeview
+thesystem.online.load_guilds(treeview, supabase=supabase, rank_priority=rank_priority)
+    
 window.resizable(False, False)
 window.mainloop()

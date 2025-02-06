@@ -222,7 +222,7 @@ def on_treeview_hover(event):
 
     # Get the current user ID and the player's current guild
     user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
-    membership_response = supabase.table('status').select('guild_id').eq('user_id', thesystem.online.get_current_user_id(supabase_client=supabase, session=session)).execute()
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     # Reset previously hovered item if it's different
@@ -275,7 +275,7 @@ def on_treeview_click(event):
 
     # Fetch current user's guild
     user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
-    membership_response = supabase.table('status').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
+    membership_response = supabase.table('status').select('guild_id').eq('user_id', user_id).execute()
     current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
 
     if column == '#4':  # Check if it's the 'Join/Switch' column
@@ -283,11 +283,10 @@ def on_treeview_click(event):
             pass
         else:
             if current_guild_id != None:
-                thesystem.online.switch_guild(thesystem.online.get_user_name(supabase_client=supabase, session=session), item_id, supabase=supabase, session=session)
-                thesystem.online.update_guild_status(session=session, treeview=treeview)
+                thesystem.online.switch_guild(thesystem.online.get_current_user_id(supabase_client=supabase, session=session), item_id, supabase_client=supabase, session=session)
+                thesystem.online.update_guild_status(supabase_client=supabase, session=session, treeview=treeview)
             else:
-                thesystem.online.join_guild(item_id, supabase_client=supabase, session=session)
-
+                thesystem.online.update_guild_status(supabase_client=supabase, session=session, treeview=treeview)
 
 
 

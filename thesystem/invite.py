@@ -7,7 +7,8 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Listbox, Frame, Scrollbar, Toplevel, Label
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Listbox, Frame, Scrollbar, ttk, Label
+from tkinter import ttk
 import json
 import csv
 import subprocess
@@ -18,32 +19,12 @@ from datetime import datetime, timedelta
 import threading
 import sys
 import os
-from supabase import create_client
-import os
-from infisical_client import ClientSettings, InfisicalClient, GetSecretOptions, AuthenticationOptions, UniversalAuthMethod
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+project_root = os.path.abspath(os.path.join(current_dir, '../'))
 
 sys.path.insert(0, project_root)
-
-import thesystem.online
-
-
-client = InfisicalClient(ClientSettings(
-    auth=AuthenticationOptions(
-        universal_auth=UniversalAuthMethod(
-            client_id="0fa8dbf8-92ee-4889-bd48-1b5dd2d22e87",
-            client_secret="a2c9a58bda26c914e333e6c0f7c35e019b30c3afa67b5dc8419a142ee8b2aec8",
-        )
-    )
-))
-
-URL = thesystem.online.get_url(client)
-KEY = thesystem.online.get_key(client)
-
-supabaseclient = create_client(URL, KEY)
 
 import thesystem.system
 
@@ -87,7 +68,10 @@ def move_window(event):
     lastx = event.x_root
     lasty = event.y_root
 
-
+def ex_close(win):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
 
 canvas = Canvas(
@@ -109,12 +93,6 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-
-def close_guild_raids():
-    thesystem.online.ex_close(win=window)
-    subprocess.Popen(['python', f'Anime Version/Guild Menu/gui.py'])
-    
-
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
@@ -127,29 +105,6 @@ image_2 = canvas.create_image(
     435.0,
     180.52554321289062,
     image=image_image_2
-)
-
-image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
-image_3 = canvas.create_image(
-    199.99966430664062,
-    61.0,
-    image=image_image_3
-)
-
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda:close_guild_raids(),
-    relief="flat"
-)
-
-button_1.place(
-    x=750.0,
-    y=40.0
 )
 
 image_image_4 = PhotoImage(
@@ -187,57 +142,30 @@ image_7 = canvas.create_image(
     image=image_image_7
 )
 
-
-entry_1 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0,
-    font=('Montserrat', 13)
-)
-entry_1.place(
-    x=100.0,
-    y=116.0,
-    width=369.0,
-    height=20.0
+text1 = canvas.create_text(
+    window_width / 2,  # Center horizontally
+    target_height / 2,  # Center vertically
+    anchor="center",
+    text="""You must be in our discord community for this.
+Please post a listing in System Discussions.""",
+    fill="white",  # Text color
+    font=("Montserrat Bold", 16),
 )
 
-canvas.create_text(
-    100.0,
-    98.0,
-    anchor="nw",
-    text="Enter Guild Name:",
-    fill="#FFFFFF",
-    font=("Montserrat Medium", 13 * -1)
-)
-
-SESSION_FILE = "Files/Data/session.json"
-
-def load_session():
-    """Load session data from the session file."""
-    if os.path.exists(SESSION_FILE) and os.path.getsize(SESSION_FILE) > 0:
-        with open(SESSION_FILE, "r") as f:
-            session_data = json.load(f)
-            if all(key in session_data for key in ["access_token", "refresh_token", "expires_in"]):
-                return session_data
-
-
-session = load_session()
-
-current_user_id = thesystem.online.get_current_user_id(session)
-
-
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_12.png"))
-
+image_image_24 = PhotoImage(
+    file=relative_to_assets("image_24.png"))
+def close():
+    subprocess.Popen(['python', f'Anime Version/Guild Menu/gui.py'])
+    ex_close(window)
+    
 button = Button(
-    image=image_image_11, 
+    image=image_image_24, 
     borderwidth=0, 
     highlightthickness=0,
-    command=lambda:thesystem.online.CreateGuild(name=entry_1, leader_id=current_user_id, window=window, supabaseclient=supabaseclient, session=session)
+    command=close
 )
 
-button.place(x=100.0, y=250.0) 
+button.place(x=370, y=250.0) 
 
 window.resizable(False, False)
 window.mainloop()
