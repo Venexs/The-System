@@ -259,9 +259,11 @@ def create_dungeon_entry(parent, dungeon):
     Label(frame, text=dungeon["Rank"], **entry_style).pack(side="left", padx=10)
     Label(frame, text=str(dungeon["created_at"]), **entry_style).pack(side="left", padx=10)
     
+    dungeon_id = dungeon["id"]
+    
     # Join button
     join_btn = Button(frame, text="Join", **button_style,
-                    command=lambda: join_dungeon(dungeon["id"]))
+                    command=lambda: join_dungeon(dungeon_id))
     join_btn.pack(side="right", padx=10)
     
     # Hover effects
@@ -295,9 +297,10 @@ def load_dungeons():
         entry.pack(fill="x", pady=2)
 
 def join_dungeon(dungeon_id):
-    # Your join logic here
-    #GroupDungeon
-    messagebox.showinfo("Success", "Joined dungeon successfully!")
+    
+    subprocess.Popen(['python', f'Anime Version/DungeonMultiplayer/gui.py'])
+    
+
 
 # Load initial data
 load_dungeons()
@@ -305,7 +308,7 @@ load_dungeons()
 # Add refresh button (place this where your Treeview was)
 refresh_btn = Button(
     window,
-    text="Refresh List",
+    text="Create Dungeon",
     command=load_dungeons,
     **button_style
 )

@@ -212,84 +212,101 @@ rank_priority = {
     'E': 8
 }
 
-hovered_item = None
+user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
+current_guild_id = None
+
+if user_id:
+    membership_response = supabase.table('Members').select('guild_id').eq('user_id', user_id).execute()
+    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
+
+# Configure modern treeview styling
+style = ttk.Style()
+style.theme_use('default')  # More modern theme
+style.configure("Treeview", 
+                background="#2D2D2D",
+                foreground="white",
+                rowheight=30,  # Increased row height
+                fieldbackground="#2D2D2D",
+                borderwidth=0,
+                font=('Segoe UI', 10))
+style.configure("Treeview.Heading", 
+                background="#404040",
+                foreground="white",
+                relief="flat",
+                font=('Segoe UI', 10, 'bold'))
+style.map('Treeview', 
+            background=[('selected', '#4A9DCA')],
+            foreground=[('selected', 'white')])
+
+# Create frame with improved layout
+tree_frame = Frame(window, bg='#2D2D2D')
+tree_frame.place(x=80, y=100, width=720, height=200)  # Precise positioning
+
+# Create Treeview with optimized parameters
+columns = ('Name', 'Rank', 'Members', 'Join')
+treeview = ttk.Treeview(tree_frame, columns=columns, show='headings', selectmode='browse')
+
+# Configure scrollbar
+vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=treeview.yview)
+treeview.configure(yscrollcommand=vsb.set)
+vsb.pack(side='right', fill='y')
+treeview.pack(side='left', fill='both', expand=True)
+
+# Configure columns with improved widths and alignment
+treeview.heading('Name', text='GUILD NAME', anchor='w')
+treeview.heading('Rank', text='RANK', anchor='center')
+treeview.heading('Members', text='MEMBERS', anchor='center')
+treeview.heading('Join', text='', anchor='center')
+
+treeview.column('Name', width=300, anchor='w')
+treeview.column('Rank', width=100, anchor='center')
+treeview.column('Members', width=100, anchor='center')
+treeview.column('Join', width=100, anchor='center')
+
+# ========== Optimized Hover/Click Handling ==========
+last_hover_item = None
 
 def on_treeview_hover(event):
-    global hovered_item
-    # Identify the item and column under the mouse cursor
-    item_id = treeview.identify_row(event.y)
-    column = treeview.identify_column(event.x)
-
-    # Get the current user ID and the player's current guild
-    user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
-    membership_response = supabase.table('Members').select('guild_id').eq('user_id', thesystem.online.get_user_name(supabase_client=supabase, session=session)).execute()
-    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
-
-    # Reset previously hovered item if it's different
-    if hovered_item and hovered_item != item_id:
-        # Clear the text completely for previously hovered item
-        treeview.item(hovered_item, values=(
-            treeview.item(hovered_item, "values")[0],  # Name
-            treeview.item(hovered_item, "values")[1],  # Rank
-            treeview.item(hovered_item, "values")[2],  # Members
-            ""  # Clear text for previously hovered item
-        ))
-        hovered_item = None
-
-    # Only process hover events over the 'Join' column
-    if item_id and column == '#4':
-        # Update the hovered item
-        hovered_item = item_id
-
-        # Determine the hover text
-        hover_text = "In Guild" if item_id == current_guild_id else "Switch Guild"
-
-        # Change the text dynamically when hovered
-        treeview.item(item_id, values=(
-            treeview.item(item_id, "values")[0],  # Name
-            treeview.item(item_id, "values")[1],  # Rank
-            treeview.item(item_id, "values")[2],  # Members
-            hover_text  # Dynamic hover text
-        ))
-
-def on_treeview_leave(event):
-    global hovered_item
-    # Reset the last hovered item's text to be empty when mouse leaves
-    if hovered_item:
-        treeview.item(hovered_item, values=(
-            treeview.item(hovered_item, "values")[0],  # Name
-            treeview.item(hovered_item, "values")[1],  # Rank
-            treeview.item(hovered_item, "values")[2],  # Members
-            ""  # Clear the text when mouse leaves
-        ))
-        hovered_item = None
+    global last_hover_item
+    # Get current item under cursor
+    item = treeview.identify_row(event.y)
+    col = treeview.identify_column(event.x)
+    
+    # Only process 'Join' column
+    if not item or col != '#4':
+        if last_hover_item:
+            treeview.item(last_hover_item, values=treeview.item(last_hover_item, 'values')[:3] + ('',))
+            last_hover_item = None
+        return
+    
+    # Update hover text if needed
+    current_text = treeview.item(item, 'values')[3]
+    new_text = "Current Guild" if item == current_guild_id else "Join Guild"
+    
+    if item != last_hover_item or current_text != new_text:
+        if last_hover_item:
+            treeview.item(last_hover_item, values=treeview.item(last_hover_item, 'values')[:3] + ('',))
+        treeview.item(item, values=treeview.item(item, 'values')[:3] + (new_text,))
+        last_hover_item = item
 
 def on_treeview_click(event):
-    # Identify the item clicked
-    item_id = treeview.identify_row(event.y)
-    column = treeview.identify_column(event.x)
-
-    if not item_id:
-        print("No guild selected.")
-        return
-
-    # Fetch current user's guild
-    user_id = thesystem.online.get_current_user_id(supabase_client=supabase, session=session)
-    membership_response = supabase.table('status').select('guild_id').eq('user_id', user_id).execute()
-    current_guild_id = membership_response.data[0]['guild_id'] if membership_response.data else None
-
-    if column == '#4':  # Check if it's the 'Join/Switch' column
-        if item_id == current_guild_id:
-            pass
+    item = treeview.identify_row(event.y)
+    col = treeview.identify_column(event.x)
+    
+    if item and col == '#4' and item != current_guild_id:
+        if current_guild_id != None:
+            thesystem.online.switch_guild(thesystem.online.get_current_user_id(supabase_client=supabase, session=session), item, supabase_client=supabase, session=session)
+            thesystem.online.update_guild_status(supabase_client=supabase, session=session, treeview=treeview)
         else:
-            if current_guild_id != None:
-                thesystem.online.switch_guild(thesystem.online.get_current_user_id(supabase_client=supabase, session=session), item_id, supabase_client=supabase, session=session)
-                thesystem.online.update_guild_status(supabase_client=supabase, session=session, treeview=treeview)
-            else:
-                thesystem.online.update_guild_status(supabase_client=supabase, session=session, treeview=treeview)
+            thesystem.online.update_guild_status(supabase_client=supabase, session=session, treeview=treeview)
 
+# Configure event bindings
+treeview.bind('<Motion>', on_treeview_hover)
+treeview.bind('<Leave>', lambda e: on_treeview_hover(e))  # Clear hover on exit
+treeview.bind('<ButtonRelease-1>', on_treeview_click)
 
-
+# Load data
+thesystem.online.load_guilds(treeview, supabase=supabase, rank_priority=rank_priority)
 
 
         
@@ -297,45 +314,8 @@ def successclose():
     subprocess.Popen(['python', f'Anime Version/Guild List/success.py'])
     thesystem.online.ex_close(window)
     
-
-
-
-# Create a frame for the Treeview
-frame = Frame(window, bg='#010616')
-frame.pack(padx=80, pady=100, fill='both', expand=True)
-
-columns = ('Name', 'Rank', 'Members', 'Join')
-
-treeview = ttk.Treeview(frame, columns=columns, show='headings', selectmode='extended')
-treeview.pack(side='left', fill='both', expand=True)
-
-# Define headings and column widths
-treeview.heading('Name', text='Guild Name')
-treeview.heading('Rank', text='Rank')
-treeview.heading('Members', text='Members')
-treeview.heading('Join', text='')
-treeview.column('Name', width=150)
-treeview.column('Rank', width=25)
-treeview.column('Members', width=25)
-treeview.column('Join', width=25)
-
-# Apply style for row borders
-style = ttk.Style()
-style.theme_use('clam')
-style.configure('Treeview', rowheight=15, borderwidth=10, relief="groove", font=('Montserrat Bold', 10))
-style.configure('Treeview', background='black', fieldbackground='black', foreground='white')
-style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
-style.map('Treeview', background=[('selected', 'skyblue')], foreground=[('selected', 'black')])
-
-
-treeview.bind("<Motion>", on_treeview_hover)  # Hover
-treeview.bind("<Enter>", on_treeview_hover)   # On Enter the widget
-treeview.bind("<Leave>", on_treeview_leave)   # On Leave the widget
-treeview.bind('<ButtonRelease-1>', on_treeview_click)  # Click
-# Add vertical scrollbar
-
-# Load data into Treeview
-thesystem.online.load_guilds(treeview, supabase=supabase, rank_priority=rank_priority)
+    
+    
     
 window.resizable(False, False)
 window.mainloop()

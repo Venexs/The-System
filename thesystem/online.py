@@ -128,7 +128,7 @@ def get_current_user_guild_leader_id(supabase_client, session):
 
 def switch_guild(user_id, new_guild_id, supabase_client, session): # Add supabase_client parameter
     # Remove the user from the current guild
-    supabase_client.table('Members').delete().eq('user_id', thesystem.online.get_user_name(supabase_client=supabase_client, session=session)).execute()
+    supabase_client.table('Members').delete().eq('user_id', get_current_user_id(supabase_client=supabase_client, session=session)).execute()
     
     # Add the user to the new guild
     supabase_client.table('Members').insert({'user_id': user_id, 'guild_id': new_guild_id}).execute()

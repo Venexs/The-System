@@ -14,7 +14,7 @@
             "XP": 20,
             "coins": 200,
             "fatigue_max": 40,
-            "fatigue": 68,
+            "fatigue": 0,
             "last_level": 0
         },
         {
