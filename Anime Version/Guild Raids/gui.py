@@ -86,7 +86,11 @@ def load_session():
                 return session_data
 
 session = load_session()
-
+def ex_close(win):
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
+    
 def start_move(event):
     global lastx, lasty
     lastx = event.x_root
@@ -257,7 +261,6 @@ def create_dungeon_entry(parent, dungeon):
     # Dungeon information
     Label(frame, text=dungeon["Name"], **entry_style).pack(side="left", padx=10)
     Label(frame, text=dungeon["Rank"], **entry_style).pack(side="left", padx=10)
-    Label(frame, text=str(dungeon["created_at"]), **entry_style).pack(side="left", padx=10)
     
     dungeon_id = dungeon["id"]
     
@@ -297,11 +300,9 @@ def load_dungeons():
         entry.pack(fill="x", pady=2)
 
 def join_dungeon(dungeon_id):
-    
-    subprocess.Popen(['python', f'Anime Version/DungeonMultiplayer/gui.py'])
-    
-
-
+    print(f"Joining dungeon with ID: {dungeon_id}") #debugging
+    subprocess.Popen(['python', f'Anime Version/DungeonMultiplayer/gui.py', str(dungeon_id)]) #PASS ID HERE
+    ex_close(window)
 # Load initial data
 load_dungeons()
 

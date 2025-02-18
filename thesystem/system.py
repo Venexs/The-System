@@ -593,16 +593,16 @@ class VideoPlayer:
         self.canvas = canvas
         self.video_path = video_path
         self.cap = cv2.VideoCapture(video_path)
-        self.image_id = self.canvas.create_image(0, 0, anchor='nw')  # Initial anchor
+        self.image_id = self.canvas.create_image(0, 0, anchor='nw')
         self.frame_queue = queue.Queue(maxsize=buffer_size)
         self.stop_event = threading.Event()
+        self.scaling_factor = 1.0  # Default scaling factor
 
-        # Read the first frame to get video dimensions
         ret, frame = self.cap.read()
         if ret:
             self.original_width = frame.shape[1]
             self.original_height = frame.shape[0]
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Reset video position
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         else:
             raise ValueError("Unable to read video file.")
 
@@ -610,78 +610,51 @@ class VideoPlayer:
         self.read_thread = threading.Thread(target=self._read_frames, daemon=True)
         self.read_thread.start()
 
-        # Ensure canvas dimensions are updated before starting
         self.canvas.update_idletasks()
         self.update_frame()
 
+
     def _calculate_scaling_factor(self):
-        """
-        Calculate the scaling factor to ensure the video fills the canvas while maintaining aspect ratio.
-        """
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
-
-        # Calculate scaling factors for both axes
         scale_width = canvas_width / self.original_width
         scale_height = canvas_height / self.original_height
-
-        # Use the larger scaling factor to ensure the video covers the canvas
         return max(scale_width, scale_height)
 
     def _read_frames(self):
-        """
-        Reads and processes video frames, adding them to a thread-safe queue.
-        """
         while not self.stop_event.is_set():
             if not self.frame_queue.full():
                 ret, frame = self.cap.read()
-
                 if not ret:
-                    # Restart video when reaching the end
                     self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                     ret, frame = self.cap.read()
-
                 if ret:
-                    # Resize frame to fill the canvas
-                    scaling_factor = self._calculate_scaling_factor()
+                    # Use the precomputed scaling factor (updated in the main thread)
+                    scaling_factor = self.scaling_factor
                     new_width = int(self.original_width * scaling_factor)
                     new_height = int(self.original_height * scaling_factor)
-
                     frame = cv2.resize(frame, (new_width, new_height))
                     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-                    # Add processed frame to the queue
                     self.frame_queue.put(frame)
             else:
-                time.sleep(0.005)  # Brief pause to prevent busy-waiting
+                time.sleep(0.005)
 
     def update_frame(self):
-        """
-        Updates the canvas with the latest frame from the queue.
-        """
-        start_time = time.time()
+        # Calculate scaling factor on the main thread
+        self.scaling_factor = self._calculate_scaling_factor()
         if not self.frame_queue.empty():
-            # Get the next frame from the queue
             frame = self.frame_queue.get()
-
-            # Convert frame to ImageTk format
             img = Image.fromarray(frame)
             imgtk = ImageTk.PhotoImage(image=img)
-
-            # Calculate the position to center the frame on the canvas
             canvas_width = self.canvas.winfo_width()
             canvas_height = self.canvas.winfo_height()
             x_center = (canvas_width - frame.shape[1]) // 2
             y_center = (canvas_height - frame.shape[0]) // 2
-
-            # Update the canvas image and position
             self.canvas.coords(self.image_id, x_center, y_center)
             self.canvas.itemconfig(self.image_id, image=imgtk)
             self.canvas.imgtk = imgtk
-
-        # Calculate the delay to maintain 24 FPS
-        elapsed_time = time.time() - start_time
-        delay = max(0, int((1 / 24 - elapsed_time) * 1000))  # Convert to milliseconds
+        # Schedule next frame update to maintain 24 FPS
+        delay = max(0, int((1 / 24) * 1000))
         self.canvas.after(delay, self.update_frame)
 
     def __del__(self):
