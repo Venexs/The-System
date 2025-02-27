@@ -2,20 +2,20 @@
     "status": [
         {
             "name": "Epoch",
-            "hp": 100,
-            "mp": 100,
-            "level": 1,
-            "str": 17,
-            "int": 17,
-            "agi": 10,
-            "vit": 10,
-            "per": 10,
-            "man": 10,
-            "XP": 20,
-            "coins": 200,
+            "hp": 380,
+            "mp": 380,
+            "level": 29,
+            "str": 25,
+            "int": 19,
+            "agi": 19,
+            "vit": 19,
+            "per": 19,
+            "man": 19,
+            "XP": 4210,
+            "coins": 151500,
             "fatigue_max": 40,
             "fatigue": 0,
-            "last_level": 0
+            "last_level": 29
         },
         {
             "title_bool": "False",
@@ -26,30 +26,8 @@
     ],
     "avail_eq": [
         {
-            "str_based": 0,
-            "int_based": 0
-        }
-    ],
-    "equipment": [
-        {
-            "STR": 0,
-            "AGI": 0,
-            "VIT": 0,
-            "INT": 0,
-            "PER": 0,
-            "MAN": 0
-        }
-    ],
-    "cal_data": [
-        {
-            "age": "17",
-            "gender": "M",
-            "height": "180",
-            "weight": "70",
-            "calorie calc": 3094,
-            "final calorie calc": 2754,
-            "result": "MILD WEIGHT LOSS",
-            "BMI": 22
+            "str_based": 120,
+            "int_based": 120
         }
     ]
 }

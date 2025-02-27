@@ -1,0 +1,1375 @@
+├───Anime Version
+│   │   exampleaifile.py
+│   │
+│   ├───Accept Job Change
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_1.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │
+│   ├───All Jobs
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │   gui2.py
+│   │   │   gui3.py
+│   │   │   gui4.py
+│   │   │   gui5.py
+│   │   │   gui6.py
+│   │   │   gui7.py
+│   │   │
+│   │   └───assets
+│   │       ├───frame0
+│   │       │       button_1.png
+│   │       │       entry_1.png
+│   │       │       entry_2.png
+│   │       │       entry_3.png
+│   │       │       entry_4.png
+│   │       │       entry_5.png
+│   │       │       image_1.png
+│   │       │       image_10.png
+│   │       │       image_11.png
+│   │       │       image_12.png
+│   │       │       image_13.png
+│   │       │       image_14.png
+│   │       │       image_15.png
+│   │       │       image_16.png
+│   │       │       image_17.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │       image_9.png
+│   │       │
+│   │       ├───frame1
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │
+│   │       ├───frame2
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │
+│   │       ├───frame3
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │
+│   │       ├───frame4
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │
+│   │       ├───frame5
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │
+│   │       ├───frame6
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_10.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │       image_9.png
+│   │       │
+│   │       └───frame7
+│   │               button_1.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │
+│   ├───assets
+│   │   └───frame0
+│   │           blue.png
+│   │           button_1.png
+│   │           button_10.png
+│   │           button_11.png
+│   │           button_12.png
+│   │           button_13.png
+│   │           button_14.png
+│   │           button_15.png
+│   │           button_16.png
+│   │           button_17.png
+│   │           button_18.png
+│   │           button_19.png
+│   │           button_2.png
+│   │           button_20.png
+│   │           button_21.png
+│   │           button_22.png
+│   │           button_23.png
+│   │           button_24.png
+│   │           button_25.png
+│   │           button_26.png
+│   │           button_3.png
+│   │           button_4.png
+│   │           button_5.png
+│   │           button_6.png
+│   │           button_7.png
+│   │           button_8.png
+│   │           button_9.png
+│   │           image_1.png
+│   │           image_10.png
+│   │           image_11.png
+│   │           image_12.png
+│   │           image_13.png
+│   │           image_14.png
+│   │           image_15.png
+│   │           image_16.png
+│   │           image_17.png
+│   │           image_18.png
+│   │           image_19.png
+│   │           image_2.png
+│   │           image_20.png
+│   │           image_21.png
+│   │           image_22.png
+│   │           image_23.png
+│   │           image_24.png
+│   │           image_25.png
+│   │           image_26.png
+│   │           image_27.png
+│   │           image_28.png
+│   │           image_29.png
+│   │           image_3.png
+│   │           image_30.png
+│   │           image_31.png
+│   │           image_32.png
+│   │           image_4.png
+│   │           image_5.png
+│   │           image_6.png
+│   │           image_7.png
+│   │           image_8.png
+│   │           image_9.png
+│   │           purple.png
+│   │
+│   ├───Calorie Input
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   ├───Create Guild
+│   │   │   error.py
+│   │   │   gui.py
+│   │   │   success.py
+│   │   │   test.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Daily Quest
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           blue.png
+│   │   │           button_1.png
+│   │   │           button_2.png
+│   │   │           button_3.png
+│   │   │           button_4.png
+│   │   │           button_5.png
+│   │   │           button_6.png
+│   │   │           button_7.png
+│   │   │           button_8.png
+│   │   │           button_9.png
+│   │   │           image_1.png
+│   │   │           image_10.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │           image_5.png
+│   │   │           image_6.png
+│   │   │           image_7.png
+│   │   │           image_8.png
+│   │   │           image_9.png
+│   │   │           purple.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Daily Quest Rewards
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   ├───Demon Castle
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │
+│   │   └───assets
+│   │       ├───frame0
+│   │       │       blue.png
+│   │       │       button_1.png
+│   │       │       image_1.png
+│   │       │       image_10.png
+│   │       │       image_11.png
+│   │       │       image_12.png
+│   │       │       image_13.png
+│   │       │       image_14.png
+│   │       │       image_15.png
+│   │       │       image_16.png
+│   │       │       image_17.png
+│   │       │       image_18.png
+│   │       │       image_19.png
+│   │       │       image_2.png
+│   │       │       image_20.png
+│   │       │       image_21.png
+│   │       │       image_22.png
+│   │       │       image_23.png
+│   │       │       image_24.png
+│   │       │       image_25.png
+│   │       │       image_26.png
+│   │       │       image_27.png
+│   │       │       image_28.png
+│   │       │       image_29.png
+│   │       │       image_3.png
+│   │       │       image_30.png
+│   │       │       image_31.png
+│   │       │       image_32.png
+│   │       │       image_33.png
+│   │       │       image_34.png
+│   │       │       image_35.png
+│   │       │       image_36.png
+│   │       │       image_37.png
+│   │       │       image_38.png
+│   │       │       image_39.png
+│   │       │       image_4.png
+│   │       │       image_40.png
+│   │       │       image_41.png
+│   │       │       image_42.png
+│   │       │       image_43.png
+│   │       │       image_44.png
+│   │       │       image_45.png
+│   │       │       image_46.png
+│   │       │       image_47.png
+│   │       │       image_48.png
+│   │       │       image_49.png
+│   │       │       image_5.png
+│   │       │       image_50.png
+│   │       │       image_51.png
+│   │       │       image_52.png
+│   │       │       image_53.png
+│   │       │       image_54.png
+│   │       │       image_55 - Copy.png
+│   │       │       image_55.png
+│   │       │       image_56.png
+│   │       │       image_57.png
+│   │       │       image_58.png
+│   │       │       image_58_alt.png
+│   │       │       image_59.png
+│   │       │       image_59_alt.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │       image_9.png
+│   │       │       purple.png
+│   │       │
+│   │       └───frame1
+│   │               blue.png
+│   │               button_1.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_5_alt.png
+│   │               image_6.png
+│   │               image_6_alt.png
+│   │               image_7.png
+│   │               purple.png
+│   │
+│   ├───Dungeon
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           blue.png
+│   │   │           button_1.png
+│   │   │           image_1.png
+│   │   │           image_10.png
+│   │   │           image_11.png
+│   │   │           image_12.png
+│   │   │           image_13.png
+│   │   │           image_14.png
+│   │   │           image_15.png
+│   │   │           image_16.png
+│   │   │           image_17.png
+│   │   │           image_18.png
+│   │   │           image_19.png
+│   │   │           image_2.png
+│   │   │           image_20.png
+│   │   │           image_21.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │           image_5.png
+│   │   │           image_6.png
+│   │   │           image_7.png
+│   │   │           image_8.png
+│   │   │           image_9.png
+│   │   │           purple.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Dungeon Runs
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           blue.png
+│   │   │           button_1.png
+│   │   │           button_2.png
+│   │   │           image_1.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │           image_5.png
+│   │   │           image_6.png
+│   │   │           image_7.png
+│   │   │           purple.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Dungeon Runs V2
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_1.png
+│   │               button_2.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │
+│   ├───DungeonMultiplayer
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_26.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_29.png
+│   │               image_30.png
+│   │               image_31.png
+│   │               image_32.png
+│   │               image_4.png
+│   │               purple.png
+│   │
+│   ├───Equip Item
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_1.png
+│   │               button_2.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               button_5.png
+│   │               button_6.png
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │               purple.png
+│   │
+│   ├───Equip Title
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_0.png
+│   │               button_1.png
+│   │               button_10.png
+│   │               button_11.png
+│   │               button_12.png
+│   │               button_13.png
+│   │               button_2.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               button_5.png
+│   │               button_6.png
+│   │               button_7.png
+│   │               button_8.png
+│   │               button_9.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_13.png
+│   │               image_14.png
+│   │               image_15.png
+│   │               image_16.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │               purple.png
+│   │
+│   ├───Equipment
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_0.png
+│   │               button_1.png
+│   │               button_2.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               button_5.png
+│   │               button_6.png
+│   │               button_7.png
+│   │               button_8.png
+│   │               button_9.png
+│   │               end.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_13.png
+│   │               image_14.png
+│   │               image_15.png
+│   │               image_16.png
+│   │               image_17.png
+│   │               image_18.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │               purple.png
+│   │
+│   ├───Final Penalty
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │
+│   ├───Guild List
+│   │   │   error.py
+│   │   │   gui.py
+│   │   │   success.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Guild Menu
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_1.png
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_4.psd
+│   │               image_5.png
+│   │               image_5.psd
+│   │               image_6.png
+│   │               image_6.psd
+│   │               image_7.png
+│   │               image_7.psd
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Guild Raids
+│   │   │   error.py
+│   │   │   gui.py
+│   │   │   success.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Instance Dungeon Confirm
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   ├───Insuff Fund
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Inventory
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_1.png
+│   │               button_10.png
+│   │               button_11.png
+│   │               button_12.png
+│   │               button_13.png
+│   │               button_14.png
+│   │               button_15.png
+│   │               button_16.png
+│   │               button_17.png
+│   │               button_18.png
+│   │               button_19.png
+│   │               button_2.png
+│   │               button_20.png
+│   │               button_21.png
+│   │               button_22.png
+│   │               button_23.png
+│   │               button_24.png
+│   │               button_25.png
+│   │               button_26.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               button_5.png
+│   │               button_6.png
+│   │               button_7.png
+│   │               button_8.png
+│   │               button_9.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_13.png
+│   │               image_14.png
+│   │               image_15.png
+│   │               image_16.png
+│   │               image_17.png
+│   │               image_18.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_25.png
+│   │               image_26.png
+│   │               image_27.png
+│   │               image_28.png
+│   │               image_29.png
+│   │               image_3.png
+│   │               image_30.png
+│   │               image_31.png
+│   │               image_32.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │               purple.png
+│   │
+│   ├───Inventory Addition
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           button_1.png
+│   │   │           button_10.png
+│   │   │           button_11.png
+│   │   │           button_12.png
+│   │   │           button_13.png
+│   │   │           button_14.png
+│   │   │           button_15.png
+│   │   │           button_16.png
+│   │   │           button_17.png
+│   │   │           button_18.png
+│   │   │           button_19.png
+│   │   │           button_2.png
+│   │   │           button_20.png
+│   │   │           button_21.png
+│   │   │           button_22.png
+│   │   │           button_23.png
+│   │   │           button_24.png
+│   │   │           button_25.png
+│   │   │           button_3.png
+│   │   │           button_4.png
+│   │   │           button_5.png
+│   │   │           button_6.png
+│   │   │           button_7.png
+│   │   │           button_8.png
+│   │   │           button_9.png
+│   │   │           entry_1.png
+│   │   │           entry_2.png
+│   │   │           entry_3.png
+│   │   │           entry_4.png
+│   │   │           entry_5.png
+│   │   │           image_1.png
+│   │   │           image_2.png
+│   │   │
+│   │   └───__pycache__
+│   │           gui_2.cpython-310.pyc
+│   │
+│   ├───Item Data
+│   │       gui.py
+│   │
+│   ├───Leaderboard
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_2.png
+│   │               button_8.png
+│   │               entry_1.png
+│   │               entry_2.png
+│   │               entry_3.png
+│   │               entry_4.png
+│   │               entry_5.png
+│   │               entry_6.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Leveled up
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Leveled up NO ADD
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Members List
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_2.png
+│   │               button_8.png
+│   │               entry_1.png
+│   │               entry_2.png
+│   │               entry_3.png
+│   │               entry_4.png
+│   │               entry_5.png
+│   │               entry_6.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Message
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   ├───Penalty Check
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           entry_1.png
+│   │   │           entry_2.png
+│   │   │           image_1.png
+│   │   │           image_10.png
+│   │   │           image_11.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │           image_5.png
+│   │   │           image_6.png
+│   │   │           image_7.png
+│   │   │           image_8.png
+│   │   │           image_9.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Penalty Quest
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           image_1.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Penalty Quest Rewards
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   ├───PVP
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │   gui2.py
+│   │   │   gui3.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_1.png
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───PVP Messages
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_1.png
+│   │               button_2.png
+│   │               button_8.png
+│   │               entry_1.png
+│   │               entry_2.png
+│   │               entry_3.png
+│   │               entry_4.png
+│   │               entry_5.png
+│   │               entry_6.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Quest adder
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           button_1.png
+│   │   │           button_2.png
+│   │   │           entry_1.png
+│   │   │           entry_10.png
+│   │   │           entry_11.png
+│   │   │           entry_12.png
+│   │   │           entry_13.png
+│   │   │           entry_14.png
+│   │   │           entry_15.png
+│   │   │           entry_16.png
+│   │   │           entry_17.png
+│   │   │           entry_18.png
+│   │   │           entry_19.png
+│   │   │           entry_2.png
+│   │   │           entry_20.png
+│   │   │           entry_21.png
+│   │   │           entry_3.png
+│   │   │           entry_4.png
+│   │   │           entry_5.png
+│   │   │           entry_6.png
+│   │   │           entry_7.png
+│   │   │           entry_8.png
+│   │   │           entry_9.png
+│   │   │           image_1.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Quest Complete
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Quest Info
+│   │       gui.py
+│   │
+│   ├───Quests
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           blue.png
+│   │   │           button_0.png
+│   │   │           button_1.png
+│   │   │           button_10.png
+│   │   │           button_11.png
+│   │   │           button_12.png
+│   │   │           button_13.png
+│   │   │           button_14.png
+│   │   │           button_15.png
+│   │   │           button_2.png
+│   │   │           button_3.png
+│   │   │           button_4.png
+│   │   │           button_5.png
+│   │   │           button_6.png
+│   │   │           button_7.png
+│   │   │           button_8.png
+│   │   │           button_9.png
+│   │   │           image_1.png
+│   │   │           image_10.png
+│   │   │           image_11.png
+│   │   │           image_12.png
+│   │   │           image_13.png
+│   │   │           image_14.png
+│   │   │           image_15.png
+│   │   │           image_16.png
+│   │   │           image_17.png
+│   │   │           image_18.png
+│   │   │           image_19.png
+│   │   │           image_2.png
+│   │   │           image_20.png
+│   │   │           image_21.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │           image_5.png
+│   │   │           image_6.png
+│   │   │           image_7.png
+│   │   │           image_8.png
+│   │   │           image_9.png
+│   │   │           purple.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Quests Filled
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Rewards Panel
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Secret Quest Rewards
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Set Effects
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           button_1.png
+│   │   │           button_2.png
+│   │   │           button_3.png
+│   │   │           image_1.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │           image_5.png
+│   │   │           image_6.png
+│   │   │           image_7.png
+│   │   │           image_8.png
+│   │   │           image_9.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Settings
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_1.png
+│   │               button_2.png
+│   │               button_3.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               purple.png
+│   │
+│   ├───Shop
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │
+│   │   └───assets
+│   │       ├───frame0
+│   │       │       blue.png
+│   │       │       button_1.png
+│   │       │       button_10.png
+│   │       │       button_2.png
+│   │       │       button_3.png
+│   │       │       button_4.png
+│   │       │       button_5.png
+│   │       │       button_6.png
+│   │       │       button_7.png
+│   │       │       button_8.png
+│   │       │       button_9.png
+│   │       │       image_1.png
+│   │       │       image_10.png
+│   │       │       image_11.png
+│   │       │       image_12.png
+│   │       │       image_13.png
+│   │       │       image_14.png
+│   │       │       image_15.png
+│   │       │       image_16.png
+│   │       │       image_17.png
+│   │       │       image_18.png
+│   │       │       image_19.png
+│   │       │       image_2.png
+│   │       │       image_20.png
+│   │       │       image_21.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │       image_9.png
+│   │       │       purple.png
+│   │       │
+│   │       └───frame1
+│   │               button_0.png
+│   │               button_1.png
+│   │               image_1.png
+│   │
+│   ├───Shop Sell
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_0.png
+│   │               button_1.png
+│   │               button_10.png
+│   │               button_11.png
+│   │               button_12.png
+│   │               button_13.png
+│   │               button_14.png
+│   │               button_15.png
+│   │               button_16.png
+│   │               button_17.png
+│   │               button_18.png
+│   │               button_19.png
+│   │               button_2.png
+│   │               button_20.png
+│   │               button_21.png
+│   │               button_22.png
+│   │               button_23.png
+│   │               button_24.png
+│   │               button_25.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               button_5.png
+│   │               button_6.png
+│   │               button_7.png
+│   │               button_8.png
+│   │               button_9.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_13.png
+│   │               image_14.png
+│   │               image_15.png
+│   │               image_16.png
+│   │               image_17.png
+│   │               image_18.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_24.png
+│   │               image_25.png
+│   │               image_26.png
+│   │               image_27.png
+│   │               image_28.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │
+│   ├───Shop Sell Final
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               button_0.png
+│   │               button_1.png
+│   │               image_1.png
+│   │
+│   ├───Skill Info
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │
+│   │   ├───assets
+│   │   │   ├───frame0
+│   │   │   └───frame1
+│   │   │           button_1.png
+│   │   │           button_2.png
+│   │   │           button_3.png
+│   │   │           button_4.png
+│   │   │           image_1.png
+│   │   │
+│   │   └───__pycache__
+│   │           gui1.cpython-310.pyc
+│   │
+│   ├───Skills Tab
+│   │   │   gui.py
+│   │   │   gui1.py
+│   │   │   gui2.py
+│   │   │   gui4.py
+│   │   │
+│   │   └───assets
+│   │       ├───frame0
+│   │       │       button_0.png
+│   │       │       button_1.png
+│   │       │       button_2.png
+│   │       │       button_3.png
+│   │       │       button_4.png
+│   │       │       button_5.png
+│   │       │       button_6.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │       image_9.png
+│   │       │
+│   │       ├───frame1
+│   │       │       button_0.png
+│   │       │       button_1.png
+│   │       │       button_2.png
+│   │       │       button_3.png
+│   │       │       button_4.png
+│   │       │       button_5.png
+│   │       │       button_6.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │       image_9.png
+│   │       │
+│   │       ├───frame2
+│   │       │       button_0.png
+│   │       │       button_1.png
+│   │       │       button_2.png
+│   │       │       button_3.png
+│   │       │       button_4.png
+│   │       │       button_5.png
+│   │       │       image_1.png
+│   │       │       image_2.png
+│   │       │       image_3.png
+│   │       │       image_4.png
+│   │       │       image_5.png
+│   │       │       image_6.png
+│   │       │       image_7.png
+│   │       │       image_8.png
+│   │       │
+│   │       └───frame3
+│   │               button_1.png
+│   │               button_2.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               image_1.png
+│   │               image_2.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │
+│   ├───Statistics
+│   │   │   gui.py
+│   │   │
+│   │   ├───assets
+│   │   │   └───frame0
+│   │   │           button_1.png
+│   │   │           button_2.png
+│   │   │           image_1.png
+│   │   │           image_2.png
+│   │   │           image_3.png
+│   │   │           image_4.png
+│   │   │
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   ├───Status Tab
+│   │   │   gui.py
+│   │   │
+│   │   └───assets
+│   │       └───frame0
+│   │               blue.png
+│   │               button_1.png
+│   │               button_2.png
+│   │               button_3.png
+│   │               button_4.png
+│   │               button_5.png
+│   │               button_6.png
+│   │               button_7.png
+│   │               button_8.png
+│   │               image_1.png
+│   │               image_10.png
+│   │               image_11.png
+│   │               image_12.png
+│   │               image_13.png
+│   │               image_14.png
+│   │               image_15.png
+│   │               image_16.png
+│   │               image_17.png
+│   │               image_18.png
+│   │               image_19.png
+│   │               image_2.png
+│   │               image_20.png
+│   │               image_21.png
+│   │               image_22.png
+│   │               image_23.png
+│   │               image_3.png
+│   │               image_4.png
+│   │               image_5.png
+│   │               image_6.png
+│   │               image_7.png
+│   │               image_8.png
+│   │               image_9.png
+│   │               purple.png
+│   │
+│   ├───Title Exists
+│   │   └───build
+│   │       └───assets
+│   │           └───frame0
+│   └───Urgent Quest
+│       │   gui.py
+│       │
+│       ├───assets
+│       │   └───frame0
+│       │           blue.png
+│       │           button_1.png
+│       │           button_2.png
+│       │           image_1.png
+│       │           image_2.png
+│       │           image_3.png
+│       │           purple.png
+│       │
+│       └───build
+│           └───assets
+│               └───frame0
+├───assets
+│   └───frame0
+│           button_1.png
+│           entry_1.png
+│           entry_2.png
+│           entry_3.png
+│           entry_4.png
+│           entry_5.png
+│           image_1.png
+│           image_10.png
+│           image_11.png
+│           image_12.png
+│           image_13.png
+│           image_14.png
+│           image_15.png
+│           image_16.png
+│           image_17.png
+│           image_18.png
+│           image_19.png
+│           image_2.png
+│           image_20.png
+│           image_21.png
+│           image_22.png
+│           image_231.png
+│           image_232.png
+│           image_3.png
+│           image_4.png
+│           image_5.png
+│           image_6.png
+│           image_7.png
+│           image_8.png
+│           image_9.png
+│           Off.png
+│           On.png
+│

@@ -99,6 +99,13 @@
         "Anti Cheat Active":
         [
             "Files/Mod/default/messages/Anti Cheat Active.png"
-        ]
+        ],
+        "Forge of Might (STR) Conquered": ["Files/Mod/default/messages/str_conquered.png"],
+        "Windswept Plains (AGI) Conquered": ["Files/Mod/default/messages/agi_conquered.png"],
+        "Labyrinth of Thought (INT) Conquered": ["Files/Mod/default/messages/int_conquered.png"],
+        "Eternal Bastion (VIT) Conquered": ["Files/Mod/default/messages/vit_conquered.png"],
+        "Veil of Shadows (PER) Conquered": ["Files/Mod/default/messages/per_conquered.png"],
+        "Astral Nexus (MAN) Conquered": ["Files/Mod/default/messages/man_conquered.png"],
+        "Shadow Extract": ["Files/Mod/default/messages/shadowextract.png"]
     }
 }

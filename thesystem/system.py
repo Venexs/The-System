@@ -588,6 +588,27 @@ def animate_window_close(window, target_height, width, step=2, delay=5):
     else:
         window.quit()
 
+def animate_text_out(canvas, text_id, steps=30, delay=8, dx=-5):
+    """Slide the text out to the left before deleting it."""
+    def move_step(step):
+        if step > 0:
+            canvas.move(text_id, dx, 0)  # Move text by dx pixels left
+            canvas.after(delay, move_step, step - 1)  # Schedule next step
+        else:
+            canvas.delete(text_id)  # Delete text when animation is done
+    
+    move_step(steps)  # Start the animation with given steps
+
+def fade_text_out(canvas, text_id, steps=30, delay=8):
+    colors = ["#000000", "#333333", "#666666", "#999999", "#CCCCCC", "#FFFFFF"]
+    def fade_step(step):
+        if step < len(colors):
+            canvas.itemconfig(text_id, fill=colors[step])
+            canvas.after(delay, fade_step, step + 1)
+        else:
+            pass
+    fade_step(0)
+
 class VideoPlayer:
     def __init__(self, canvas, video_path, del_x=0, del_y=0, resize_factor=0.7, buffer_size=10):
         self.canvas = canvas

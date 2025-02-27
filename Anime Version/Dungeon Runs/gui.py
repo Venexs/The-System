@@ -575,5 +575,8 @@ update_images()
 
 get()
 
+
+
+
 window.resizable(False, False)
 window.mainloop()
