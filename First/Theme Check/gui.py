@@ -35,38 +35,20 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-
-def center_window(root, width, height):
-    # Get screen width and height
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    
-    # Calculate position x, y to center the window
-    x = (screen_width - width) // 2
-    y = (screen_height - height) // 2
-    
-    # Set the dimensions of the window and the position
-    root.geometry(f'{width}x{height}+{x}+{y}')
-
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
 
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
 
 def ex_close(eve):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 def name(eve,name):
@@ -107,9 +89,9 @@ target_height = 592
 window_width = 934
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
-#center_window(window,window_width,target_height)
+thesystem.system.center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
@@ -149,7 +131,7 @@ bottom_size = (850, 47)
 # Preload top and bottom images
 top_preloaded_images = preload_images(top_images, top_size)
 bottom_preloaded_images = preload_images(bottom_images, bottom_size)
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 canvas = Canvas(
     window,
@@ -170,10 +152,11 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
+player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0, pause_duration=0.6, resize_factor=-1)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -194,37 +177,9 @@ image_3 = canvas.create_image(
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
-    248.0,
-    318.0,
+    309.0,
+    310.0,
     image=image_image_4
-)
-
-canvas.tag_bind(image_4, "<ButtonPress-1>", lambda event: name(event, "Anime"))
-
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    394.0,
-    318.0,
-    image=image_image_5
-)
-
-canvas.tag_bind(image_5, "<ButtonPress-1>", lambda event: name(event, "Manwha"))
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    540.0,
-    319.0,
-    image=image_image_6
-)
-
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
-    686.0,
-    318.0,
-    image=image_image_7
 )
 
 button_image_1 = PhotoImage(
@@ -233,29 +188,85 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: ex_close(0),
+    command=lambda: name(0, "Anime"),
     relief="flat"
 )
 button_1.place(
+    x=369.0,
+    y=402.0,
+    width=86.0,
+    height=17.0
+)
+
+image_image_5 = PhotoImage(
+    file=relative_to_assets("image_5.png"))
+image_5 = canvas.create_image(
+    621.0,
+    310.0,
+    image=image_image_5
+)
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: name(0, "Manwha"),
+    relief="flat"
+)
+button_2.place(
+    x=679.0,
+    y=402.0,
+    width=86.0,
+    height=17.0
+)
+
+button_image_3 = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+button_3 = Button(
+    image=button_image_3,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(0),
+    relief="flat"
+)
+button_3.place(
     x=756.0,
     y=92.0,
     width=25.0,
     height=25.0
 )
 
+image_image_6 = PhotoImage(
+    file=relative_to_assets("image_6.png"))
+image_6 = canvas.create_image(
+    69.0,
+    313.0,
+    image=image_image_6
+)
+
+image_image_7 = PhotoImage(
+    file=relative_to_assets("image_7.png"))
+image_7 = canvas.create_image(
+    865.0,
+    325.0,
+    image=image_image_7
+)
+
 image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
-    70.0,
-    313.0,
+    113.0,
+    306.0,
     image=image_image_8
 )
 
 image_image_9 = PhotoImage(
     file=relative_to_assets("image_9.png"))
 image_9 = canvas.create_image(
-    865.0,
-    325.0,
+    818.0,
+    303.0,
     image=image_image_9
 )
 
@@ -306,16 +317,16 @@ canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 bottom_image = canvas.create_image(459.0, 562.0, image=bottom_preloaded_images[bot_image_index])
 
 
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
+button_image_4 = PhotoImage(
+    file=relative_to_assets("button_4.png"))
+button_4 = Button(
+    image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_2 clicked"),
     relief="flat"
 )
-button_2.place(
+button_4.place(
     x=597.0,
     y=498.0,
     width=180.0,

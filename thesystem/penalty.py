@@ -26,7 +26,7 @@ def complete(entry_1, entry_2, window):
     ex_close(window)
 
 def ex_close(window):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, window.winfo_height(), window.winfo_width(), step=30, delay=1)
 
 def is_admin():

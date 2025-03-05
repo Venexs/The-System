@@ -27,7 +27,7 @@ sys.path.insert(0, project_root)
 import thesystem.system
 import thesystem.castle
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
@@ -111,19 +111,15 @@ if soul_count>=10000 and rewards==False:
     thesystem.castle.reward_castle()
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay 
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
@@ -133,7 +129,7 @@ def ex_close(win):
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
 
 
@@ -156,7 +152,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0, resize_factor=1.3)

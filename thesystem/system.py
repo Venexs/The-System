@@ -1,7 +1,7 @@
 import ujson
 import csv
 import subprocess
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw, ImageFont, ImageTk, ImageFilter
 from datetime import datetime, timedelta, date
 from concurrent.futures import ThreadPoolExecutor
 import threading
@@ -13,8 +13,14 @@ import os
 import queue
 import thesystem.misc
 import numpy as np
+from multiprocessing import Pool, cpu_count
+import tkinter as tk
+from tkinter import Label
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from functools import partial
 
 last_run = 0 
+tk_images = []
 
 def fin_pen():
     today = datetime.now().date()
@@ -44,7 +50,7 @@ def fin_pen():
             fout_final_wr.writerow([dates,"DONE","Complete"])
 
     #! ===================================================================
-    with open("Files\Data\Calorie_Count.json", 'r') as calorie_add_file:
+    with open("Files/Data/Calorie_Count.json", 'r') as calorie_add_file:
         calorie_add_data=ujson.load(calorie_add_file)
         calorie_add_key=list(calorie_add_data.keys())[0]
         cal_tdy_val=calorie_add_data[calorie_add_data]
@@ -57,7 +63,7 @@ def fin_pen():
     formatted_date = current_date.strftime("%Y-%m-%d")
     day_of_week = (current_date_t.strftime("%A"))
     try:
-        with open("Files\Workout\Cal_Count.json", 'r') as calorie_val_search_file:
+        with open("Files/Workout/Cal_Count.json", 'r') as calorie_val_search_file:
             calorie_val_search_data=ujson.load(calorie_val_search_file)
             cal_val=calorie_val_search_data[day_of_week]
             
@@ -97,6 +103,8 @@ def penalty_check(win):
         target_time_str=data0["Penalty Time"]
 
     now=datetime.now()
+    if target_time_str == "24:00":
+        target_time_str = "00:00"
     target_time=datetime.strptime(target_time_str, "%H:%M").time()
     target_datetime=datetime.combine(now.date(), target_time)
     
@@ -169,96 +177,85 @@ def run_once_prog(stp_eve, thrd):
         sys.exit()
 
 def random_skill_check():
-    # Load the primary status file
-    with open("Files/status.json", 'r') as fson:
-        data = ujson.load(fson)
+    # Load the primary status file and extract player's data.
+    with open("Files/status.json", 'r') as f:
+        data = ujson.load(f)
+    player = data["status"][0]
+    meta = data["status"][1]
 
-    # Extract player stats and metadata
-    name = data["status"][0]['name'].upper()
-    hp = data["status"][0]['hp']
-    mp = data["status"][0]['mp']
-    lvl = data["status"][0]['level']
-    old_lvl = f"{lvl:02d}"
+    # Convert numeric stats to integers.
+    lvl = int(player['level'])
+    stre = int(player['str'])
+    intel = int(player['int'])
+    agi = int(player['agi'])
+    vit = int(player['vit'])
+    per = int(player['per'])
+    man = int(player['man'])
 
-    stre = data["status"][0]['str']
-    intel = data["status"][0]['int']
-    agi = data["status"][0]['agi']
-    vit = data["status"][0]['vit']
-    per = data["status"][0]['per']
-    man = data["status"][0]['man']
-
-    tit = data["status"][1]['title'].upper()
-    job = data["status"][1]['job'].upper()
-    xp_str = data["status"][0]['XP']
-    coins = data["status"][0]['coins']
-
-    # Check level-up and skill eligibility
+    # Check if level-up is eligible (every 5 levels).
     if lvl % 5 == 0:
-        with open("Files/Skills/Skill_old_check.json", 'r') as check_file:
-            old_lvl_data = ujson.load(check_file)
+        # Load old stats.
+        with open("Files/Skills/Skill_old_check.json", 'r') as f:
+            old_lvl_data = ujson.load(f)
+        old_stat = old_lvl_data["old_stat"][0]
 
-        if lvl != old_lvl_data["old_stat"][0]["lvl"]:
-            # Calculate stat differences
+        # Proceed only if the level has changed.
+        if lvl != int(old_stat["lvl"]):
+            # Calculate stat differences.
             comp_rec = {
-                "STR": int(stre) - int(old_lvl_data["old_stat"][0]["str"]),
-                "INT": int(intel) - int(old_lvl_data["old_stat"][0]["int"]),
-                "AGI": int(agi) - int(old_lvl_data["old_stat"][0]["agi"]),
-                "VIT": int(vit) - int(old_lvl_data["old_stat"][0]["vit"]),
-                "PER": int(per) - int(old_lvl_data["old_stat"][0]["per"]),
-                "MAN": int(man) - int(old_lvl_data["old_stat"][0]["man"])
+                "STR": stre - int(old_stat["str"]),
+                "INT": intel - int(old_stat["int"]),
+                "AGI": agi - int(old_stat["agi"]),
+                "VIT": vit - int(old_stat["vit"]),
+                "PER": per - int(old_stat["per"]),
+                "MAN": man - int(old_stat["man"])
             }
+            max_val = max(comp_rec.values())
+            # Get at most two alphabetically first keys with the max difference.
+            max_keys = sorted([key for key, value in comp_rec.items() if value == max_val])[:2]
 
-            # Identify the max stat(s)
-            max_value = max(comp_rec.values())
-            max_keys = [key for key, value in comp_rec.items() if value == max_value]
-
-            # Handle ties for multiple max stats, limit to 2 alphabetically
-            max_keys = sorted(max_keys)[:2]
-
-            # Load skill list data
-            with open("Files/Skills/Skill_List.json", 'r') as skill_list:
-                skill_list_data = ujson.load(skill_list)
-
-            # Match skills with conditions
-            name_of_skill = [
+            # Load the available skills from the skill list.
+            with open("Files/Skills/Skill_List.json", 'r') as f:
+                skill_list_data = ujson.load(f)
+            # Find skills whose condition is met by the max_keys.
+            available_skills = [
                 skill for skill, details in skill_list_data.items()
-                if set(details[1]["Condition"]).issubset(max_keys)
+                if set(details[1].get("Condition", [])).issubset(max_keys)
             ]
+            choosen_skill = random.choice(available_skills) if available_skills else "Dash"
 
-            # Choose a skill
-            choosen_skill = random.choice(name_of_skill) if name_of_skill else "Dash"
+            # Load current skills.
+            with open("Files/Skills/Skill.json", 'r') as f:
+                main_skill_data = ujson.load(f)
 
-            # Load current skills
-            with open("Files/Skills/Skill.json", 'r') as main_skills:
-                main_skill_data = ujson.load(main_skills)
-
-            # Check for duplication and process accordingly
+            # If the chosen skill exists, attempt an upgrade.
             if choosen_skill in main_skill_data:
                 if main_skill_data[choosen_skill][0]["lvl"] != "MAX":
                     main_skill_data[choosen_skill][0]["lvl"] += 1
-                    with open("Files/Skills/Skill.json", 'w') as update_main_skills:
-                        ujson.dump(main_skill_data, update_main_skills, indent=6)
-
-                    with open("Files/Temp Files/Skill Up Temp.csv", 'w', newline='') as skill_temp_csv_open:
-                        fw = csv.writer(skill_temp_csv_open)
-                        fw.writerow([choosen_skill])
-
-                    with open('Files/Data/New_Updates.json', 'w') as updatefile:
-                        fin_data = {"Skills": "False", "Quests": "False", "Upgrade": "True", "Lines": "False"}
-                        ujson.dump(fin_data, updatefile, indent=4)
+                    # Write updated skills.
+                    with open("Files/Skills/Skill.json", 'w') as f:
+                        ujson.dump(main_skill_data, f, indent=6)
+                    # Log the skill upgrade to a temporary CSV.
+                    with open("Files/Temp Files/Skill Up Temp.csv", 'w', newline='') as csvfile:
+                        csv.writer(csvfile).writerow([choosen_skill])
+                    # Update the New Updates file.
+                    new_updates = {"Skills": "False", "Quests": "False", "Upgrade": "True", "Lines": "False"}
+                    with open("Files/Data/New_Updates.json", 'w') as f:
+                        ujson.dump(new_updates, f, indent=4)
             else:
-                main_skill_data[choosen_skill] = [(skill_list_data[choosen_skill].pop(0))]
-                main_skill_data[choosen_skill][0]["pl_point"] = 0
+                # Add the new skill from the skill list.
+                new_skill_entry = skill_list_data.get(choosen_skill, [])
+                entry = new_skill_entry.pop(0) if new_skill_entry else {}
+                entry["pl_point"] = 0
+                main_skill_data[choosen_skill] = [entry]
+                with open("Files/Skills/Skill.json", 'w') as f:
+                    ujson.dump(main_skill_data, f, indent=6)
+                new_updates = {"Skills": "True", "Quests": "False", "Upgrade": "False", "Lines": "False"}
+                with open("Files/Data/New_Updates.json", 'w') as f:
+                    ujson.dump(new_updates, f, indent=4)
 
-                with open("Files/Skills/Skill.json", 'w') as update_main_skills:
-                    ujson.dump(main_skill_data, update_main_skills, indent=6)
-
-                with open('Files/Data/New_Updates.json', 'w') as updatefile:
-                    fin_data = {"Skills": "True", "Quests": "False", "Upgrade": "False", "Lines": "False"}
-                    ujson.dump(fin_data, updatefile, indent=4)
-
-            # Update old stats
-            old_lvl_data["old_stat"][0].update({
+            # Update the stored old stats.
+            old_stat.update({
                 "lvl": lvl,
                 "str": stre,
                 "int": intel,
@@ -267,9 +264,8 @@ def random_skill_check():
                 "per": per,
                 "man": man,
             })
-
-            with open("Files/Skills/Skill_old_check.json", 'w') as final_check_file:
-                ujson.dump(old_lvl_data, final_check_file, indent=4)
+            with open("Files/Skills/Skill_old_check.json", 'w') as f:
+                ujson.dump(old_lvl_data, f, indent=4)
 
 def check_midnight(window,stop_event):
     while not stop_event.is_set():
@@ -306,7 +302,7 @@ def random_quest():
 
             if activ_quests_vals<13 and activ_quests_vals!=13:
                 # ? Quest Name
-                with open("Files\Quests\Quest_Names.json", 'r') as quest_name_file:
+                with open("Files/Quests/Quest_Names.json", 'r') as quest_name_file:
                     quest_names=ujson.load(quest_name_file)
                     if random_ab in ["STR","AGI","VIT"]:
                         names_list=quest_names["STR"]
@@ -330,7 +326,7 @@ def random_quest():
                         rew3="INTav"
                 
                 # ? Quest Description
-                with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
+                with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
                     quest_desc=ujson.load(quest_desc_file)
                     if rank in ["E", "D"]:
                         desc_list=quest_desc["Easy"]
@@ -355,7 +351,7 @@ def random_quest():
                 
                 coinval=amt[rank]
                 rew1=f"Coin Bag {coinval}"
-                with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
+                with open("Files/Data/Inventory_List.json", 'r') as rewards_name_file:
                     reward_names=ujson.load(rewards_name_file)
                     reward_names_list=list(reward_names.keys())
 
@@ -543,149 +539,180 @@ def random_quest():
 def make_window_transparent(window,color="#0C679B"):
     window.wm_attributes('-transparentcolor', color)
 
-def animate_window_open(window, target_height, width, step=2, delay=5, doners=False):
+def animate_window_open(window, target_height, width, step=2, delay=5, doners=False, cached_dims=None):
     current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
+    if current_height >= target_height:
+        return
 
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height < target_height:
-        new_height = min(current_height + step, target_height)
-    else:
-        new_height = current_height
+    # Increase height by step.
+    new_height = min(current_height + step, target_height)
     
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+    # Cache screen dimensions if not already provided.
+    if cached_dims is None:
+        cached_dims = (window.winfo_screenwidth(), window.winfo_screenheight())
+    screen_width, screen_height = cached_dims
 
-    done_val=False
+    # Compute new coordinates to keep the window centered.
+    new_x = (screen_width - width) // 2
+    new_y = (screen_height - new_height) // 2
 
-    if round((new_height/target_height), 1)==0.2:
-        if doners==False:
-            #subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-            done_val=True
+    # Update geometry.
+    window.geometry(f"{width}x{new_height}+{new_x}+{new_y}")
+    
+    # Trigger a one-time action when passing the 20% threshold.
+    if not doners:
+        threshold = 0.2 * target_height
+        if current_height < threshold <= new_height:
+            # Trigger side effect, e.g. play a sound:
+            # subprocess.Popen(['python', 'Files\\Mod\\default\\sfx.py'])
+            doners = True
 
-    if new_height < target_height:
-        window.after(delay, animate_window_open, window, target_height, width, step, delay, done_val)
+    # Schedule the next update using the cached screen dimensions.
+    window.after(max(1, delay // 2), animate_window_open, window, target_height, width, step, delay, doners, cached_dims)
 
-def animate_window_close(window, target_height, width, step=2, delay=5):
+def animate_window_close(window, target_height, width, step=2, delay=5, cached_dims=None):
     current_height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    window.geometry(f"{width}x{current_height}+{screen_width//2 - width//2}+{screen_height//2 - current_height//2}")
-
-    if current_height > target_height:
-        new_height = max(current_height - step, target_height)
-    else:
-        new_height = current_height
+    new_height = max(current_height - step, target_height)
     
-    new_y = screen_height // 2 - new_height // 2
-    window.geometry(f"{width}x{new_height}+{screen_width//2 - width//2}+{new_y}")
+    if cached_dims is None:
+        cached_dims = (window.winfo_screenwidth(), window.winfo_screenheight())
+    screen_width, screen_height = cached_dims
+
+    # Compute new coordinates to keep the window centered.
+    new_x = (screen_width - width) // 2
+    new_y = (screen_height - new_height) // 2
+
+    # Update geometry.
+    window.geometry(f"{width}x{new_height}+{new_x}+{new_y}")
 
     if new_height > target_height:
-        window.after(delay, animate_window_close, window, target_height, width, step, delay)
+        window.after(delay, animate_window_close, window, target_height, width, step, delay, cached_dims)
     else:
         window.quit()
 
-def animate_text_out(canvas, text_id, steps=30, delay=8, dx=-5):
-    """Slide the text out to the left before deleting it."""
-    def move_step(step):
-        if step > 0:
-            canvas.move(text_id, dx, 0)  # Move text by dx pixels left
-            canvas.after(delay, move_step, step - 1)  # Schedule next step
-        else:
-            canvas.delete(text_id)  # Delete text when animation is done
-    
-    move_step(steps)  # Start the animation with given steps
-
-def fade_text_out(canvas, text_id, steps=30, delay=8):
-    colors = ["#000000", "#333333", "#666666", "#999999", "#CCCCCC", "#FFFFFF"]
-    def fade_step(step):
-        if step < len(colors):
-            canvas.itemconfig(text_id, fill=colors[step])
-            canvas.after(delay, fade_step, step + 1)
-        else:
-            pass
-    fade_step(0)
-
 class VideoPlayer:
-    def __init__(self, canvas, video_path, del_x=0, del_y=0, resize_factor=0.7, buffer_size=10):
+    def __init__(self, canvas, video_path, del_x=0, del_y=0, resize_factor=0.7, buffer_size=4, pause_duration=0, fps=12):
         self.canvas = canvas
         self.video_path = video_path
         self.cap = cv2.VideoCapture(video_path)
         self.image_id = self.canvas.create_image(0, 0, anchor='nw')
         self.frame_queue = queue.Queue(maxsize=buffer_size)
         self.stop_event = threading.Event()
-        self.scaling_factor = 1.0  # Default scaling factor
+        self.pause_duration = float(pause_duration)
+        self.fps = fps
+        self.first_frame_displayed = False
+
+        # Wait for valid canvas dimensions.
+        self.canvas.update_idletasks()
+        while self.canvas.winfo_width() <= 1 or self.canvas.winfo_height() <= 1:
+            self.canvas.update_idletasks()
+            time.sleep(0.01)
 
         ret, frame = self.cap.read()
-        if ret:
-            self.original_width = frame.shape[1]
-            self.original_height = frame.shape[0]
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-        else:
+        if not ret:
             raise ValueError("Unable to read video file.")
+        self.original_width = frame.shape[1]
+        self.original_height = frame.shape[0]
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
-        # Start frame processing in a separate thread
+        # Cache canvas dimensions.
+        self.last_canvas_width = None
+        self.last_canvas_height = None
+        self.last_new_width = None
+        self.last_new_height = None
+        self.new_dimensions = self._calculate_new_dimensions()
+
+        # Start the background thread for reading frames.
         self.read_thread = threading.Thread(target=self._read_frames, daemon=True)
         self.read_thread.start()
 
-        self.canvas.update_idletasks()
+        # Start the update loop on the main thread.
         self.update_frame()
 
-
-    def _calculate_scaling_factor(self):
+    def _calculate_new_dimensions(self):
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
-        scale_width = canvas_width / self.original_width
-        scale_height = canvas_height / self.original_height
-        return max(scale_width, scale_height)
+        if self.last_canvas_width == canvas_width and self.last_canvas_height == canvas_height:
+            return self.last_new_width, self.last_new_height
+
+        # "Cover" effect: scale so that one edge exactly matches.
+        scaling_factor = max(canvas_width / self.original_width, canvas_height / self.original_height)
+        new_width = int(self.original_width * scaling_factor)
+        new_height = int(self.original_height * scaling_factor)
+
+        self.last_canvas_width = canvas_width
+        self.last_canvas_height = canvas_height
+        self.last_new_width = new_width
+        self.last_new_height = new_height
+        return new_width, new_height
 
     def _read_frames(self):
         while not self.stop_event.is_set():
-            if not self.frame_queue.full():
+            ret, frame = self.cap.read()
+            if not ret:
+                # Loop video by resetting the frame pointer.
+                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 ret, frame = self.cap.read()
                 if not ret:
-                    self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                    ret, frame = self.cap.read()
-                if ret:
-                    # Use the precomputed scaling factor (updated in the main thread)
-                    scaling_factor = self.scaling_factor
-                    new_width = int(self.original_width * scaling_factor)
-                    new_height = int(self.original_height * scaling_factor)
-                    frame = cv2.resize(frame, (new_width, new_height))
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    self.frame_queue.put(frame)
-            else:
-                time.sleep(0.005)
+                    continue
+
+            new_width, new_height = self.new_dimensions
+            # Choose interpolation based on resizing direction.
+            interp = cv2.INTER_LINEAR if (new_width > self.original_width or new_height > self.original_height) else cv2.INTER_AREA
+            frame = cv2.resize(frame, (new_width, new_height), interpolation=interp)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # Use non-blocking put; drop frame if the queue is full.
+            try:
+                self.frame_queue.put_nowait(frame)
+            except queue.Full:
+                pass
 
     def update_frame(self):
-        # Calculate scaling factor on the main thread
-        self.scaling_factor = self._calculate_scaling_factor()
-        if not self.frame_queue.empty():
-            frame = self.frame_queue.get()
+        self.new_dimensions = self._calculate_new_dimensions()
+        try:
+            frame = self.frame_queue.get_nowait()
+        except queue.Empty:
+            frame = None
+
+        if frame is not None:
             img = Image.fromarray(frame)
             imgtk = ImageTk.PhotoImage(image=img)
             canvas_width = self.canvas.winfo_width()
             canvas_height = self.canvas.winfo_height()
+            # Center the frame on the canvas.
             x_center = (canvas_width - frame.shape[1]) // 2
             y_center = (canvas_height - frame.shape[0]) // 2
             self.canvas.coords(self.image_id, x_center, y_center)
             self.canvas.itemconfig(self.image_id, image=imgtk)
-            self.canvas.imgtk = imgtk
-        # Schedule next frame update to maintain 24 FPS
-        delay = max(0, int((1 / 24) * 1000))
-        self.canvas.after(delay, self.update_frame)
+            self.canvas.imgtk = imgtk  # Keep a reference to avoid garbage collection.
+
+            if not self.first_frame_displayed:
+                self.first_frame_displayed = True
+                self.canvas.after(int(self.pause_duration * 1000), self.update_frame)
+                return
+
+        # Schedule next frame update based on fps.
+        self.canvas.after(int(1000 / self.fps), self.update_frame)
 
     def __del__(self):
         try:
-            self.stop_event.set()  # Signal the reading thread to stop
-            self.read_thread.join()  # Wait for the thread to finish
+            self.stop_event.set()
+            self.read_thread.join(timeout=1)
             if self.cap.isOpened():
                 self.cap.release()
-        except AttributeError:
-            pass  # Ignore errors caused by partially destroyed objects
+        except Exception:
+            pass
+
+def set_preview_temp(o_name1,qt1):
+    with open("Files/Temp Files/Inventory temp.csv", 'w', newline='') as new_csv_open:
+        rec=[o_name1, qt1, "Preview"]
+        writer=csv.writer(new_csv_open)
+        writer.writerow(rec)
+    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            theme_data=ujson.load(themefile)
+            theme=theme_data["Theme"]
+    subprocess.Popen(['python', f'{theme} Version/Manwha Version\Item Data\gui.py/gui.py'])
 
 def center_window(root, width, height):
     # Get screen width and height
@@ -801,6 +828,7 @@ def get_fin_xp():
         data["status"][0]['vit'] += 1 * level_difference
         data["status"][0]['per'] += 1 * level_difference
         data["status"][0]['man'] += 1 * level_difference
+        data["status"][0]['fatigue_max'] += 10 * level_difference
 
         # Save updated status to file
         with open("Files/Status.json", 'w') as up_fson:
@@ -887,7 +915,7 @@ def give_fatigue_from_rank(rank):
         return 600
     elif rank=='S':
         return 1300
-    
+ 
 def message_open(message):
     fout=open('Files/Checks/Message.csv', 'w', newline='')
     fw=csv.writer(fout)
@@ -897,39 +925,68 @@ def message_open(message):
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
-    subprocess.Popen(['python', f"{theme} Version\Message\gui.py"])
+    subprocess.Popen(['python', f"{theme} Version/Message/gui.py"])
 
-def resize_image(image_path, size):
-    """Resize an image using PIL."""
-    if os.path.exists(image_path):
-        try:
-            img = Image.open(image_path)
-            return img.resize(size, Image.Resampling.LANCZOS)
-        except Exception as e:
-            print(f"Error opening/resizing image {image_path}: {e}")
+def resize_image_cv(image_path, size):
+    """
+    Resize an image using OpenCV for faster performance.
+    It preserves the alpha channel if present.
+    """
+    try:
+        # Read image; IMREAD_UNCHANGED ensures the alpha channel is preserved.
+        img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+        if img is None:
+            print(f"Error reading image: {image_path}")
             return None
-    return None
 
-def preload_images(image_paths, size):
-    """Preload images by resizing them in parallel and converting to PhotoImage."""
-    resized_images = []
+        # Resize image using INTER_AREA interpolation (optimized for downscaling)
+        resized = cv2.resize(img, size, interpolation=cv2.INTER_AREA)
 
-    with ThreadPoolExecutor() as executor:
-        resized_images = list(executor.map(lambda path: resize_image(path, size), image_paths))
+        # Convert color channels: OpenCV loads images in BGR or BGRA order.
+        if resized.ndim == 3:
+            channels = resized.shape[2]
+            if channels == 3:
+                # Convert BGR to RGB.
+                resized = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
+            elif channels == 4:
+                # Convert BGRA to RGBA.
+                resized = cv2.cvtColor(resized, cv2.COLOR_BGRA2RGBA)
+        return resized
+    except Exception as e:
+        print(f"Error resizing {image_path}: {e}")
+        return None
+
+def preload_images(image_paths, size, max_workers=None):
+    """
+    Preload images by resizing them in parallel using OpenCV
+    and converting them to ImageTk.PhotoImage objects.
+    
+    Parameters:
+      image_paths: List of image file paths.
+      size: Desired size (width, height) tuple.
+      max_workers: Maximum number of threads to use. If None, it is set to a safe default.
+      
+    Returns:
+      A list of ImageTk.PhotoImage objects.
+    """
+    # Set max_workers to a safe default if not provided.
+    if max_workers is None:
+        max_workers = min(32, (os.cpu_count() or 1) + 4)
     
     preloaded_images = []
+    
+    # Use ThreadPoolExecutor to parallelize resizing.
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        func = partial(resize_image_cv, size=size)
+        resized_images = list(executor.map(func, image_paths))
+    
+    # Convert each resized NumPy image to a PIL Image then to PhotoImage.
     for img in resized_images:
-        if img is not None:
-            if isinstance(img, np.ndarray):  # Check if it's a NumPy array (OpenCV image)
-                try:
-                    preloaded_images.append(ImageTk.PhotoImage(image=Image.fromarray(img)))
-                except Exception as e:
-                    print(f"Error converting to PhotoImage: {e}")
-                    print(f"Image shape: {img.shape}, dtype: {img.dtype}")
-            elif isinstance(img, Image.Image):  # Check if it's a PIL Image
-                preloaded_images.append(ImageTk.PhotoImage(image=img))
-            else:
-                print(f"Unknown image type: {type(img)}")
+        if img is None:
+            continue
+        pil_img = Image.fromarray(img)
+        preloaded_images.append(ImageTk.PhotoImage(pil_img))
+    
     return preloaded_images
 
 def side_bar(image, size, alt=False):

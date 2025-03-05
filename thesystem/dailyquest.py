@@ -25,7 +25,16 @@ def dailys_init():
         fl_int=daily_quest_data["Final"]["Int_type"]
         fl_slp=daily_quest_data["Final"]["Sleep"]
         # ? =======================================================
-    return [[daily_quest_data], [pl_push, pl_sit, pl_sqat, pl_run, pl_int, pl_slp], [fl_push, fl_sit, fl_sqat, fl_run, fl_int, fl_slp]]
+        # ? Name
+        push_name=daily_quest_data["Change"][0]["1"][0]
+        sit_name=daily_quest_data["Change"][1]["2"][0]
+        squat_name=daily_quest_data["Change"][2]["3"][0]
+        run_name=daily_quest_data["Change"][3]["4"][0]
+
+        int_name=daily_quest_data["Change"][4]["5"][0]
+        slp_name=daily_quest_data["Change"][5]["6"][0]
+        # ? =======================================================
+    return [[daily_quest_data], [pl_push, pl_sit, pl_sqat, pl_run, pl_int, pl_slp], [fl_push, fl_sit, fl_sqat, fl_run, fl_int, fl_slp], [push_name, sit_name, squat_name, run_name, int_name, slp_name]]
 
 def get_rank():
     with open("Files/status.json", 'r') as rank_check_file:
@@ -97,7 +106,7 @@ def get_titles():
     return title, list_of_titles_data
 
 def daily_preview(window):
-    with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+    with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
             rew_fw=csv.writer(rew_csv_open)
             rew_fw.writerow(["Preview"])
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
@@ -125,6 +134,11 @@ def check_daily_comp(today_date_str, window):
         fl_int = daily_quest_data["Final"]["Int_type"]
         fl_slp = daily_quest_data["Final"]["Sleep"]
 
+        main_max_value = daily_quest_data["Steps"][2]
+        side_max_value = daily_quest_data["Steps"][3]
+        float_step = daily_quest_data["Steps"][0]
+        int_step = daily_quest_data["Steps"][1]
+
     with open('Files/Checks/Secret_Quest_Check.json', 'r') as secrer_quest:
         secrer_quest_data = ujson.load(secrer_quest)
         day_num = secrer_quest_data["Day"]
@@ -133,12 +147,12 @@ def check_daily_comp(today_date_str, window):
     # First check if today is the correct day to check completion
     if day_num == tdy_week_num:
         if (pl_push / 2) >= fl_push and (pl_run / 2) >= fl_run and (pl_sqat / 2) >= fl_sqat and (pl_sit / 2) >= fl_sit and (pl_int / 2) >= fl_int:
-            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
+            if fl_push != main_max_value and fl_sit != main_max_value and fl_sqat != main_max_value:
                 # Update final quest data with rewards
-                daily_quest_data["Final"]["Push"] += 5
-                daily_quest_data["Final"]["Sit"] += 5
-                daily_quest_data["Final"]["Squat"] += 5
-                daily_quest_data["Final"]["Run"] += 0.5
+                daily_quest_data["Final"]["Push"] += int_step
+                daily_quest_data["Final"]["Sit"] += int_step
+                daily_quest_data["Final"]["Squat"] += int_step
+                daily_quest_data["Final"]["Run"] += float_step
                 daily_quest_data["Streak"]["Value"] += 1
 
                 # Reset player data
@@ -150,8 +164,8 @@ def check_daily_comp(today_date_str, window):
                 daily_quest_data["Player"]["Sleep"] = 0
 
                 # Increment intellect if not already at max
-                if round(fl_int, 1) != 10:
-                    daily_quest_data["Final"]["Int_type"] += 0.5
+                if round(fl_int, 1) != side_max_value:
+                    daily_quest_data["Final"]["Int_type"] += float_step
 
                 daily_quest_data["Streak"]["Value"]+=1
                 daily_quest_data["Streak"]["Greater_value"]+=1
@@ -188,12 +202,12 @@ def check_daily_comp(today_date_str, window):
 
         # Handle the condition where day_num != tdy_week_num
         if (pl_push) >= fl_push and (pl_run) >= fl_run and (pl_sqat) >= fl_sqat and (pl_sit) >= fl_sit and (pl_int) >= fl_int and (pl_slp) >= fl_slp:
-            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
+            if fl_push != main_max_value and fl_sit != main_max_value and fl_sqat != main_max_value:
                 # Update final quest data with rewards
-                daily_quest_data["Final"]["Push"] += 5
-                daily_quest_data["Final"]["Sit"] += 5
-                daily_quest_data["Final"]["Squat"] += 5
-                daily_quest_data["Final"]["Run"] += 0.5
+                daily_quest_data["Final"]["Push"] += int_step
+                daily_quest_data["Final"]["Sit"] += int_step
+                daily_quest_data["Final"]["Squat"] += int_step
+                daily_quest_data["Final"]["Run"] += float_step
                 daily_quest_data["Streak"]["Value"] += 1
 
                 # Reset player data
@@ -205,8 +219,8 @@ def check_daily_comp(today_date_str, window):
                 daily_quest_data["Player"]["Sleep"] = 0
 
                 # Increment intellect if not already at max
-                if round(fl_int, 1) != 10:
-                    daily_quest_data["Final"]["Int_type"] += 0.5
+                if round(fl_int, 1) != side_max_value:
+                    daily_quest_data["Final"]["Int_type"] += float_step
 
                 # Log reward info
                 if (pl_push) >= fl_push*3 and (pl_run) >= fl_run*3 and (pl_sqat) >= fl_sqat*3 and (pl_sit) >= fl_sit*3 and (pl_int) >= fl_int*3:
@@ -249,12 +263,12 @@ def check_daily_comp(today_date_str, window):
     else:
         # Handle the condition where day_num != tdy_week_num
         if (pl_push) >= fl_push and (pl_run) >= fl_run and (pl_sqat) >= fl_sqat and (pl_sit) >= fl_sit and (pl_int) >= fl_int and (pl_slp) >= fl_slp:
-            if fl_push != 100 and fl_sit != 100 and fl_sqat != 100:
+            if fl_push != main_max_value and fl_sit != main_max_value and fl_sqat != main_max_value:
                 # Update final quest data with rewards
-                daily_quest_data["Final"]["Push"] += 5
-                daily_quest_data["Final"]["Sit"] += 5
-                daily_quest_data["Final"]["Squat"] += 5
-                daily_quest_data["Final"]["Run"] += 0.5
+                daily_quest_data["Final"]["Push"] += int_step
+                daily_quest_data["Final"]["Sit"] += int_step
+                daily_quest_data["Final"]["Squat"] += int_step
+                daily_quest_data["Final"]["Run"] += float_step
                 daily_quest_data["Streak"]["Value"] += 1
 
                 # Reset player data
@@ -266,8 +280,8 @@ def check_daily_comp(today_date_str, window):
                 daily_quest_data["Player"]["Sleep"] = 0
 
                 # Increment intellect if not already at max
-                if round(fl_int, 1) != 10:
-                    daily_quest_data["Final"]["Int_type"] += 0.5
+                if round(fl_int, 1) != side_max_value:
+                    daily_quest_data["Final"]["Int_type"] += float_step
 
                 # Log reward info
                 if (pl_push) >= fl_push*3 and (pl_run) >= fl_run*3 and (pl_sqat) >= fl_sqat*3 and (pl_sit) >= fl_sit*3 and (pl_int) >= fl_int*3:
@@ -295,7 +309,10 @@ def check_daily_comp(today_date_str, window):
                 with open('Files/Data/Theme_Check.json', 'r') as themefile:
                     theme_data = ujson.load(themefile)
                     theme = theme_data["Theme"]
-                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
+                if theme=="Anime":
+                    subprocess.Popen(['python', "Anime Version/New Items/gui.py"])
+                else:  
+                    subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
 
                 # Close the daily quest tab
                 with open("Files/Tabs.json", 'r') as tab_son:

@@ -14,7 +14,7 @@ import csv
 import cv2
 from PIL import Image, ImageTk
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -73,26 +73,23 @@ def ex_close(win):
     win.quit()
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 with open("Files/status.json", 'r') as fson:
     data=ujson.load(fson)
     name=data["status"][0]['name'].upper()
     xp_str=data["status"][0]['XP']
 
-with open("Files\Skills\Skill.json", 'r') as skill_fson:
+with open("Files/Skills/Skill.json", 'r') as skill_fson:
     skill_data=ujson.load(skill_fson)
     rol=list(skill_data.keys())
     num=len(rol)
@@ -141,7 +138,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = VideoPlayer(canvas, video_path, 321.0, 307.0)

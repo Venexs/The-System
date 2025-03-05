@@ -9,8 +9,18 @@ import csv
 import subprocess
 import cv2
 from PIL import Image, ImageTk
+import os
+import sys
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+
+sys.path.insert(0, project_root)
+
+import thesystem.system
+
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -27,49 +37,17 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-class VideoPlayer:
-    def __init__(self, canvas, video_path, x, y):
-        self.canvas = canvas
-        self.video_path = video_path
-        self.cap = cv2.VideoCapture(video_path)
-        self.x = x
-        self.y = y
-        self.image_id = self.canvas.create_image(self.x, self.y)
-        self.update_frame()
-
-    def update_frame(self):
-        ret, frame = self.cap.read()
-        if not ret:
-            # If the video has ended, reset the capture object
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, frame = self.cap.read()
-
-        if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(frame)
-            imgtk = ImageTk.PhotoImage(image=img)
-            self.canvas.itemconfig(self.image_id, image=imgtk)
-            self.canvas.imgtk = imgtk
-
-        self.canvas.after(10, self.update_frame)
-
-    def __del__(self):
-        self.cap.release()
-
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
     win.quit()
@@ -119,10 +97,10 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]  # Replace with your video path
-player = VideoPlayer(canvas, video_path, 679.0, 364.0)
+player = thesystem.system.VideoPlayer(canvas, video_path, 679.0, 364.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

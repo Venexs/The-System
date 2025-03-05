@@ -40,26 +40,23 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     subprocess.Popen(['python', 'Manwha Version\Equipment\gui.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=30, delay=1)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -133,7 +130,7 @@ for k in rol:
 # ! FILE INJECTION
 # ! ======================================================================
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
     normal_font_col=pres_file_data["Manwha"]["Normal Font Color"]
@@ -162,10 +159,13 @@ presets = thesystem.misc.load_ujson(PRESETS_FILE)
 names = ["-", "-", "-", "-", "-"]
 ranks = ["X", "X", "X", "X", "X"]
 
-for idx, item in enumerate(inventory_data.keys()):
-    if inventory_data[item][0]["cat"] == cat and idx < 5:
-        names[idx] = item
-        ranks[idx] = inventory_data[item][0]["rank"]
+match_count = 0
+for item in inventory_data.keys():
+    if inventory_data[item][0]["cat"] == cat:
+        if match_count < 5:
+            names[match_count] = item
+            ranks[match_count] = inventory_data[item][0]["rank"]
+            match_count += 1
 
 
 button_image_1 = PhotoImage(

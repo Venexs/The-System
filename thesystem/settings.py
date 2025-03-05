@@ -1,8 +1,9 @@
 import ujson
 
-def settings_ope(checkbox_var1,checkbox_var0):
+def settings_ope(checkbox_var1,checkbox_var0,checkbox_var2):
     val1=checkbox_var1.get()
     val0=checkbox_var0.get()
+    val2=checkbox_var2.get()
 
     with open("Files/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
@@ -16,6 +17,12 @@ def settings_ope(checkbox_var1,checkbox_var0):
         setting_data["Settings"]["Main_Penalty"]="False"
     else:
         setting_data["Settings"]["Main_Penalty"]="True"
-    
+
+    if val2==0:
+        setting_data["Settings"]["Performernce (ANIME):"]="False"
+    else:
+        setting_data["Settings"]["Performernce (ANIME):"]="True"
+
+
     with open("Files/Settings.json", 'w') as settings_open_final:
         ujson.dump(setting_data, settings_open_final, indent=4)

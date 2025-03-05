@@ -9,6 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
+import threading
 import ujson
 import csv
 import cv2
@@ -40,12 +41,14 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
+stop_event=threading.Event()
+
 initial_height = 0
-target_height = 880
+target_height = 760
 window_width = 555
 
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
@@ -67,38 +70,45 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (550, 38))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (550, 33))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     with open("Files/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Shop"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     win.quit()
 
 with open("Files/status.json", 'r') as fson:
@@ -117,16 +127,10 @@ def open_prog(name, cat, rank, desc, value):
 
         ex_close(window)
 
-def sell_tab():
-    if lvl>=5:
-        subprocess.Popen(['python', 'Anime Version/Shop Sell/gui1.py'])
-
-        ex_close(window)
-
 canvas = Canvas(
     window,
-    bg = "#0C679B",
-    height = 880,
+    bg = "#FFFFFF",
+    height = 760,
     width = 555,
     bd = 0,
     highlightthickness = 0,
@@ -142,17 +146,16 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 478.0, resize_factor=1)
-
+player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 478.0, resize_factor=0.7, pause_duration=1.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
     285.0,
-    454.0,
+    411.0,
     image=image_image_2
 )
 
@@ -160,54 +163,18 @@ image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))
 image_3 = canvas.create_image(
     278.0,
-    151.0,
+    122.0,
     image=image_image_3
 )
 
-
-'''
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
-    relief="flat"
+canvas.create_text(
+    156.0,
+    142.0,
+    anchor="nw",
+    text="[You cannot buy anything at your level]",
+    fill="#FF0000",
+    font=("Montserrat SemiBold", 12 * -1)
 )
-button_1.place(
-    x=96.0,
-    y=215.0,
-    width=170.0,
-    height=27.0
-)
-
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: sell_tab,
-    relief="flat"
-)
-button_2.place(
-    x=291.0,
-    y=215.0,
-    width=170.0,
-    height=27.0
-)
-'''
-
-if lvl<5:
-    canvas.create_text(
-        178.0,
-        200.0,
-        anchor="nw",
-        text="[You cannot buy anything at your level]",
-        fill="#FF0000",
-        font=("Montserrat SemiBold", 10 * -1)
-    )
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
@@ -220,7 +187,7 @@ button_1 = Button(
 )
 button_1.place(
     x=67.0,
-    y=236.0,
+    y=165.0,
     width=46.26959228515625,
     height=31.702701568603516
 )
@@ -236,7 +203,7 @@ button_2 = Button(
 )
 button_2.place(
     x=117.0,
-    y=236.0,
+    y=165.0,
     width=46.26959228515625,
     height=31.702701568603516
 )
@@ -245,7 +212,7 @@ image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
     282.0,
-    526.0,
+    455.0,
     image=image_image_4
 )
 
@@ -253,7 +220,7 @@ image_image_5 = PhotoImage(
     file=relative_to_assets("image_5.png"))
 image_5 = canvas.create_image(
     281.0,
-    318.0,
+    247.0,
     image=image_image_5
 )
 
@@ -261,13 +228,13 @@ image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
     112.0,
-    318.0,
+    247.0,
     image=image_image_6
 )
 
 canvas.create_text(
     154.0,
-    287.0,
+    216.0,
     anchor="nw",
     text="E-Rank Type Quest",
     fill="#50ABFF",
@@ -276,7 +243,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    313.0,
+    242.0,
     anchor="nw",
     text="CATEGORY:",
     fill="#FFFFFF",
@@ -285,7 +252,7 @@ canvas.create_text(
 
 canvas.create_text(
     231.0,
-    313.0,
+    242.0,
     anchor="nw",
     text="QUEST",
     fill="#FFFFFF",
@@ -294,7 +261,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    331.0,
+    260.0,
     anchor="nw",
     text="RANK:",
     fill="#FFFFFF",
@@ -303,7 +270,7 @@ canvas.create_text(
 
 canvas.create_text(
     197.0,
-    331.0,
+    260.0,
     anchor="nw",
     text="E",
     fill="#FFFFFF",
@@ -312,7 +279,7 @@ canvas.create_text(
 
 canvas.create_text(
     363.0,
-    339.0,
+    268.0,
     anchor="nw",
     text="VALUE:",
     fill="#FFFFFF",
@@ -321,7 +288,7 @@ canvas.create_text(
 
 canvas.create_text(
     412.0,
-    339.0,
+    268.0,
     anchor="nw",
     text="100",
     fill="#FFFFFF",
@@ -339,7 +306,7 @@ button_3 = Button(
 )
 button_3.place(
     x=432.0,
-    y=295.0,
+    y=224.0,
     width=48.0,
     height=17.0
 )
@@ -348,7 +315,7 @@ image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
     281.0,
-    402.0,
+    331.0,
     image=image_image_7
 )
 
@@ -356,13 +323,13 @@ image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
     112.0,
-    402.0,
+    331.0,
     image=image_image_8
 )
 
 canvas.create_text(
     154.0,
-    371.0,
+    300.0,
     anchor="nw",
     text="D-Rank Type Quest",
     fill="#50ABFF",
@@ -371,7 +338,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    397.0,
+    326.0,
     anchor="nw",
     text="CATEGORY:",
     fill="#FFFFFF",
@@ -380,7 +347,7 @@ canvas.create_text(
 
 canvas.create_text(
     231.0,
-    397.0,
+    326.0,
     anchor="nw",
     text="QUEST",
     fill="#FFFFFF",
@@ -389,7 +356,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    415.0,
+    344.0,
     anchor="nw",
     text="RANK:",
     fill="#FFFFFF",
@@ -398,7 +365,7 @@ canvas.create_text(
 
 canvas.create_text(
     197.0,
-    415.0,
+    344.0,
     anchor="nw",
     text="D",
     fill="#FFFFFF",
@@ -407,7 +374,7 @@ canvas.create_text(
 
 canvas.create_text(
     363.0,
-    423.0,
+    352.0,
     anchor="nw",
     text="VALUE:",
     fill="#FFFFFF",
@@ -416,7 +383,7 @@ canvas.create_text(
 
 canvas.create_text(
     412.0,
-    423.0,
+    352.0,
     anchor="nw",
     text="300",
     fill="#FFFFFF",
@@ -434,7 +401,7 @@ button_4 = Button(
 )
 button_4.place(
     x=432.0,
-    y=379.0,
+    y=308.0,
     width=48.0,
     height=17.0
 )
@@ -443,7 +410,7 @@ image_image_9 = PhotoImage(
     file=relative_to_assets("image_9.png"))
 image_9 = canvas.create_image(
     281.0,
-    486.0,
+    415.0,
     image=image_image_9
 )
 
@@ -451,13 +418,13 @@ image_image_10 = PhotoImage(
     file=relative_to_assets("image_10.png"))
 image_10 = canvas.create_image(
     112.0,
-    486.0,
+    415.0,
     image=image_image_10
 )
 
 canvas.create_text(
     154.0,
-    455.0,
+    384.0,
     anchor="nw",
     text="C-Rank Type Quest",
     fill="#50ABFF",
@@ -466,7 +433,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    481.0,
+    410.0,
     anchor="nw",
     text="CATEGORY:",
     fill="#FFFFFF",
@@ -475,7 +442,7 @@ canvas.create_text(
 
 canvas.create_text(
     231.0,
-    481.0,
+    410.0,
     anchor="nw",
     text="QUEST",
     fill="#FFFFFF",
@@ -484,7 +451,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    499.0,
+    428.0,
     anchor="nw",
     text="RANK:",
     fill="#FFFFFF",
@@ -493,7 +460,7 @@ canvas.create_text(
 
 canvas.create_text(
     197.0,
-    499.0,
+    428.0,
     anchor="nw",
     text="C",
     fill="#FFFFFF",
@@ -502,7 +469,7 @@ canvas.create_text(
 
 canvas.create_text(
     363.0,
-    507.0,
+    436.0,
     anchor="nw",
     text="VALUE:",
     fill="#FFFFFF",
@@ -511,7 +478,7 @@ canvas.create_text(
 
 canvas.create_text(
     412.0,
-    507.0,
+    436.0,
     anchor="nw",
     text="2700",
     fill="#FFFFFF",
@@ -529,7 +496,7 @@ button_5 = Button(
 )
 button_5.place(
     x=432.0,
-    y=463.0,
+    y=392.0,
     width=48.0,
     height=17.0
 )
@@ -538,7 +505,7 @@ image_image_11 = PhotoImage(
     file=relative_to_assets("image_11.png"))
 image_11 = canvas.create_image(
     281.0,
-    570.0,
+    499.0,
     image=image_image_11
 )
 
@@ -546,13 +513,13 @@ image_image_12 = PhotoImage(
     file=relative_to_assets("image_12.png"))
 image_12 = canvas.create_image(
     112.0,
-    570.0,
+    499.0,
     image=image_image_12
 )
 
 canvas.create_text(
     154.0,
-    539.0,
+    468.0,
     anchor="nw",
     text="B-Rank Type Quest",
     fill="#50ABFF",
@@ -561,7 +528,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    565.0,
+    494.0,
     anchor="nw",
     text="CATEGORY:",
     fill="#FFFFFF",
@@ -570,7 +537,7 @@ canvas.create_text(
 
 canvas.create_text(
     231.0,
-    565.0,
+    494.0,
     anchor="nw",
     text="QUEST",
     fill="#FFFFFF",
@@ -579,7 +546,7 @@ canvas.create_text(
 
 canvas.create_text(
     154.0,
-    583.0,
+    512.0,
     anchor="nw",
     text="RANK:",
     fill="#FFFFFF",
@@ -588,7 +555,7 @@ canvas.create_text(
 
 canvas.create_text(
     197.0,
-    583.0,
+    512.0,
     anchor="nw",
     text="B",
     fill="#FFFFFF",
@@ -597,7 +564,7 @@ canvas.create_text(
 
 canvas.create_text(
     363.0,
-    591.0,
+    520.0,
     anchor="nw",
     text="VALUE:",
     fill="#FFFFFF",
@@ -606,7 +573,7 @@ canvas.create_text(
 
 canvas.create_text(
     412.0,
-    591.0,
+    520.0,
     anchor="nw",
     text="75000",
     fill="#FFFFFF",
@@ -624,7 +591,7 @@ button_6 = Button(
 )
 button_6.place(
     x=432.0,
-    y=547.0,
+    y=476.0,
     width=48.0,
     height=17.0
 )
@@ -633,7 +600,7 @@ image_image_13 = PhotoImage(
     file=relative_to_assets("image_13.png"))
 image_13 = canvas.create_image(
     282.0,
-    654.0,
+    583.0,
     image=image_image_13
 )
 
@@ -641,13 +608,13 @@ image_image_14 = PhotoImage(
     file=relative_to_assets("image_14.png"))
 image_14 = canvas.create_image(
     113.0,
-    654.0,
+    583.0,
     image=image_image_14
 )
 
 canvas.create_text(
     155.0,
-    623.0,
+    552.0,
     anchor="nw",
     text="A-Rank Type Quest",
     fill="#50ABFF",
@@ -656,7 +623,7 @@ canvas.create_text(
 
 canvas.create_text(
     155.0,
-    649.0,
+    578.0,
     anchor="nw",
     text="CATEGORY:",
     fill="#FFFFFF",
@@ -665,7 +632,7 @@ canvas.create_text(
 
 canvas.create_text(
     232.0,
-    649.0,
+    578.0,
     anchor="nw",
     text="QUEST",
     fill="#FFFFFF",
@@ -674,7 +641,7 @@ canvas.create_text(
 
 canvas.create_text(
     155.0,
-    667.0,
+    596.0,
     anchor="nw",
     text="RANK:",
     fill="#FFFFFF",
@@ -683,7 +650,7 @@ canvas.create_text(
 
 canvas.create_text(
     198.0,
-    667.0,
+    596.0,
     anchor="nw",
     text="A",
     fill="#FFFFFF",
@@ -692,7 +659,7 @@ canvas.create_text(
 
 canvas.create_text(
     364.0,
-    675.0,
+    604.0,
     anchor="nw",
     text="VALUE:",
     fill="#FFFFFF",
@@ -701,7 +668,7 @@ canvas.create_text(
 
 canvas.create_text(
     413.0,
-    675.0,
+    604.0,
     anchor="nw",
     text="100000",
     fill="#FFFFFF",
@@ -719,7 +686,7 @@ button_7 = Button(
 )
 button_7.place(
     x=433.0,
-    y=631.0,
+    y=560.0,
     width=48.0,
     height=17.0
 )
@@ -728,7 +695,7 @@ image_image_15 = PhotoImage(
     file=relative_to_assets("image_15.png"))
 image_15 = canvas.create_image(
     282.0,
-    738.0,
+    667.0,
     image=image_image_15
 )
 
@@ -736,13 +703,13 @@ image_image_16 = PhotoImage(
     file=relative_to_assets("image_16.png"))
 image_16 = canvas.create_image(
     113.0,
-    738.0,
+    667.0,
     image=image_image_16
 )
 
 canvas.create_text(
     155.0,
-    707.0,
+    636.0,
     anchor="nw",
     text="S-Rank Type Quest",
     fill="#50ABFF",
@@ -751,7 +718,7 @@ canvas.create_text(
 
 canvas.create_text(
     155.0,
-    733.0,
+    662.0,
     anchor="nw",
     text="CATEGORY:",
     fill="#FFFFFF",
@@ -760,7 +727,7 @@ canvas.create_text(
 
 canvas.create_text(
     232.0,
-    733.0,
+    662.0,
     anchor="nw",
     text="QUEST",
     fill="#FFFFFF",
@@ -769,7 +736,7 @@ canvas.create_text(
 
 canvas.create_text(
     155.0,
-    751.0,
+    680.0,
     anchor="nw",
     text="RANK:",
     fill="#FFFFFF",
@@ -778,7 +745,7 @@ canvas.create_text(
 
 canvas.create_text(
     198.0,
-    751.0,
+    680.0,
     anchor="nw",
     text="S",
     fill="#FFFFFF",
@@ -787,7 +754,7 @@ canvas.create_text(
 
 canvas.create_text(
     364.0,
-    759.0,
+    688.0,
     anchor="nw",
     text="VALUE:",
     fill="#FFFFFF",
@@ -796,7 +763,7 @@ canvas.create_text(
 
 canvas.create_text(
     413.0,
-    759.0,
+    688.0,
     anchor="nw",
     text="200000",
     fill="#FFFFFF",
@@ -814,7 +781,7 @@ button_8 = Button(
 )
 button_8.place(
     x=433.0,
-    y=715.0,
+    y=644.0,
     width=48.0,
     height=17.0
 )
@@ -823,13 +790,13 @@ image_image_17 = PhotoImage(
     file=relative_to_assets("image_17.png"))
 image_17 = canvas.create_image(
     417.0,
-    250.0,
+    180.0,
     image=image_image_17
 )
 
 canvas.create_text(
     370.0,
-    239.0,
+    169.0,
     anchor="nw",
     text=f"{coins}",
     fill="#FFFFFF",
@@ -852,7 +819,7 @@ canvas.create_rectangle(
 
 canvas.create_rectangle(
     0.0,
-    950.0,
+    730.0,
     640.0,
     825.0,
     fill=transp_clr,
@@ -866,19 +833,19 @@ canvas.create_rectangle(
     fill=transp_clr,
     outline="")
 
-image_40 = thesystem.system.side_bar("left_bar.png", (81, 850))
-canvas.create_image(0.0, 460.0, image=image_40)
+image_40 = thesystem.system.side_bar("left_bar.png", (81, 700))
+canvas.create_image(0.0, 380.0, image=image_40)
 
 canvas.create_rectangle(
     0.0,
-    950.0,
+    730.0,
     640.0,
     825.0,
     fill=transp_clr,
     outline="")
 
-image_50 = thesystem.system.side_bar("right_bar.png", (81, 820))
-canvas.create_image(533.0, 437.0, image=image_50)
+image_50 = thesystem.system.side_bar("right_bar.png", (81, 700))
+canvas.create_image(540.0, 380.0, image=image_50)
 
 image_index = 0
 bot_image_index = 0
@@ -894,7 +861,7 @@ canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
 bottom_image = canvas.create_image(
     275.0,
-    837.0,
+    730.0,
     image=bottom_preloaded_images[bot_image_index]
 )
 
@@ -915,7 +882,9 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 button_image_9 = PhotoImage(
     file=relative_to_assets("button_9.png"))

@@ -10,6 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import csv
 import subprocess
+import threading
 import ujson
 import cv2
 from PIL import Image, ImageTk
@@ -22,6 +23,7 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 
 sys.path.insert(0, project_root)
 
+import thesystem.quests
 import thesystem.system
 
 OUTPUT_PATH = Path(__file__).parent
@@ -40,6 +42,8 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
+stop_event=threading.Event()
+
 window.geometry("555x729")
 
 initial_height = 0
@@ -48,7 +52,7 @@ window_width = 555
 
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.center_window(window,window_width,target_height)
-thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=55, delay=1)
 
 job=thesystem.misc.return_status()["status"][1]["job"]
 
@@ -65,15 +69,22 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
-
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
@@ -81,28 +92,28 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     with open("Files/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Quest"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=30, delay=1)
 
 def questadd():
@@ -128,10 +139,14 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 360.0, resize_factor=0.9)
+player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 360.0, resize_factor=0.9, pause_duration=1.2)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -177,7 +192,7 @@ try:
 except:
     name1=rank1=type1=id1='-'
 
-image_image_5=thesystem.system.get_quest_image(rank1,type1)
+image_image_5=thesystem.quests.get_quest_image(rank1,type1)
 image_5 = canvas.create_image(
     289.0,
     196.0,
@@ -203,7 +218,7 @@ try:
 except:
     name2=rank2=type2=id2='-'
 
-image_image_6=thesystem.system.get_quest_image(rank2,type2)
+image_image_6=thesystem.quests.get_quest_image(rank2,type2)
 image_6 = canvas.create_image(
     289.0,
     235.0,
@@ -229,7 +244,7 @@ try:
 except:
     name3=rank3=type3=id3='-'
 
-image_image_7=thesystem.system.get_quest_image(rank3,type3)
+image_image_7=thesystem.quests.get_quest_image(rank3,type3)
 image_7 = canvas.create_image(
     289.0,
     274.0,
@@ -255,7 +270,7 @@ try:
 except:
     name4=rank4=type4=id4='-'
 
-image_image_8=thesystem.system.get_quest_image(rank4,type4)
+image_image_8=thesystem.quests.get_quest_image(rank4,type4)
 image_8 = canvas.create_image(
     289.0,
     313.0,
@@ -281,7 +296,7 @@ try:
 except:
     name5=rank5=type5=id5='-'
 
-image_image_9=thesystem.system.get_quest_image(rank5,type5)
+image_image_9=thesystem.quests.get_quest_image(rank5,type5)
 image_9 = canvas.create_image(
     289.0,
     352.0,
@@ -307,7 +322,7 @@ try:
 except:
     name6=rank6=type6=id6='-'
 
-image_image_10=thesystem.system.get_quest_image(rank6,type6)
+image_image_10=thesystem.quests.get_quest_image(rank6,type6)
 image_10 = canvas.create_image(
     289.0,
     391.0,
@@ -333,7 +348,7 @@ try:
 except:
     name7=rank7=type7=id7='-'
 
-image_image_11=thesystem.system.get_quest_image(rank7,type7)
+image_image_11=thesystem.quests.get_quest_image(rank7,type7)
 image_11 = canvas.create_image(
     289.0,
     430.0,
@@ -359,7 +374,7 @@ try:
 except:
     name8=rank8=type8=id8='-'
 
-image_image_12=thesystem.system.get_quest_image(rank8,type8)
+image_image_12=thesystem.quests.get_quest_image(rank8,type8)
 image_12 = canvas.create_image(
     289.0,
     469.0,
@@ -385,7 +400,7 @@ try:
 except:
     name9=rank9=type9=id9='-'
 
-image_image_13=thesystem.system.get_quest_image(rank9,type9)
+image_image_13=thesystem.quests.get_quest_image(rank9,type9)
 image_13 = canvas.create_image(
     289.0,
     508.0,
@@ -411,7 +426,7 @@ try:
 except:
     name10=rank10=type10=id10='-'
 
-image_image_14=thesystem.system.get_quest_image(rank10,type10)
+image_image_14=thesystem.quests.get_quest_image(rank10,type10)
 image_14 = canvas.create_image(
     289.0,
     547.0,
@@ -437,7 +452,7 @@ try:
 except:
     name11=rank11=type11=id11='-'
 
-image_image_15=thesystem.system.get_quest_image(rank11,type11)
+image_image_15=thesystem.quests.get_quest_image(rank11,type11)
 image_15 = canvas.create_image(
     289.0,
     586.0,
@@ -463,7 +478,7 @@ try:
 except:
     name12=rank12=type12=id12='-'
 
-image_image_16=thesystem.system.get_quest_image(rank12,type12)
+image_image_16=thesystem.quests.get_quest_image(rank12,type12)
 image_16 = canvas.create_image(
     289.0,
     625.0,
@@ -489,7 +504,7 @@ try:
 except:
     name13=rank13=type13=id13='-'
 
-image_image_17=thesystem.system.get_quest_image(rank13,type13)
+image_image_17=thesystem.quests.get_quest_image(rank13,type13)
 image_17 = canvas.create_image(
     289.0,
     664.0,
@@ -505,13 +520,11 @@ canvas.create_text(
     font=("Montserrat", 18 * -1)
 )
 
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name1, id1, type1, window),
+    command=lambda: thesystem.quests.open_write_quest(name1, id1, type1, window),
     relief="flat"
 )
 button_1.place(
@@ -520,14 +533,11 @@ button_1.place(
     width=24.0,
     height=24.0
 )
-
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
 button_2 = Button(
-    image=button_image_2,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name2, id2, type2, window),
+    command=lambda: thesystem.quests.open_write_quest(name2, id2, type2, window),
     relief="flat"
 )
 button_2.place(
@@ -537,13 +547,11 @@ button_2.place(
     height=24.0
 )
 
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
 button_3 = Button(
-    image=button_image_3,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name3, id3, type3, window),
+    command=lambda: thesystem.quests.open_write_quest(name3, id3, type3, window),
     relief="flat"
 )
 button_3.place(
@@ -553,13 +561,11 @@ button_3.place(
     height=24.0
 )
 
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
 button_4 = Button(
-    image=button_image_4,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name4, id4, type4, window),
+    command=lambda: thesystem.quests.open_write_quest(name4, id4, type4, window),
     relief="flat"
 )
 button_4.place(
@@ -569,13 +575,11 @@ button_4.place(
     height=24.0
 )
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
 button_5 = Button(
-    image=button_image_5,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name5, id5, type5, window),
+    command=lambda: thesystem.quests.open_write_quest(name5, id5, type5, window),
     relief="flat"
 )
 button_5.place(
@@ -585,13 +589,11 @@ button_5.place(
     height=24.0
 )
 
-button_image_6 = PhotoImage(
-    file=relative_to_assets("button_6.png"))
 button_6 = Button(
-    image=button_image_6,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name6, id6, type6, window),
+    command=lambda: thesystem.quests.open_write_quest(name6, id6, type6, window),
     relief="flat"
 )
 button_6.place(
@@ -601,13 +603,11 @@ button_6.place(
     height=24.0
 )
 
-button_image_7 = PhotoImage(
-    file=relative_to_assets("button_7.png"))
 button_7 = Button(
-    image=button_image_7,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name7, id7, type7, window),
+    command=lambda: thesystem.quests.open_write_quest(name7, id7, type7, window),
     relief="flat"
 )
 button_7.place(
@@ -617,13 +617,11 @@ button_7.place(
     height=24.0
 )
 
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
 button_8 = Button(
-    image=button_image_8,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name8, id8, type8, window),
+    command=lambda: thesystem.quests.open_write_quest(name8, id8, type8, window),
     relief="flat"
 )
 button_8.place(
@@ -633,13 +631,11 @@ button_8.place(
     height=24.0
 )
 
-button_image_9 = PhotoImage(
-    file=relative_to_assets("button_9.png"))
 button_9 = Button(
-    image=button_image_9,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name9, id9, type9, window),
+    command=lambda: thesystem.quests.open_write_quest(name9, id9, type9, window),
     relief="flat"
 )
 button_9.place(
@@ -649,13 +645,11 @@ button_9.place(
     height=24.0
 )
 
-button_image_10 = PhotoImage(
-    file=relative_to_assets("button_10.png"))
 button_10 = Button(
-    image=button_image_10,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name10, id10, type10, window),
+    command=lambda: thesystem.quests.open_write_quest(name10, id10, type10, window),
     relief="flat"
 )
 button_10.place(
@@ -665,13 +659,11 @@ button_10.place(
     height=24.0
 )
 
-button_image_11 = PhotoImage(
-    file=relative_to_assets("button_11.png"))
 button_11 = Button(
-    image=button_image_11,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name11, id11, type11, window),
+    command=lambda: thesystem.quests.open_write_quest(name11, id11, type11, window),
     relief="flat"
 )
 button_11.place(
@@ -681,13 +673,11 @@ button_11.place(
     height=24.0
 )
 
-button_image_12 = PhotoImage(
-    file=relative_to_assets("button_12.png"))
 button_12 = Button(
-    image=button_image_12,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name12, id12, type12, window),
+    command=lambda: thesystem.quests.open_write_quest(name12, id12, type12, window),
     relief="flat"
 )
 button_12.place(
@@ -697,13 +687,11 @@ button_12.place(
     height=24.0
 )
 
-button_image_13 = PhotoImage(
-    file=relative_to_assets("button_13.png"))
 button_13 = Button(
-    image=button_image_13,
+    image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.system.open_write_quest(name13, id13, type13, window),
+    command=lambda: thesystem.quests.open_write_quest(name13, id13, type13, window),
     relief="flat"
 )
 button_13.place(
@@ -837,7 +825,9 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 # =================================================================================================
 

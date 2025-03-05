@@ -32,19 +32,16 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
     win.quit()
@@ -53,7 +50,7 @@ name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name1
 rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13='X'
 c=0
 
-with open("Files\Titles\Titles.json", 'r') as fson:
+with open("Files/Titles/Titles.json", 'r') as fson:
     data=ujson.load(fson)
     data_key=list(data.keys())
     try:
@@ -114,7 +111,7 @@ with open("Files\Titles\Titles.json", 'r') as fson:
     except:
         print("", end='')
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -151,7 +148,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0, resize_factor=1)

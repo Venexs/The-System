@@ -27,7 +27,7 @@ def up():
     screen_tr_txt=canvas_1.itemcget(screen_txt, "text")
     av_tr_txt=canvas_1.itemcget(av_txt, "text")
     if int(av_tr_txt)!=0:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         new=int(screen_tr_txt)+1
         be_new=f"{new:03d}"
         canvas_1.itemconfig(screen_txt, text=be_new)
@@ -42,7 +42,7 @@ def down():
     screen_tr_txt=canvas_1.itemcget(screen_txt, "text")
     av_tr_txt=canvas_1.itemcget(av_txt, "text")
     if int(screen_tr_txt)!=0:
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         new=int(screen_tr_txt)-1
         be_new=f"{new:03d}"
         canvas_1.itemconfig(screen_txt, text=be_new)
@@ -94,7 +94,7 @@ def goback():
 
     window.quit()
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -135,19 +135,16 @@ class VideoPlayer:
         self.cap.release()
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
     win.quit()

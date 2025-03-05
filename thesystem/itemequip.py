@@ -61,10 +61,14 @@ def process_item_buffs(item_data, status_data, sign=1):
     """Applies or removes buffs/debuffs to/from the status data."""
     for buff_type in ("buff", "debuff"):
         items = item_data.get(buff_type, {})
+        if not isinstance(items, dict):
+            # Handle or log error: perhaps skip or try to parse the string into a dict
+            continue
         for key, value in items.items():
             attribute = resolve_buff_name(key)
             if attribute:
                 status_data["equipment"][0][attribute] += sign * value
+
 
 # Command to open and handle equipment selection
 def handle_selection(val, name, cat, window, dat1, dat2, dat3, dat4, dat5):

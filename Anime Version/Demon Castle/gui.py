@@ -78,6 +78,14 @@ def relative_to_assets(path: str) -> Path:
         pat = ASSETS_PATH / Path("image_5.png")
         return pat
 
+with open("Files/Mod/presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["High Long Size"]
+
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
+
 window = Tk()
 
 initial_height = 0
@@ -85,6 +93,7 @@ target_height = 602
 window_width = 1102
 
 window.geometry(f"{window_width}x{initial_height}")
+stop_event=threading.Event()
 
 job=thesystem.misc.return_status()["status"][1]["job"]
 
@@ -101,16 +110,24 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window, transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (1229, 47))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1229, 47))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
-thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
@@ -130,21 +147,20 @@ if soul_count>=10000 and rewards==False:
     thesystem.castle.reward_castle()
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay 
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()    
     with open("Files/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
@@ -152,7 +168,24 @@ def ex_close(win):
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
+
+def ex_dc_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
+    with open("Files/Tabs.json",'r') as tab_son:
+        tab_son_data=ujson.load(tab_son)
+
+    with open("Files/Tabs.json",'w') as fin_tab_son:
+        tab_son_data["Castle"]='Close'
+        ujson.dump(tab_son_data,fin_tab_son,indent=4)
+
+    subprocess.Popen(['python', 'Anime Version\Demon Castle Quest Reminder\gui.py'])
+    
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
 
 canvas = Canvas(
@@ -167,20 +200,20 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=relative_to_assets("background.png"))
 image_1 = canvas.create_image(
     961.0,
     329.0,
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
+player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0, pause_duration=1.0)
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=relative_to_assets("frame.png"))
 image_2 = canvas.create_image(
     554.0,
     319.0,
@@ -188,7 +221,7 @@ image_2 = canvas.create_image(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=relative_to_assets("demon floor.png"))
 image_3 = canvas.create_image(
     740.0,
     313.0,
@@ -674,7 +707,7 @@ for i in range(4, 54):
         canvas.itemconfig(globals()[image_canvas_name], state='normal')
 
 image_image_54 = PhotoImage(
-    file=relative_to_assets("image_54.png"))
+    file=relative_to_assets("final floor.png"))
 image_54 = canvas.create_image(
     740.0,
     313.0,
@@ -914,12 +947,14 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 # ===========================================================
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=relative_to_assets("close.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
@@ -933,5 +968,22 @@ button_1.place(
     width=30.0,
     height=30.0
 )
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("reminder.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_dc_close(window),
+    relief="flat"
+)
+button_2.place(
+    x=467.0,
+    y=72.0,
+    width=32.0,
+    height=32.0
+)
+
 window.resizable(False, False)
 window.mainloop()

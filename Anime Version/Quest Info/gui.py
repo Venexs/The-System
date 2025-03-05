@@ -12,6 +12,7 @@ import ujson
 import csv
 import subprocess
 import cv2
+import threading
 from PIL import Image, ImageTk
 import sys
 import os
@@ -33,7 +34,7 @@ window_width = 898
 
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.center_window(window,window_width,target_height)
-thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
 job=thesystem.misc.return_status()["status"][1]["job"]
 
@@ -50,18 +51,22 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (957, 43))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1026, 47))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#0c679b")
 window.attributes('-alpha',0.8)
@@ -69,22 +74,22 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
-    win.quit()
+    threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
+
 
 with open("Files/Temp Files/Quest Temp.csv", 'r') as csv_open:
     fr=csv.reader(csv_open)
@@ -98,7 +103,7 @@ segments = []
 other_seg=[]
 segment_length = 70
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     get_stuff_path_str=pres_file_data["Anime"]["Mid Size Screen"]
 
@@ -125,15 +130,15 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0)
+player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 277.0, pause_duration=0.5)
 
 image_image_2 = PhotoImage(
     file=get_stuff_path("frame.png"))
 image_2 = canvas.create_image(
-    448.0,
+    463.0,
     284.0,
     image=image_image_2
 )
@@ -231,7 +236,6 @@ if typeof == "Learn":
 
     if fatigue_true==True:
         thesystem.system.message_open("High Rank")
-
 
 
     canvas.create_text(
@@ -611,6 +615,16 @@ if typeof == "Learn":
         )
 
 elif typeof == "Common":
+    donot=False
+    def reminder():
+        global ex_txt
+        ex_tr_txt=canvas.itemcget(ex_txt, "text")
+        with open("Files\Temp Files\Quest Reminder.csv", 'w', newline='') as csv_open:
+            writer=csv.writer(csv_open)
+            writer.writerow([name, ex_tr_txt])
+        subprocess.Popen(['python', "Anime Version\Quest Reminder\gui.py"])
+        ex_close(0)
+    
     with open("Files/Quests/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
@@ -618,27 +632,35 @@ elif typeof == "Common":
                 rank=data[k][0]["rank"]
 
                 skill=data[k][0]["skill"]
-                num=data[k][0]["amt"]
-                numval=data[k][0]["amtval"]
+                try:
+                    num=data[k][0]["amt"]
+                    numval=data[k][0]["amtval"]
+                except:
+                    num=data[k][0]["time"]
+                    numval=data[k][0]["timeval"]
+                    donot=True
 
                 try:
-                    time=data[k][0]["time"]
-                    timeval=data[k][0]["timval"]
+                    if donot!=True:
+                        time=data[k][0]["time"]
+                        timeval=data[k][0]["timeval"]
+                    else:
+                        time=timeval='-'
                 except:
                     time=timeval='-'
 
-                    desc_full=data[k][0]["desc"]
+                desc_full=data[k][0]["desc"]
 
-                    for i in range(0, len(desc_full), segment_length):
-                        segments.append(desc_full[i:i+segment_length])
+                for i in range(0, len(desc_full), segment_length):
+                    segments.append(desc_full[i:i+segment_length])
 
-                    if len(segments) >= 1:
-                        desc1 = segments[0]
-                    if len(segments) >= 2:
-                        desc2 = segments[1]
+                if len(segments) >= 1:
+                    desc1 = segments[0]
+                if len(segments) >= 2:
+                    desc2 = segments[1]
 
-                    rewards=data[k][0]["Rewards"]
-                    fatigue=thesystem.system.give_fatigue_from_rank(rank)
+                rewards=data[k][0]["Rewards"]
+                fatigue=thesystem.system.give_fatigue_from_rank(rank)
 
     with open("Files/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
@@ -657,7 +679,7 @@ elif typeof == "Common":
         ex_tr_txt=canvas.itemcget(ex_txt, "text")
         new_1=int(ex_tr_txt)+1
         be_new_1=f"{new_1}"
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         canvas.itemconfig(ex_txt, text=be_new_1)
         
 
@@ -1048,6 +1070,22 @@ elif typeof == "Common":
         height=16.0
     )
 
+    button_image_8 = PhotoImage(
+        file=get_stuff_path("reminder.png"),)
+    button_8 = Button(
+        image=button_image_8,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: reminder(),
+        relief="flat"
+    )
+    button_8.place(
+        x=713.0,
+        y=209.0,
+        width=20.0,
+        height=20.0
+    )
+
 elif typeof == "Unknown":
     
     with open("Files/Temp Files/Quest Temp.csv", 'r') as csv_open:
@@ -1417,7 +1455,7 @@ side = PhotoImage(file=get_stuff_path("blue.png"))
 if job.upper()!="NONE":
     side = PhotoImage(file=get_stuff_path("purple.png"))
 canvas.create_image(35.0, 270.0, image=side)
-canvas.create_image(925.0, 294.0, image=side)
+canvas.create_image(890.0, 294.0, image=side)
 
 canvas.create_rectangle(
     0.0,
@@ -1447,7 +1485,7 @@ image_40 = thesystem.system.side_bar("left_bar.png", (60, 490))
 canvas.create_image(50.0, 270.0, image=image_40)
 
 image_50 = thesystem.system.side_bar("right_bar.png", (60, 490))
-canvas.create_image(900.0, 275.0, image=image_50)
+canvas.create_image(870.0, 275.0, image=image_50)
 
 image_index = 0
 bot_image_index = 0
@@ -1484,7 +1522,8 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_images()
 
 window.resizable(False, False)
 window.mainloop()

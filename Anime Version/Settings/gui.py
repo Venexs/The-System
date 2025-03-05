@@ -54,6 +54,8 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+stop_event=threading.Event()
+
 job=thesystem.misc.return_status()["status"][1]["job"]
 
 top_val='dailyquest.py'
@@ -69,21 +71,31 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (490, 34))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (490, 34))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 checkbox_var1 = IntVar(value=0)
 checkbox_var0 = IntVar(value=0)
+checkbox_var2 = IntVar(value=0)
 
-with open("Files\Settings.json", 'r') as settings_open:
+with open("Files/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
+checkbox_var2 = IntVar(value=1 if setting_data["Settings"].get("Performernce (ANIME)", "False") == "True" else 0)
 checkbox_var1 = IntVar(value=1 if setting_data["Settings"].get("Calorie_Penalty", "False") == "True" else 0)
 checkbox_var0 = IntVar(value=1 if setting_data["Settings"].get("Main_Penalty", "False") == "True" else 0)
 
@@ -103,6 +115,9 @@ def move_window(event):
     lasty = event.y_root
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     with open("Files/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
@@ -110,7 +125,7 @@ def ex_close(win):
         tab_son_data["Settings"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 def theme_open():
@@ -118,7 +133,7 @@ def theme_open():
         fw=csv.writer(info_open)
         fw.writerow(["True"])
         
-    subprocess.Popen(['python', 'First\Theme Check\gui.py'])
+    subprocess.Popen(['python', 'First/Theme Check/gui.py'])
     ex_close(window)
 
 def info_open():
@@ -126,7 +141,7 @@ def info_open():
         fw=csv.writer(info_open)
         fw.writerow(["True"])
 
-    subprocess.Popen(['python', 'First\Info\gui.py'])
+    subprocess.Popen(['python', 'First/Info/gui.py'])
     ex_close(window)
 
 unchecked_image = PhotoImage(file="assets/frame0/Off.png")
@@ -150,11 +165,11 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 330.0, resize_factor=0.8)
+player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 330.0, resize_factor=0.8, pause_duration=0.3)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -283,7 +298,9 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 # =================================================================
 
@@ -315,7 +332,7 @@ canvas.create_text(
 checkbox = Checkbutton(
     window,
     variable=checkbox_var1,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0),
+    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -341,7 +358,7 @@ canvas.create_text(
 checkbox1 = Checkbutton(
     window,
     variable=checkbox_var0,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0),
+    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -354,6 +371,32 @@ checkbox1 = Checkbutton(
 
 # Position the checkbox using place
 checkbox1.place(x=317, y=304, width=14, height=14)
+
+canvas.create_text(
+    73.0,
+    334.0,
+    anchor="nw",
+    text="High Performance for Anime Version:",
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 11 * -1)
+)
+
+checkbox2 = Checkbutton(
+    window,
+    variable=checkbox_var2,
+    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
+    image=unchecked_image,
+    selectimage=checked_image,
+    compound="center",       # Place the image to the left of the text
+    indicatoron=False,       # Hide the default checkbox indicator
+    bd=0,
+    highlightthickness=0,    # Remove the focus highlight around the widget
+    padx=0,                  # Remove internal horizontal padding
+    pady=0
+)
+
+# Position the checkbox using place
+checkbox2.place(x=317, y=342, width=14, height=14)
 
 window.resizable(False, False)
 window.mainloop()

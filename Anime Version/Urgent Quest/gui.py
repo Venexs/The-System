@@ -11,6 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import ujson
 import csv
 import subprocess
+import threading
 import random
 import cv2
 from PIL import Image, ImageTk
@@ -33,26 +34,28 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=20, delay=1)
 
 window = Tk()
+
+stop_event=threading.Event()
 
 initial_height = 0
 target_height = 239
@@ -80,20 +83,28 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (1120, 47))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1053, 43))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 def complete():
-    with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
     
-    with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
         ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
@@ -198,7 +209,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 213.0)
@@ -390,7 +401,10 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
+
 button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
 button_2 = Button(

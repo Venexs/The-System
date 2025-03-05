@@ -28,7 +28,7 @@ def ex_close(win):
         tab_son_data["Dungeons"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=system.fade_out, args=(win, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     system.animate_window_close(win, initial_height, window_width, step=20, delay=1)
 
 def check_fatigue(rank):
@@ -49,7 +49,7 @@ def check_fatigue(rank):
 
 def open_e_dunfile(eve):
     rank='E'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -58,11 +58,11 @@ def open_e_dunfile(eve):
     fat_check=check_fatigue(rank)
     if dun_full_data[current_date_string][rank]!=0 and fat_check==False:
         dun_full_data[current_date_string][rank]-=1
-        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -70,7 +70,7 @@ def open_e_dunfile(eve):
 
 def open_d_dunfile(eve):
     rank='D'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -79,11 +79,11 @@ def open_d_dunfile(eve):
     fat_check=check_fatigue(rank)
     if dun_full_data[current_date_string][rank]!=0 and fat_check==False:
         dun_full_data[current_date_string][rank]-=1
-        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -91,7 +91,7 @@ def open_d_dunfile(eve):
 
 def open_c_dunfile(eve):
     rank='C'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -100,11 +100,11 @@ def open_c_dunfile(eve):
     fat_check=check_fatigue(rank)
     if dun_full_data[current_date_string][rank]!=0 and fat_check==False:
         dun_full_data[current_date_string][rank]-=1
-        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -112,7 +112,7 @@ def open_c_dunfile(eve):
 
 def open_b_dunfile(eve):
     rank='B'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -121,11 +121,11 @@ def open_b_dunfile(eve):
     fat_check=check_fatigue(rank)
     if dun_full_data[current_date_string][rank]!=0 and fat_check==False:
         dun_full_data[current_date_string][rank]-=1
-        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -133,7 +133,7 @@ def open_b_dunfile(eve):
 
 def open_a_dunfile(eve):
     rank='A'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -142,11 +142,11 @@ def open_a_dunfile(eve):
     fat_check=check_fatigue(rank)
     if dun_full_data[current_date_string][rank]!=0 and fat_check==False:
         dun_full_data[current_date_string][rank]-=1
-        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -154,7 +154,7 @@ def open_a_dunfile(eve):
 
 def open_s_dunfile(eve):
     rank='S'
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -163,11 +163,11 @@ def open_s_dunfile(eve):
     fat_check=check_fatigue(rank)
     if dun_full_data[current_date_string][rank]!=0 and fat_check==False:
         dun_full_data[current_date_string][rank]-=1
-        with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -260,14 +260,14 @@ def update_inventory(window):
         ujson.dump(data, file, indent=4)
 
     rank=item["rank"]
-    with open("Files\Data\Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
-    with open("Files\Data\Dungeon_Rank.csv", 'w', newline='') as rank_file:
+    with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
         fw=csv.writer(rank_file)
         fw.writerow([rank,"Instance"])
 
-    with open("Files\Data\Todays_Dungeon.json", 'w') as final_dun_full:
+    with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
         ujson.dump(dun_full_data, final_dun_full, indent=6)
 
     subprocess.Popen(['python', 'Manwha Version/Dungeon Runs/gui.py'])

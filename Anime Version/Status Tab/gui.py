@@ -10,6 +10,7 @@ import tkinter as tk
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label, Event
 import threading
 import ujson
+import json
 import csv
 import subprocess
 import time
@@ -31,6 +32,9 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 window = Tk()
+
+stop_event=threading.Event()
+
 window.geometry("488x0")  # Initial collapsed height
 window.configure(bg="#FFFFFF")
 window.attributes('-alpha', 0.8)
@@ -55,16 +59,30 @@ thesystem.system.make_window_transparent(window, transp_clr)
 # Animate window open
 window_width = 488
 target_height = 716
-thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
+
+
+def animate_close():
+    thesystem.system.animate_window_close(window, 0, window_width, step=50, delay=1)
+
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (488, 38))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (609, 33))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
+
 presets_data = thesystem.misc.load_ujson("Files/Mod/presets.json")
 
 
@@ -83,7 +101,7 @@ def relative_to_assets(path: str) -> Path:
 
 def load_fatigue_value():
     with open('Files/status.json', 'r') as file:
-        data = ujson.load(file)
+        data = json.load(file)
         fatigue = data["status"][0].get("fatigue", 0)
         fatigue_max = data["status"][0].get("fatigue_max", 1)  # Avoid division by zero
         # Calculate fatigue percentage
@@ -100,7 +118,7 @@ def update_fatigue_text(canvas, fatigue_val):
         # Update canvas text only if fatigue value has changed
         if current_fatigue_percent != loaded_fatigue_value:
             canvas.itemconfig(fatigue_val, text=f"{current_fatigue_percent}%")
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
             loaded_fatigue_value = current_fatigue_percent
 
         # Wait for 3 minutes before updating again
@@ -139,7 +157,12 @@ def ex_close(event=None):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     stop_update_thread_func()
-    thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
+    # Create a thread and start it
+    close_thread = threading.Thread(target=animate_close, daemon=True)
+    close_thread.start()
 
 def start_job(event):
     data = thesystem.misc.load_ujson("Files/Data/Job_info.json")
@@ -161,23 +184,20 @@ canvas = Canvas(window, bg="#FFFFFF", height=716, width=488, bd=0, highlightthic
 canvas.place(x=0, y=0)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 # Background image and character attributes
 canvas.create_image(430.0, 363.0, image=PhotoImage(file=relative_to_assets("image_1.png")))
-player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"][video], 430.0, 363.0, resize_factor=0.3)
+player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"][video], 430.0, 363.0, resize_factor=0.3, pause_duration=0.7)
 
 # Display Character Status
 name, hp, mp, lvl = status_data["status"][0]["name"].upper(), status_data["status"][0]["hp"], status_data["status"][0]["mp"], status_data["status"][0]["level"]
@@ -258,27 +278,27 @@ if re_check==True:
 
 # ? =====================================================================
 def update_stat(stat_name): 
-    with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = status_data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else status_data["avail_eq"][0]["int_based"]
-    if val<3 and available_points > 0:
+    if val<8 and available_points > 0:
             de_update_str() if stat_name in ["str", "agi", "vit"] else de_update_int()
             status_data["status"][0][stat_name] += 1
             val=status_data["status"][0][stat_name]
             canvas.itemconfig(stat_text_widgets[stat_name], text=f"{val:03d}")
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
             status_data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 status_data["status"][0]["fatigue_max"]+=20
             with open("Files/status.json", 'w') as fson:
                 ujson.dump(status_data, fson, indent=6)
-            with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
+            with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
                 ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':
                 #update_fatigue_text(canvas,fatigue_val)
-    elif val>=3 and available_points > 0:
+    elif val>=8 and available_points > 0:
         with open("Files/Temp Files/Urgent Temp.csv", 'w', newline='') as urgent_file:
             fr=csv.writer(urgent_file)
             fr.writerow([stat_name.upper()])
@@ -674,8 +694,9 @@ def update_images():
     # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
-# Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 # ===========================================================
 

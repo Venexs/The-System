@@ -31,42 +31,79 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+with open("Files/Mod/presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["Default"]
+
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
+
 window = Tk()
+stop_event=threading.Event()
 
-window_width=449
+initial_height = 0
+target_height = 449
+window_width = 696
 
-window.geometry("696x449")
+window.geometry(f"{window_width}x{initial_height}")
+
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+thesystem.system.center_window(window,window_width,target_height)
+thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
-thesystem.system.make_window_transparent(window)
 
-top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+        setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 # Preload top and bottom images
 top_preloaded_images = thesystem.system.preload_images(top_images, (695, 39))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (702, 36))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
@@ -83,7 +120,7 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=get_stuff_path("backgroud.png"))
 image_1 = canvas.create_image(
     609.0,
     301.0,
@@ -96,7 +133,7 @@ video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0)
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=get_stuff_path("frame.png"))
 image_2 = canvas.create_image(
     348.0,
     233.0,
@@ -104,7 +141,7 @@ image_2 = canvas.create_image(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=get_stuff_path("alert.png"))
 image_3 = canvas.create_image(
     379.0,
     110.0,
@@ -112,7 +149,7 @@ image_3 = canvas.create_image(
 )
 
 image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
+    file=get_stuff_path("!.png"))
 image_4 = canvas.create_image(
     186.0,
     110.0,
@@ -120,7 +157,7 @@ image_4 = canvas.create_image(
 )
 
 image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
+    file=get_stuff_path("job change alert.png"))
 image_5 = canvas.create_image(
     357.0,
     240.0,
@@ -132,15 +169,15 @@ canvas.create_rectangle(
     0.0,
     696.0,
     29.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
-    1.0,
+    0.0,
     5.0,
     60.0,
     455.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -148,7 +185,7 @@ canvas.create_rectangle(
     0.0,
     696.0,
     458.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -156,7 +193,7 @@ canvas.create_rectangle(
     0.0,
     381.0,
     38.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -164,7 +201,7 @@ canvas.create_rectangle(
     421.0,
     923.0,
     460.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -172,7 +209,7 @@ canvas.create_rectangle(
     19.0,
     643.0,
     44.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 canvas.create_rectangle(
@@ -180,7 +217,7 @@ canvas.create_rectangle(
     -10.0,
     765.0,
     50.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 image_40 = thesystem.system.side_bar("left_bar.png", (47, 393))
@@ -223,10 +260,11 @@ def update_images():
     # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
-update_images()
+update_thread = threading.Thread(target=update_images)
+update_thread.start()
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=get_stuff_path("close.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,

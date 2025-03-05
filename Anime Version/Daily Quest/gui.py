@@ -35,12 +35,21 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
-secrer_quest_data=thesystem.misc.load_ujson("Files\Checks\Secret_Quest_Check.json")
+secrer_quest_data=thesystem.misc.load_ujson("Files/Checks/Secret_Quest_Check.json")
 day_num=secrer_quest_data["Day"]
 tdy_week_num=datetime.today().weekday()
+stop_event=threading.Event()
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
+
+with open("Files/Mod/presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["High Long Size"]
+
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
 
 def update_timer(end_time):
     remaining_time = end_time - datetime.now()
@@ -57,25 +66,24 @@ def update_timer(end_time):
     window.after(1000, update_timer, end_time)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     thesystem.misc.update_screen("Daily","Close")
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
+    thesystem.system.animate_window_close(window, 0, window_width, step=30, delay=1)
 
 with open("Files/Checks/Daily_time_check.csv", 'r') as Daily_date_check_file:
     fr=csv.reader(Daily_date_check_file)
@@ -89,10 +97,11 @@ with open("Files/Checks/Daily_time_check.csv", 'r') as Daily_date_check_file:
 today = date.today()
 today_date_str = today.strftime("%Y-%m-%d")
 
-daily_quest_raw, player_data, final_data = dailyquest.dailys_init()
+daily_quest_raw, player_data, final_data, name_list = dailyquest.dailys_init()
 daily_quest_data = daily_quest_raw[0]
 pl_push, pl_sit, pl_sqat, pl_run, pl_int, pl_slp = player_data
 fl_push, fl_sit, fl_sqat, fl_run, fl_int, fl_slp = final_data
+push_name, sit_name, squat_name, run_name, int_name, slp_name = name_list
 
 rank = dailyquest.get_rank()
 
@@ -139,16 +148,24 @@ if full_check==False:
 
     thesystem.system.make_window_transparent(window,transp_clr)
 
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+    with open("Files/Settings.json", 'r') as settings_open:
+        setting_data=ujson.load(settings_open)
 
-    thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
+    if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+        top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+        bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+    else:
+        top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+        bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+
+    thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
     # Preload top and bottom images
     top_preloaded_images = thesystem.system.preload_images(top_images, (488, 38))
     bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (488, 33))
 
-    subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
     window.configure(bg = "#FFFFFF")
     window.attributes('-alpha',0.8)
@@ -167,7 +184,7 @@ if full_check==False:
 
     canvas.place(x = 0, y = 0)
     image_image_1 = PhotoImage(
-        file=relative_to_assets("image_1.png"))
+        file=get_stuff_path("background.png"))
     image_1 = canvas.create_image(
         277.0,
         495.0,
@@ -177,10 +194,10 @@ if full_check==False:
     pres_file_data=thesystem.misc.load_ujson("Files/Mod/presets.json")
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"][video]
-    player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 400.0, resize_factor=0.8)
+    player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 400.0, resize_factor=0.6, pause_duration=0.5, buffer_size=50)
 
     image_image_2 = PhotoImage(
-        file=relative_to_assets("image_2.png"))
+        file=get_stuff_path("frame.png"))
     image_2 = canvas.create_image(
         245.0,
         403.0,
@@ -188,7 +205,7 @@ if full_check==False:
     )
 
     image_image_3 = PhotoImage(
-        file=relative_to_assets("image_3.png"))
+        file=get_stuff_path("title.png"))
     image_3 = canvas.create_image(
         241.0,
         102.0,
@@ -196,7 +213,7 @@ if full_check==False:
     )
 
     image_image_4 = PhotoImage(
-        file=relative_to_assets("image_4.png"))
+        file=get_stuff_path("goal.png"))
     image_4 = canvas.create_image(
         244.0,
         194.0,
@@ -225,7 +242,7 @@ if full_check==False:
         86.0,
         244.0,
         anchor="nw",
-        text="Push-ups",
+        text=f"{push_name}",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
@@ -234,7 +251,7 @@ if full_check==False:
         86.0,
         284.0,
         anchor="nw",
-        text="Sit-ups",
+        text=f"{sit_name}",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
@@ -243,7 +260,7 @@ if full_check==False:
         86.0,
         323.0,
         anchor="nw",
-        text="Squats",
+        text=f"{squat_name}",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
@@ -252,7 +269,7 @@ if full_check==False:
         86.0,
         363.0,
         anchor="nw",
-        text="Running",
+        text=f"{run_name}",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
@@ -261,7 +278,7 @@ if full_check==False:
         86.0,
         420.0,
         anchor="nw",
-        text="Chapter Reading",
+        text=f"{int_name}",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
@@ -270,7 +287,7 @@ if full_check==False:
         86.0,
         459.0,
         anchor="nw",
-        text="Proper Last Night Sleep",
+        text=f"{slp_name}",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
@@ -306,13 +323,13 @@ if full_check==False:
         313.0,
         363.0,
         anchor="nw",
-        text=f"[{pl_run}/{fl_run}km]",
+        text=f"[{pl_run}/{fl_run}]",
         fill=normal_font_col,
         font=("Montserrat Regular", 14 * -1)
     )
 
     int_txt=canvas.create_text(
-        333.0,
+        315.0,
         420.0,
         anchor="nw",
         text=f"[{pl_int}/{fl_int}]",
@@ -321,7 +338,7 @@ if full_check==False:
     )
 
     sleep_txt=canvas.create_text(
-        334.0,
+        315.0,
         459.0,
         anchor="nw",
         text=f"[{pl_slp}/{fl_slp}]",
@@ -330,7 +347,7 @@ if full_check==False:
     )
 
     image_image_5 = PhotoImage(
-        file=relative_to_assets("image_5.png"))
+        file=get_stuff_path("bars.png"))
     image_5 = canvas.create_image(
         242.0,
         363.0,
@@ -338,7 +355,7 @@ if full_check==False:
     )
 
     button_image_1 = PhotoImage(
-        file=relative_to_assets("button_1.png"))
+        file=get_stuff_path("add.png"))
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
@@ -354,7 +371,7 @@ if full_check==False:
     )
 
     button_image_2 = PhotoImage(
-        file=relative_to_assets("button_2.png"))
+        file=get_stuff_path("add.png"))
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
@@ -370,7 +387,7 @@ if full_check==False:
     )
 
     button_image_3 = PhotoImage(
-        file=relative_to_assets("button_3.png"))
+        file=get_stuff_path("add.png"))
     button_3 = Button(
         image=button_image_3,
         borderwidth=0,
@@ -386,7 +403,7 @@ if full_check==False:
     )
 
     button_image_4 = PhotoImage(
-        file=relative_to_assets("button_4.png"))
+        file=get_stuff_path("add.png"))
     button_4 = Button(
         image=button_image_4,
         borderwidth=0,
@@ -402,7 +419,7 @@ if full_check==False:
     )
 
     button_image_5 = PhotoImage(
-        file=relative_to_assets("button_5.png"))
+        file=get_stuff_path("add.png"))
     button_5 = Button(
         image=button_image_5,
         borderwidth=0,
@@ -418,7 +435,7 @@ if full_check==False:
     )
 
     button_image_6 = PhotoImage(
-        file=relative_to_assets("button_6.png"))
+        file=get_stuff_path("add.png"))
     button_6 = Button(
         image=button_image_6,
         borderwidth=0,
@@ -434,51 +451,51 @@ if full_check==False:
     )
 
     def update_pushup():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global pushup_txt
         current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Push"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indent=4)
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
 
     def update_situp():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global situp_txt
         current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Sit"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indent=4)
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_sqat():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global situp_txt
         current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Squat"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indent=4)
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_run():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global run_txt
         current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Run"]+=0.5
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indent=4)
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
 
     def update_int():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global int_txt
         current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Int_type"]+=0.5
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indent=4)
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
 
     def update_sleep():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global sleep_txt
         current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Sleep"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indent=4)
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
 
     canvas.create_text(
@@ -491,7 +508,7 @@ if full_check==False:
     )
 
     button_image_7 = PhotoImage(
-        file=relative_to_assets("button_7.png"))
+        file=get_stuff_path("preview.png"))
     button_7 = Button(
         image=button_image_7,
         borderwidth=0,
@@ -507,7 +524,7 @@ if full_check==False:
     )
 
     image_image_6 = PhotoImage(
-        file=relative_to_assets("image_6.png"))
+        file=get_stuff_path("warning.png"))
     image_6 = canvas.create_image(
         244.0,
         598.0,
@@ -515,12 +532,12 @@ if full_check==False:
     )
 
     button_image_8 = PhotoImage(
-        file=relative_to_assets("button_8.png"))
+        file=get_stuff_path("complete.png"))
     button_8 = Button(
         image=button_image_8,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.system.check_daily_comp(today_date_str, window),
+        command=lambda: thesystem.dailyquest.check_daily_comp(today_date_str, window),
         relief="flat"
     )
     button_8.place(
@@ -530,9 +547,9 @@ if full_check==False:
         height=27.0
     )
 
-    side = PhotoImage(file=relative_to_assets("blue.png"))
+    side = PhotoImage(file=get_stuff_path("blue.png"))
     if job.upper()!="NONE":
-        side = PhotoImage(file=relative_to_assets("purple.png"))
+        side = PhotoImage(file=get_stuff_path("purple.png"))
     canvas.create_image(15.0, 381.0, image=side)
     canvas.create_image(468.0, 404.0, image=side)
 
@@ -601,10 +618,13 @@ if full_check==False:
         window.after(1000 // 24, update_images)
 
     # Start the animation
-    update_images()
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        update_thread = threading.Thread(target=update_images)
+        update_thread.start()
+
 
     button_image_9 = PhotoImage(
-        file=relative_to_assets("button_9.png"))
+        file=get_stuff_path("close.png"))
     button_9 = Button(
         image=button_image_9,
         borderwidth=0,
@@ -628,7 +648,7 @@ elif full_check==True:
     if rew_check=="True":
         thesystem.system.message_open("Quest Completed")
     else:
-        with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+        with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
             rew_fw=csv.writer(rew_csv_open)
             rew_fw.writerow(["Reward"])
         subprocess.Popen(['python', 'Anime Version/Daily Quest Rewards/gui.py'])

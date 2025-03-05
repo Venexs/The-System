@@ -5,10 +5,9 @@
             "amt":15,
 
             "amtval":"Reps",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Chest", "Shoulder", "Arms", "Core"]
         }
     ],
 
@@ -18,10 +17,9 @@
             "amt":15,
 
             "amtval":"Reps",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs", "Core"]
         }
     ],
 
@@ -31,10 +29,9 @@
             "time":45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs", "Core", "Shoulder"]
         }
     ],
 
@@ -44,10 +41,9 @@
             "time":45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Back", "Core", "Shoulder"]
         }
     ],
 
@@ -58,10 +54,9 @@
 
 
             "amtval":"Reps",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs", "Core"]
         }
     ],
     "Crunches":[
@@ -70,10 +65,9 @@
             "amt":15,
 
             "amtval":"Reps",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Core"]
         }
     ],
     "Wall Sit":[
@@ -82,10 +76,9 @@
             "time":45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs", "Core"]
         }
     ],
     "High Knees":[
@@ -94,10 +87,9 @@
             "time":45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs", "Core"]
         }
     ],
     "Superman Hold":[
@@ -106,10 +98,9 @@
             "time":45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "STRBUFF":1
+            "type":"Common",
+
+            "Areas":["Back", "Shoulder", "Core"]
         }
     ]
 }

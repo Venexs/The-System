@@ -33,23 +33,24 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
 
@@ -58,7 +59,7 @@ rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank1
 c=0
 
 
-with open("Files\Titles\Titles.json", 'r') as fson:
+with open("Files/Titles/Titles.json", 'r') as fson:
     data=ujson.load(fson)
     data_key=list(data.keys())
     try:
@@ -120,6 +121,7 @@ with open("Files\Titles\Titles.json", 'r') as fson:
         print("", end='')
 
 window = Tk()
+stop_event=threading.Event()
 
 initial_height = 0
 target_height = 531
@@ -142,8 +144,16 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
@@ -156,7 +166,7 @@ window.wm_attributes("-topmost", True)
 top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 canvas = Canvas(
     window,
@@ -177,11 +187,11 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 350.0, resize_factor=1)
+player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 350.0, resize_factor=1, pause_duration=0.4)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -607,9 +617,28 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 # =================================================================================================
+
+button_image_9 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+button_9 = Button(
+    image=button_image_9,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: ex_close(window),
+    relief="flat"
+)
+button_9.place(
+    x=481.0,
+    y=55.0,
+    width=28,
+    height=28
+)
+
 
 window.resizable(False, False)
 window.mainloop()

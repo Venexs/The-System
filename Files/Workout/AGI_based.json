@@ -5,10 +5,9 @@
             "time": 45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs","Shoulder"]
         }
     ],
 
@@ -18,10 +17,9 @@
             "time": 60,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs"]
         }
     ],
 
@@ -31,10 +29,9 @@
             "time": 45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
+            "type":"Common",
+
+            "Areas":["Shoulder", "Core", "Legs"]
         }
     ],
 
@@ -44,10 +41,9 @@
             "time": 45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs", "Core"]
         }
     ],
 
@@ -57,10 +53,9 @@
             "time": 45,
 
             "timeval":"Seconds",
-            "type":"Learn"
-        },
-        {
-            "AGIBUFF":1
+            "type":"Learn",
+
+            "Areas":["Legs", "Core"]
         }
     ],
 
@@ -70,10 +65,9 @@
             "time": 45,
 
             "timeval":"Seconds",
-            "type":"Common"
-        },
-        {
-            "AGIBUFF":1
+            "type":"Common",
+
+            "Areas":["Legs"]
         }
     ]
 }

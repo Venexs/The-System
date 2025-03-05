@@ -44,6 +44,7 @@ target_height = 144
 window_width = 715
 
 window.geometry(f"{window_width}x{initial_height}")
+stop_event=threading.Event()
 
 job=thesystem.misc.return_status()["status"][1]["job"]
 
@@ -60,8 +61,16 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
 
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 thesystem.system.center_window(window,window_width,target_height)
@@ -75,24 +84,25 @@ window.wm_attributes("-topmost", True)
 top_preloaded_images = thesystem.system.preload_images(top_images, (715, 41))
 bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (715, 41))
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(eve):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
+
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=12, delay=1)
@@ -118,7 +128,7 @@ image_1 = canvas.create_image(
 )
 
 video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
+player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0, pause_duration=0.4)
 
 image_image_2 = PhotoImage(
     file=get_stuff_path("frame.png"))
@@ -217,7 +227,8 @@ def update_images():
     window.after(1000 // 24, update_images)
 
 # Start the animation
-update_images()
+update_thread = threading.Thread(target=update_images)
+update_thread.start()
 
 entry_1 = Entry(
     bd=0,

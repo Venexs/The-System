@@ -1,29 +1,14 @@
 {
-      "Courage of the Weak": [
+      "Rebirth of the Strong": [
             {
                   "ID": 0,
-                  "obj": "Become a Player",
+                  "obj": "Defeat all 9 Monarchs",
                   "rank": "?",
                   "type": "Unknown",
-                  "desc": "Quest given by [Unknown]",
+                  "desc": "Quest given by The Architect",
                   "Rewards": {
                         "LVLADD": 10
                   }
-            }
-      ],
-      "Advanced skills are indifferent to Magic": [
-            {
-                  "desc": "A Challenger dared you to do complete these objectives",
-                  "amt": 1,
-                  "amtval": "Chapters",
-                  "type": "Common",
-                  "rank": "E",
-                  "ID": 933848,
-                  "Rewards": {
-                        "Coin Bag 300": 1,
-                        "Coin Bag 100": 1
-                  },
-                  "skill": "Books"
             }
       ]
 }

@@ -1,5 +1,3 @@
 @echo off
 
-py vow.py
-
-PAUSE
+py gui.py

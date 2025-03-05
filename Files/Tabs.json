@@ -1,13 +1,14 @@
 {
-    "Inventory": "Open",
+    "Inventory": "Close",
     "Daily": "Close",
-    "Quest": "Open",
+    "Quest": "Close",
     "Skill": "Close",
-    "Status": "Open",
+    "Status": "Close",
     "Equipment": "Close",
     "Shop": "Close",
     "Dungeons": "Close",
     "Settings": "Close",
     "Calories": "Close",
-    "Castle": "Close"
+    "Castle": "Close",
+    "Intro": "Close"
 }

@@ -152,7 +152,7 @@ def demon_fight(canvas_name,window):
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
-    subprocess.Popen(['python', f'{theme} Version\Demon Castle\gui1.py'])
+    subprocess.Popen(['python', f'{theme} Version/Demon Castle/gui1.py'])
     ex_close(window)
 
 def ex_close(win):
@@ -162,7 +162,7 @@ def ex_close(win):
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(win, win.winfo_width(), win.winfo_height(), step=50, delay=1)
 
 def reward_castle():
@@ -187,7 +187,7 @@ def reward_castle():
     with open('Files/Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
-    subprocess.Popen(['python', f"{theme} Version\Leveled up\gui.py"])
+    subprocess.Popen(['python', f"{theme} Version/Leveled up/gui.py"])
 
     with open("Files/Inventory.json", 'r') as fson:
         data_fininv=ujson.load(fson)
@@ -210,7 +210,7 @@ def reward_castle():
     with open("Files/Inventory.json", 'w') as finaladdon:
         ujson.dump(data_fininv, finaladdon, indent=6)
 
-    subprocess.Popen(['python', "Anime Version\Demon Castle\gui.py"])
+    subprocess.Popen(['python', "Anime Version/Demon Castle/gui.py"])
 
 def choose_demon_by_rank(rank_of):
     with open("Files/Demons Castle/Demon_Data.json", "r") as demon_file:

@@ -4,7 +4,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 def final(name0,window):
-    with open("Files\Titles\Titles.json", 'r') as fson:
+    with open("Files/Titles/Titles.json", 'r') as fson:
         data=ujson.load(fson)
     if name0!='':
         with open("Files\Status.json", 'r') as fina_read_fson:

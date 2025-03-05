@@ -3,7 +3,9 @@ import ujson
 import csv
 import random
 import subprocess
+import os
 import thesystem.system
+from PIL import Image, ImageTk
 
 def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
     try:
@@ -41,7 +43,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
 
         id_val=random.randrange(1,999999)
 
-        with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
+        with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
             quest_desc=ujson.load(quest_desc_file)
             if rank in ["E", "D"]:
                 desc_list=quest_desc["Easy"]
@@ -65,7 +67,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
         
         coinval=amt[rank]
         rew1=f"Coin Bag {coinval}"
-        with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
+        with open("Files/Data/Inventory_List.json", 'r') as rewards_name_file:
             reward_names=ujson.load(rewards_name_file)
             reward_names_list=list(reward_names.keys())
 
@@ -211,8 +213,20 @@ def quest_reward(window,dicts,rank,name,special=False):
         theme=theme_data["Theme"]
     
     if special==False:
-        thesystem.system.message_open("Quest Completed")
-        subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
+        if theme=="Anime":
+            with open("Files\Temp Files\Quest Rewards.json", 'r') as fols:
+                data_quest_rewards=ujson.load(fols)
+                
+            data_quest_rewards["Type"]="Quest"
+            data_quest_rewards["Rewards"]=dicts
+
+            with open("Files\Temp Files\Quest Rewards.json", 'w') as fols:
+                ujson.dump(data_quest_rewards, fols, indent=6)
+            
+            subprocess.Popen(['python', f'{theme} Version/New Items/gui.py'])
+        else:
+            thesystem.system.message_open("Quest Completed")
+            subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
     else:
         thesystem.system.message_open("Revertion")
         subprocess.Popen(['python', 'First/Vows/gui.py'])
@@ -295,7 +309,66 @@ def open_write_quest(name,id,type,window):
 
         window.quit()
 
+def get_item_image(name):
+    try:
+        # Construct the absolute path to the Images folder
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        if name.split()[0] == 'Coin' and name.split()[1] == 'Bag':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Coin Pouch Big.png")
 
+        elif name.split()[-1] == 'Key':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Instance Keys Big.png")
+
+        elif name=="INT. Based Points"or name=="INTav":
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "AVINT" + '.png')
+
+        elif name=="STR. Based Points" or name=="STRav":
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "AVSTR" + '.png')
+
+        elif name.split()[0]=="Coins:":
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Coin" + '.png')
+
+        elif name.split()[0]=="Experience":
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "XP" + '.png')
+
+        elif name=="LVLADD":
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Level Add" + '.png')
+
+        elif name=="":
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Unknown" + '.png')
+
+        else:
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, name + ' Big.png')
+
+        if not os.path.exists(files):
+            files = os.path.join(file_loc, "Unknown.png")
+
+        # Open and resize the image
+        image = Image.open(files)
+
+        # Crop to 680x680 (centered)
+        width, height = image.size
+        left = 0
+        top = (height - 680) // 2  # Crop from center
+        right = 680
+        bottom = top + 680
+        image = image.crop((left, top, right, bottom))
+
+        image = image.resize((38, 38), Image.Resampling.LANCZOS)  # High-quality resize
+        return ImageTk.PhotoImage(image)
+
+    except:
+        return None  # Handle errors properly
 
 
 

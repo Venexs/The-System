@@ -1,29 +1,24 @@
 {
-    "Easy":
-    [
-        "You have given a mission by the organization.",
-        "A Soldier has given you a quest",
-        "The Unkown Sorcerer has told you to practice these",
-        "A Challenger dared you to do complete these objectives",
-        "Your Guardian wishes for you to complete this."
+    "Easy": [
+      "Mark Gorman and Rational send you on a mission.",
+      "Peyton and Tyrone have a quest for you.",
+      "Treemangis Truman and Yatagarasu urge you to study magic.",
+      "Derek and Solar dare you to complete these tasks.",
+      "Suhayl and Stanely need you to defend the realm."
     ],
-
-    "Intermediate":
-    [
-        "A mysterious figure has left behind a list of tasks",
-        "A soldier handed you a list of covert missions",
-        "A commander shares a list of exercise, these will prove to be useful in the upcoming campaign",
-        "An elder delivers a bundle of scrolls, each containing instructions",
-        "Your Guardian has given you instructions",
-        "You were Challenged"
+    "Intermediate": [
+      "K Ars and Devajeet leave you a list of tasks.",
+      "Rimuru Tempest and Kryse assign secret missions.",
+      "Jacob and Zan Carli share vital exercises.",
+      "Tru and Comi deliver ancient scrolls.",
+      "Sakurai gives clear instructions.",
+      "Ellison challenges you with a daring quest."
     ],
-
-    "Hard":
-    [
-        "The Order has directly ordered you to complete this quest",
-        "The Unkown Sorcerer returns to give you a quest",
-        "The Order requires you to complete this training",
-        "A God has given you a Challenge. Finish it if you dare",
-        "A Monarch has given you a task"
+    "Hard": [
+      "Forfeit orders you to face a dangerous quest.",
+      "Verxtan, the sorcerer, sets you a tough task.",
+      "Akiko, emissary of the Order, demands training.",
+      "Hi Ju, a divine being, gives you a holy challenge.",
+      "Michael, the monarch, assigns a critical mission."
     ]
-}
+  }

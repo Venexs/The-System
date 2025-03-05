@@ -40,7 +40,7 @@ with open("Files/Tabs.json",'w') as fin_tab_son:
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window = Tk()
 
@@ -58,37 +58,33 @@ window.wm_attributes("-topmost", True)
 
 checkbox_var1 = IntVar(value=0)
 checkbox_var0 = IntVar(value=0)
+checkbox_var2 = IntVar(value=0)
 
-with open("Files\Settings.json", 'r') as settings_open:
+with open("Files/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Calorie_Penalty"]=="True":
-    checkbox_var1 = IntVar(value=1)
-
-if setting_data["Settings"]["Main_Penalty"]=="True":
-    checkbox_var0 = IntVar(value=1)
+checkbox_var2 = IntVar(value=1 if setting_data["Settings"].get("Performernce (ANIME)", "False") == "True" else 0)
+checkbox_var1 = IntVar(value=1 if setting_data["Settings"].get("Calorie_Penalty", "False") == "True" else 0)
+checkbox_var0 = IntVar(value=1 if setting_data["Settings"].get("Main_Penalty", "False") == "True" else 0)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def theme_open():
     with open("Files/Checks/theme_open.csv", 'w', newline='') as info_open:
         fw=csv.writer(info_open)
         fw.writerow(["True"])
         
-    subprocess.Popen(['python', 'First\Theme Check\gui.py'])
+    subprocess.Popen(['python', 'First/Theme Check/gui.py'])
     ex_close(window)
 
 def info_open():
@@ -96,7 +92,7 @@ def info_open():
         fw=csv.writer(info_open)
         fw.writerow(["True"])
 
-    subprocess.Popen(['python', 'First\Info\gui.py'])
+    subprocess.Popen(['python', 'First/Info/gui.py'])
     ex_close(window)
 
 
@@ -108,7 +104,7 @@ def ex_close(win):
         tab_son_data["Settings"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 unchecked_image = PhotoImage(file="assets/frame0/Off.png")
@@ -133,7 +129,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 300.0, resize_factor=1.2)
@@ -233,7 +229,7 @@ canvas.create_text(
 checkbox = Checkbutton(
     window,
     variable=checkbox_var1,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0),
+    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -259,7 +255,7 @@ canvas.create_text(
 checkbox1 = Checkbutton(
     window,
     variable=checkbox_var0,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0),
+    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -272,6 +268,32 @@ checkbox1 = Checkbutton(
 
 # Position the checkbox using place
 checkbox1.place(x=265, y=267, width=14, height=14)
+
+canvas.create_text(
+    30.0,
+    261.0+38,
+    anchor="nw",
+    text="High Performance for Anime Version:",
+    fill="#FFFFFF",
+    font=("Exo SemiBold", 11 * -1)
+)
+
+checkbox2 = Checkbutton(
+    window,
+    variable=checkbox_var2,
+    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
+    image=unchecked_image,
+    selectimage=checked_image,
+    compound="center",       # Place the image to the left of the text
+    indicatoron=False,       # Hide the default checkbox indicator
+    bd=0,
+    highlightthickness=0,    # Remove the focus highlight around the widget
+    padx=0,                  # Remove internal horizontal padding
+    pady=0
+)
+
+# Position the checkbox using place
+checkbox2.place(x=265, y=267.0+38, width=14, height=14)
 
 window.resizable(False, False)
 window.mainloop()

@@ -10,6 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import threading
 import ujson
+import json
 import csv
 import subprocess
 import time
@@ -50,26 +51,23 @@ window_width = 355
 window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=40, delay=1)
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 window.configure(bg = "#FFFFFF")
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(eve):
     with open("Files/Tabs.json",'r') as tab_son:
@@ -79,7 +77,7 @@ def ex_close(eve):
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     stop_update_thread_func()
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
@@ -105,12 +103,12 @@ def load_fatigue_value():
             if not content:
                 raise ValueError("The status.json file is empty.")
             
-            data = ujson.load(file)
+            data = json.load(file)
             fatigue = data["status"][0].get("fatigue", 0)
             fatigue_max = data["status"][0].get("fatigue_max", 1)
             fatigue_percent = int((fatigue / fatigue_max) * 100)
             return fatigue_percent
-    except (ujson.jsonDecodeError, ValueError) as e:
+    except:
         return 0
 
 update_thread = None
@@ -196,7 +194,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 180.0, resize_factor=1.2)
@@ -323,27 +321,27 @@ if re_check==True:
 
 
 def update_stat(stat_name): 
-    with open("Files\Checks\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else data["avail_eq"][0]["int_based"]
-    if val<3 and available_points > 0:
+    if val<8 and available_points > 0:
             de_update_str() if stat_name in ["str", "agi", "vit"] else de_update_int()
             data["status"][0][stat_name] += 1
             val=data["status"][0][stat_name]
             canvas.itemconfig(stat_text_widgets[stat_name], text=f"{val:03d}")
-            subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+            subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
             data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 data["status"][0]["fatigue_max"]+=20
             with open("Files/status.json", 'w') as fson:
                 ujson.dump(data, fson, indent=6)
-            with open("Files\Checks\Ability_Check.json", 'w') as fin_ability_check_file:
+            with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
                 ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':
                 #update_fatigue_text(canvas,fatigue_val)
-    elif val>=3 and available_points > 0:
+    elif val>=8 and available_points > 0:
         with open("Files/Temp Files/Urgent Temp.csv", 'w', newline='') as urgent_file:
             fr=csv.writer(urgent_file)
             fr.writerow([stat_name.upper()])
@@ -830,16 +828,6 @@ if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
     canvas.itemconfig("Job", state="normal")
 else:
     canvas.itemconfig("Job", state="hidden")
-
-if lvl>=5:
-    with open("Files/status.json", 'r') as fson:
-        data=ujson.load(fson)
-        patre=data["status"][1]['patreon']
-    if patre==False:
-        subprocess.Popen(["python", "First\Patreon\gui.py"])
-        data["status"][1]['patreon']=True
-        with open("Files/status.json", 'w') as fson:
-            ujson.dump(data, fson, indent=6)
 
 start_update_thread(canvas, fatigue_val)
 window.resizable(False, False)

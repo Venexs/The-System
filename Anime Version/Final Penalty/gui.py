@@ -33,15 +33,49 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+with open("Files/Mod/presets.json", 'r') as pres_file:
+    pres_file_data=ujson.load(pres_file)
+    get_stuff_path_str=pres_file_data["Anime"]["Message Box"]
+
+def get_stuff_path(key):
+    full_path=get_stuff_path_str+'/'+key
+    return full_path
+
 window = Tk()
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+
+stop_event=threading.Event()
 
 initial_height = 0
 target_height = 144
 window_width = 715
 
+job=thesystem.misc.return_status()["status"][1]["job"]
+
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+thesystem.system.make_window_transparent(window,transp_clr)
+
+with open("Files/Settings.json", 'r') as settings_open:
+    setting_data=ujson.load(settings_open)
+
+if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+else:
+    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+
 window.geometry(f"{window_width}x{initial_height}")
-thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=20, delay=1)
 thesystem.system.center_window(window,window_width,target_height)
 
@@ -50,22 +84,28 @@ window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
+# Preload top and bottom images
+top_preloaded_images = thesystem.system.preload_images(top_images, (715, 41))
+bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (715, 41))
+
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])   
+
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
+    if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+        stop_event.set()
+        update_thread.join()
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=30, delay=1)
@@ -90,10 +130,10 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
+player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0, pause_duration=0.3)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -121,28 +161,18 @@ image_4 = canvas.create_image(
 
 canvas.tag_bind(image_4, "<ButtonPress-1>", ex_close)
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    47.0,
-    72.0,
-    image=image_image_5
-)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    677.0,
-    71.0,
-    image=image_image_6
-)
+side = PhotoImage(file=get_stuff_path("blue.png"))
+if job.upper()!="NONE":
+    side = PhotoImage(file=get_stuff_path("purple.png"))
+canvas.create_image(677.0, 71.0, image=side)
+canvas.create_image(47.0, 72.0, image=side)
 
 canvas.create_rectangle(
-    158.0,
     0.0,
-    732.0,
-    20.0,
-    fill="#0C679B",
+    0.0,
+    760.0,
+    30.0,
+    fill=transp_clr,    
     outline="")
 
 canvas.create_rectangle(
@@ -150,35 +180,61 @@ canvas.create_rectangle(
     0.0,
     162.0,
     16.0,
-    fill="#0C679B",
+    fill=transp_clr,    
     outline="")
 
 canvas.create_rectangle(
     0.0,
-    135.0,
+    123.0,
     715.0,
-    145.0,
-    fill="#0C679B",
+    144.0,
+    fill=transp_clr,    
     outline="")
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
+image_40 = thesystem.system.side_bar("left_bar.png", (30, 100))
+canvas.create_image(82.0, 76.0, image=image_40)
+
+image_50 = thesystem.system.side_bar("right_bar.png", (30, 114))
+canvas.create_image(640.0, 75.0, image=image_50)
+
+image_index = 0
+bot_image_index = 0
+
+top_image = canvas.create_image(
     357.0,
-    14.0,
-    image=image_image_7
+    20.0,
+    image=top_preloaded_images[image_index]
 )
 
-canvas.tag_bind(image_7, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_7, "<B1-Motion>", move_window)
+canvas.tag_bind(top_image, "<ButtonPress-1>", start_move)
+canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
-image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
-image_8 = canvas.create_image(
+bottom_image = canvas.create_image(
     370.0,
-    130.0,
-    image=image_image_8
+    128.0,
+    image=bottom_preloaded_images[bot_image_index]
 )
+
+step,delay=1,1
+
+def update_images():
+    global image_index, bot_image_index
+
+    # Update top image
+    image_index = (image_index + 1) % len(top_preloaded_images)
+    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+
+    # Update bottom image
+    bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
+    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+
+    # Schedule next update (24 FPS)
+    window.after(1000 // 24, update_images)
+
+# Start the animation
+if setting_data["Settings"]["Performernce (ANIME):"] != "True":
+    update_thread = threading.Thread(target=update_images)
+    update_thread.start()
 
 thesystem.finalpenalty.decrement_stats()
 window.resizable(False, False)

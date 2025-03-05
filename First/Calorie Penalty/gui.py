@@ -47,7 +47,7 @@ x=data["Value"]
 
 today_str = datetime.now().strftime("%d-%m-%Y")
 
-with open("Files\Data\Calorie_Count.json", 'r') as cal_file:
+with open("Files/Data/Calorie_Count.json", 'r') as cal_file:
     cal_file_data = ujson.load(cal_file)
 
 if today_str in cal_file_data:
@@ -78,7 +78,7 @@ canvas = Canvas(
 canvas.pack(fill="both", expand=True)
 
 def ex_close(eve):
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     window.quit()
 
 # Load images

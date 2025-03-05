@@ -25,7 +25,7 @@ sys.path.insert(0, project_root)
 
 import thesystem.system
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH2 = OUTPUT_PATH / Path(r"assets\frame2")
@@ -50,35 +50,6 @@ window2.attributes('-alpha',0.8)
 window2.overrideredirect(True)
 window2.wm_attributes("-topmost", True)
 
-class VideoPlayer:
-    def __init__(self, canvas, video_path, x, y):
-        self.canvas = canvas
-        self.video_path = video_path
-        self.cap = cv2.VideoCapture(video_path)
-        self.x = x
-        self.y = y
-        self.image_id = self.canvas.create_image(self.x, self.y)
-        self.update_frame()
-
-    def update_frame(self):
-        ret, frame = self.cap.read()
-        if not ret:
-            # If the video has ended, reset the capture object
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, frame = self.cap.read()
-
-        if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(frame)
-            imgtk = ImageTk.PhotoImage(image=img)
-            self.canvas.itemconfig(self.image_id, image=imgtk)
-            self.canvas.imgtk = imgtk
-
-        self.canvas.after(10, self.update_frame)
-
-    def __del__(self):
-        self.cap.release()
-
 def start_move(event):
     global lastx, lasty
     lastx = event.x_root
@@ -96,14 +67,14 @@ def move_window(event):
 
 def ex_close(win):
     subprocess.Popen(['python', 'Anime Version/Skills Tab/gui.py'])
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(win, target_height, window_width, step=40, delay=1)
     win.quit()
 
 name1=name2=name3=name4='-'
 lvl1=lvl2=lvl3=lvl4='??'
 
-with open("Files\Skills\Skill.json", 'r') as fson:
+with open("Files/Skills/Skill.json", 'r') as fson:
     c=0
     try:
         data=ujson.load(fson)
@@ -159,10 +130,10 @@ image_1 = canvas2.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = VideoPlayer(canvas2, video_path, 603.0, 447.0)
+player = thesystem.system.VideoPlayer(canvas2, video_path, 603.0, 447.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

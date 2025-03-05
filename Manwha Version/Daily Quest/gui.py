@@ -56,19 +56,16 @@ def update_timer(end_time):
     window.after(1000, update_timer, end_time)
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 def ex_close(win):
     with open("Files/Tabs.json",'r') as tab_son:
@@ -77,7 +74,7 @@ def ex_close(win):
     with open("Files/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Daily"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
-    subprocess.Popen(['python', 'Files\Mod\default\sfx_close.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, target_height, window_width, step=10, delay=1)
 
 with open("Files/Checks/Daily_time_check.csv", 'r') as Daily_date_check_file:
@@ -89,10 +86,11 @@ with open("Files/Checks/Daily_time_check.csv", 'r') as Daily_date_check_file:
         # today check is a part of Rew_check, ensuring if the quest was completed today
         tdy_check=k[2]
 
-daily_quest_raw, player_data, final_data = dailyquest.dailys_init()
+daily_quest_raw, player_data, final_data, name_list = dailyquest.dailys_init()
 daily_quest_data = daily_quest_raw[0]
 pl_push, pl_sit, pl_sqat, pl_run, pl_int, pl_slp = player_data
 fl_push, fl_sit, fl_sqat, fl_run, fl_int, fl_slp = final_data
+push_name, sit_name, squat_name, run_name, int_name, slp_name = name_list
 
 rank = dailyquest.get_rank()
 
@@ -124,7 +122,7 @@ if full_check==False:
         tab_son_data["Daily"]='Open'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
-    subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+    subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
     window = Tk()
 
@@ -159,10 +157,10 @@ if full_check==False:
         image=image_image_1
     )
 
-    with open("Files\Mod\presets.json", 'r') as pres_file:
+    with open("Files/Mod/presets.json", 'r') as pres_file:
         pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
-    player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 350.0, resize_factor=1.5)
+    player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 350.0, resize_factor=1.5, pause_duration=0.7)
 
     image_image_2 = PhotoImage(
         file=relative_to_assets("image_2.png"))
@@ -210,7 +208,7 @@ if full_check==False:
         51.0,
         210.0,
         anchor="nw",
-        text="Push-ups",
+        text=f"{push_name}",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
@@ -219,7 +217,7 @@ if full_check==False:
         51.0,
         250.0,
         anchor="nw",
-        text="Sit-ups",
+        text=f"{sit_name}",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
@@ -228,7 +226,7 @@ if full_check==False:
         51.0,
         289.0,
         anchor="nw",
-        text="Squats",
+        text=f"{squat_name}",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
@@ -237,7 +235,7 @@ if full_check==False:
         51.0,
         329.0,
         anchor="nw",
-        text="Running",
+        text=f"{run_name}",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
@@ -246,7 +244,7 @@ if full_check==False:
         51.0,
         386.0,
         anchor="nw",
-        text="Chapter Reading",
+        text=f"{int_name}",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
@@ -255,7 +253,7 @@ if full_check==False:
         51.0,
         425.0,
         anchor="nw",
-        text="Proper Last Night Sleep",
+        text=f"{slp_name}",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
@@ -291,13 +289,13 @@ if full_check==False:
         278.0,
         329.0,
         anchor="nw",
-        text=f"[{pl_run}/{fl_run}km]",
+        text=f"[{pl_run}/{fl_run}]",
         fill="#FFD337",
         font=("Exo Bold", 14 * -1)
     )
 
     int_txt=canvas.create_text(
-        296.0,
+        278.0,
         386.0,
         anchor="nw",
         text=f"[{pl_int}/{fl_int}]",
@@ -306,7 +304,7 @@ if full_check==False:
     )
 
     sleep_txt=canvas.create_text(
-        297.0,
+        278.0,
         425.0,
         anchor="nw",
         text=f"[{pl_slp}/{fl_slp}]",
@@ -418,55 +416,51 @@ if full_check==False:
         height=20.0
     )
     def update_pushup():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
-        current_text = int(((canvas.itemcget(pushup_txt, "text")).split("/"))[0][1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Push"] += 1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
-        canvas.itemconfig(pushup_txt, text=f"[{current_text + 1}/{fl_push}]")
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
+        #global pushup_txt
+        current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
+        daily_quest_data["Player"]["Push"]+=1
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
+
     def update_situp():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global situp_txt
         current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Sit"]+=1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+        daily_quest_data["Player"]["Sit"]+=1
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_sqat():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global situp_txt
         current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Squat"]+=1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+        daily_quest_data["Player"]["Squat"]+=1
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_run():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global run_txt
         current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Run"]+=0.5
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+        daily_quest_data["Player"]["Run"]+=0.5
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
 
     def update_int():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global int_txt
         current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Int_type"]+=0.5
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+        daily_quest_data["Player"]["Int_type"]+=0.5
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
 
     def update_sleep():
-        subprocess.Popen(['python', 'Files\Mod\default\sfx_point.py'])
+        subprocess.Popen(['python', 'Files/Mod/default/sfx_point.py'])
         #global sleep_txt
         current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
-        with open("Files/Data/Daily_Quest.json", 'w') as write_daily_quest_file:
-            daily_quest_data["Player"]["Sleep"]+=1
-            ujson.dump(daily_quest_data, write_daily_quest_file, indent=4)
+        daily_quest_data["Player"]["Sleep"]+=1
+        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
 
     canvas.create_text(
@@ -508,7 +502,7 @@ if full_check==False:
         image=button_image_8,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: thesystem.system.check_daily_comp(today_date_str, window),
+        command=lambda: thesystem.dailyquest.check_daily_comp(today_date_str, window),
         relief="flat"
     )
     button_8.place(
@@ -554,7 +548,8 @@ elif full_check==True:
     if rew_check=="True":
         thesystem.system.message_open("Quest Completed")
     else:
-        with open("Files\Temp Files\Daily Rewards.csv", 'w', newline='') as rew_csv_open:
+        with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
             rew_fw=csv.writer(rew_csv_open)
             rew_fw.writerow(["Reward"])
         subprocess.Popen(['python', 'Manwha Version/Daily Quest Rewards/gui.py'])
+

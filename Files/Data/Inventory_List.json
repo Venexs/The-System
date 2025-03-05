@@ -7,6 +7,7 @@
             "rank":"E",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":100
         }
@@ -20,6 +21,7 @@
             "rank":"D",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":300
         }
@@ -33,6 +35,7 @@
             "rank":"D",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":500
         }
@@ -46,6 +49,7 @@
             "rank":"C",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":1000
         }
@@ -59,6 +63,7 @@
             "rank":"C",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":2000
         }
@@ -72,6 +77,7 @@
             "rank":"B",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":5000
         }
@@ -85,6 +91,7 @@
             "rank":"A",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":10000
         }
@@ -98,6 +105,7 @@
             "rank":"S",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":50000
         }
@@ -111,6 +119,7 @@
             "rank":"S",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":80000
         }
@@ -124,6 +133,7 @@
             "rank":"S",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":150000
         }
@@ -137,6 +147,7 @@
             "rank":"S",
             "buff":"",
             "debuff":"",
+            "quest":true,
 
             "Value":250000
         }
@@ -154,6 +165,7 @@
                 "PERbuff":4
             },
             "debuff":"",
+            "quest":true,
 
             "Value":20000
         }
@@ -170,6 +182,7 @@
                 "STRbuff":4
             },
             "debuff":"",
+            "quest":true,
 
             "Value":5000
         }
@@ -186,6 +199,7 @@
                 "STRbuff":2
             },
             "debuff":"",
+            "quest":true,
 
             "Value":2000
         }
@@ -203,6 +217,7 @@
                 "PERbuff":1
             },
             "debuff":"",
+            "quest":true,
 
             "Value":300
         }
@@ -222,6 +237,7 @@
             {
                 "STRbuff":2
             },
+            "quest":true,
 
             "Value":200
         }
@@ -238,6 +254,7 @@
                 "MANbuff":2
             },
             "debuff":"",
+            "quest":true,
 
             "Value":500
         }
@@ -254,6 +271,7 @@
                 "MANbuff":15
             },  
             "debuff":"",
+            "quest":true,
 
             "Value":10000
         }
@@ -271,6 +289,7 @@
                 "INTbuff":10
             },
             "debuff":"",
+            "quest":true,
 
             "Value":15000
         }
@@ -288,6 +307,7 @@
                 "AGIbuff":20
             },
             "debuff":"",
+            "quest":true,
 
             "Value":100000
         }
@@ -307,6 +327,8 @@
                 "STRdebuff": 10,
                 "AGIdebuff": 10
             },
+
+            "quest":true,
             "Value": 100000
         }
       ],
@@ -323,6 +345,8 @@
             "debuff": {
                 "VITdebuff": 5
             },
+            
+            "quest":true,
             "Value": 75000
         }
       ],
@@ -340,6 +364,8 @@
                 "INTdebuff": 5,
                 "MANdebuff": 5
             },
+            
+            "quest":true,
             "Value": 8000
         }
       ],
@@ -356,6 +382,8 @@
             "debuff": {
                 "AGIdebuff": 10
             },
+            
+            "quest":true,
             "Value": 20000
         }
       ],
@@ -374,6 +402,8 @@
                 "AGIdebuff": 10,
                 "MANdebuff": 10
             },
+            
+            "quest":true,
             "Value": 200000
         }
       ],
@@ -390,6 +420,8 @@
             "debuff": {
                 "VITdebuff": 5
             },
+            
+            "quest":true,
             "Value": 5000
         }
       ],
@@ -407,6 +439,8 @@
                 "STRdebuff": 5,
                 "AGIdebuff": 5
             },
+            
+            "quest":true,
             "Value": 4000
         }
       ],
@@ -424,6 +458,8 @@
                 "STRdebuff": 5,
                 "VITdebuff": 5
             },
+            
+            "quest":true,
             "Value": 5500
         }
       ],
@@ -436,6 +472,8 @@
             "rank": "?",
             "buff": "",
             "debuff":"",
+
+            "quest":true,
             "Value": 0
         }
       ],
@@ -448,6 +486,8 @@
             "rank": "?",
             "buff": "",
             "debuff":"",
+            
+            "quest":true,
             "Value": 0
         }
       ],
@@ -460,6 +500,8 @@
             "rank": "?",
             "buff": "",
             "debuff":"",
+            
+            "quest":true,
             "Value": 0
         }
       ],
@@ -474,6 +516,8 @@
                 "AGIbuff": 20
             },
             "debuff":"",
+            
+            "quest":true,
             "Value": 50000
         }
       ],
@@ -492,6 +536,8 @@
             "AGIdebuff": 5,
             "VITdebuff": 5
           },
+          
+          "quest":true,
           "Value": 15000
         }
       ],
@@ -509,6 +555,8 @@
             "AGIdebuff": 5,
             "MANdebuff": 5
           },
+          
+          "quest":true,
           "Value": 8000
         }
       ],
@@ -524,6 +572,8 @@
           "debuff": {
             "AGIdebuff": 1
           },
+          
+          "quest":true,
           "Value": 1000
         }
       ],
@@ -540,6 +590,8 @@
           "debuff": {
             "VITdebuff": 3
           },
+          
+          "quest":true,
           "Value": 6000
         }
       ],
@@ -557,6 +609,8 @@
             "AGIdebuff": 5,
             "MANdebuff": 3
           },
+          
+          "quest":true,
           "Value": 12000
         }
       ],
@@ -572,6 +626,8 @@
           "debuff": {
             "AGIdebuff": 4
           },
+          
+          "quest":true,
           "Value": 4500
         }
       ],
@@ -590,6 +646,8 @@
                 "STRdebuff": 15,
                 "AGIdebuff": 15
             },
+            
+            "quest":true,
             "Value": 200000
         }
     ],
@@ -604,6 +662,8 @@
                 "INTbuff": 30
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 300000
         }
     ],
@@ -618,6 +678,8 @@
                 "AGIbuff": 15
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 8000
         }
     ],
@@ -635,6 +697,8 @@
             "debuff": {
                 "AGIdebuff": 10
             },
+            
+            "quest":true,
             "Value": 25000
         }
     ],
@@ -649,6 +713,8 @@
                 "PERbuff": 8
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 3500
         }
     ],
@@ -663,6 +729,8 @@
                 "VITbuff": 10
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 1500
         }
     ],
@@ -678,6 +746,8 @@
                 "VITbuff": 40
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 700000
         }
     ],
@@ -693,6 +763,8 @@
                 "AGIbuff":20
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 100000
         }
     ],
@@ -707,6 +779,8 @@
                 "MANbuff": 50
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 750000
         }
     ],
@@ -722,6 +796,8 @@
                 "AGIbuff": 30
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 800000
         }
     ],
@@ -738,6 +814,8 @@
             "debuff": {
                 "VITdebuff":20
             },
+            
+            "quest":true,
             "Value": 1000000
         }
     ],
@@ -754,6 +832,8 @@
             "debuff": {
                 "AGIdebuff":10
             },
+            
+            "quest":true,
             "Value": 100000
         }
     ],
@@ -770,6 +850,8 @@
             "debuff": {
                 "AGIdebuff":10
             },
+            
+            "quest":true,
             "Value": 100000
         }
     ],
@@ -784,6 +866,8 @@
                 "PERbuff": 60
             },
             "debuff": {},
+            
+            "quest":true,
             "Value": 1500000
         }
     ],
@@ -797,6 +881,7 @@
             "buff":"",
             "debuff":"",
 
+            "quest":true,
             "Value":10000
         }
     ],
@@ -810,6 +895,7 @@
             "buff":"",
             "debuff":"",
 
+            "quest":true,
             "Value":15000
         }
     ],
@@ -823,6 +909,7 @@
             "buff":"",
             "debuff":"",
 
+            "quest":true,
             "Value":20000
         }
     ],
@@ -836,6 +923,7 @@
             "buff":"",
             "debuff":"",
 
+            "quest":true,
             "Value":25000
         }
     ],
@@ -849,6 +937,7 @@
             "buff":"",
             "debuff":"",
 
+            "quest":true,
             "Value":30000
         }
     ],
@@ -862,20 +951,8 @@
             "buff":"",
             "debuff":"",
 
+            "quest":true,
             "Value":35000
-        }
-    ],
-
-    "The Orb of Order": [
-        {
-            "desc":"Press the Equip Button to Rearrange your Stat Points",
-            "qty":1,
-            "cat":"Orb",
-            "rank":"?",
-            "buff":"",
-            "debuff":"",
-
-            "Value":1000000
         }
     ]
     

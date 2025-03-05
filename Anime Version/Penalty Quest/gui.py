@@ -75,7 +75,7 @@ def countdown_completed():
     window.quit()
     subprocess.Popen(['python', 'Anime Version/Penalty Quest Rewards/gui.py'])
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
     pen_info_data = ujson.load(pen_info_file)
@@ -103,7 +103,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-with open("Files\Mod\presets.json", 'r') as pres_file:
+with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
 player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)

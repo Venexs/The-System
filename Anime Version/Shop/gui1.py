@@ -22,8 +22,9 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
+import thesystem.shop
 
-subprocess.Popen(['python', 'Files\Mod\default\sfx.py'])
+subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
@@ -44,6 +45,8 @@ window.wm_attributes("-topmost", True)
 with open("Files/status.json", 'r') as read_status_file:
     read_status_file_data=ujson.load(read_status_file)
     coins=read_status_file_data["status"][0]['coins']
+
+thesystem.system.center_window(window,475,163)
 
 def ex_close(win):
     win.quit()
@@ -71,270 +74,11 @@ with open("Files/Temp Files/Shop Temp.csv", 'r') as csv_open:
             desc2=''
         value=k[4]
 
-def quests_add(rank,vals):
-    ab_points=["STR","AGI","VIT","INT","PER","MAN"]
-    random_ab=ab_points[random.randint(0, 5)]
-
-    # ? Active Quests
-    try:
-        with open("Files/Quests/Active_Quests.json", 'r') as active_quests_file:
-            activ_quests=ujson.load(active_quests_file)
-            name_of_activ_quests=list(activ_quests.keys())
-            activ_quests_vals=0
-            for k in name_of_activ_quests:
-                activ_quests_vals+=1
-    except:
-        name_of_activ_quests=[]
-
-    if activ_quests_vals<13 and activ_quests_vals!=13:
-        # ? Quest Name
-        with open("Files\Quests\Quest_Names.json", 'r') as quest_name_file:
-            quest_names=ujson.load(quest_name_file)
-            if random_ab in ["STR","AGI","VIT"]:
-                names_list=quest_names["STR"]
-                check=True
-                while check:
-                    quest_name=random.choice(names_list)
-                    if quest_name in name_of_activ_quests:
-                        quest_name=random.choice(names_list)
-                    else:
-                        check=False
-                rew3="STRav"
-            elif random_ab in ["INT","PER","MAN"]:
-                names_list=quest_names["INT"]
-                check=True
-                while check:
-                    quest_name=random.choice(names_list)
-                    if quest_name in name_of_activ_quests:
-                        quest_name=random.choice(names_list)
-                    else:
-                        check=False
-                rew3="INTav"
-        
-        # ? Quest Description
-        with open("Files\Quests\Quest_Desc.json", 'r') as quest_desc_file:
-            quest_desc=ujson.load(quest_desc_file)
-            if rank in ["E", "D"]:
-                desc_list=quest_desc["Easy"]
-                findesc=random.choice(desc_list)
-            elif rank in ["C", "B"]:
-                desc_list=quest_desc["Intermediate"]
-                findesc=random.choice(desc_list)
-            elif rank in ["A", "S"]:
-                desc_list=quest_desc["Hard"]
-                findesc=random.choice(desc_list)
-
-        # ! MAIN INFO
-        # ? Rewards
-        amt={
-            "S":250000, 
-            "A":130000,
-            "B":80000,
-            "C":5000,
-            "D":500,
-            "E":300
-            }
-        
-        coinval=amt[rank]
-        rew1=f"Coin Bag {coinval}"
-        with open("Files\Data\Inventory_List.json", 'r') as rewards_name_file:
-            reward_names=ujson.load(rewards_name_file)
-            reward_names_list=list(reward_names.keys())
-
-            final_rewards_list=[]
-            for k in reward_names_list:
-                if rank==reward_names[k][0]["rank"]:
-                    final_rewards_list.append(k)
-            
-            rew2=random.choice(final_rewards_list)
-
-        # ? Quest Info
-        file_name=f"Files\Workout\{random_ab}_based.json"
-        with open(file_name, 'r') as quest_file_name:
-            quest_main_names=ujson.load(quest_file_name)
-            quest_main_names_list=list(quest_main_names.keys())
-            final_quest_main_name=random.choice(quest_main_names_list)
-
-            details=quest_main_names[final_quest_main_name][0]
-
-        # ? Final
-
-        rew_dict={rew1:1, rew2:1}
-        if rank in ["S"]:
-            rew_dict["LVLADD"]=8
-            rew_dict[rew3]=10
-        elif rank in ["A"]:
-            rew_dict["LVLADD"]=5
-            rew_dict[rew3]=8
-        elif rank in ["B"]:
-            rew_dict["LVLADD"]=2
-            rew_dict[rew3]=6
-
-        if details["type"]=='Learn':
-            details["obj_desc"]=details["desc"]
-
-        details["desc"]=findesc
-        details["rank"]=rank
-        details["ID"]=random.randrange(1,999999)
-
-        if rank=="D":
-            if "amt" in details:
-                if details["amt"]==50:
-                    details["amt"]+=10
-
-                elif details["amt"]==15:
-                    details["amt"]+=5
-
-                elif details["amt"]==2:
-                    details["amt"]+=1
-
-                elif details["amt"]==30:
-                    details["amt"]+=15
-
-                elif details["amt"]==1:
-                    details["amt"]+=1
-
-            if ("time" in details) and ("amt" not in details):
-                if details["time"]==60:
-                    details["time"]+=60
-
-                elif details["time"]==45:
-                    details["time"]+=15
-
-                elif details["time"]==1:
-                    details["time"]+=1
-
-        elif rank=="C":
-            if "amt" in details:
-                if details["amt"]==50:
-                    details["amt"]+=20
-
-                elif details["amt"]==15:
-                    details["amt"]+=15
-
-                elif details["amt"]==2:
-                    details["amt"]+=1
-
-                elif details["amt"]==30:
-                    details["amt"]+=30
-
-                elif details["amt"]==1:
-                    details["amt"]+=2
-
-            if ("time" in details) and ("amt" not in details):
-                if details["time"]==45:
-                    details["time"]+=30
-
-                elif details["time"]==60:
-                    details["time"]+=120
-
-                elif details["time"]==1:
-                    details["time"]+=2
-
-        elif rank=="B":
-            if "amt" in details:
-                if details["amt"]==50:
-                    details["amt"]+=50
-
-                elif details["amt"]==15:
-                    details["amt"]+=35
-
-                elif details["amt"]==2:
-                    details["amt"]+=3
-
-                elif details["amt"]==30:
-                    details["amt"]+=60
-
-                elif details["amt"]==1:
-                    details["amt"]+=3
-
-            if ("time" in details) and ("amt" not in details):
-                if details["time"]==45:
-                    details["time"]+=45
-
-                elif details["time"]==60:
-                    details["time"]+=240
-
-                elif details["time"]==1:
-                    details["time"]+=4
-
-        elif rank=="A":
-            if "amt" in details:
-                if details["amt"]==50:
-                    details["amt"]+=100
-
-                elif details["amt"]==15:
-                    details["amt"]+=60
-
-                elif details["amt"]==2:
-                    details["amt"]+=5
-
-                elif details["amt"]==30:
-                    details["amt"]+=70
-
-                elif details["amt"]==1:
-                    details["amt"]+=4
-
-            if ("time" in details) and ("amt" not in details):
-                if details["time"]==45:
-                    details["time"]+=65
-
-                elif details["time"]==60:
-                    details["time"]+=360
-
-                elif details["time"]==1:
-                    details["time"]+=6
-
-        elif rank=="S":
-            if "amt" in details:
-                if details["amt"]==50:
-                    details["amt"]+=150
-
-                elif details["amt"]==15:
-                    details["amt"]+=85
-
-                elif details["amt"]==2:
-                    details["amt"]+=8
-
-                elif details["amt"]==30:
-                    details["amt"]+=90
-
-                elif details["amt"]==1:
-                    details["amt"]+=5
-
-            if ("time" in details) and ("amt" not in details):
-                if details["time"]==45:
-                    details["time"]+=75
-
-                elif details["time"]==60:
-                    details["time"]+=540
-
-                elif details["time"]==1:
-                    details["time"]+=9
-
-        details["Rewards"]=rew_dict
-
-        details["skill"]=final_quest_main_name
-        
-        activ_quests[quest_name]=[details]
-
-        with open("Files/Quests/Active_Quests.json", 'w') as fin_active_quest_file:
-            ujson.dump(activ_quests, fin_active_quest_file, indent=6)
-
-        with open("Files/status.json", 'w') as write_status_file:
-            read_status_file_data["status"][0]['coins']-=int(vals)
-            ujson.dump(read_status_file_data, write_status_file, indent=4)
-
-    else:
-        thesystem.system.message_open("Quest Slot Filled")
-
-    window.quit()
-
 def shop_check(name,rank,val):
     if coins>=int(val):
         split_name=(name.split()[2])
         if split_name=="Quest":
-            quests_add(rank,val)
+            thesystem.shop.quests_add(rank,val,read_status_file_data, window)
 
 canvas = Canvas(
     window,
@@ -347,19 +91,16 @@ canvas = Canvas(
 )
 
 def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
+    window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
 def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = window.winfo_x() + deltax
-    y = window.winfo_y() + deltay
-    window.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
+    x_root, y_root = event.widget.winfo_pointerxy()
+    deltax, deltay = x_root - window.lastx, y_root - window.lasty
+
+    if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+        window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+        window.lastx, window.lasty = x_root, y_root
+
 
 
 canvas.place(x = 0, y = 0)
