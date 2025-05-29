@@ -80,7 +80,7 @@ def get():
     
     bmi=round(float(weight)/((float(height)/100)**2))
 
-    with open("Files/status.json", 'r') as first_fson:
+    with open("Files/Player Data/Status.json", 'r') as first_fson:
         data=ujson.load(first_fson)
         data["status"][0]['name']=name
 
@@ -93,7 +93,7 @@ def get():
         data["cal_data"][0]["result"]=(result.upper())
         data["cal_data"][0]["BMI"]=bmi
     
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=4)
 
     with open("Files/Checks/info_open.csv", 'r') as info_open:
@@ -102,7 +102,7 @@ def get():
             istrue=k[0]
 
     if istrue=='True':
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
 

@@ -63,7 +63,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -93,7 +93,7 @@ with open("Files\Temp Files\Quest Reminder.csv", "r") as f:
         quest_name = row[0]
         pl_num = row[1]
 
-with open("Files\Quests\Active_Quests.json", 'r') as fols:
+with open("Files/Player Data/Active_Quests.json", 'r') as fols:
     data = ujson.load(fols)
     for k in data:
         if k == quest_name:
@@ -141,7 +141,7 @@ def start_checking(file_path):
     thread.start()
     return thread, stop_event
 
-json_file_path = "Files/Tabs.json"
+json_file_path = "Files/Player Data/Tabs.json"
 checker_thread, stop_event = start_checking(json_file_path)
 
 atexit.register(stop_event.set)

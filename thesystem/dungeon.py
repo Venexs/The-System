@@ -7,7 +7,7 @@ import random
 import threading
 
 
-with open('Files/Data/Theme_Check.json', 'r') as themefile:
+with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
     theme_data = ujson.load(themefile)
     theme = theme_data["Theme"]
 
@@ -21,10 +21,10 @@ elif theme=='Manwha':
     window_width = 393
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Dungeons"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=system.fade_out, args=(win, 0.8)).start()
@@ -32,7 +32,7 @@ def ex_close(win):
     system.animate_window_close(win, initial_height, window_width, step=20, delay=1)
 
 def check_fatigue(rank):
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -49,7 +49,7 @@ def check_fatigue(rank):
 
 def open_e_dunfile(eve):
     rank='E'
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -62,7 +62,7 @@ def open_e_dunfile(eve):
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -70,7 +70,7 @@ def open_e_dunfile(eve):
 
 def open_d_dunfile(eve):
     rank='D'
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -83,7 +83,7 @@ def open_d_dunfile(eve):
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -91,7 +91,7 @@ def open_d_dunfile(eve):
 
 def open_c_dunfile(eve):
     rank='C'
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -104,7 +104,7 @@ def open_c_dunfile(eve):
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -112,7 +112,7 @@ def open_c_dunfile(eve):
 
 def open_b_dunfile(eve):
     rank='B'
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -125,7 +125,7 @@ def open_b_dunfile(eve):
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -133,7 +133,7 @@ def open_b_dunfile(eve):
 
 def open_a_dunfile(eve):
     rank='A'
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -146,7 +146,7 @@ def open_a_dunfile(eve):
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -154,7 +154,7 @@ def open_a_dunfile(eve):
 
 def open_s_dunfile(eve):
     rank='S'
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     date_format = "%Y-%m-%d"
@@ -167,7 +167,7 @@ def open_s_dunfile(eve):
             fw=csv.writer(rank_file)
             fw.writerow([rank,"Normal"])
 
-        with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+        with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
             ujson.dump(dun_full_data, final_dun_full, indent=6)
 
         subprocess.Popen(['python', f'{theme} Version/Dungeon Runs/gui.py'])
@@ -177,7 +177,7 @@ rank_order = {'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5, 'S': 6}
 
 def instance_dungeon(eve):
     # Load the ujson data from the file
-    with open('Files/inventory.json', 'r') as file:
+    with open('Files/Player Data/Inventory.json', 'r') as file:
         data = ujson.load(file)
 
     # Filter items with 'Instance Keys' category and store with names
@@ -238,7 +238,7 @@ def update_inventory(window):
     item_name = get_item_name_from_csv()
 
     # Load the ujson data from the file
-    with open('Files/Inventory.json', 'r') as file:
+    with open('Files/Player Data/Inventory.json', 'r') as file:
         data = ujson.load(file)
     
     # Find the item and update or remove it
@@ -256,18 +256,18 @@ def update_inventory(window):
             del data[item_name]
 
     # Write the updated data back to inventory.json
-    with open('Files/Inventory.json', 'w') as file:
+    with open('Files/Player Data/Inventory.json', 'w') as file:
         ujson.dump(data, file, indent=4)
 
     rank=item["rank"]
-    with open("Files/Data/Todays_Dungeon.json", 'r') as dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'r') as dun_full:
         dun_full_data=ujson.load(dun_full)
 
     with open("Files/Data/Dungeon_Rank.csv", 'w', newline='') as rank_file:
         fw=csv.writer(rank_file)
         fw.writerow([rank,"Instance"])
 
-    with open("Files/Data/Todays_Dungeon.json", 'w') as final_dun_full:
+    with open("Files/Player Data/Todays_Dungeon.json", 'w') as final_dun_full:
         ujson.dump(dun_full_data, final_dun_full, indent=6)
 
     subprocess.Popen(['python', 'Manwha Version/Dungeon Runs/gui.py'])
@@ -277,7 +277,7 @@ def dun_check():
     global e_rank, d_rank, c_rank, b_rank, a_rank, s_rank, red_gate
 
     # Path to the ujson file
-    file_path = "Files\\Data\\Todays_Dungeon.json"
+    file_path = "Files\\Player Data\\Todays_Dungeon.json"
     
     # Load the existing data from the file
     try:
@@ -292,6 +292,7 @@ def dun_check():
 
     # Check if data already exists for today's date
     if current_date_string not in dun_check_data:
+        dun_check_data = {}
         # E Rank Distro
         e_rank_vals = sum(1 for _ in range(5) if random.randint(1, 2) == 1)
 
@@ -339,188 +340,46 @@ def dun_check():
 
     return e_rank, d_rank, c_rank, b_rank, a_rank, s_rank
 
-def dungeon_rank_get(rank,amt1,amt1_check):
-    with open("Files/status.json", 'r') as fson:
-        data=ujson.load(fson)
-        agi=data["status"][0]['agi']
-        stre=data["status"][0]['str']
-    minus=reduction(amt1, stre, agi, amt1_check)
-    if rank=='D':
-        if amt1_check=="amt":
-            if amt1==50:
-                amt1+=10
-            elif amt1==15:
-                amt1+=5
-            elif amt1==2:
-                amt1+=1
-            elif amt1==30:
-                amt1+=15
-            elif amt1==1:
-                amt1+=1
-        elif amt1_check=="time":
-            if amt1==45:
-                amt1+=15
-            elif amt1==60:
-                amt1+=60
-            elif amt1==1:
-                amt1+=1
-    elif rank=='C':
-        if amt1_check=="amt":
-            if amt1==50:
-                amt1+=20
-            elif amt1==15:
-                amt1+=15
-            elif amt1==2:
-                amt1+=2
-            elif amt1==30:
-                amt1+=30
-            elif amt1==1:
-                amt1+=2
-        elif amt1_check=="time":
-            if amt1==45:
-                amt1+=30
-            elif amt1==60:
-                amt1+=120
-            elif amt1==1:
-                amt1+=2
-    elif rank=='B':
-        if amt1_check=="amt":
-            if amt1==50:
-                amt1+=30
-            elif amt1==15:
-                amt1+=35
-            elif amt1==2:
-                amt1+=3
-            elif amt1==30:
-                amt1+=60
-            elif amt1==1:
-                amt1+=3
-        elif amt1_check=="time":
-            if amt1==45:
-                amt1+=45
-            elif amt1==60:
-                amt1+=240
-            elif amt1==1:
-                amt1+=4
-    elif rank=='A':
-        if amt1_check=="amt":
-            if amt1==50:
-                amt1+=100
-            elif amt1==15:
-                amt1+=50
-            elif amt1==2:
-                amt1+=5
-            elif amt1==30:
-                amt1+=70
-            elif amt1==1:
-                amt1+=4
-        elif amt1_check=="time":
-            if amt1==45:
-                amt1+=65
-            elif amt1==60:
-                amt1+=360
-            elif amt1==1:
-                amt1+=6
-    elif rank=='S':
-        if amt1_check=="amt":
-            if amt1==50:
-                amt1+=150
-            elif amt1==15:
-                amt1+=85
-            elif amt1==2:
-                amt1+=8
-            elif amt1==30:
-                amt1+=90
-            elif amt1==1:
-                amt1+=5
-        elif amt1_check=="time":
-            if amt1==45:
-                amt1+=75
-            elif amt1==60:
-                amt1+=540
-            elif amt1==1:
-                amt1+=9
-
-    amt1=amt1-minus
+def dungeon_rank_get(rank, amt1, amt1_check, act1):
+    with open("Files/Player Data/Status.json", 'r') as fson:
+        data = ujson.load(fson)
+        agi = data["status"][0]['agi']
+        stre = data["status"][0]['str']
+    
+    rank_modifiers = {
+        'D': {"amt": {50: 10, 15: 5, 2: 1, 30: 15, 1: 1}, "time": {45: 15, 60: 60, 1: 1}},
+        'C': {"amt": {50: 20, 15: 15, 2: 2, 30: 30, 1: 2}, "time": {45: 30, 60: 120, 1: 2}},
+        'B': {"amt": {50: 30, 15: 35, 2: 3, 30: 60, 1: 3}, "time": {45: 45, 60: 240, 1: 4}},
+        'A': {"amt": {50: 100, 15: 50, 2: 5, 30: 70, 1: 4}, "time": {45: 65, 60: 360, 1: 6}},
+        'S': {"amt": {50: 150, 15: 85, 2: 8, 30: 90, 1: 5}, "time": {45: 75, 60: 540, 1: 9}}
+    }
+    
+    if rank in rank_modifiers and amt1_check in rank_modifiers[rank]:
+        amt1 += rank_modifiers[rank][amt1_check].get(amt1, 0)
+    
+    amt1 -= (reduction(amt1, stre, agi, amt1_check))
     return amt1
 
 def reduction(val, stre, agi, types):
-    if types=="amt":
-        if val==50:
-            if stre>=20 and stre<=30:
-                return -10
-            elif stre>=31 and stre<=40:
-                return -20
-            elif stre>=41 and stre<=50:
-                return -30
-            elif stre>=51 and stre<=60:
-                return -40
-            elif stre>=61 and stre<=70:
-                return -100
-            else:
-                return 0
-        
-        elif val==15:
-            if stre>=20 and stre<=30:
-                return -5
-            elif stre>=31 and stre<=40:
-                return -5
-            elif stre>=41 and stre<=50:
-                return -10
-            elif stre>=51 and stre<=60:
-                return -25
-            elif stre>=61 and stre<=70:
-                return -35
-            else:
-                return 0
-            
-        elif val==30:
-            if stre>=20 and stre<=30:
-                return -10
-            elif stre>=31 and stre<=40:
-                return -10
-            elif stre>=41 and stre<=50:
-                return -20
-            elif stre>=51 and stre<=60:
-                return -25
-            elif stre>=61 and stre<=70:
-                return -35
-        
-        else:
-            return 0
-        
-    elif types=="time":
-        if val==45:
-            if agi>=20 and agi<=30:
-                return -10
-            elif agi>=31 and agi<=40:
-                return -20
-            elif agi>=41 and agi<=50:
-                return -30
-            elif agi>=51 and agi<=60:
-                return -30
-            elif agi>=61 and agi<=70:
-                return -40
-            else:
-                return 0
-        
-        elif val==60:
-            if agi>=20 and agi<=30:
-                return -20
-            elif agi>=31 and agi<=40:
-                return -30
-            elif agi>=41 and agi<=50:
-                return -100
-            elif agi>=51 and agi<=60:
-                return -100
-            elif agi>=61 and agi<=70:
-                return -200
-            else:
-                return 0
-        
-        else:
-            return 0
-
+    thresholds = {
+        "amt": {
+            50: [(80, 120, -10), (121, 160, -20), (161, 200, -30), (201, 240, -40), (241, 280, -100)],
+            15: [(80, 120, -5), (121, 160, -5), (161, 200, -10), (201, 240, -25), (241, 280, -35)],
+            30: [(80, 120, -10), (121, 160, -10), (161, 200, -20), (201, 240, -25), (241, 280, -35)]
+        },
+        "time": {
+            45: [(80, 120, -10), (121, 160, -20), (161, 200, -30), (201, 240, -30), (241, 280, -40)],
+            60: [(80, 120, -20), (121, 160, -30), (161, 200, -100), (201, 240, -100), (241, 280, -200)]
+        }
+    }
+    
+    if types in thresholds and val in thresholds[types]:
+        stat = stre if types == "amt" else agi
+        for lower, upper, reduction in thresholds[types][val]:
+            if lower <= stat <= upper:
+                return reduction
+    
+    return 0
 
 
 

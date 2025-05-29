@@ -52,10 +52,10 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Intro"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])

@@ -77,7 +77,7 @@ def countdown_completed():
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
-with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
+with open("Files/Player Data/Penalty_Info.json", "r") as pen_info_file:
     pen_info_data = ujson.load(pen_info_file)
     info = pen_info_data["Penalty Info"]
     pr_name1 = info[0]

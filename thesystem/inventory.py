@@ -42,10 +42,10 @@ def create_inventory_item(canvas, window, item_data, x, y, button_images, item_i
     canvas.create_text(x + 7, y + 68, anchor="nw", text=qt, fill="#FFFFFF", font=("Montserrat Medium", 10 * -1))
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Inventory"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(win, 0.8)).start()
@@ -71,7 +71,7 @@ def inventory_item_data(name,rank,category,t,r,s,window):
             fw.writerow(rec)
             fout.close()
 
-            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                 theme_data=ujson.load(themefile)
                 theme=theme_data["Theme"]
             subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py'])
@@ -102,10 +102,10 @@ def get_inventory_button_image(name):
     return PhotoImage(file=files)
 
 def selling_item(name,window,val):
-    with open("Files/status.json", 'r') as read_status_file:
+    with open("Files/Player Data/Status.json", 'r') as read_status_file:
         read_status_file_data=ujson.load(read_status_file)
 
-    with open("Files/Inventory.json", 'r') as fin_inv_fson:
+    with open("Files/Player Data/Inventory.json", 'r') as fin_inv_fson:
         fin_inv_data=ujson.load(fin_inv_fson)
 
         fin_qt=fin_inv_data[name][0]["qty"]
@@ -115,14 +115,14 @@ def selling_item(name,window,val):
             del fin_inv_data[name]
             closing=True
 
-    with open("Files/Inventory.json", 'w') as finaladdon_inv:
+    with open("Files/Player Data/Inventory.json", 'w') as finaladdon_inv:
         ujson.dump(fin_inv_data, finaladdon_inv, indent=6)
 
-    with open("Files/status.json", 'w') as write_status_file:
+    with open("Files/Player Data/Status.json", 'w') as write_status_file:
         read_status_file_data["status"][0]['coins']+=int(val)
         ujson.dump(read_status_file_data, write_status_file, indent=4)
 
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
 

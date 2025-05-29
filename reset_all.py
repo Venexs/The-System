@@ -144,35 +144,35 @@ title_data={}
 
 skill_data={}
 
-with open("Files\Skills\Skill.json", 'w') as skill_file:
+with open("Files/Player Data/Skill.json", 'w') as skill_file:
     ujson.dump(skill_data, skill_file, indent=4)
 
-with open("Files\Titles\Titles.json", 'w') as title_file:
+with open("Files/Player Data/Titles.json", 'w') as title_file:
     ujson.dump(title_data, title_file, indent=4)
 
-with open("Files/Status.json", 'w') as status_file:
+with open("Files/Player Data/Status.json", 'w') as status_file:
     ujson.dump(stat_data, status_file, indent=4)
 
-with open("Files/Inventory.json", 'w') as inv_file:
+with open("Files/Player Data/Inventory.json", 'w') as inv_file:
     ujson.dump(inv_data, inv_file, indent=4)
 
-with open("Files/Equipment.json", 'w') as equip_file:
+with open("Files/Player Data/Equipment.json", 'w') as equip_file:
     ujson.dump(equip_data, equip_file, indent=4)
 
-with open("Files\Data\Daily_Quest.json",'w') as daily_file:
+with open("Files/Player Data/Daily_Quest.json",'w') as daily_file:
     ujson.dump(daily_data, daily_file, indent=4)
 
-with open("Files\Quests\Active_Quests.json", 'w') as quest_file:
+with open("Files/Player Data/Active_Quests.json", 'w') as quest_file:
     ujson.dump(quest_data, quest_file, indent=6)
 
-with open("Files\Data\Job_info.json", 'w') as job_file:
+with open("Files/Player Data/Job_info.json", 'w') as job_file:
     ujson.dump(job_info, job_file, indent=4)
 
-with open("Files\Data\First_open.csv", 'w', newline='') as info_open:
+with open("Files/Player Data/First_open.csv", 'w', newline='') as info_open:
     fw=csv.writer(info_open)
     fw.writerow(["False"])
 
-with open("Files\Data\Prove_file.csv", 'w', newline='') as info_open2:
+with open("Files/Player Data/Prove_file.csv", 'w', newline='') as info_open2:
     fw1=csv.writer(info_open2)
     fw1.writerow(["False"])
 

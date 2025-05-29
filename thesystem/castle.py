@@ -54,17 +54,17 @@ def load_image_visibility(file_path, run_once_val, total_images=50, hidden_perce
         print(complete_data)
         if complete_data:
             try:
-                with open("Files/Demons Castle/Demon_Floor.json", 'r') as floor_file:
+                with open("Files/Player Data/Demon_Floor.json", 'r') as floor_file:
                     floor_data = ujson.load(floor_file)
             except:
                 floor_data = {str(i): "Doing" if i == 1 else "Undone" for i in range(1, 101)}
-                with open("Files/Demons Castle/Demon_Floor.json", 'w') as floor_file:
+                with open("Files/Player Data/Demon_Floor.json", 'w') as floor_file:
                     ujson.dump(floor_data,floor_file, indent=4)
                 
-                with open("Files/Demons Castle/Demon_Floor.json", 'r') as floor_file:
+                with open("Files/Player Data/Demon_Floor.json", 'r') as floor_file:
                     floor_data = ujson.load(floor_file)
 
-            with open("Files/Demons Castle/Demon_Floor.json", 'w') as floor_file:
+            with open("Files/Player Data/Demon_Floor.json", 'w') as floor_file:
                 floor_num=get_priority_key_and_value(floor_data)
                 next_floor=str(int(floor_num[0])+1)
                 floor_data[floor_num[0]]='Done'
@@ -87,14 +87,14 @@ def load_image_visibility(file_path, run_once_val, total_images=50, hidden_perce
                 ujson.dump({"hidden_images":data}, f, indent=4)
                 
         try:
-            with open("Files/Demons Castle/Demon_Floor.json", 'r') as floor_file:
+            with open("Files/Player Data/Demon_Floor.json", 'r') as floor_file:
                 floor_data = ujson.load(floor_file)
         except:
             floor_data = {str(i): "Doing" if i == 1 else "Undone" for i in range(1, 101)}
-            with open("Files/Demons Castle/Demon_Floor.json", 'w') as floor_file:
+            with open("Files/Player Data/Demon_Floor.json", 'w') as floor_file:
                 ujson.dump(floor_data,floor_file, indent=4)
             
-            with open("Files/Demons Castle/Demon_Floor.json", 'r') as floor_file:
+            with open("Files/Player Data/Demon_Floor.json", 'r') as floor_file:
                 floor_data = ujson.load(floor_file)
 
         result = get_priority_key_and_value(floor_data)
@@ -146,20 +146,20 @@ def load_image_visibility(file_path, run_once_val, total_images=50, hidden_perce
 
 def demon_fight(canvas_name,window):
     numeber=canvas_name.split('_')[-1]
-    with open("Files/Demons Castle/Demon_info.csv", "w", newline='') as file_opem:
+    with open("Files/Temp Files/Demon_info.csv", "w", newline='') as file_opem:
         writer = csv.writer(file_opem)
         writer.writerow([floor, numeber])
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     subprocess.Popen(['python', f'{theme} Version/Demon Castle/gui1.py'])
     ex_close(window)
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
@@ -170,7 +170,7 @@ def reward_castle():
     thesystem.system.message_open("Demon Castle Reward")
 
     for k in range(10):
-        with open("Files/status.json", 'r') as fson:
+        with open("Files/Player Data/Status.json", 'r') as fson:
             data=ujson.load(fson)
             data["status"][0]['level']+=1
             # ? =================================================
@@ -181,15 +181,15 @@ def reward_castle():
             data["status"][0]['per']+=1
             data["status"][0]['man']+=1
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
     
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     subprocess.Popen(['python', f"{theme} Version/Leveled up/gui.py"])
 
-    with open("Files/Inventory.json", 'r') as fson:
+    with open("Files/Player Data/Inventory.json", 'r') as fson:
         data_fininv=ujson.load(fson)
     
     item=[
@@ -207,13 +207,13 @@ def reward_castle():
 
     data_fininv["The Orb of Order"]=item
 
-    with open("Files/Inventory.json", 'w') as finaladdon:
+    with open("Files/Player Data/Inventory.json", 'w') as finaladdon:
         ujson.dump(data_fininv, finaladdon, indent=6)
 
     subprocess.Popen(['python', "Anime Version/Demon Castle/gui.py"])
 
 def choose_demon_by_rank(rank_of):
-    with open("Files/Demons Castle/Demon_Data.json", "r") as demon_file:
+    with open("Files/Player Data/Demon_Data.json", "r") as demon_file:
         demons = ujson.load(demon_file)
     # Filter demons by the given rank
     filtered_demons = [name for name, details in demons.items() if details["rank"] == rank_of]

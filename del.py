@@ -36,5 +36,10 @@ def generate_xp_dict(max_level=120):
 
 if __name__ == "__main__":
     # Adjust max_level as desired (here set to 120 for demonstration)
-    xp_data = generate_xp_dict(120)
+    xp_data = generate_xp_dict(250)
+    
+    # Save the dictionary to a JSON file
+    with open("Files/Data/Level_Up_Values.json", "w") as f:
+        json.dump(xp_data, f, indent=4)
+
     print(json.dumps(xp_data, indent=4))

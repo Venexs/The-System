@@ -52,14 +52,14 @@ def ex_close(eve):
     thesystem.system.animate_window_close(window, initial_height, window_width, step=20, delay=1)
 
 def name(eve,name):
-    with open("Files\Data\Theme_Check.json", 'r') as file:
+    with open("Files/Player Data/Theme_Check.json", 'r') as file:
         data = ujson.load(file)
     
     # Modify the theme from "Anime" to "Manwha"
     data["Theme"] = name
     
     # Write the updated data back to the file
-    with open("Files\Data\Theme_Check.json", 'w') as file:
+    with open("Files/Player Data/Theme_Check.json", 'w') as file:
         ujson.dump(data, file, indent=4)
 
     with open("Files/Checks/theme_open.csv", 'r') as info_open:
@@ -67,7 +67,7 @@ def name(eve,name):
         for k in info_fr:
             istrue=k[0]
 
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
 

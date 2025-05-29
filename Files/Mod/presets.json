@@ -2,7 +2,7 @@
     "Active Theme":["Anime"],
     "Anime":{
         "Video":"Files/Mod/default/Anime/0001-0200.mp4",
-        "Alt Video":"Files/Mod/default/Anime/alt.mp4",
+        "Alt Video":"Files/Mod/default/Anime/alt1.mp4",
         
         "Close SFX":"Files/Mod/default/Anime/Close.wav",
         "Open SFX":"Files/Mod/default/Anime/Open.wav",
@@ -99,5 +99,13 @@
         [
             "Files/Mod/default/messages/Courage of the Weak.png"
         ]
+    },
+
+    "Help":{
+        "ABI Points":"Files/Mod/default/Help/Status0.png",
+        "Dungeons":"Files/Mod/default/Help/Dungeons.png",
+        "Equipment":"Files/Mod/default/Help/Equipment.png",
+        "Shadoow Realm":"Files/Mod/default/Help/Shadow Realm.png"
+
     }
 }

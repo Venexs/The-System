@@ -50,7 +50,7 @@ name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name1
 rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13='X'
 c=0
 
-with open("Files/Titles/Titles.json", 'r') as fson:
+with open("Files/Player Data/Titles.json", 'r') as fson:
     data=ujson.load(fson)
     data_key=list(data.keys())
     try:

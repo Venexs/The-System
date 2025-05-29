@@ -1,0 +1,57 @@
+{
+    "Spirited":
+    {
+        "Statbuff":1,
+        "Rank":"E"
+    },
+    "Spirited II":
+    {
+        "Statbuff":2,
+        "Rank":"E"
+    },
+    "Spirited III":
+    {
+        "Statbuff":3,
+        "Rank":"E"
+    },
+    "Wolfsbane":
+    {
+        "Statbuff":5,
+        "Rank":"D"
+    },
+    "Knight":
+    {
+        "Statbuff":8,
+        "Rank":"D"
+    },
+    "Slayer":
+    {
+        "Statbuff":10,
+        "Rank":"C"
+    },
+    "Kingslayer":
+    {
+        "Statbuff":15,
+        "Rank":"C"
+    },
+    "Indomitable":
+    {
+        "Statbuff":17,
+        "Rank":"B"
+    },
+    "Indomitable II":
+    {
+        "Statbuff":20,
+        "Rank":"A"
+    },
+    "God of Gods":
+    {
+        "Statbuff":25,
+        "Rank":"S"
+    },
+    "Blessed":
+    {
+        "Statbuff":7,
+        "Rank":"D"
+    }
+}

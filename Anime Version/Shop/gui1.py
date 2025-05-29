@@ -42,7 +42,7 @@ window.attributes('-alpha',0.9)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-with open("Files/status.json", 'r') as read_status_file:
+with open("Files/Player Data/Status.json", 'r') as read_status_file:
     read_status_file_data=ujson.load(read_status_file)
     coins=read_status_file_data["status"][0]['coins']
 

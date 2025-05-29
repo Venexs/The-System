@@ -128,7 +128,7 @@ def entry_data():
         side_step=float(side_step)
 
 
-        with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
+        with open("Files/Player Data/Daily_Quest.json", 'r') as daily_quest_file:
             daily_quest_data=ujson.load(daily_quest_file)
             daily_quest_data["Change"][0]["1"][0]=push_name
             daily_quest_data["Change"][1]["2"][0]=sit_name
@@ -152,7 +152,7 @@ def entry_data():
             daily_quest_data["Streak"]["Value"]=0
             daily_quest_data["Streak"]["Greater_value"]=0
 
-            with open("Files/Data/Daily_Quest.json", 'w') as daily_quest_file:
+            with open("Files/Player Data/Daily_Quest.json", 'w') as daily_quest_file:
                 ujson.dump(daily_quest_data, daily_quest_file, indent=4)
 
             subprocess.Popen(['python', 'First/Theme Check/gui.py'])

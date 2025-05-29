@@ -80,7 +80,7 @@ thesystem.system.center_window(window,window_width,target_height)
 thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -132,7 +132,7 @@ if data["Type"] == "Daily":
     streak=dailyquest.get_streak()
     title, list_of_titles_data = dailyquest.get_titles()
 
-    with open("Files/status.json", 'r') as rank_check_file:
+    with open("Files/Player Data/Status.json", 'r') as rank_check_file:
         rank_check_data=json.load(rank_check_file)
 
     if type_re=="Reward":
@@ -154,7 +154,7 @@ if data["Type"] == "Daily":
             coins=(rew_list[2]*2)
 
     elif type_re=='Great Reward':
-        with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
+        with open("Files/Player Data/Daily_Quest.json", 'r') as daily_quest_file:
             daily_quest_data = json.load(daily_quest_file)
             gr_streak=daily_quest_data["Streak"]["Greater_value"]
         
@@ -200,7 +200,7 @@ if data["Type"] == "Daily":
         today = date.today()
         today_date_str = today.strftime("%Y-%m-%d")
 
-        with open("Files/status.json", 'w') as status_import:
+        with open("Files/Player Data/Status.json", 'w') as status_import:
             rank_check_data["status"][0]['coins']+=coins
             rank_check_data["status"][0]['XP']+=xp_pl
             rank_check_data["avail_eq"][0]['str_based']+=av_str
@@ -222,7 +222,7 @@ if data["Type"] == "Daily":
 
         dupli_title=False
         try:
-            with open("Files/Titles/Titles.json", 'r') as title_import:
+            with open("Files/Player Data/Titles.json", 'r') as title_import:
                 title_import_data=json.load(title_import)
                 title_import_data_list=list(title_import_data.keys())
                 for k in title_import_data_list:
@@ -236,17 +236,17 @@ if data["Type"] == "Daily":
 
         else:
             try:
-                with open("Files/Titles/Titles.json", 'r') as title_import:
+                with open("Files/Player Data/Titles.json", 'r') as title_import:
                     title_import_data=json.load(title_import)
             except:
                 title_import_data={}
             
             title_import_data[title]=list_of_titles_data[title]
             
-            with open("Files/Titles/Titles.json", 'w') as final_title_import:
+            with open("Files/Player Data/Titles.json", 'w') as final_title_import:
                 json.dump(title_import_data, final_title_import, indent=4)
 
-        with open("Files/Status.json", 'w') as status_import:
+        with open("Files/Player Data/Status.json", 'w') as status_import:
             rank_check_data["status"][0]['coins']+=coins
             rank_check_data["avail_eq"][0]['str_based']+=av_str
             rank_check_data["avail_eq"][0]['int_based']+=av_int
@@ -268,7 +268,7 @@ if data["Type"] == "Daily":
 
         dupli_title=False
         try:
-            with open("Files/Titles/Titles.json", 'r') as title_import:
+            with open("Files/Player Data/Titles.json", 'r') as title_import:
                 title_import_data=json.load(title_import)
                 title_import_data_list=list(title_import_data.keys())
                 for k in title_import_data_list:
@@ -282,17 +282,17 @@ if data["Type"] == "Daily":
 
         else:
             try:
-                with open("Files/Titles/Titles.json", 'r') as title_import:
+                with open("Files/Player Data/Titles.json", 'r') as title_import:
                     title_import_data=json.load(title_import)
             except:
                 title_import_data={}
             
             title_import_data["Blessed"]=list_of_titles_data["Blessed"]
             
-            with open("Files/Titles/Titles.json", 'w') as final_title_import:
+            with open("Files/Player Data/Titles.json", 'w') as final_title_import:
                 json.dump(title_import_data, final_title_import, indent=4)
 
-        with open("Files/Status.json", 'w') as status_import:
+        with open("Files/Player Data/Status.json", 'w') as status_import:
             rank_check_data["status"][0]['coins']+=coins
             rank_check_data["avail_eq"][0]['str_based']+=av_str
             rank_check_data["avail_eq"][0]['int_based']+=av_int

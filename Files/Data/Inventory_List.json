@@ -954,6 +954,20 @@
             "quest":true,
             "Value":35000
         }
+    ],
+
+    "Veg Maggi": [
+        {
+            "desc":"Maggi bought from a nearby shop. They're pretty good.",
+            "qty":1,
+            "cat":"Noodles",
+            "rank":"C",
+            "buff":"",
+            "debuff":"",
+
+            "quest":true,
+            "Value":40
+        }
     ]
     
     

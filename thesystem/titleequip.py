@@ -4,10 +4,10 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 def final(name0,window):
-    with open("Files/Titles/Titles.json", 'r') as fson:
+    with open("Files/Player Data/Titles.json", 'r') as fson:
         data=ujson.load(fson)
     if name0!='':
-        with open("Files\Status.json", 'r') as fina_read_fson:
+        with open("Files/Player Data/Status.json", 'r') as fina_read_fson:
             fina_read_data=ujson.load(fina_read_fson)
 
         if fina_read_data["status"][1]["title_bool"]!="True":
@@ -23,7 +23,7 @@ def final(name0,window):
             fina_read_data["status"][1]['title_bool']="True"
             fina_read_data["status"][1]['title']=name0
 
-            with open("Files/status.json", 'w') as fina_write_fson:
+            with open("Files/Player Data/Status.json", 'w') as fina_write_fson:
                 ujson.dump(fina_read_data, fina_write_fson, indent=4)
 
             subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
@@ -46,7 +46,7 @@ def final(name0,window):
             fina_read_data["status"][1]['title_bool']="True"
             fina_read_data["status"][1]['title']=name0
 
-            with open("Files/status.json", 'w') as fina_write_fson:
+            with open("Files/Player Data/Status.json", 'w') as fina_write_fson:
                 ujson.dump(fina_read_data, fina_write_fson, indent=4)
 
             subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])

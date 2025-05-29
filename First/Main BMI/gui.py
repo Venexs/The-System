@@ -63,7 +63,7 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 thesystem.system.make_window_transparent(window)
 
-with open("Files/status.json", 'r') as first_fson:
+with open("Files/Player Data/Status.json", 'r') as first_fson:
     data=ujson.load(first_fson)
     cc=data["cal_data"][0]["calorie calc"]
     r1=data["cal_data"][0]["final calorie calc"]

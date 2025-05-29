@@ -84,21 +84,21 @@ def move_window(event):
         window.lastx, window.lasty = x_root, y_root
 
 
-with open("Files/status.json", 'r') as fson:
+with open("Files/Player Data/Status.json", 'r') as fson:
     data=ujson.load(fson)
     name=data["status"][0]['name'].upper()
     xp_str=data["status"][0]['XP']
 
-with open("Files/Skills/Skill.json", 'r') as skill_fson:
+with open("Files/Player Data/Skill.json", 'r') as skill_fson:
     skill_data=ujson.load(skill_fson)
     rol=list(skill_data.keys())
     num=len(rol)
 
-with open("Files\Data\Streaks.json", 'r') as streak_fson:
+with open("Files/Player Data/Streaks.json", 'r') as streak_fson:
     streak_data=ujson.load(streak_fson)
     streak_val=streak_data["Streak"][0]
 
-with open("Files\Data\Statistics.json", 'r') as stats_fson:
+with open("Files\Player Data\Statistics.json", 'r') as stats_fson:
     stats_data=ujson.load(stats_fson)
     quest_num=stats_data["Quests"]
     e_rank=stats_data["E Rank"]

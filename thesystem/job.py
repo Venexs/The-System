@@ -2,7 +2,7 @@ import ujson
 
 
 def speedster():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Force of Speed"]=[{
             "lvl":1,
@@ -30,18 +30,18 @@ def speedster():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Speedster"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 
 def beserker():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Strength Augmentation"]=[{
             "lvl":1,
@@ -69,18 +69,18 @@ def beserker():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Beserker"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 
 def tank():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Quick Heal"]=[{
             "lvl":1,
@@ -108,18 +108,18 @@ def tank():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Tank"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 
 def shadow_monarch():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Shadow Extraction"]=[{
             "lvl":1,
@@ -147,18 +147,18 @@ def shadow_monarch():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Shadow Monarch"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 
 def commander():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Charismatic Presence"]=[{
             "lvl":1,
@@ -186,18 +186,18 @@ def commander():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Commander"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 
 def observer():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Heightened Perception"]=[{
             "lvl":1,
@@ -215,7 +215,7 @@ def observer():
         skill_file_data["Puzzle Snap"]=[{
             "lvl":1,
             "type":"Job",
-            "desc":"Even with limited information, You can puzzle togeather a full picture with limited information",
+            "desc":"Even with limited information, You can puzzle together a full picture with limited information",
             "pl_point":0,
             
             "base":"INT",
@@ -225,18 +225,18 @@ def observer():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Observer"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 
 def artificer():
-    with open('Files\Skills\Skill.json', 'r') as skill_file:
+    with open('Files/Player Data/Skill.json', 'r') as skill_file:
         skill_file_data=ujson.load(skill_file)
         skill_file_data["Quick Thought"]=[{
             "lvl":1,
@@ -264,13 +264,13 @@ def artificer():
             }
         }]
 
-    with open('Files\Skills\Skill.json', 'w') as fin_skill_file:
+    with open('Files/Player Data/Skill.json', 'w') as fin_skill_file:
         ujson.dump(skill_file_data, fin_skill_file, indent=6)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
     data["status"][1]['job']="Artificer"
 
-    with open("Files/status.json", 'w') as fson:
+    with open("Files/Player Data/Status.json", 'w') as fson:
         ujson.dump(data, fson, indent=6)
 

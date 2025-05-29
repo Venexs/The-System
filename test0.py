@@ -39,7 +39,7 @@ def recognize_speech():
     print("Thread started, listening for '{hotkey} [command]'...")
     while listening:
         try:
-            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                 theme_data=ujson.load(themefile)
                 theme=theme_data["Theme"]
             with microphone as source:

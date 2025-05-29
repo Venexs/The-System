@@ -75,14 +75,14 @@ def confirm():
     elif base=='INT':
         status_data["avail_eq"][0]['int_based']=status_data["avail_eq"][0]['int_based']-int(screen_tr_txt)
 
-    with open("Files/status.json", 'w') as fin_status:
+    with open("Files/Player Data/Status.json", 'w') as fin_status:
         ujson.dump(status_data, fin_status, indent=4)
 
     data_main[name][0]["pl_point"]=pl_points
     if level_up==True:
         data_main[name][0]["lvl"]=lvl+1
 
-    with open("Files/Skills/Skill.json", 'w') as fin_skill:
+    with open("Files/Player Data/Skill.json", 'w') as fin_skill:
         ujson.dump(data_main, fin_skill, indent=6)
 
     subprocess.Popen(['python', 'Anime Version/Skill Info/gui.py'])
@@ -157,7 +157,7 @@ with open("Files/Temp Files/Skill Temp.csv", 'r') as csv_open:
 with open("Files\Data\Skill_Up_Values.json", 'r') as fson:
     data=ujson.load(fson)
 
-with open("Files/Skills/Skill.json", 'r') as fron:
+with open("Files/Player Data/Skill.json", 'r') as fron:
     data_main=ujson.load(fron)
     data_main_key=list(data_main.keys())
 
@@ -170,7 +170,7 @@ with open("Files/Skills/Skill.json", 'r') as fron:
 if lvl!="MAX":
     get=data['Values'][0][str(lvl+1)]
 
-with open("Files/status.json", 'r') as status:
+with open("Files/Player Data/Status.json", 'r') as status:
     status_data=ujson.load(status)
 
     if base=='STR':

@@ -97,7 +97,7 @@ if typeof == "Learn":
     other_seg=[]
     segment_length = 52
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -149,7 +149,7 @@ if typeof == "Learn":
 
                 rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -678,7 +678,7 @@ elif typeof == "Common":
     segments = []
     segment_length = 77
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -707,7 +707,7 @@ elif typeof == "Common":
 
                 rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -1202,7 +1202,7 @@ elif typeof == "Unknown":
     segments = []
     segment_length = 77
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -1223,7 +1223,7 @@ elif typeof == "Unknown":
 
                     rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", "r") as f:
+    with open("Files/Player Data/Status.json", "r") as f:
         data2=ujson.load(f)
         level=data2["status"][0]["level"]
 

@@ -33,10 +33,10 @@ def fin_pen():
             dates=k[0]
 
     p_date=datetime.strptime(dates, "%Y-%m-%d").date()
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
-    with open("Files/Settings.json", 'r') as settings_open:
+    with open("Files/Player Data/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
     if yesterday==p_date and status=="UNDONE" and setting_data["Settings"]["Main_Penalty"]!="False":
         subprocess.Popen(['python', f'{theme} Version/Penalty Quest/gui.py'])
@@ -67,7 +67,7 @@ def fin_pen():
             calorie_val_search_data=ujson.load(calorie_val_search_file)
             cal_val=calorie_val_search_data[day_of_week]
             
-        with open("Files/status.json", 'r') as stat_first_fson:
+        with open("Files/Player Data/Status.json", 'r') as stat_first_fson:
             stat_first_fson_data=ujson.load(stat_first_fson)
             result=stat_first_fson_data["cal_data"][0]["result"]
     
@@ -75,6 +75,8 @@ def fin_pen():
         result='MILD WEIGHT LOSS'
         cal_tdy_val=0
 
+
+    '''
     global last_run
     cal_pen = False
     cooldown = 24 * 60 * 60  # 24 hours in seconds
@@ -95,10 +97,11 @@ def fin_pen():
         subprocess.Popen(['python', 'First/Calorie Penalty/gui.py'])
         last_run = current_time  # Update the last run time
 
+    '''
     #! ===================================================================
 
 def penalty_check(win):
-    with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
+    with open("Files/Player Data/Penalty_Info.json", "r") as pen_info_file:
         data0=ujson.load(pen_info_file)
         target_time_str=data0["Penalty Time"]
 
@@ -125,7 +128,7 @@ def close(stp_eve, thrd):
 
 def run_once_prog(stp_eve, thrd):
     try:
-        with open("Files/Data/First_open.csv", 'r') as first_open_check_file:
+        with open("Files/Player Data/First_open.csv", 'r') as first_open_check_file:
             first_open_check_data=csv.reader(first_open_check_file)
             first_run_file_check=False
             try:
@@ -138,7 +141,7 @@ def run_once_prog(stp_eve, thrd):
         first_run_file_check=True
 
     try:
-        with open("Files/Data/Prove_file.csv", 'r') as second_open_check_file:
+        with open("Files/Player Data/Prove_file.csv", 'r') as second_open_check_file:
             second_open_check_data=csv.reader(second_open_check_file)
             second_run_file_check=False
             try:
@@ -178,7 +181,7 @@ def run_once_prog(stp_eve, thrd):
 
 def random_skill_check():
     # Load the primary status file and extract player's data.
-    with open("Files/status.json", 'r') as f:
+    with open("Files/Player Data/Status.json", 'r') as f:
         data = ujson.load(f)
     player = data["status"][0]
     meta = data["status"][1]
@@ -195,7 +198,7 @@ def random_skill_check():
     # Check if level-up is eligible (every 5 levels).
     if lvl % 5 == 0:
         # Load old stats.
-        with open("Files/Skills/Skill_old_check.json", 'r') as f:
+        with open("Files/Player Data/Skill_old_check.json", 'r') as f:
             old_lvl_data = ujson.load(f)
         old_stat = old_lvl_data["old_stat"][0]
 
@@ -215,7 +218,7 @@ def random_skill_check():
             max_keys = sorted([key for key, value in comp_rec.items() if value == max_val])[:2]
 
             # Load the available skills from the skill list.
-            with open("Files/Skills/Skill_List.json", 'r') as f:
+            with open("Files\Data\Skill_List.json", 'r') as f:
                 skill_list_data = ujson.load(f)
             # Find skills whose condition is met by the max_keys.
             available_skills = [
@@ -225,7 +228,7 @@ def random_skill_check():
             choosen_skill = random.choice(available_skills) if available_skills else "Dash"
 
             # Load current skills.
-            with open("Files/Skills/Skill.json", 'r') as f:
+            with open("Files/Player Data/Skill.json", 'r') as f:
                 main_skill_data = ujson.load(f)
 
             # If the chosen skill exists, attempt an upgrade.
@@ -233,7 +236,7 @@ def random_skill_check():
                 if main_skill_data[choosen_skill][0]["lvl"] != "MAX":
                     main_skill_data[choosen_skill][0]["lvl"] += 1
                     # Write updated skills.
-                    with open("Files/Skills/Skill.json", 'w') as f:
+                    with open("Files/Player Data/Skill.json", 'w') as f:
                         ujson.dump(main_skill_data, f, indent=6)
                     # Log the skill upgrade to a temporary CSV.
                     with open("Files/Temp Files/Skill Up Temp.csv", 'w', newline='') as csvfile:
@@ -248,7 +251,7 @@ def random_skill_check():
                 entry = new_skill_entry.pop(0) if new_skill_entry else {}
                 entry["pl_point"] = 0
                 main_skill_data[choosen_skill] = [entry]
-                with open("Files/Skills/Skill.json", 'w') as f:
+                with open("Files/Player Data/Skill.json", 'w') as f:
                     ujson.dump(main_skill_data, f, indent=6)
                 new_updates = {"Skills": "True", "Quests": "False", "Upgrade": "False", "Lines": "False"}
                 with open("Files/Data/New_Updates.json", 'w') as f:
@@ -264,7 +267,7 @@ def random_skill_check():
                 "per": per,
                 "man": man,
             })
-            with open("Files/Skills/Skill_old_check.json", 'w') as f:
+            with open("Files/Player Data/Skill_old_check.json", 'w') as f:
                 ujson.dump(old_lvl_data, f, indent=4)
 
 def check_midnight(window,stop_event):
@@ -276,7 +279,7 @@ def check_midnight(window,stop_event):
 
 def random_quest():
     # ! The Random Quests thing
-    with open('Files/Data/Random_Quest_Day.json', 'r') as random_quest:
+    with open('Files/Player Data/Random_Quest_Day.json', 'r') as random_quest:
         random_quest_data=ujson.load(random_quest)
         day_num=random_quest_data["Day"]
         tdy_week_num=datetime.today().weekday()
@@ -291,7 +294,7 @@ def random_quest():
 
             # ? Active Quests
             try:
-                with open("Files/Quests/Active_Quests.json", 'r') as active_quests_file:
+                with open("Files/Player Data/Active_Quests.json", 'r') as active_quests_file:
                     activ_quests=ujson.load(active_quests_file)
                     name_of_activ_quests=list(activ_quests.keys())
                     activ_quests_vals=0
@@ -302,7 +305,7 @@ def random_quest():
 
             if activ_quests_vals<13 and activ_quests_vals!=13:
                 # ? Quest Name
-                with open("Files/Quests/Quest_Names.json", 'r') as quest_name_file:
+                with open("Files/Data/Quest_Names.json", 'r') as quest_name_file:
                     quest_names=ujson.load(quest_name_file)
                     if random_ab in ["STR","AGI","VIT"]:
                         names_list=quest_names["STR"]
@@ -326,7 +329,7 @@ def random_quest():
                         rew3="INTav"
                 
                 # ? Quest Description
-                with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
+                with open("Files/Data/Quest_Desc.json", 'r') as quest_desc_file:
                     quest_desc=ujson.load(quest_desc_file)
                     if rank in ["E", "D"]:
                         desc_list=quest_desc["Easy"]
@@ -518,13 +521,13 @@ def random_quest():
                 
                 activ_quests[quest_name]=[details]
 
-                with open("Files/Quests/Active_Quests.json", 'w') as fin_active_quest_file:
+                with open("Files/Player Data/Active_Quests.json", 'w') as fin_active_quest_file:
                     ujson.dump(activ_quests, fin_active_quest_file, indent=6)
 
                 random_quest_data["Day"]=random.randint(0,6)
 
     if comp_check==True:
-        with open('Files/Data/Random_Quest_Day.json', 'w') as finalrandom_quest:
+        with open('Files/Player Data/Random_Quest_Day.json', 'w') as finalrandom_quest:
             ujson.dump(random_quest_data, finalrandom_quest, indent=4)
 
         with open('Files/Data/New_Updates.json', 'w') as updatefile:
@@ -601,6 +604,7 @@ class VideoPlayer:
         self.pause_duration = float(pause_duration)
         self.fps = fps
         self.first_frame_displayed = False
+        self.rotate_video = False  # Flag to check if rotation is needed
 
         # Wait for valid canvas dimensions.
         self.canvas.update_idletasks()
@@ -611,6 +615,12 @@ class VideoPlayer:
         ret, frame = self.cap.read()
         if not ret:
             raise ValueError("Unable to read video file.")
+
+        # Check if the canvas is taller than it is wide
+        if self.canvas.winfo_height() > self.canvas.winfo_width():
+            self.rotate_video = True  # Set flag to rotate frames
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
         self.original_width = frame.shape[1]
         self.original_height = frame.shape[0]
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -655,6 +665,10 @@ class VideoPlayer:
                 ret, frame = self.cap.read()
                 if not ret:
                     continue
+            
+            # Rotate frame if necessary
+            if self.rotate_video:
+                frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
             new_width, new_height = self.new_dimensions
             # Choose interpolation based on resizing direction.
@@ -709,7 +723,7 @@ def set_preview_temp(o_name1,qt1):
         rec=[o_name1, qt1, "Preview"]
         writer=csv.writer(new_csv_open)
         writer.writerow(rec)
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
     subprocess.Popen(['python', f'{theme} Version/Manwha Version\Item Data\gui.py/gui.py'])
@@ -737,7 +751,7 @@ def update_penalty_countdown(duration_seconds, countdown_label, canvas, window):
 
         # If time is up, perform the necessary actions
         if remaining_time.total_seconds() <= 0:
-            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                 theme_data = ujson.load(themefile)
                 theme = theme_data["Theme"]
             subprocess.Popen(['python', f'{theme} Version/Penalty Quest Rewards/gui.py'])
@@ -758,13 +772,13 @@ def update_penalty_countdown(duration_seconds, countdown_label, canvas, window):
     update_timer()
 
 def start_job(canvas):
-    with open("Files/Data/Job_info.json", 'r') as stat_fson:
+    with open("Files/Player Data/Job_info.json", 'r') as stat_fson:
         data=ujson.load(stat_fson)
 
     canvas.itemconfig("Jobs", state="hidden")
     data["status"][1]["job_confirm"]='True'
 
-    with open("Files/Data/Job_info.json", 'w') as fson:
+    with open("Files/Player Data/Job_info.json", 'w') as fson:
         ujson.dump(data, fson, indent=4)
 
 def three_val(val):
@@ -794,9 +808,10 @@ def pos_fix(num):
 
 def get_fin_xp():
     # Load the status file
-    with open("Files/Status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data = ujson.load(fson)
         lvl = int(data["status"][0]['level'])  # Current level
+        old_lvl=lvl
         xp = float(data["status"][0]['XP'])  # Current XP value
         last_lvl = int(data["status"][0]['last_level'])  # Last processed level
 
@@ -831,20 +846,10 @@ def get_fin_xp():
         data["status"][0]['fatigue_max'] += 10 * level_difference
 
         # Save updated status to file
-        with open("Files/Status.json", 'w') as up_fson:
+        with open("Files/Player Data/Status.json", 'w') as up_fson:
             ujson.dump(data, up_fson, indent=4)
 
-        # Trigger level-up GUI
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
-            theme_data = ujson.load(themefile)
-            theme = theme_data["Theme"]
-            subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
-
-            if data["status"][0]['level']>=100:
-                message_open("Courage of the Weak")
-
-    else:
-        print()
+        rank_up(old_lvl, new_lvl)
     fin_xp = None
     if str(lvl + 1) in level_up_values:
         next_level_xp = float(level_up_values[str(lvl + 1)])
@@ -852,8 +857,23 @@ def get_fin_xp():
 
     return [leveled_up,fin_xp]
 
+def rank_up(old_lvl, new_lvl):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data = ujson.load(themefile)
+        theme = theme_data["Theme"]
+
+    old_rank=give_ranking(old_lvl)
+    new_rank=give_ranking(new_lvl)
+    if old_rank==new_rank:
+        subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
+    else:
+        with open("Files\Temp Files\Rank file.csv", "w", newline="") as f:
+            writer=csv.writer(f)
+            writer.writerow([f"{old_lvl}"])
+        subprocess.Popen(['python', f'{theme} Version/Rank up/gui.py'])
+
 def return_back_to_tab(loc,window):
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
         fin_loc=f'{theme} Version/{loc}/gui.py'
@@ -922,7 +942,7 @@ def message_open(message):
     rec=[message]
     fw.writerow(rec)
     fout.close()
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     subprocess.Popen(['python', f"{theme} Version/Message/gui.py"])
@@ -1006,3 +1026,40 @@ def side_bar(image, size, alt=False):
         print(f"Image {s} not found.")
         return None
 
+def info_open(message):
+    subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
+    fout=open('Files\Temp Files\help.csv', 'w', newline='')
+    fw=csv.writer(fout)
+    rec=[message]
+    fw.writerow(rec)
+    fout.close()
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data=ujson.load(themefile)
+        theme=theme_data["Theme"]
+    subprocess.Popen(['python', f"{theme} Version/Info/gui.py"])
+
+def event_tracker():
+    while True:
+        today_day = datetime.today().strftime('%A')
+        current_time = datetime.now().strftime("%H:%M")
+        
+        with open("Files/Player Data/Player Events.json", "r") as f:
+            data = ujson.load(f)
+        data_keys=data.keys()
+        for key in data_keys:
+            if today_day in data[key]["days"]:
+                if data[key]["time"]==current_time:
+                    with open("Files\Temp Files\Event.csv", "w", newline="") as f:
+                        writer = csv.writer(f)
+                        writer.writerow([key])
+                    data[key]["begun"]=True
+                    with open("Files/Player Data/Player Events.json", "w") as f:
+                        ujson.dump(data, f, indent=6)
+                    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+                        theme_data=ujson.load(themefile)
+                        theme=theme_data["Theme"]
+                    subprocess.Popen(['python', f"{theme} Version/Urgent Quest PVE/gui.py"])
+                elif current_time > data[key]["time"]:
+                    if data[key]["begun"]==False:
+                        print()
+        time.sleep(3)

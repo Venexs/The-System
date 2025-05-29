@@ -44,7 +44,7 @@ window.wm_attributes("-topmost", True)
 
 thesystem.system.center_window(window, 475, 163)
 
-with open("Files/status.json", 'r') as read_status_file:
+with open("Files/Player Data/Status.json", 'r') as read_status_file:
     read_status_file_data=ujson.load(read_status_file)
     coins=read_status_file_data["status"][0]['coins']
 

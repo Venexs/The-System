@@ -59,7 +59,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -106,7 +106,7 @@ def ex_close(win):
 rank='X'
 
 item_name = thesystem.dungeon.get_item_name_from_csv()
-with open('Files/Inventory.json', 'r') as file:
+with open('Files/Player Data/Inventory.json', 'r') as file:
     data = ujson.load(file)
 
 # Find the item and update or remove it

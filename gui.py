@@ -34,8 +34,12 @@ import thesystem.system
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
+
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
+
 try:
-    file_path= "Files/Data/Vow_status.json"
+    file_path= "Files/Player Data/Vow_status.json"
     with open(file_path, 'r') as vow_file:
         vow_status = ujson.load(vow_file)
         vow=vow_status["Vow"]
@@ -44,26 +48,9 @@ except:
     vow=False
 
 if vow==False:
-
-    def align_window_right_center(window):
-        # Ensure the window's dimensions are calculated
-        window.update_idletasks()
-        
-        # Get window dimensions
-        win_width = window.winfo_width()
-        win_height = window.winfo_height()
-        
-        # Get screen dimensions
-        screen_width = window.winfo_screenwidth()
-        screen_height = window.winfo_screenheight()
-        
-        x = screen_width - win_width
-        y = ((screen_height - win_height) // 2)-15
-        
-        window.geometry(f"+{x}+{y}")
-
     thing=txt='None'
     stop_thread = False  # Global flag to control the thread
+
 
     fin_data={
         "Skills":"False",
@@ -87,7 +74,7 @@ if vow==False:
         "Intro": "Close"
     }
 
-    with open("Files/Tabs.json", 'w') as tab_reset:
+    with open("Files/Player Data/Tabs.json", 'w') as tab_reset:
         json.dump(tab_data,tab_reset, indent=4)
 
     stop_event0 = threading.Event()
@@ -97,12 +84,12 @@ if vow==False:
         return ASSETS_PATH / Path(path)
 
     def load_data():
-        with open('Files/status.json', 'r') as file:
+        with open('Files/Player Data/Status.json', 'r') as file:
             return json.load(file)
 
     # Function to save the updated JSON data
     def save_data(data):
-        with open('Files/status.json', 'w') as file:
+        with open('Files/Player Data/Status.json', 'w') as file:
             json.dump(data, file, indent=4)
 
     # Function to reduce fatigue by 1% of fatigue_max every 3 minutes
@@ -132,58 +119,16 @@ if vow==False:
                     return
                 time.sleep(1)
 
-    def read_cal_thread():
-        while True:
-            read_cal()
-            # Sleep for a random time between 5 and 6 minutes
-            sleep_time = 5
-            time.sleep(sleep_time)
+    def start_move(event):
+        window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
-    def read_cal(eve=0):
-        with open("Files/Data/Calorie_Count.json", 'r') as calorie_add_file:
-            calorie_add_data=json.load(calorie_add_file)
-            calorie_add_key=list(calorie_add_data.keys())[0]
+    def move_window(event):
+        x_root, y_root = event.widget.winfo_pointerxy()
+        deltax, deltay = x_root - window.lastx, y_root - window.lasty
 
-        # Get today's date
-        current_date = date.today()
-
-        # Format the date as a string
-        formatted_date = current_date.strftime("%Y-%m-%d")
-
-        if calorie_add_key==formatted_date:
-            global pl_cal_txt
-            pl_current_text = canvas.itemcget(pl_cal_txt, "text")
-            pl_current_text=calorie_add_data[formatted_date][0]
-            global pl_new_text
-            pl_new_text = "{:04d}".format(int(pl_current_text))
-            canvas.itemconfig(pl_cal_txt, text=pl_new_text)
-            global sys_cal_txt
-            today = datetime.now().strftime("%A")
-        
-            # Read the JSON file
-            with open("Files/Workout/Cal_Count.json", "r") as file:
-                daily_calories = json.load(file)
-            
-            # Return the calories for today
-            tdy_val=daily_calories.get(today, 0)
-            sys_current_text = canvas.itemcget(sys_cal_txt, "text")
-            sys_current_text = tdy_val
-            global sys_new_text
-            sys_new_text = "{:04d}".format(int(sys_current_text))
-            canvas.itemconfig(sys_cal_txt, text=sys_new_text)
-
-        else:
-            new_data={formatted_date:[0]}
-            with open("Files/Data/Calorie_Count.json", 'w') as calorie_add_file_write:
-                json.dump(new_data, calorie_add_file_write, indent=4)
-            read_cal(None)
-
-    def update_cal_display():
-        global pl_new_text, sys_new_text
-        read_cal()
-        canvas.itemconfig(pl_cal_txt, text=pl_new_text)
-        canvas.itemconfig(sys_cal_txt, text=f"/{sys_new_text}")
-        window.after(1000, update_cal_display)  # Schedule the next update in 1 second
+        if deltax != 0 or deltay != 0:  # Update only if there is actual movement
+            window.geometry(f"+{window.winfo_x() + deltax}+{window.winfo_y() + deltay}")
+            window.lastx, window.lasty = x_root, y_root
 
     def timer_func():
         date_format = "%Y-%m-%d"
@@ -218,7 +163,7 @@ if vow==False:
     def give_job():
         canvas.itemconfig("job", state='hidden')
         stop_event1.set()
-        with open("Files/Data/Job_info.json", 'r') as fson:
+        with open("Files/Player Data/Job_info.json", 'r') as fson:
             data=json.load(fson)
             data["status"][0]['job_confirm']='True'
 
@@ -232,7 +177,7 @@ if vow==False:
         ability_dict={"STR":a1, "INT":a2, "AGI":a3, "VIT":a4, "PER":a5, "MAN":a6}
         abi=max(ability_dict)
 
-        with open("Files/Data/Job_info.json", 'w') as stfson:
+        with open("Files/Player Data/Job_info.json", 'w') as stfson:
             json.dump(data, stfson, indent=4)
 
         if abi=="STR":
@@ -250,7 +195,7 @@ if vow==False:
 
     def check_for_job():
         while not stop_event1.is_set():
-            with open("Files/Data/Job_info.json", 'r') as fson:
+            with open("Files/Player Data/Job_info.json", 'r') as fson:
                 data=json.load(fson)
             job_check=data["status"][0]['job_active']
             job_confim=data["status"][0]['job_confirm']
@@ -258,7 +203,7 @@ if vow==False:
             if job_check=='True' and job_confim=='False':
                 if data["status"][0]['job_check']=='False':
                     data["status"][0]['job_check']='True'
-                    with open("Files/Data/Job_info.json", 'w') as fina_fson:
+                    with open("Files/Player Data/Job_info.json", 'w') as fina_fson:
                         json.dump(data, fina_fson, indent=4)
             
                     subprocess.Popen(['python', f'D:/Projects/System/{theme} Version/Accept Job Change/gui.py'])
@@ -281,9 +226,8 @@ if vow==False:
 
     window = Tk()
 
-    window.geometry("294x758")
+    window.geometry("920x920")
 
-    align_window_right_center(window)   
     window.configure(bg = "#292929")
     window.attributes('-alpha',0.8)
     window.overrideredirect(True)
@@ -303,7 +247,7 @@ if vow==False:
         subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
         home_items = [
             "home", "home1", "home2", "home3", "home4", "home5", 
-            "home6", "home7", "home8", "home9", "home10", "home11", "home12"
+            "home6", "home7", "home8", "home9", "home10", "home11", "home12", "home13"
         ]
 
         def show_items(index=0):
@@ -326,16 +270,16 @@ if vow==False:
             show_bar = False
 
     def open_cal(eve):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
 
-        with open("Files/Tabs.json",'r') as tab_son:
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Calories"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Calories"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
         
@@ -343,34 +287,34 @@ if vow==False:
         subprocess.Popen(['python', f'{theme} Version/Calorie Input/gui.py'])
 
     def open_dungeon(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
 
         subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
-        with open("Files/Tabs.json",'r') as tab_son:
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Dungeons"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Dungeons"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
             subprocess.Popen(['python', f'{theme} Version/Dungeon/gui.py'])
 
     def settings_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Settings"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Settings"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -379,16 +323,16 @@ if vow==False:
             subprocess.Popen(['python', inv_name])
 
     def castle_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Castle"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Castle"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -397,16 +341,16 @@ if vow==False:
             subprocess.Popen(['python', inv_name])
 
     def inv_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Inventory"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Inventory"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -415,11 +359,11 @@ if vow==False:
             subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
     def daily_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Daily"]=='Close':
@@ -428,16 +372,16 @@ if vow==False:
             subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
     def quest_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Quest"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Quest"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -446,16 +390,16 @@ if vow==False:
             subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
     def skill_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Skill"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Skill"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -464,16 +408,16 @@ if vow==False:
             subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
     def status_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Status"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Status"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -482,16 +426,16 @@ if vow==False:
             subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
     def equip_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Equipment"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Equipment"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -500,16 +444,16 @@ if vow==False:
             subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
 
     def shop_open(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Shop"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Shop"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -535,16 +479,16 @@ if vow==False:
         sys.exit()
 
     def intro(event):
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
             theme=theme_data["Theme"]
-    
-        with open("Files/Tabs.json",'r') as tab_son:
+
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=json.load(tab_son)
 
         if tab_son_data["Intro"]=='Close':
 
-            with open("Files/Tabs.json",'w') as fin_tab_son:
+            with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
                 tab_son_data["Intro"]='Open'
                 json.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -558,7 +502,6 @@ if vow==False:
     def hide_job():
         canvas.itemconfig("job", state="hidden")
 
-
     # ? =====================================================================
     # ! The Every 5th Level Skil Checker
     thesystem.system.random_skill_check()
@@ -566,11 +509,11 @@ if vow==False:
     thesystem.system.random_quest()
     # ? =====================================================================
 
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=json.load(themefile)
         theme=theme_data["Theme"]
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=json.load(fson)
         name=data["status"][0]['name'].upper()
         # ? =================================================
@@ -599,8 +542,8 @@ if vow==False:
     canvas = Canvas(
         window,
         bg = "#292929",
-        height = 758,
-        width = 294,
+        height = 920,
+        width = 920,
         bd = 0,
         highlightthickness = 0,
         relief = "ridge"
@@ -610,172 +553,183 @@ if vow==False:
     image_image_1 = PhotoImage(
         file=relative_to_assets("image_1.png"))
     image_1 = canvas.create_image(
-        275.8399658203125,
-        54.60626983642578,
+        459.6004638671875,
+        459.2827453613281,
         image=image_image_1
     )
 
     canvas.tag_bind(image_1, "<ButtonPress-1>", open_home)
 
-    image_image_4 = PhotoImage(
-        file=relative_to_assets("image_4.png"))
-    image_4 = canvas.create_image(
-        279.28167724609375,
-        168.85289764404297,
-        image=image_image_4,
-        tags="home",
-        state="hidden"
+    image_image_2 = PhotoImage(
+        file=relative_to_assets("image_2.png"))
+    image_2 = canvas.create_image(
+        493.0,
+        421.0,
+        image=image_image_2
     )
 
-    canvas.tag_bind(image_4, "<ButtonPress-1>", status_open)
+    canvas.tag_bind(image_2, "<ButtonPress-1>", start_move)
+    canvas.tag_bind(image_2, "<B1-Motion>", move_window)
 
-    image_image_7 = PhotoImage(
-        file=relative_to_assets("image_7.png"))
-    image_7 = canvas.create_image(
-        280.1575927734375,
-        303.2894287109375,
-        image=image_image_7,
+    image_image_3 = PhotoImage(
+        file=relative_to_assets("image_3.png"))
+    image_3 = canvas.create_image(
+        460.0911865234375,
+        555.478148578175,
+        image=image_image_3,
         tags="home1",
         state="hidden"
     )
 
-    canvas.tag_bind(image_7, "<ButtonPress-1>", daily_open)
+    canvas.tag_bind(image_3, "<ButtonPress-1>", status_open)
 
-    image_image_10 = PhotoImage(
-        file=relative_to_assets("image_10.png"))
-    image_10 = canvas.create_image(
-        280.30462646484375,
-        458.5411682128906,
-        image=image_image_10,
+    image_image_4 = PhotoImage(
+        file=relative_to_assets("image_4.png"))
+    image_4 = canvas.create_image(
+        550.690038915669,
+        522.3607694785769,
+        image=image_image_4,
         tags="home2",
         state="hidden"
     )
 
-    canvas.tag_bind(image_10, "<ButtonPress-1>", inv_open)
+    canvas.tag_bind(image_4, "<ButtonPress-1>", daily_open)
 
-    image_image_13 = PhotoImage(
-        file=relative_to_assets("image_13.png"))
-    image_13 = canvas.create_image(
-        280.30462646484375,
-        619.5411987304688,
-        image=image_image_13,
+    image_image_5 = PhotoImage(
+        file=relative_to_assets("image_5.png"))
+    image_5 = canvas.create_image(
+        550.6188507080078,
+        397.16014099121094,
+        image=image_image_5,
         tags="home3",
         state="hidden"
     )
 
-    canvas.tag_bind(image_13, "<ButtonPress-1>", equip_open)
+    canvas.tag_bind(image_5, "<ButtonPress-1>", quest_open)
 
-    image_image_16 = PhotoImage(
-        file=relative_to_assets("image_16.png"))
-    image_16 = canvas.create_image(
-        235.0120849609375,
-        127.54119491577148,
-        image=image_image_16,
+    image_image_6 = PhotoImage(
+        file=relative_to_assets("image_6.png"))
+    image_6 = canvas.create_image(
+        460.0912364224905,
+        362.99999150587064,
+        image=image_image_6,
         tags="home4",
         state="hidden"
     )
 
-    canvas.tag_bind(image_16, "<ButtonPress-1>", open_dungeon)
+    canvas.tag_bind(image_6, "<ButtonPress-1>", inv_open)
 
-    image_image_19 = PhotoImage(
-        file=relative_to_assets("image_19.png"))
-    image_19 = canvas.create_image(
-        235.0120849609375,
-        287.54119873046875,
-        image=image_image_19,
-        tags="home5",
+    image_image_7 = PhotoImage(
+        file=relative_to_assets("image_7.png"))
+    image_7 = canvas.create_image(
+        369.00001342479027,
+        395.1195373535156,
+        image=image_image_7,
+        tags="home3",
         state="hidden"
     )
 
-    canvas.tag_bind(image_19, "<ButtonPress-1>", open_cal)
+    canvas.tag_bind(image_7, "<ButtonPress-1>", equip_open)
 
-    image_image_22 = PhotoImage(
-        file=relative_to_assets("image_22.png"))
-    image_22 = canvas.create_image(
-        235.0120849609375,
-        454.54119873046875,
-        image=image_image_22,
-        tags="home6",
+    image_image_8 = PhotoImage(
+        file=relative_to_assets("image_8.png"))
+    image_8 = canvas.create_image(
+        370.944091796875,
+        520.902587890625,
+        image=image_image_8,
+        tags="home2",
         state="hidden"
     )
 
-    canvas.tag_bind(image_22, "<ButtonPress-1>", settings_open)
+    canvas.tag_bind(image_8, "<ButtonPress-1>", open_dungeon)
 
-    image_image_25 = PhotoImage(
-        file=relative_to_assets("image_25.png"))
-    image_25 = canvas.create_image(
-        235.0120849609375,
-        597.15087890625,
-        image=image_image_25,
-        tags="home7",
-        state="hidden"
-    )
-
-    canvas.tag_bind(image_25, "<ButtonPress-1>", quest_open)
-
-    image_image_40 = PhotoImage(
-        file=relative_to_assets("image_40.png"))
-    image_40 = canvas.create_image(
-        191.0,
-        104.69878768920898,
-        image=image_image_40,
+    image_image_9 = PhotoImage(
+        file=relative_to_assets("image_9.png"))
+    image_9 = canvas.create_image(
+        332.99999197133,
+        611.0000135325972,
+        image=image_image_9,
         tags="home8",
         state="hidden"
     )
 
-    canvas.tag_bind(image_40, "<ButtonPress-1>", intro)
+    canvas.tag_bind(image_9, "<ButtonPress-1>", settings_open)
 
-    image_image_28 = PhotoImage(
-        file=relative_to_assets("image_28.png"))
-    image_28 = canvas.create_image(
-        191.0120849609375,
-        220.0,
-        image=image_image_28,
+    image_image_10 = PhotoImage(
+        file=relative_to_assets("image_10.png"))
+    image_10 = canvas.create_image(
+        268.99999338684756,
+        522.0000097590273,
+        image=image_image_10,
         tags="home9",
         state="hidden"
     )
 
-    canvas.tag_bind(image_28, "<ButtonPress-1>", skill_open)
+    canvas.tag_bind(image_10, "<ButtonPress-1>", open_cal)
 
-    image_image_31 = PhotoImage(
-        file=relative_to_assets("image_31.png"))
-    image_31 = canvas.create_image(
-        196.09890747070312,
-        426.0,
-        image=image_image_31,
+    image_image_11 = PhotoImage(
+        file=relative_to_assets("image_11.png"))
+    image_11 = canvas.create_image(
+        261.0,
+        390.99999589660365,
+        image=image_image_11,
         tags="home10",
         state="hidden"
     )
 
-    canvas.tag_bind(image_31, "<ButtonPress-1>", castle_open)
+    canvas.tag_bind(image_11, "<ButtonPress-1>", castle_open)
 
-    image_image_34 = PhotoImage(
-        file=relative_to_assets("image_34.png"))
-    image_34 = canvas.create_image(
-        191.0120849609375,
-        618.0,
-        image=image_image_34,
-        tags="home11",
+    image_image_12 = PhotoImage(
+        file=relative_to_assets("image_12.png"))
+    image_12 = canvas.create_image(
+        660.9999919213851,
+        390.9999928961788,
+        image=image_image_12,
+        tags="home10",
         state="hidden"
     )
 
-    canvas.tag_bind(image_34, "<ButtonPress-1>", shop_open)
+    canvas.tag_bind(image_12, "<ButtonPress-1>", shop_open)
 
-    image_image_37 = PhotoImage(
-        file=relative_to_assets("image_37.png"))
-    image_37 = canvas.create_image(
-        240.3637237548828,
-        722.1205095925577,
-        image=image_image_37,
-        tags="home12",
+    image_image_13 = PhotoImage(
+        file=relative_to_assets("image_13.png"))
+    image_13 = canvas.create_image(
+        654.999995438553,
+        521.9999966698451,
+        image=image_image_13,
+        tags="home9",
         state="hidden"
     )
 
-    canvas.tag_bind(image_37, "<ButtonPress-1>", close_full)
+    canvas.tag_bind(image_13, "<ButtonPress-1>", skill_open)
+
+    image_image_14 = PhotoImage(
+        file=relative_to_assets("image_14.png"))
+    image_14 = canvas.create_image(
+        592.0000123731879,
+        613.0000142702847,
+        image=image_image_14,
+        tags="home8",
+        state="hidden"
+    )
+
+    canvas.tag_bind(image_14, "<ButtonPress-1>", intro)
+
+    image_image_15 = PhotoImage(
+        file=relative_to_assets("image_15.png"))
+    image_15 = canvas.create_image(
+        460.0,
+        655.999993913435,
+        image=image_image_15,
+        tags="home6",
+        state="hidden"
+    )
+
+    canvas.tag_bind(image_15, "<ButtonPress-1>", close_full)
 
     canvas.create_text(
-        99.0,
-        17.0,
+        393.0,
+        594.0,
         anchor="nw",
         text="Job Change Quest",
         fill="#FFFFFF",
@@ -785,8 +739,8 @@ if vow==False:
     )
 
     timer=canvas.create_text(
-        122.0,
-        33.0,
+        415.0,
+        610.0,
         anchor="nw",
         text="00:00:00",
         fill="#FFFFFF",

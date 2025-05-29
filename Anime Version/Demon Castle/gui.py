@@ -36,7 +36,7 @@ open_check=misc.update_screen("Castle")
 run_once_val=False
 
 # Path to the ujson file
-ujson_file_path = "Files/Demons Castle/image_visibility.json"
+ujson_file_path = "Files/Player Data/image_visibility.json"
 
 # Load visibility data
 data = thesystem.castle.load_image_visibility(ujson_file_path, run_once_val)
@@ -48,10 +48,10 @@ floor=data[1]
 file_num=0
 
 try:
-    with open("Files/Demons Castle/Demon_Castle.json", 'r') as castle_file:
+    with open("Files/Data/Demon_Castle.json", 'r') as castle_file:
         castle_data = ujson.load(castle_file)
 except:
-    with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
+    with open("Files/Data/Demon_Castle.json", 'w') as castle_file:
         castle_data={"Souls":0,"XP":0,"Rewards":False,"Final":False}
         ujson.dump(castle_data,castle_file, indent=4)
 
@@ -110,7 +110,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window, transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -140,7 +140,7 @@ rewards=castle_data["Rewards"]
 final=castle_data["Final"]
 
 if soul_count>=10000 and rewards==False:
-    with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
+    with open("Files/Data/Demon_Castle.json", 'w') as castle_file:
         castle_data["Rewards"]=True
         ujson.dump(castle_data,castle_file, indent=4)
     
@@ -161,10 +161,10 @@ def ex_close(win):
     if setting_data["Settings"]["Performernce (ANIME):"] != "True":
         stop_event.set()
         update_thread.join()    
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
@@ -175,10 +175,10 @@ def ex_dc_close(win):
     if setting_data["Settings"]["Performernce (ANIME):"] != "True":
         stop_event.set()
         update_thread.join()
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
 

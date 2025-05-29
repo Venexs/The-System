@@ -27,10 +27,10 @@ import thesystem.inventory
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Equipment"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -68,12 +68,12 @@ def move_window(event):
 
 
 def ex_close():
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
     if tab_son_data["Equipment"]=='Open':
 
-        with open("Files/Tabs.json",'w') as fin_tab_son:
+        with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
             tab_son_data["Equipment"]='Close'
             ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -779,6 +779,16 @@ image_19 = canvas.create_image(
 
 canvas.tag_bind(image_19, "<ButtonPress-1>", start_move)
 canvas.tag_bind(image_19, "<B1-Motion>", move_window)
+
+image_image_20 = PhotoImage(
+    file=relative_to_assets("image_25.png"))
+image_20 = canvas.create_image(
+    218.0,
+    43.0,
+    image=image_image_20
+)
+
+canvas.tag_bind(image_19, "<ButtonPress-1>", lambda event: thesystem.system.info_open("Equipment"))
 
 window.resizable(False, False)
 window.mainloop()
