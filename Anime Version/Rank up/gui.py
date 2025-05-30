@@ -226,7 +226,7 @@ image_6 = canvas.create_image(
     image=image_image_60
 )
 
-with open("Files\Temp Files\Rank file.csv", "r") as f:
+with open("Files/Temp Files/Rank file.csv", "r") as f:
     reader = csv.reader(f)
     for row in reader:
         old_lvl = int(row[0])

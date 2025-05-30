@@ -218,7 +218,7 @@ def random_skill_check():
             max_keys = sorted([key for key, value in comp_rec.items() if value == max_val])[:2]
 
             # Load the available skills from the skill list.
-            with open("Files\Data\Skill_List.json", 'r') as f:
+            with open("Files/Data/Skill_List.json", 'r') as f:
                 skill_list_data = ujson.load(f)
             # Find skills whose condition is met by the max_keys.
             available_skills = [
@@ -366,7 +366,7 @@ def random_quest():
                     rew2=random.choice(final_rewards_list)
 
                 # ? Quest Info
-                file_name=f"Files\Workout\{random_ab}_based.json"
+                file_name=f"Files/Workout/{random_ab}_based.json"
                 with open(file_name, 'r') as quest_file_name:
                     quest_main_names=ujson.load(quest_file_name)
                     quest_main_names_list=list(quest_main_names.keys())
@@ -726,7 +726,7 @@ def set_preview_temp(o_name1,qt1):
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
-    subprocess.Popen(['python', f'{theme} Version/Manwha Version\Item Data\gui.py/gui.py'])
+    subprocess.Popen(['python', f'{theme} Version/Manwha Version/Item Data/gui.py/gui.py'])
 
 def center_window(root, width, height):
     # Get screen width and height
@@ -867,7 +867,7 @@ def rank_up(old_lvl, new_lvl):
     if old_rank==new_rank:
         subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
     else:
-        with open("Files\Temp Files\Rank file.csv", "w", newline="") as f:
+        with open("Files/Temp Files/Rank file.csv", "w", newline="") as f:
             writer=csv.writer(f)
             writer.writerow([f"{old_lvl}"])
         subprocess.Popen(['python', f'{theme} Version/Rank up/gui.py'])
@@ -1028,7 +1028,7 @@ def side_bar(image, size, alt=False):
 
 def info_open(message):
     subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
-    fout=open('Files\Temp Files\help.csv', 'w', newline='')
+    fout=open('Files/Temp Files/help.csv', 'w', newline='')
     fw=csv.writer(fout)
     rec=[message]
     fw.writerow(rec)
@@ -1049,7 +1049,7 @@ def event_tracker():
         for key in data_keys:
             if today_day in data[key]["days"]:
                 if data[key]["time"]==current_time:
-                    with open("Files\Temp Files\Event.csv", "w", newline="") as f:
+                    with open("Files/Temp Files/Event.csv", "w", newline="") as f:
                         writer = csv.writer(f)
                         writer.writerow([key])
                     data[key]["begun"]=True

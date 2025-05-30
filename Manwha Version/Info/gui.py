@@ -141,7 +141,7 @@ button_1.place(
     height=30.20939064025879
 )
 
-with open("Files\Temp Files\help.csv") as f:
+with open("Files/Temp Files/help.csv") as f:
     reader = csv.reader(f)
     for row in reader:
         info=row[0]

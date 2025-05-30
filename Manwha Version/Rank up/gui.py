@@ -142,7 +142,7 @@ status_data = thesystem.misc.load_ujson("Files/Player Data/Status.json")
 name = status_data["status"][0]["name"]
 level = status_data["status"][0]["level"]
 
-with open("Files\Temp Files\Rank file.csv", "r") as f:
+with open("Files/Temp Files/Rank file.csv", "r") as f:
     reader = csv.reader(f)
     for row in reader:
         old_lvl = int(row[0])
@@ -153,8 +153,8 @@ new_rank=thesystem.system.give_ranking(level)
 
 # Centering each text
 center_text(canvas, f"[{name}] has been promoted!", 97.0, ("Exo Regular", 15 * -1), "#FFFFFF")
-center_text(canvas, f"[{new_rank} Rank]   Lv.{old_lvl}", 149.0, ("Exo Regular", 17 * -1), "#FFFFFF")
-center_text(canvas, f"[{old_rank} Rank]   Lv.{level}", 241.0, ("Exo Bold", 17 * -1), "#00FF2A")
+center_text(canvas, f"[{old_rank} Rank]   Lv.{old_lvl}", 149.0, ("Exo Regular", 17 * -1), "#FFFFFF")
+center_text(canvas, f"[{new_rank} Rank]   Lv.{level}", 241.0, ("Exo Bold", 17 * -1), "#00FF2A")
 
 
 image_image_4 = PhotoImage(

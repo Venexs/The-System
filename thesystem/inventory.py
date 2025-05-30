@@ -48,9 +48,8 @@ def ex_close(win):
     with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Inventory"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
-    threading.Thread(target=thesystem.system.fade_out, args=(win, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    thesystem.system.animate_window_close(win, win.winfo_height(), win.winfo_width, step=50, delay=1)
+    thesystem.system.animate_window_close(win, win.winfo_height(), win.winfo_width(), step=40, delay=1)
 
 def inventory_name_cut(name):
     if len(name)>15:

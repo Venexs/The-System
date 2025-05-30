@@ -322,7 +322,7 @@ def equip_item(cat,item_full_data, window):
             data_fininv=ujson.load(fson)
         del data_fininv["The Orb of Order"]
 
-        subprocess.Popen(['python', "First\The Order\gui.py"])
+        subprocess.Popen(['python', "First/The Order/gui.py"])
         window.quit()
 
 

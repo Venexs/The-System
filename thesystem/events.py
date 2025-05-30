@@ -20,7 +20,7 @@ def event_tracker():
         for key in data_keys:
             if today_day in data[key]["days"]:
                 if data[key]["time"]==current_time:
-                    with open("Files\Temp Files\Event.csv", "w", newline="") as f:
+                    with open("Files/Temp Files/Event.csv", "w", newline="") as f:
                         writer = csv.writer(f)
                         writer.writerow([key])
                     data[key]["begun"]=True

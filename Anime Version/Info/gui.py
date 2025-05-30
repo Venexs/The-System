@@ -138,7 +138,7 @@ image_1 = canvas.create_image(
 )
 
 pres_file_data=misc.load_ujson("Files/Mod/presets.json")
-video_path=pres_file_data["Anime"]["Video"]
+video_path=pres_file_data["Anime"][video]
 
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0, pause_duration=1)
 
@@ -182,7 +182,7 @@ button_2.place(
     height=23,
 )
 
-with open("Files\Temp Files\help.csv") as f:
+with open("Files/Temp Files/help.csv") as f:
     reader = csv.reader(f)
     for row in reader:
         info=row[0]

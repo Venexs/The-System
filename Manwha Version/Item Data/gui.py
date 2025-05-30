@@ -82,7 +82,7 @@ def move_window(event):
 def ex_close(win):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    subprocess.Popen(['python', 'Manwha Version\Inventory\gui.py'])
+    subprocess.Popen(['python', 'Manwha Version/Inventory/gui.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 typs='Item'
 

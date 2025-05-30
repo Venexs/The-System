@@ -134,7 +134,7 @@ window.wm_attributes("-topmost", True)
 name="Quest Name"
 desc1=desc2=desc3=desc4=desc5=desc6=""
 
-with open("Files\Temp Files\Event.csv") as f:
+with open("Files/Temp Files/Event.csv") as f:
     reader = csv.reader(f)
     for row in reader:
         name=row[0]
