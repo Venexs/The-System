@@ -122,8 +122,9 @@ def complete():
         info[1] = exe_name2
         pen_info_data["Penalty Info"] = info
 
-        hh=entry_1.get()
-        mm=entry_2.get()
+        hh = entry_1.get("1.0", "end-1c")
+        mm = entry_2.get("1.0", "end-1c")
+
         try:
             hh=int(hh)
             mm=int(mm)
