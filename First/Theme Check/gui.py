@@ -79,6 +79,9 @@ def name(eve,name):
         ex_close(window)
     
     else:
+        with open("Files/Player Data/First_open.csv", 'w', newline='') as info_open:
+            fw=csv.writer(info_open)
+            fw.writerow(["True"])
         subprocess.Popen(['python', 'gui.py'])
         ex_close(window)
 
