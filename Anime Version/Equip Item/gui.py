@@ -33,9 +33,9 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / "assets/frame0"
 EQUIPMENT_TEMP_FILE = 'Files/Temp Files/Equipment Temp.csv'
-INVENTORY_FILE = 'Files/Inventory.json'
+INVENTORY_FILE = 'Files/Player Data/Inventory.json'
 EQUIPMENT_FILE = 'Files/Equipment.json'
-STATUS_FILE = 'Files/status.json'
+STATUS_FILE = 'Files/Player Data/Status.json'
 PRESETS_FILE = "Files/Mod/presets.json"
 
 def relative_to_assets(path: str) -> Path:
@@ -87,7 +87,7 @@ if job!='None':
 thesystem.system.make_window_transparent(window,transp_clr)
 
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -144,7 +144,7 @@ with open('Files/Temp Files/Equipment Temp.csv', 'r') as fop:
         equipment_temp=k
         break
     
-with open('Files/Inventory.json', 'r') as fout:
+with open('Files/Player Data/Inventory.json', 'r') as fout:
     data=ujson.load(fout)
     rol=list(data.keys())
 c = 0

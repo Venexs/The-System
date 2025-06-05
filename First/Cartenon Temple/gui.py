@@ -128,7 +128,7 @@ def answer():
     canvas.itemconfig("Sixth", state="hidden")
     if confirm==True:
         canvas.itemconfig("Yes", state="normal")
-        with open("Files/Data/Prove_file.csv", 'w', newline='') as first_open_check_file:
+        with open("Files/Player Data/Prove_file.csv", 'w', newline='') as first_open_check_file:
             fw=csv.writer(first_open_check_file)
             fw.writerow(["True"])
         window.after(5000, ex_close_0)

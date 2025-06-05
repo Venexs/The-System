@@ -76,7 +76,7 @@ canvas = Canvas(
     relief = "ridge"
 )
 
-with open("Files/status.json", 'r') as fson:
+with open("Files/Player Data/Status.json", 'r') as fson:
     data=ujson.load(fson)
     stre=data["status"][0]['str']
     intel=data["status"][0]['int']
@@ -104,7 +104,7 @@ def finale():
             data["status"][0]['per']=int(per)
             data["status"][0]['man']=int(man)
 
-            with open("Files/status.json", 'w') as fson:
+            with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(data, fson, indent=6)
 
             ex_close(window)

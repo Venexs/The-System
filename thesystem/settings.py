@@ -5,13 +5,8 @@ def settings_ope(checkbox_var1,checkbox_var0,checkbox_var2):
     val0=checkbox_var0.get()
     val2=checkbox_var2.get()
 
-    with open("Files/Settings.json", 'r') as settings_open:
+    with open("Files/Player Data/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
-    
-    if val1==0:
-        setting_data["Settings"]["Calorie_Penalty"]="False"
-    else:
-        setting_data["Settings"]["Calorie_Penalty"]="True"
 
     if val0==0:
         setting_data["Settings"]["Main_Penalty"]="False"
@@ -24,5 +19,5 @@ def settings_ope(checkbox_var1,checkbox_var0,checkbox_var2):
         setting_data["Settings"]["Performernce (ANIME):"]="True"
 
 
-    with open("Files/Settings.json", 'w') as settings_open_final:
+    with open("Files/Player Data/Settings.json", 'w') as settings_open_final:
         ujson.dump(setting_data, settings_open_final, indent=4)

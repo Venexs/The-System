@@ -8,7 +8,7 @@ def quests_add(rank, vals, read_status_file_data, window):
     random_ab = random.choice(ab_points)
     
     try:
-        with open("Files/Quests/Active_Quests.json", 'r') as f:
+        with open("Files/Player Data/Active_Quests.json", 'r') as f:
             active_quests = ujson.load(f)
     except Exception:
         active_quests = {}
@@ -17,7 +17,7 @@ def quests_add(rank, vals, read_status_file_data, window):
     
     if active_count < 13:
         # --- Quest Name Selection ---
-        with open("Files/Quests/Quest_Names.json", 'r') as f:
+        with open("Files/Data/Quest_Names.json", 'r') as f:
             quest_names = ujson.load(f)
         if random_ab in ["STR", "AGI", "VIT"]:
             names_list = quest_names.get("STR", [])
@@ -30,7 +30,7 @@ def quests_add(rank, vals, read_status_file_data, window):
         quest_name = random.choice(available_names) if available_names else random.choice(names_list)
         
         # --- Quest Description ---
-        with open("Files/Quests/Quest_Desc.json", 'r') as f:
+        with open("Files/Data/Quest_Desc.json", 'r') as f:
             quest_desc = ujson.load(f)
         if rank in ["E", "D"]:
             desc_list = quest_desc.get("Easy", [])
@@ -105,27 +105,27 @@ def quests_add(rank, vals, read_status_file_data, window):
         
         # --- Save the New Quest ---
         active_quests[quest_name] = [details]
-        with open("Files/Quests/Active_Quests.json", 'w') as f:
+        with open("Files/Player Data/Active_Quests.json", 'w') as f:
             ujson.dump(active_quests, f, indent=6)
         
         # --- Update Status ---
         # (Assumes read_status_file_data is a global variable)
-        with open("Files/status.json", 'w') as f:
+        with open("Files/Player Data/Status.json", 'w') as f:
             read_status_file_data["status"][0]['coins'] -= int(vals)
             ujson.dump(read_status_file_data, f, indent=4)
     else:
         thesystem.system.message_open("Quest Slot Filled")
     
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
 
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
     if tab_son_data["Shop"]=='Close':
 
-        with open("Files/Tabs.json",'w') as fin_tab_son:
+        with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
             tab_son_data["Shop"]='Open'
             ujson.dump(tab_son_data,fin_tab_son,indent=4)
 

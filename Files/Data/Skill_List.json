@@ -1,0 +1,231 @@
+{
+    "Rush":[
+        {
+            "lvl":1,
+            "type":"Passive",
+            "desc":"When Your body health decreases and fatigue is high, The Skill activates to push adrenaline and allowing you to keep going on",
+            
+            "base":"STR",
+            "rewards":{
+                "STRav":5,
+                "Gatekeepers Necklace":1
+            }
+        },
+        {
+            "Condition":[
+                "VIT"
+            ]
+        }
+    ],
+
+    "Dash":[
+        {
+            "lvl":1,
+            "type":"Active",
+            "desc":"Gives the User the ability to get a faster start in a sprint / run",
+
+            "base":"STR",
+            "rewards":{
+                "STRav":5,
+                "Gauntlet of Lightning":1
+            }
+        },
+        {
+            "Condition":[
+                "AGI"
+            ]
+        }
+    ],
+    
+
+    "Negotiation":[
+        {
+            "lvl":1,
+            "type":"Active",
+            "desc":"Alows one to persuade others to agree to terms beneficial to oneself, whether in business, diplomacy, or personal interactions.",
+
+            "base":"INT",
+            "rewards":{
+                "INTav":5,
+                "Demon Monarch's Ring":1
+            }
+        },
+        {
+            "Condition":[
+                "MAN"
+            ]
+        }
+    ],
+
+    "Tacital":[
+        {
+            "lvl":1,
+            "type":"Passive",
+            "desc":"It allows quickly assessing a situation and formulating effective plans or responses",
+
+            "base":"INT",
+            "rewards":{
+                "INTav":5,
+                "Aetherial Circlet":1
+            }
+        },
+        {
+            "Condition":[
+                "INT"
+            ]
+        }
+    ],
+
+    "Iron Fist":[
+        {
+            "lvl":1,
+            "type":"Active",
+            "desc":"Allows one to have an increased power in punching. Although It also deals in equal pain to oneself",
+
+            "base":"STR",
+            "rewards":{
+                "STRav":5,
+                "Gauntlet of the Eternal Guardian":1
+            }
+        },
+        {
+            "Condition":[
+                "STR",
+                "VIT"
+            ]
+        }
+    ],
+
+    "Iron Warrior":[
+        {
+            "lvl":1,
+            "type":"Passive",
+            "desc":"Allows one to become slightly less pained while health is low",
+
+            "base":"STR",
+            "rewards":{
+                "STRav":5,
+                "Titanium Plate Armor":1
+            }
+        },
+        {
+            "Condition":[
+                "STR",
+                "VIT"
+            ]
+        }
+    ],
+
+    "Resourceful Adaptation": [
+        {
+            "lvl": 1,
+            "type": "Active",
+            "desc": "Enables the user to adapt quickly to changing circumstances, finding creative solutions to problems on the fly.",
+            "base": "INT",
+            "rewards": {
+                "INTav": 5,
+                "Chameleon Cloak": 1
+            }
+        },
+        {
+            "Condition": [
+                "INT",
+                "PER"
+            ]
+        }
+    ],
+
+    "Charismatic Aura": [
+        {
+            "lvl": 1,
+            "type": "Passive",
+            "desc": "Radiates an aura of charm and charisma, making it easier to win people over and gain their trust or admiration.",
+            "base": "MAN",
+            "rewards": {
+                "INTav": 5,
+                "High-Minister's Amulet": 1
+            }
+        },
+        {
+            "Condition": [
+                "MAN",
+                "PER"
+            ]
+        }
+    ],
+
+    "Fatal Strike": [
+        {
+            "lvl": 1,
+            "type": "Active",
+            "desc": "Allows the user to execute precise and accurate strikes, targeting specific weak points for maximum damage.",
+            "base": "STR",
+            "rewards": {
+                "STRav": 5,
+                "Blade of Precision": 1
+            }
+        },
+        {
+            "Condition": [
+                "STR",
+                "AGI"
+            ]
+        }
+    ],
+
+    "Nimble Endurance": [
+        {
+            "lvl": 1,
+            "type": "Passive",
+            "desc": "Combines agility with endurance, allowing the user to maintain swift movements even in prolonged physical exertion.",
+            "base": "AGI",
+            "rewards": {
+                "STRav": 5,
+                "Dragonscale Boots": 1
+            }
+        },
+        {
+            "Condition": [
+                "AGI",
+                "VIT"
+            ]
+        }
+    ],
+
+    "Mind Over Matter": [
+        {
+            "lvl": 1,
+            "type": "Active",
+            "desc": "Harnesses the one's intellect to influence the minds of others, compelling them to act in accordance with the user's desires.",
+            "base": "INT",
+            "rewards": {
+                "INTav": 5,
+                "Ring of Arcane Mastery": 1
+            }
+        },
+        {
+            "Condition": [
+                "INT",
+                "MAN"
+            ]
+        }
+    ],
+
+    "Brute Force Mastery": [
+        {
+            "lvl": 1,
+            "type": "Active",
+            "desc": "Empowers the user with unparalleled strength, enabling them to perform feats of raw power and destruction.",
+            "base": "STR",
+            "rewards": {
+                "First Glove of Colossus": 1,
+                "Second Glove of Colossus": 1
+            }
+        },
+        {
+            "Condition": [
+                "STR"
+            ]
+        }
+    ]
+}

@@ -30,10 +30,10 @@ import thesystem.settings as settings
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Settings"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -71,7 +71,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -88,15 +88,13 @@ bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (490, 3
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
-checkbox_var1 = IntVar(value=0)
 checkbox_var0 = IntVar(value=0)
 checkbox_var2 = IntVar(value=0)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 checkbox_var2 = IntVar(value=1 if setting_data["Settings"].get("Performernce (ANIME)", "False") == "True" else 0)
-checkbox_var1 = IntVar(value=1 if setting_data["Settings"].get("Calorie_Penalty", "False") == "True" else 0)
 checkbox_var0 = IntVar(value=1 if setting_data["Settings"].get("Main_Penalty", "False") == "True" else 0)
 
 def start_move(event):
@@ -118,10 +116,10 @@ def ex_close(win):
     if setting_data["Settings"]["Performernce (ANIME):"] != "True":
         stop_event.set()
         update_thread.join()
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Settings"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
@@ -331,8 +329,8 @@ canvas.create_text(
 
 checkbox = Checkbutton(
     window,
-    variable=checkbox_var1,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
+    variable=checkbox_var0,
+    command= lambda: settings.settings_ope(checkbox_var0, checkbox_var0, checkbox_var2),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -345,32 +343,7 @@ checkbox = Checkbutton(
 
 # Position the checkbox using place
 checkbox.place(x=317, y=266, width=14, height=14)
-
-canvas.create_text(
-    73.0,
-    297.0,
-    anchor="nw",
-    text="Have Penalty for Calorie Coutnt:",
-    fill="#FFFFFF",
-    font=("Montserrat SemiBold", 11 * -1)
-)
-
-checkbox1 = Checkbutton(
-    window,
-    variable=checkbox_var0,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
-    image=unchecked_image,
-    selectimage=checked_image,
-    compound="center",       # Place the image to the left of the text
-    indicatoron=False,       # Hide the default checkbox indicator
-    bd=0,
-    highlightthickness=0,    # Remove the focus highlight around the widget
-    padx=0,                  # Remove internal horizontal padding
-    pady=0
-)
-
 # Position the checkbox using place
-checkbox1.place(x=317, y=304, width=14, height=14)
 
 canvas.create_text(
     73.0,
@@ -384,7 +357,7 @@ canvas.create_text(
 checkbox2 = Checkbutton(
     window,
     variable=checkbox_var2,
-    command= lambda: settings.settings_ope(checkbox_var1, checkbox_var0, checkbox_var2),
+    command= lambda: settings.settings_ope(checkbox_var2, checkbox_var0, checkbox_var2),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text

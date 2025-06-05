@@ -75,7 +75,7 @@ rank = dailyquest.get_rank()
 streak=dailyquest.get_streak()
 title, list_of_titles_data = dailyquest.get_titles()
 
-with open("Files/status.json", 'r') as rank_check_file:
+with open("Files/Player Data/Status.json", 'r') as rank_check_file:
     rank_check_data=json.load(rank_check_file)
 
 if type_re=="Reward":
@@ -97,7 +97,7 @@ elif type_re=='Secret':
         coins=(rew_list[2]*2)
 
 elif type_re=='Great Reward':
-    with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
+    with open("Files/Player Data/Daily_Quest.json", 'r') as daily_quest_file:
         daily_quest_data = json.load(daily_quest_file)
         gr_streak=daily_quest_data["Streak"]["Greater_value"]
     
@@ -131,7 +131,7 @@ def get():
     today = date.today()
     today_date_str = today.strftime("%Y-%m-%d")
 
-    with open("Files/status.json", 'w') as status_import:
+    with open("Files/Player Data/Status.json", 'w') as status_import:
         rank_check_data["status"][0]['coins']+=coins
         rank_check_data["status"][0]['XP']+=xp_pl
         rank_check_data["avail_eq"][0]['str_based']+=av_str
@@ -143,7 +143,7 @@ def get():
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=json.load(tab_son)
 
     if tab_son_data["Status"]=='Close':
@@ -160,7 +160,7 @@ def secret_get():
 
     dupli_title=False
     try:
-        with open("Files/Titles/Titles.json", 'r') as title_import:
+        with open("Files/Player Data/Titles.json", 'r') as title_import:
             title_import_data=json.load(title_import)
             title_import_data_list=list(title_import_data.keys())
             for k in title_import_data_list:
@@ -174,17 +174,17 @@ def secret_get():
 
     else:
         try:
-            with open("Files/Titles/Titles.json", 'r') as title_import:
+            with open("Files/Player Data/Titles.json", 'r') as title_import:
                 title_import_data=json.load(title_import)
         except:
             title_import_data={}
         
         title_import_data[title]=list_of_titles_data[title]
         
-        with open("Files/Titles/Titles.json", 'w') as final_title_import:
+        with open("Files/Player Data/Titles.json", 'w') as final_title_import:
             json.dump(title_import_data, final_title_import, indent=4)
 
-    with open("Files/Status.json", 'w') as status_import:
+    with open("Files/Player Data/Status.json", 'w') as status_import:
         rank_check_data["status"][0]['coins']+=coins
         rank_check_data["avail_eq"][0]['str_based']+=av_str
         rank_check_data["avail_eq"][0]['int_based']+=av_int
@@ -196,7 +196,7 @@ def secret_get():
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=json.load(tab_son)
     if tab_son_data["Status"]!='Open':
         subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])
@@ -212,7 +212,7 @@ def great_get():
 
     dupli_title=False
     try:
-        with open("Files/Titles/Titles.json", 'r') as title_import:
+        with open("Files/Player Data/Titles.json", 'r') as title_import:
             title_import_data=json.load(title_import)
             title_import_data_list=list(title_import_data.keys())
             for k in title_import_data_list:
@@ -226,17 +226,17 @@ def great_get():
 
     else:
         try:
-            with open("Files/Titles/Titles.json", 'r') as title_import:
+            with open("Files/Player Data/Titles.json", 'r') as title_import:
                 title_import_data=json.load(title_import)
         except:
             title_import_data={}
         
         title_import_data["Blessed"]=list_of_titles_data["Blessed"]
         
-        with open("Files/Titles/Titles.json", 'w') as final_title_import:
+        with open("Files/Player Data/Titles.json", 'w') as final_title_import:
             json.dump(title_import_data, final_title_import, indent=4)
 
-    with open("Files/Status.json", 'w') as status_import:
+    with open("Files/Player Data/Status.json", 'w') as status_import:
         rank_check_data["status"][0]['coins']+=coins
         rank_check_data["avail_eq"][0]['str_based']+=av_str
         rank_check_data["avail_eq"][0]['int_based']+=av_int
@@ -248,7 +248,7 @@ def great_get():
         fw=csv.writer(Daily_date_check_file)
         fw.writerow([today_date_str, "True", "Complete"])
 
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=json.load(tab_son)
     if tab_son_data["Status"]!='Open':
         subprocess.Popen(['python', 'Anime Version/Status Tab/gui.py'])

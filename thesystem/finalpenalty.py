@@ -1,7 +1,7 @@
 import ujson
 
 def decrement_stats():
-    ujson_file="Files\Status.json"
+    ujson_file="Files/Player Data/Status.json"
     # Load the ujson file
     with open(ujson_file, 'r') as file:
         data = ujson.load(file)

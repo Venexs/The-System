@@ -64,7 +64,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window, transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -122,10 +122,10 @@ def count_statuses(data):
     
     return done_count, doing_count, total_items
 
-with open("Files\Demons Castle\image_visibility.json", 'r') as f:
+with open("Files/Player Data/image_visibility.json", 'r') as f:
     data = ujson.load(f)
 
-with open("Files\Demons Castle\Demon_Floor.json", 'r') as f1:
+with open("Files/Player Data/Demon_Floor.json", 'r') as f1:
     floor_data = ujson.load(f1)
 
 total_images, completed_images = count_completed_images(data)
@@ -147,7 +147,7 @@ def start_checking(file_path):
     thread.start()
     return thread, stop_event
 
-json_file_path = "Files/Tabs.json"
+json_file_path = "Files/Player Data/Tabs.json"
 checker_thread, stop_event = start_checking(json_file_path)
 
 atexit.register(stop_event.set)

@@ -62,7 +62,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window, transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -103,7 +103,7 @@ def move_window(event):
         window.lastx, window.lasty = x_root, y_root
 
 
-with open("Files/Demons Castle/Demon_info.csv", "r") as file_opem:
+with open("Files/Temp Files/Demon_info.csv", "r") as file_opem:
     reader = csv.reader(file_opem)
     for row in reader:
         floor = int(row[0])
@@ -154,7 +154,7 @@ def get_act():
     act1=random.choice(str_quest_main_names_list)
     act2=random.choice(str_quest_main_names_list)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
         lvl=data["status"][0]['level']
 
@@ -176,8 +176,8 @@ def get_act():
         amtval2=str_quest_main_names[act2][0]["timeval"]
         amt2_check="time"
     
-    amt1=thesystem.dungeon.dungeon_rank_get(floor_rank, amt1, amt1_check)
-    amt2=thesystem.dungeon.dungeon_rank_get(floor_rank, amt2, amt2_check)
+    amt1=thesystem.dungeon.dungeon_rank_get(floor_rank, amt1, amt1_check, act1)
+    amt2=thesystem.dungeon.dungeon_rank_get(floor_rank, amt2, amt2_check, act2)
 
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
@@ -200,7 +200,7 @@ def get_act():
             amt3=agi_quest_main_names[act3][0]["time"]
             amtval3=agi_quest_main_names[act3][0]["timeval"]
             amt3_check="time"
-        amt3=thesystem.dungeon.dungeon_rank_get(floor_rank, amt3, amt3_check)
+        amt3=thesystem.dungeon.dungeon_rank_get(floor_rank, amt3, amt3_check, act3)
         full_act3_name='- '+act3+' '+str(amt3)+' '+amtval3
 
     if floor_rank!="E" and floor_rank!="D" and floor_rank!="C" and floor_rank!="B": 
@@ -213,7 +213,7 @@ def get_act():
             amtval4=agi_quest_main_names[act4][0]["timeval"]
             amt4_check="time"
 
-        amt4=thesystem.dungeon.dungeon_rank_get(floor_rank, amt4, amt4_check)
+        amt4=thesystem.dungeon.dungeon_rank_get(floor_rank, amt4, amt4_check, act4)
         full_act4_name='- '+act4+' '+str(amt4)+' '+amtval4
 
     canvas.itemconfig(activity1, text=full_act1_name)
@@ -314,36 +314,36 @@ def next():
     mob+=1
 
     if mob==2:
-        with open("Files/Status.json", 'r') as status_read_file:
+        with open("Files/Player Data/Status.json", 'r') as status_read_file:
             status_read_data=ujson.load(status_read_file)
 
         if (floor==25 or floor==50 or floor==75 or floor==100) and (num==53 or num==55):
             XP_val=1000
         else:
-            with open("Files/Demons Castle/Demon_Data.json", "r") as demon_file:
+            with open("Files/Player Data/Demon_Data.json", "r") as demon_file:
                 demons = ujson.load(demon_file)
                 XP_val=demons[name]["XP"]
                 soul_count=demons[name]["soul"]
 
         if final_boss==False:
-            with open("Files/Demons Castle/image_visibility.json", 'r') as f:
+            with open("Files/Player Data/image_visibility.json", 'r') as f:
                 data = ujson.load(f)
                 data['hidden_images'][str(num)]["Completed"]=True
-            with open("Files/Demons Castle/image_visibility.json", 'w') as f:
+            with open("Files/Player Data/image_visibility.json", 'w') as f:
                 ujson.dump(data, f, indent=4)
 
         status_read_data["status"][0]['XP']+=XP_val
-        with open("Files/Demons Castle/Demon_Castle.json", 'r') as fson_fin:
+        with open("Files/Data/Demon_Castle.json", 'r') as fson_fin:
             findata = ujson.load(fson_fin)
             findata['XP']+=XP_val
             findata['Souls']+=soul_count
             if final_boss==True:
                 findata['Final']=True
         
-        with open("Files/Demons Castle/Demon_Castle.json", 'w') as fson_fin:
+        with open("Files/Data/Demon_Castle.json", 'w') as fson_fin:
             ujson.dump(findata, fson_fin, indent=6)
 
-        with open("Files/status.json", 'w') as fson:
+        with open("Files/Player Data/Status.json", 'w') as fson:
             ujson.dump(status_read_data, fson, indent=4)
 
 
@@ -367,7 +367,7 @@ canvas = Canvas(
     relief = "ridge"
 )
 
-with open("Files/Status.json", 'r') as fson:
+with open("Files/Player Data/Status.json", 'r') as fson:
     data=ujson.load(fson)
     lvl=data["status"][0]['level']
 

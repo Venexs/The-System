@@ -70,7 +70,7 @@ def ex_close(win):
 name1=name2=name3=name4=name5=name6='-'
 lvl1=lvl2=lvl3=lvl4=lvl5=lvl6='??'
 
-with open("Files/Skills/Skill.json", 'r') as fson:
+with open("Files/Player Data/Skill.json", 'r') as fson:
     c=0
     try:
         data=ujson.load(fson)

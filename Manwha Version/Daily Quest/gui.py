@@ -33,7 +33,7 @@ import thesystem.dailyquest as dailyquest
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open('Files\Checks\Secret_Quest_Check.json', 'r') as secrer_quest:
+with open('Files\Player Data\Secret_Quest_Check.json', 'r') as secrer_quest:
     secrer_quest_data=ujson.load(secrer_quest)
     day_num=secrer_quest_data["Day"]
     tdy_week_num=datetime.today().weekday()
@@ -68,10 +68,10 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Daily"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
@@ -115,10 +115,10 @@ elif date_from_string==today:
         full_check=True
 
 if full_check==False:
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Daily"]='Open'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -420,7 +420,7 @@ if full_check==False:
         #global pushup_txt
         current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Push"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
 
     def update_situp():
@@ -428,7 +428,7 @@ if full_check==False:
         #global situp_txt
         current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Sit"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_sqat():
@@ -436,7 +436,7 @@ if full_check==False:
         #global situp_txt
         current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Squat"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_run():
@@ -444,7 +444,7 @@ if full_check==False:
         #global run_txt
         current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Run"]+=0.5
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
 
     def update_int():
@@ -452,7 +452,7 @@ if full_check==False:
         #global int_txt
         current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Int_type"]+=0.5
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
 
     def update_sleep():
@@ -460,7 +460,7 @@ if full_check==False:
         #global sleep_txt
         current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Sleep"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
 
     canvas.create_text(

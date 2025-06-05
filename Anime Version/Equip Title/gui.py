@@ -59,7 +59,7 @@ rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank1
 c=0
 
 
-with open("Files/Titles/Titles.json", 'r') as fson:
+with open("Files/Player Data/Titles.json", 'r') as fson:
     data=ujson.load(fson)
     data_key=list(data.keys())
     try:
@@ -144,7 +144,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":

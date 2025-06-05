@@ -62,11 +62,10 @@ target_height = 716
 
 thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
-
 def animate_close():
     thesystem.system.animate_window_close(window, 0, window_width, step=50, delay=1)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -86,8 +85,8 @@ subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 presets_data = thesystem.misc.load_ujson("Files/Mod/presets.json")
 
 
-status_data = thesystem.misc.load_ujson("Files/status.json")
-job_data = thesystem.misc.load_ujson("Files/Data/Job_info.json")
+status_data = thesystem.misc.load_ujson("Files/Player Data/Status.json")
+job_data = thesystem.misc.load_ujson("Files/Player Data/Job_info.json")
 
 def title_chng(event):
     subprocess.Popen(['python', 'Anime Version/Equip Title/gui.py'])
@@ -100,7 +99,7 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def load_fatigue_value():
-    with open('Files/status.json', 'r') as file:
+    with open('Files/Player Data/Status.json', 'r') as file:
         data = json.load(file)
         fatigue = data["status"][0].get("fatigue", 0)
         fatigue_max = data["status"][0].get("fatigue_max", 1)  # Avoid division by zero
@@ -143,7 +142,7 @@ def stop_update_thread_func():
         update_thread.join()  # Wait for the thread to finish
 
 def update_tabs_ujson(status='Open'):
-    tabs_ujson_path = "Files/Tabs.json"
+    tabs_ujson_path = "Files/Player Data/Tabs.json"
     with open(tabs_ujson_path, 'r+') as tab_ujson:
         tab_data = ujson.load(tab_ujson)
         tab_data["Status"] = status
@@ -165,13 +164,13 @@ def ex_close(event=None):
     close_thread.start()
 
 def start_job(event):
-    data = thesystem.misc.load_ujson("Files/Data/Job_info.json")
+    data = thesystem.misc.load_ujson("Files/Player Data/Job_info.json")
     data["status"][0]["job_active"] = 'True'
     date_format = "%Y-%m-%d"
     future_date = (datetime.now() + timedelta(days=1)).strftime(date_format)
     with open("Files/Temp Files/Job_Change Date.csv", 'w', newline='') as file:
         csv.writer(file).writerow([future_date])
-    with open("Files/Data/Job_info.json", 'w') as fson:
+    with open("Files/Player Data/Job_info.json", 'w') as fson:
         ujson.dump(data, fson, indent=4)
 
 # Title color assignment
@@ -230,7 +229,7 @@ image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
     239.0,
-    367.0,
+    350.0,
     image=image_image_2
 )
 
@@ -278,7 +277,7 @@ if re_check==True:
 
 # ? =====================================================================
 def update_stat(stat_name): 
-    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
+    with open("Files\Player Data\Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = status_data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else status_data["avail_eq"][0]["int_based"]
@@ -291,9 +290,9 @@ def update_stat(stat_name):
             status_data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 status_data["status"][0]["fatigue_max"]+=20
-            with open("Files/status.json", 'w') as fson:
+            with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(status_data, fson, indent=6)
-            with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
+            with open("Files\Player Data\Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
                 ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':
@@ -323,7 +322,7 @@ for stat in stat_attributes:
 
 def de_update_str():
     global av_str_based
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
         check_value=data["avail_eq"][0]['str_based']
     if check_value>0:
@@ -336,7 +335,7 @@ def de_update_str():
 
 def de_update_int():
     global av_int_based
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
         check_value=data["avail_eq"][0]['int_based']
     if check_value>0:
@@ -716,7 +715,7 @@ button_8.place(
     height=20.0
 )
 
-with open("Files/Data/Job_info.json", 'r') as stat_fson:
+with open("Files/Player Data/Job_info.json", 'r') as stat_fson:
     stat_data=ujson.load(stat_fson)
 
 if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
@@ -724,6 +723,16 @@ if stat_data["status"][0]["job_active"]=='False' and lvl>=40:
     canvas.itemconfig("Job", state="normal")
 else:
     canvas.itemconfig("Job", state="hidden")
+
+image_image_24 = PhotoImage(
+    file=relative_to_assets("image_24.png"))
+image_24 = canvas.create_image(
+    261.0,
+    112.0,
+    image=image_image_24
+)
+
+canvas.tag_bind(image_24, "<ButtonPress-1>", lambda event: thesystem.system.info_open("ABI Points"))
 
 start_update_thread(canvas, fatigue_val)
 window.resizable(False, False)

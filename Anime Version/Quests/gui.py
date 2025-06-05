@@ -29,10 +29,10 @@ import thesystem.system
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Quest"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -69,7 +69,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -107,10 +107,10 @@ def ex_close(win):
     if setting_data["Settings"]["Performernce (ANIME):"] != "True":
         stop_event.set()
         update_thread.join()
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Quest"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
@@ -172,7 +172,7 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-with open("Files/Quests/Active_Quests.json", 'r') as fson:
+with open("Files/Player Data/Active_Quests.json", 'r') as fson:
     main_data=ujson.load(fson)
     main_keys=list(main_data.keys())
 
@@ -770,7 +770,7 @@ canvas.create_rectangle(
 
 canvas.create_rectangle(
     0.0,
-    0.0,
+    0.0,    
     640.0,
     49.0,
     fill=transp_clr,
@@ -784,7 +784,7 @@ canvas.create_rectangle(
     950.0,
     640.0,
     825.0,
-    fill="#0C679B",
+    fill=transp_clr,
     outline="")
 
 image_50 = thesystem.system.side_bar("right_bar.png", (81, 680))

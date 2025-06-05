@@ -73,6 +73,15 @@ def get_stuff_path(key):
     full_path=get_stuff_path_str+'/'+key
     return full_path
 
+def get_quest_img(rank):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data=ujson.load(themefile)
+        theme=theme_data["Theme"]
+    path = f"Files\\Mod\\default\\{theme}\\Quest img\\{rank}.png"
+    image = Image.open(path)
+    image = image.resize((105, 105), Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(image)
+
 if typeof == "Learn":
         
     two_title=False
@@ -97,7 +106,7 @@ if typeof == "Learn":
     other_seg=[]
     segment_length = 52
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -149,7 +158,7 @@ if typeof == "Learn":
 
                 rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -202,8 +211,7 @@ if typeof == "Learn":
         image=image_image_3
     )
 
-    image_image_4 = PhotoImage(
-        file=get_stuff_path("image.png"))
+    image_image_4 = get_quest_img(rank)
     image_4 = canvas.create_image(
         92.0,
         135.0,
@@ -678,7 +686,7 @@ elif typeof == "Common":
     segments = []
     segment_length = 77
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -707,7 +715,7 @@ elif typeof == "Common":
 
                 rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -770,8 +778,7 @@ elif typeof == "Common":
         image=image_image_3
     )
 
-    image_image_4 = PhotoImage(
-        file=get_stuff_path("image.png"))
+    image_image_4 = get_quest_img(rank)
     image_4 = canvas.create_image(
         92.0,
         130.0,
@@ -1202,7 +1209,7 @@ elif typeof == "Unknown":
     segments = []
     segment_length = 77
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -1223,7 +1230,7 @@ elif typeof == "Unknown":
 
                     rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", "r") as f:
+    with open("Files/Player Data/Status.json", "r") as f:
         data2=ujson.load(f)
         level=data2["status"][0]["level"]
 
@@ -1267,8 +1274,7 @@ elif typeof == "Unknown":
         image=image_image_3
     )
 
-    image_image_4 = PhotoImage(
-        file=get_stuff_path("image.png"))
+    image_image_4 = get_quest_img(rank)
     image_4 = canvas.create_image(
         92.0,
         155.0,

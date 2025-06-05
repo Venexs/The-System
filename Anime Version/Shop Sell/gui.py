@@ -126,7 +126,7 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
-with open("Files/Inventory.json", 'r') as fson:
+with open("Files/Player Data/Inventory.json", 'r') as fson:
     data=ujson.load(fson)
 
 rol=list(data.keys())

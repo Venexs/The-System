@@ -48,21 +48,21 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 def complete():
-    with open("Files/Checks/Ability_Check.json", 'r') as ability_check_file:
+    with open("Files\Player Data\Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
     
-    with open("Files/Checks/Ability_Check.json", 'w') as fin_ability_check_file:
+    with open("Files\Player Data\Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
         ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 
-    with open("Files/Data/Job_info.json", 'r') as stat_fson:
+    with open("Files/Player Data/Job_info.json", 'r') as stat_fson:
         stat_data=ujson.load(stat_fson)
 
     stat_data["status"][1][abi]+=1
-    with open("Files/Data/Job_info.json", 'w') as final_stat_fson:
+    with open("Files/Player Data/Job_info.json", 'w') as final_stat_fson:
         ujson.dump(stat_data, final_stat_fson, indent=4)
     
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
         abi_l=abi.lower()
 
@@ -73,7 +73,7 @@ def complete():
         data["status"][0][abi_l]+=1
         data["avail_eq"][0][abi_2]-=1
 
-    with open("Files/status.json", 'w') as fin_fson:
+    with open("Files/Player Data/Status.json", 'w') as fin_fson:
         ujson.dump(data, fin_fson, indent=4)
     ex_close(window)
 

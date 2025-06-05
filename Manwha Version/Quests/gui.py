@@ -30,10 +30,10 @@ subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Quest"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -82,10 +82,10 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Quest"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
@@ -133,7 +133,7 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-with open("Files/Quests/Active_Quests.json", 'r') as fson:
+with open("Files/Player Data/Active_Quests.json", 'r') as fson:
     main_data=ujson.load(fson)
     main_keys=list(main_data.keys())
 

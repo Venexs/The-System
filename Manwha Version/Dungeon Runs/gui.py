@@ -92,7 +92,7 @@ def get_act():
     act1=random.choice(str_quest_main_names_list)
     act2=random.choice(str_quest_main_names_list)
 
-    with open("Files/status.json", 'r') as fson:
+    with open("Files/Player Data/Status.json", 'r') as fson:
         data=ujson.load(fson)
         lvl=data["status"][0]['level']
 
@@ -114,8 +114,8 @@ def get_act():
         amtval2=str_quest_main_names[act2][0]["timeval"]
         amt2_check="time"
     
-    amt1=thesystem.dungeon.dungeon_rank_get(rank, amt1, amt1_check)
-    amt2=thesystem.dungeon.dungeon_rank_get(rank, amt2, amt2_check)
+    amt1=thesystem.dungeon.dungeon_rank_get(rank, amt1, amt1_check, act1)
+    amt2=thesystem.dungeon.dungeon_rank_get(rank, amt2, amt2_check, act2)
 
     full_act1_name='- '+act1+' '+str(amt1)+' '+amtval1
     full_act2_name='- '+act2+' '+str(amt2)+' '+amtval2
@@ -138,7 +138,7 @@ def get_act():
             amt3=agi_quest_main_names[act3][0]["time"]
             amtval3=agi_quest_main_names[act3][0]["timeval"]
             amt3_check="time"
-        amt3=thesystem.dungeon.dungeon_rank_get(rank, amt3, amt3_check)
+        amt3=thesystem.dungeon.dungeon_rank_get(rank, amt3, amt3_check, act3)
         full_act3_name='- '+act3+' '+str(amt3)+' '+amtval3
 
     if thesystem.system.give_ranking(lvl)!="E" and thesystem.system.give_ranking(lvl)!="D" and thesystem.system.give_ranking(lvl)!="C" and thesystem.system.give_ranking(lvl)!="B": 
@@ -151,7 +151,7 @@ def get_act():
             amtval4=agi_quest_main_names[act4][0]["timeval"]
             amt4_check="time"
 
-        amt4=thesystem.dungeon.dungeon_rank_get(rank, amt4, amt4_check)
+        amt4=thesystem.dungeon.dungeon_rank_get(rank, amt4, amt4_check, act4)
         full_act4_name='- '+act4+' '+str(amt4)+' '+amtval4
 
     canvas.itemconfig(activity1, text=full_act1_name)
@@ -253,7 +253,7 @@ def next():
     mob+=1
 
     if mob==4:
-        with open("Files/Status.json", 'r') as status_read_file:
+        with open("Files/Player Data/Status.json", 'r') as status_read_file:
             status_read_data=ujson.load(status_read_file)
 
         if rew_rank=='E':
@@ -280,7 +280,7 @@ def next():
             status_read_data["avail_eq"][0]['int_based']+=avp
             status_read_data["status"][0]['XP']+=XP_val
             status_read_data["status"][0]['coins']+=coin
-            with open("Files/status.json", 'w') as fson:
+            with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
@@ -292,7 +292,7 @@ def next():
             status_read_data["status"][0]['coins']+=(coin*2)
             status_read_data["avail_eq"][0]['str_based']+=(avp*2)
             status_read_data["avail_eq"][0]['int_based']+=(avp*2)
-            with open("Files/status.json", 'w') as fson:
+            with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(status_read_data, fson, indent=4)
 
             with open("Files/Checks/Message.csv", 'w', newline='') as check_file:

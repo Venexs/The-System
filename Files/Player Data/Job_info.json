@@ -1,0 +1,24 @@
+{
+    "status": [
+        {
+            "job_active": "False",
+            "job_check": "False",
+            "job_confirm": "False"
+        },
+        {
+            "STR": 1,
+            "AGI": 1,
+            "VIT": 1,
+            "INT": 1,
+            "PER": 1,
+            "MAN": 1,
+            "plSTR": 0,
+            "plAGI": 0,
+            "plVIT": 0,
+            "plINT": 0,
+            "plPER": 0,
+            "plMAN": 0,
+            "job_confirm": "False"
+        }
+    ]
+}

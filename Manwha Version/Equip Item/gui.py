@@ -30,9 +30,9 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 ASSETS_PATH = OUTPUT_PATH / "assets/frame0"
 EQUIPMENT_TEMP_FILE = 'Files/Temp Files/Equipment Temp.csv'
-INVENTORY_FILE = 'Files/Inventory.json'
+INVENTORY_FILE = 'Files/Player Data/Inventory.json'
 EQUIPMENT_FILE = 'Files/Equipment.json'
-STATUS_FILE = 'Files/status.json'
+STATUS_FILE = 'Files/Player Data/Status.json'
 PRESETS_FILE = "Files/Mod/presets.json"
 
 
@@ -102,7 +102,7 @@ with open('Files/Temp Files/Equipment Temp.csv', 'r') as fop:
         except:
             print()
     
-with open('Files/Inventory.json', 'r') as fout:
+with open('Files/Player Data/Inventory.json', 'r') as fout:
     data=ujson.load(fout)
     rol=list(data.keys())
 c = 0

@@ -31,10 +31,10 @@ import thesystem.dungeon as dungeonbk
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Dungeons"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -72,10 +72,10 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Dungeons"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
@@ -332,6 +332,16 @@ image_18 = canvas.create_image(
 
 canvas.tag_bind(image_18, "<ButtonPress-1>", start_move)
 canvas.tag_bind(image_18, "<B1-Motion>", move_window)
+
+image_image_19 = PhotoImage(
+    file=relative_to_assets("image_19.png"))
+image_19 = canvas.create_image(
+    199.0,
+    48.0,
+    image=image_image_19
+)
+
+canvas.tag_bind(image_19, "<ButtonPress-1>", lambda event: thesystem.system.info_open("Dungeons"))
 
 window.resizable(False, False)
 window.mainloop()

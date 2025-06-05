@@ -4,7 +4,7 @@ from datetime import datetime
 import csv
 
 def dailys_init():
-    with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
+    with open("Files/Player Data/Daily_Quest.json", 'r') as daily_quest_file:
         daily_quest_data=ujson.load(daily_quest_file)
         # ? =======================================================
         # ? Players
@@ -37,7 +37,7 @@ def dailys_init():
     return [[daily_quest_data], [pl_push, pl_sit, pl_sqat, pl_run, pl_int, pl_slp], [fl_push, fl_sit, fl_sqat, fl_run, fl_int, fl_slp], [push_name, sit_name, squat_name, run_name, int_name, slp_name]]
 
 def get_rank():
-    with open("Files/status.json", 'r') as rank_check_file:
+    with open("Files/Player Data/Status.json", 'r') as rank_check_file:
         rank_check_data=ujson.load(rank_check_file)
         lvl=rank_check_data["status"][0]['level']
 
@@ -72,14 +72,14 @@ def get_check_rew():
         return [reward, type_re]
 
 def get_streak():
-    with open("Files/Data/Daily_Quest.json", 'r') as streak_file:
+    with open("Files/Player Data/Daily_Quest.json", 'r') as streak_file:
         streak_file_data = ujson.load(streak_file)
         streak=streak_file_data["Streak"]["Value"]
     return streak
 
 def get_titles():
     streak=get_streak()
-    with open("Files/Titles/Title_list.json", "r") as list_of_titles:
+    with open("Files/Data/Title_list.json", "r") as list_of_titles:
         list_of_titles_data=ujson.load(list_of_titles)
         list_of_titles_keys=list(list_of_titles_data.keys())
 
@@ -109,13 +109,13 @@ def daily_preview(window):
     with open("Files/Temp Files/Daily Rewards.csv", 'w', newline='') as rew_csv_open:
             rew_fw=csv.writer(rew_csv_open)
             rew_fw.writerow(["Preview"])
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
 
 def check_daily_comp(today_date_str, window):
-    with open("Files/Data/Daily_Quest.json", 'r') as daily_quest_file:
+    with open("Files/Player Data/Daily_Quest.json", 'r') as daily_quest_file:
         daily_quest_data = ujson.load(daily_quest_file)
         
         # Player's daily progress
@@ -139,7 +139,7 @@ def check_daily_comp(today_date_str, window):
         float_step = daily_quest_data["Steps"][0]
         int_step = daily_quest_data["Steps"][1]
 
-    with open('Files/Checks/Secret_Quest_Check.json', 'r') as secrer_quest:
+    with open('Files/Player Data/Secret_Quest_Check.json', 'r') as secrer_quest:
         secrer_quest_data = ujson.load(secrer_quest)
         day_num = secrer_quest_data["Day"]
         tdy_week_num = datetime.today().weekday()
@@ -171,7 +171,7 @@ def check_daily_comp(today_date_str, window):
                 daily_quest_data["Streak"]["Greater_value"]+=1
 
                 # Save the updated quest data
-                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                with open("Files/Player Data/Daily_Quest.json", 'w') as final_daily_quest_file:
                     ujson.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
                 # Record the completion time check
@@ -185,16 +185,16 @@ def check_daily_comp(today_date_str, window):
                     rew_fw.writerow(["Secret"])
 
                 # Execute the reward GUI based on the theme
-                with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                     theme_data = ujson.load(themefile)
                     theme = theme_data["Theme"]
                 subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
 
                 # Close the daily quest tab
-                with open("Files/Tabs.json", 'r') as tab_son:
+                with open("Files/Player Data/Tabs.json", 'r') as tab_son:
                     tab_son_data = ujson.load(tab_son)
 
-                with open("Files/Tabs.json", 'w') as fin_tab_son:
+                with open("Files/Player Data/Tabs.json", 'w') as fin_tab_son:
                     tab_son_data["Daily"] = 'Close'
                     ujson.dump(tab_son_data, fin_tab_son, indent=4)
 
@@ -236,7 +236,7 @@ def check_daily_comp(today_date_str, window):
                         daily_quest_data["Streak"]["Value"] += 1
 
                 # Save the updated quest data
-                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                with open("Files/Player Data/Daily_Quest.json", 'w') as final_daily_quest_file:
                     ujson.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
                 # Record the completion time check
@@ -245,16 +245,16 @@ def check_daily_comp(today_date_str, window):
                     fw1.writerow([today_date_str, "True", "Complete"])
 
                 # Execute the reward GUI based on the theme
-                with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                     theme_data = ujson.load(themefile)
                     theme = theme_data["Theme"]
                 subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
 
                 # Close the daily quest tab
-                with open("Files/Tabs.json", 'r') as tab_son:
+                with open("Files/Player Data/Tabs.json", 'r') as tab_son:
                     tab_son_data = ujson.load(tab_son)
 
-                with open("Files/Tabs.json", 'w') as fin_tab_son:
+                with open("Files/Player Data/Tabs.json", 'w') as fin_tab_son:
                     tab_son_data["Daily"] = 'Close'
                     ujson.dump(tab_son_data, fin_tab_son, indent=4)
 
@@ -297,7 +297,7 @@ def check_daily_comp(today_date_str, window):
                         daily_quest_data["Streak"]["Value"] += 1
 
                 # Save the updated quest data
-                with open("Files/Data/Daily_Quest.json", 'w') as final_daily_quest_file:
+                with open("Files/Player Data/Daily_Quest.json", 'w') as final_daily_quest_file:
                     ujson.dump(daily_quest_data, final_daily_quest_file, indent=4)
 
                 # Record the completion time check
@@ -306,19 +306,16 @@ def check_daily_comp(today_date_str, window):
                     fw1.writerow([today_date_str, "True", "Complete"])
 
                 # Execute the reward GUI based on the theme
-                with open('Files/Data/Theme_Check.json', 'r') as themefile:
+                with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                     theme_data = ujson.load(themefile)
                     theme = theme_data["Theme"]
-                if theme=="Anime":
-                    subprocess.Popen(['python', "Anime Version/New Items/gui.py"])
-                else:  
-                    subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
+                subprocess.Popen(['python', f'{theme} Version/Daily Quest Rewards/gui.py'])
 
                 # Close the daily quest tab
-                with open("Files/Tabs.json", 'r') as tab_son:
+                with open("Files/Player Data/Tabs.json", 'r') as tab_son:
                     tab_son_data = ujson.load(tab_son)
 
-                with open("Files/Tabs.json", 'w') as fin_tab_son:
+                with open("Files/Player Data/Tabs.json", 'w') as fin_tab_son:
                     tab_son_data["Daily"] = 'Close'
                     ujson.dump(tab_son_data, fin_tab_son, indent=4)
 

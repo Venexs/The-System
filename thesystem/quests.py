@@ -9,7 +9,7 @@ from PIL import Image, ImageTk
 
 def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
     try:
-        with open("Files/Quests/Active_Quests.json", 'r') as active_quests_file:
+        with open("Files/Player Data/Active_Quests.json", 'r') as active_quests_file:
             activ_quests=ujson.load(active_quests_file)
             name_of_activ_quests=list(activ_quests.keys())
             activ_quests_vals=0
@@ -18,7 +18,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
     except:
         name_of_activ_quests=[]
     
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
 
@@ -43,7 +43,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
 
         id_val=random.randrange(1,999999)
 
-        with open("Files/Quests/Quest_Desc.json", 'r') as quest_desc_file:
+        with open("Files/Data/Quest_Desc.json", 'r') as quest_desc_file:
             quest_desc=ujson.load(quest_desc_file)
             if rank in ["E", "D"]:
                 desc_list=quest_desc["Easy"]
@@ -104,7 +104,7 @@ def quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window):
 
         activ_quests[quest_name]=detail
 
-        with open("Files/Quests/Active_Quests.json", 'w') as fin_active_quest_file:
+        with open("Files/Player Data/Active_Quests.json", 'w') as fin_active_quest_file:
             ujson.dump(activ_quests, fin_active_quest_file, indent=6)
 
     else:
@@ -118,10 +118,11 @@ def quest_reward(window,dicts,rank,name,special=False):
     rol=list(dicts.keys())
     for k in rol:
         if k=="LVLADD":
-            with open("Files/Status.json", 'r') as fson:
+            with open("Files/Player Data/Status.json", 'r') as fson:
                     data_status=ujson.load(fson)
             
-            for k in range(dicts[k]):                
+            old_level=data_status["status"][0]['level']
+            for k in range(dicts[k]):
                 data_status["status"][0]['level']+=1
                 data_status["status"][0]['str']+=1
                 data_status["status"][0]['agi']+=1
@@ -133,6 +134,9 @@ def quest_reward(window,dicts,rank,name,special=False):
                 data_status["status"][0]['fatigue_max']+=40
                 if special!=True:
                     data_status["status"][0]['fatigue']+=thesystem.system.give_fatigue_from_rank(rank)
+            
+            new_level=data_status["status"][0]['level']
+            thesystem.system.rank_up(old_level,new_level)
                 
             if rank=="E":
                 data_status["status"][0]['XP']+=10
@@ -149,31 +153,31 @@ def quest_reward(window,dicts,rank,name,special=False):
             else:
                 data_status["status"][0]['XP']+=1000
 
-            with open("Files/status.json", 'w') as fson:
+            with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(data_status, fson, indent=4)
-            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                 theme_data=ujson.load(themefile)
                 theme=theme_data["Theme"]
             subprocess.Popen(['python', f'{theme} Version/Leveled up/gui.py'])
 
         elif k=="STRav":
             for k in range(dicts[k]):
-                with open("Files/Status.json", 'r') as fson:
+                with open("Files/Player Data/Status.json", 'r') as fson:
                     data_status_2=ujson.load(fson)
                     
                     data_status_2["avail_eq"][0]['str_based']+=1
 
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(data_status_2, fson, indent=4)
 
         elif k=="INTav":
             for k in range(dicts[k]):
-                with open("Files/Status.json", 'r') as fson:
+                with open("Files/Player Data/Status.json", 'r') as fson:
                     data_status_3=ujson.load(fson)
                     
                     data_status_3["avail_eq"][0]['int_based']+=1
 
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(data_status_3, fson, indent=4)
 
         else:
@@ -183,7 +187,7 @@ def quest_reward(window,dicts,rank,name,special=False):
                 item=data_inv[k]
                 name_of_item=k
             
-            with open("Files/Inventory.json", 'r') as fson:
+            with open("Files/Player Data/Inventory.json", 'r') as fson:
                 data_fininv=ujson.load(fson)
                 key_data=list(data_fininv.keys())
 
@@ -197,18 +201,18 @@ def quest_reward(window,dicts,rank,name,special=False):
             elif check==False:
                 data_fininv[name_of_item]=item
 
-            with open("Files/Inventory.json", 'w') as finaladdon:
+            with open("Files/Player Data/Inventory.json", 'w') as finaladdon:
                 ujson.dump(data_fininv, finaladdon, indent=6)
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fols:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fols:
         quests=ujson.load(fols)
 
     del quests[name]
 
-    with open("Files/Quests/Active_Quests.json", 'w') as folas: 
+    with open("Files/Player Data/Active_Quests.json", 'w') as folas: 
         ujson.dump(quests, folas, indent=6)
 
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     
@@ -234,15 +238,15 @@ def quest_reward(window,dicts,rank,name,special=False):
     window.quit()
 
 def abandon_quest(name,window):
-    with open("Files/Quests/Active_Quests.json", 'r') as fols:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fols:
         quests=ujson.load(fols)
 
     del quests[name]
 
-    with open("Files/Quests/Active_Quests.json", 'w') as fols:
+    with open("Files/Player Data/Active_Quests.json", 'w') as fols:
         ujson.dump(quests, fols, indent=6)
 
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     subprocess.Popen(['python', f'{theme} Version/Quests/gui.py'])
@@ -250,7 +254,7 @@ def abandon_quest(name,window):
     window.quit()
 
 def get_quest_image(rank,typel):
-    with open('Files/Data/Theme_Check.json', 'r') as themefile:
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
     if rank!='-' and typel!='-':
@@ -290,7 +294,7 @@ def get_quest_image(rank,typel):
 
 def open_write_quest(name,id,type,window):
     if name!="-":
-        with open('Files/Data/Theme_Check.json', 'r') as themefile:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
         with open("Files/Temp Files/Quest Temp.csv", 'w', newline='') as csv_open:
@@ -300,10 +304,10 @@ def open_write_quest(name,id,type,window):
 
         subprocess.Popen(['python', f'{theme} Version/Quest Info/gui.py'])
 
-        with open("Files/Tabs.json",'r') as tab_son:
+        with open("Files/Player Data/Tabs.json",'r') as tab_son:
             tab_son_data=ujson.load(tab_son)
 
-        with open("Files/Tabs.json",'w') as fin_tab_son:
+        with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
             tab_son_data["Quest"]='Close'
             ujson.dump(tab_son_data,fin_tab_son,indent=4)
 

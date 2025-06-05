@@ -24,10 +24,10 @@ import thesystem.inventory
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Inventory"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -64,10 +64,10 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Inventory"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
@@ -130,7 +130,7 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-with open("Files/Inventory.json", 'r') as fson:
+with open("Files/Player Data/Inventory.json", 'r') as fson:
     data=ujson.load(fson)
 
 rol=list(data.keys())

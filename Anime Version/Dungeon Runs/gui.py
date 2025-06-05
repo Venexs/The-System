@@ -812,7 +812,7 @@ class DungeonSystem:
         
         # Update XP and rewards in records
         try:
-            with open("Files/Status.json", 'r') as status_read_file:
+            with open("Files/Player Data/Status.json", 'r') as status_read_file:
                 status_read_data = ujson.load(status_read_file)
 
             # Define rewards based on rank
@@ -841,7 +841,7 @@ class DungeonSystem:
                 status_read_data["avail_eq"][0]['int_based'] += avp
                 status_read_data["status"][0]['XP'] += self.XP_val
                 status_read_data["status"][0]['coins'] += coin
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(status_read_data, fson, indent=4)
                 with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                     check_fw = csv.writer(check_file)
@@ -851,7 +851,7 @@ class DungeonSystem:
                 status_read_data["status"][0]['coins'] += (coin * 2)
                 status_read_data["avail_eq"][0]['str_based'] += (avp * 2)
                 status_read_data["avail_eq"][0]['int_based'] += (avp * 2)
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(status_read_data, fson, indent=4)
                 with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                     check_fw = csv.writer(check_file)

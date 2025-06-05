@@ -40,7 +40,7 @@ with open("Files/Temp Files/Shop Sell Temp.csv", 'r') as csv_open:
     for k in fr:
         name=k[0]
 
-with open("Files/Inventory.json", 'r') as file_check_op:
+with open("Files/Player Data/Inventory.json", 'r') as file_check_op:
     inv_main_data=ujson.load(file_check_op)
     inv_main_data_keys=list(inv_main_data.keys())
     
@@ -58,10 +58,10 @@ with open("Files/Inventory.json", 'r') as file_check_op:
         desc2 = segments[1]
 
 def selling():
-    with open("Files/status.json", 'r') as read_status_file:
+    with open("Files/Player Data/Status.json", 'r') as read_status_file:
         read_status_file_data=ujson.load(read_status_file)
 
-    with open("Files/Inventory.json", 'r') as fin_inv_fson:
+    with open("Files/Player Data/Inventory.json", 'r') as fin_inv_fson:
         fin_inv_data=ujson.load(fin_inv_fson)
 
         fin_inv_data[k][0]["qty"]-=1
@@ -70,10 +70,10 @@ def selling():
             del fin_inv_data[k]
             closing=True
 
-    with open("Files/Inventory.json", 'w') as finaladdon_inv:
+    with open("Files/Player Data/Inventory.json", 'w') as finaladdon_inv:
         ujson.dump(fin_inv_data, finaladdon_inv, indent=6)
 
-    with open("Files/status.json", 'w') as write_status_file:
+    with open("Files/Player Data/Status.json", 'w') as write_status_file:
         read_status_file_data["status"][0]['coins']+=int(val)
         ujson.dump(read_status_file_data, write_status_file, indent=4)
 

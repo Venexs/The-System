@@ -82,7 +82,7 @@ def move_window(event):
 def ex_close(win):
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    subprocess.Popen(['python', 'Manwha Version\Inventory\gui.py'])
+    subprocess.Popen(['python', 'Manwha Version/Inventory/gui.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 typs='Item'
 
@@ -96,7 +96,7 @@ with open('Files/Temp Files/Inventory temp.csv', 'r') as fout:
         except:
             typs='Item'
 
-with open('Files/Equipment.json', 'r') as eq_fout:
+with open('Files/Player Data/Equipment.json', 'r') as eq_fout:
     eq_data=ujson.load(eq_fout)
 
 # Example usage:
@@ -104,7 +104,7 @@ equiipment_check = equipment.find_item_slot(name, eq_data)
 equiipment_check_bool=equiipment_check[1]
 
 if typs=='Item':
-    with open("Files/Inventory.json", 'r') as fson:
+    with open("Files/Player Data/Inventory.json", 'r') as fson:
         data=ujson.load(fson)
         dat_keys=list(data.keys())
 

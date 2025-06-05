@@ -35,7 +35,7 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
-secrer_quest_data=thesystem.misc.load_ujson("Files/Checks/Secret_Quest_Check.json")
+secrer_quest_data=thesystem.misc.load_ujson("Files/Player Data/Secret_Quest_Check.json")
 day_num=secrer_quest_data["Day"]
 tdy_week_num=datetime.today().weekday()
 stop_event=threading.Event()
@@ -148,7 +148,7 @@ if full_check==False:
 
     thesystem.system.make_window_transparent(window,transp_clr)
 
-    with open("Files/Settings.json", 'r') as settings_open:
+    with open("Files/Player Data/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
 
     if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -455,7 +455,7 @@ if full_check==False:
         #global pushup_txt
         current_text=int((((canvas.itemcget(pushup_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Push"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(pushup_txt, text=f"[{current_text+1}/{fl_push}]")
 
     def update_situp():
@@ -463,7 +463,7 @@ if full_check==False:
         #global situp_txt
         current_text=int((((canvas.itemcget(situp_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Sit"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(situp_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_sqat():
@@ -471,7 +471,7 @@ if full_check==False:
         #global situp_txt
         current_text=int((((canvas.itemcget(squat_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Squat"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(squat_txt, text=f"[{current_text+1}/{fl_sit}]")
 
     def update_run():
@@ -479,7 +479,7 @@ if full_check==False:
         #global run_txt
         current_text=float((((canvas.itemcget(run_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Run"]+=0.5
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(run_txt, text=f"[{current_text+0.5}/{fl_run}]")
 
     def update_int():
@@ -487,7 +487,7 @@ if full_check==False:
         #global int_txt
         current_text=float((((canvas.itemcget(int_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Int_type"]+=0.5
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(int_txt, text=f"[{current_text+0.5}/{fl_int}]")
 
     def update_sleep():
@@ -495,7 +495,7 @@ if full_check==False:
         #global sleep_txt
         current_text=int((((canvas.itemcget(sleep_txt, "text")).split("/"))[0])[1:])
         daily_quest_data["Player"]["Sleep"]+=1
-        thesystem.misc.dump_ujson("Files/Data/Daily_Quest.json", daily_quest_data, indents=4)
+        thesystem.misc.dump_ujson("Files/Player Data/Daily_Quest.json", daily_quest_data, indents=4)
         canvas.itemconfig(sleep_txt, text=f"[{current_text+1}/{fl_slp}]")
 
     canvas.create_text(

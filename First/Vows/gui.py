@@ -102,7 +102,7 @@ def keep(eve):
 def remove(eve):
     subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
     
-    file_path= "Files/Data/Vow_status.json"
+    file_path= "Files/Player Data/Vow_status.json"
     # Create the file
     with open(file_path, 'w') as file:
         ujson.dump({"Vow": True}, file, indent=4)  # Create an empty file

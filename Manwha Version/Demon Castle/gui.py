@@ -31,17 +31,17 @@ subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Castle"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
 run_once_val=False
 
 # Path to the ujson file
-ujson_file_path = "Files/Demons Castle/image_visibility.json"
+ujson_file_path = "Files/Player Data/image_visibility.json"
 
 # Load visibility data
 data = thesystem.castle.load_image_visibility(ujson_file_path, run_once_val)
@@ -53,10 +53,10 @@ floor=data[1]
 file_num=0
 
 try:
-    with open("Files/Demons Castle/Demon_Castle.json", 'r') as castle_file:
+    with open("Files/Data/Demon_Castle.json", 'r') as castle_file:
         castle_data = ujson.load(castle_file)
 except:
-    with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
+    with open("Files/Data/Demon_Castle.json", 'w') as castle_file:
         castle_data={"Souls":0,"XP":0,"Rewards":False,"Final":False}
         ujson.dump(castle_data,castle_file, indent=4)
 
@@ -104,7 +104,7 @@ rewards=castle_data["Rewards"]
 final=castle_data["Final"]
 
 if soul_count>=10000 and rewards==False:
-    with open("Files/Demons Castle/Demon_Castle.json", 'w') as castle_file:
+    with open("Files/Data/Demon_Castle.json", 'w') as castle_file:
         castle_data["Rewards"]=True
         ujson.dump(castle_data,castle_file, indent=4)
     
@@ -122,10 +122,10 @@ def move_window(event):
         window.lastx, window.lasty = x_root, y_root
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Castle"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()

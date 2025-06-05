@@ -32,10 +32,10 @@ import thesystem.misc
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Dungeons"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -67,7 +67,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -111,10 +111,10 @@ def ex_close(win):
     if setting_data["Settings"]["Performernce (ANIME):"] != "True":
         stop_event.set()
         update_thread.join()
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Dungeons"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
@@ -436,5 +436,16 @@ image_21 = canvas.create_image(
     597.0,
     image=image_image_21
 )
+
+image_image_22 = PhotoImage(
+    file=relative_to_assets("image_22.png"))
+image_22 = canvas.create_image(
+    247.0,
+    75.0,
+    image=image_image_22
+)
+
+canvas.tag_bind(image_22, "<ButtonPress-1>", lambda event: thesystem.system.info_open("Dungeons"))
+
 window.resizable(False, False)
 window.mainloop()

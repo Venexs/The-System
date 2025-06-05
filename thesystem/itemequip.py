@@ -20,9 +20,9 @@ import thesystem.system
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / "assets/frame0"
 EQUIPMENT_TEMP_FILE = 'Files/Temp Files/Equipment Temp.csv'
-INVENTORY_FILE = 'Files/Inventory.json'
-EQUIPMENT_FILE = 'Files/Equipment.json'
-STATUS_FILE = 'Files/status.json'
+INVENTORY_FILE = 'Files/Player Data/Inventory.json'
+EQUIPMENT_FILE = 'Files/Player Data/Equipment.json'
+STATUS_FILE = 'Files/Player Data/Status.json'
 PRESETS_FILE = "Files/Mod/presets.json"
 
 # Utility Functions
@@ -94,10 +94,10 @@ def handle_selection(val, name, cat, window, dat1, dat2, dat3, dat4, dat5):
 def equip_item(cat,item_full_data, window):
 
     if cat!="ORDER":
-        with open('Files/Inventory.json', 'r') as fout:
+        with open('Files/Player Data/Inventory.json', 'r') as fout:
             data=ujson.load(fout)
             rol=list(data.keys())
-        with open('Files/Equipment.json', 'r') as first_equipment_file:
+        with open('Files/Player Data/Equipment.json', 'r') as first_equipment_file:
             first_equipment_file_data=ujson.load(first_equipment_file)
             if first_equipment_file_data[cat]!={}:
                 item_old_name=list(first_equipment_file_data[cat].keys())[0]
@@ -177,7 +177,7 @@ def equip_item(cat,item_full_data, window):
                 except:
                     print("",end='')
 
-                with open("Files/status.json", 'r') as status_file_eq:
+                with open("Files/Player Data/Status.json", 'r') as status_file_eq:
                     status_file_eq_data=ujson.load(status_file_eq)
                     try:
                         status_file_eq_data["equipment"][0][oldbuff_1_name]=-oldbuff1_value
@@ -193,21 +193,21 @@ def equip_item(cat,item_full_data, window):
 
                 first_equipment_file_data[cat]={}
 
-                with open('Files/Equipment.json', 'w') as second_write_equipment_file:
+                with open('Files/Player Data/Equipment.json', 'w') as second_write_equipment_file:
                     ujson.dump(first_equipment_file_data, second_write_equipment_file, indent=6)
 
-                with open('Files/status.json', 'w') as second_write_status_file:
+                with open('Files/Player Data/Status.json', 'w') as second_write_status_file:
                     ujson.dump(status_file_eq_data, second_write_status_file, indent=4)
 
         if cat in ["HELM", "CHESTPLATE", "FIRST GAUNTLET", "SECOND GAUNTLET", "BOOTS", "COLLAR", "RING"]:
-            with open('Files/Equipment.json', 'r') as finale_equip:
+            with open('Files/Player Data/Equipment.json', 'r') as finale_equip:
                 finale_equip_data=ujson.load(finale_equip)
                 finale_equip_data[cat]=item_full_data
 
-            with open('Files/Equipment.json', 'w') as inject:
+            with open('Files/Player Data/Equipment.json', 'w') as inject:
                 ujson.dump(finale_equip_data, inject, indent=6)
 
-            with open('Files/Equipment.json', 'r') as second_equipment_file:
+            with open('Files/Player Data/Equipment.json', 'r') as second_equipment_file:
                 second_equipment_file_data=ujson.load(second_equipment_file)
                 item_new_name=list(second_equipment_file_data[cat].keys())[0]
                 new_item_buff_main=list(second_equipment_file_data[cat][item_new_name][0]["buff"].keys())
@@ -287,7 +287,7 @@ def equip_item(cat,item_full_data, window):
                 except:
                     print("",end='')
 
-                with open("Files/status.json", 'r') as status2_file_eq:
+                with open("Files/Player Data/Status.json", 'r') as status2_file_eq:
                     status2_file_eq_data=ujson.load(status2_file_eq)
                     try:
                         status2_file_eq_data["equipment"][0][newbuff_1_name]=status2_file_eq_data["equipment"][0][newbuff_1_name]+newbuff1_value
@@ -301,16 +301,16 @@ def equip_item(cat,item_full_data, window):
                     except:
                         print()
 
-                with open('Files/Equipment.json', 'w') as second_final_write_equipment_file:
+                with open('Files/Player Data/Equipment.json', 'w') as second_final_write_equipment_file:
                     ujson.dump(second_equipment_file_data, second_final_write_equipment_file, indent=6)
 
-                with open('Files/status.json', 'w') as second_final_write_status_file:
+                with open('Files/Player Data/Status.json', 'w') as second_final_write_status_file:
                     ujson.dump(status2_file_eq_data, second_final_write_status_file, indent=4)
 
-            with open('Files/Data/Theme_Check.json', 'r') as themefile:
+            with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
                 theme_data=ujson.load(themefile)
                 theme=theme_data["Theme"]
-            with open("Files/Tabs.json",'r') as tab_son:
+            with open("Files/Player Data/Tabs.json",'r') as tab_son:
                 tab_son_data=ujson.load(tab_son)
 
             if tab_son_data["Inventory"]=='Close':
@@ -318,11 +318,11 @@ def equip_item(cat,item_full_data, window):
             window.quit()
 
     else:
-        with open("Files/Inventory.json", 'r') as fson:
+        with open("Files/Player Data/Inventory.json", 'r') as fson:
             data_fininv=ujson.load(fson)
         del data_fininv["The Orb of Order"]
 
-        subprocess.Popen(['python', "First\The Order\gui.py"])
+        subprocess.Popen(['python', "First/The Order/gui.py"])
         window.quit()
 
 

@@ -1,0 +1,14 @@
+{
+      "Rebirth of the Strong": [
+            {
+                  "ID": 0,
+                  "obj": "Get Strong",
+                  "rank": "?",
+                  "type": "Unknown",
+                  "desc": "Quest given by The Architect",
+                  "Rewards": {
+                        "LVLADD": 10
+                  }
+            }
+      ]
+}

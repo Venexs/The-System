@@ -8,6 +8,7 @@ import os
 import threading
 import ctypes
 import sys
+import psutil
 
 # Hosts modification-related imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -39,49 +40,41 @@ window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
 window.attributes('-alpha', 0.7)
 
-
-# Hosts file path and website list
-hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"  # For Windows
-redirect_ip = "127.0.0.1"
-blocked_websites = ["www.pornhub.com", "pornhub.com", "www.hanime.tv", "hanime.tv"]
-
-# thesystem.penalty.run_as_admin()
-
-
-def block_websites():
-    """Block the specified websites by modifying the hosts file."""
-    with open(hosts_path, 'r+') as hosts_file:
-        content = hosts_file.read()
-        for website in blocked_websites:
-            if website not in content:
-                hosts_file.write(f"{redirect_ip} {website}\n")
-
-
-def unblock_websites():
-    """Unblock the specified websites by removing them from the hosts file."""
-    with open(hosts_path, 'r+') as hosts_file:
-        content = hosts_file.readlines()
-        hosts_file.seek(0)
-        for line in content:
-            if not any(website in line for website in blocked_websites):
-                hosts_file.write(line)
-        hosts_file.truncate()
-    # When the countdown is complete, close the window and unblock websites
-    countdown_completed()
-
-
-# Function to run when countdown reaches 00:00:00
-def countdown_completed():
-    window.quit()
-    subprocess.Popen(['python', 'Anime Version/Penalty Quest Rewards/gui.py'])
-
-subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
-
-with open("Files/Data/Penalty_Info.json", "r") as pen_info_file:
+with open("Files/Player Data/Penalty_Info.json", "r") as pen_info_file:
     pen_info_data = ujson.load(pen_info_file)
     info = pen_info_data["Penalty Info"]
     pr_name1 = info[0]
     pr_name2 = info[1]
+
+
+def close_programs_if_open(program_name1, program_name2):
+    """
+    Closes all instances of two programs if they are running and not equal to '-'.
+
+    :param program_name1: First program name (e.g., 'chrome.exe' or '-')
+    :param program_name2: Second program name (e.g., 'notepad.exe' or '-')
+    """
+    to_close = set()
+
+    # Filter out invalid names
+    if program_name1 != "-":
+        to_close.add(program_name1.lower())
+    if program_name2 != "-":
+        to_close.add(program_name2.lower())
+
+    for proc in psutil.process_iter(['name']):
+        try:
+            pname = proc.info['name']
+            if pname and pname.lower() in to_close:
+                print(f"Closing {pname} (PID: {proc.pid})")
+                proc.terminate()
+                proc.wait(timeout=3)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+def ex_close(eve):
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
+    thesystem.system.animate_window_close(window, initial_height, window_width, step=5, delay=1)
 
 canvas = Canvas(
     window,
@@ -168,13 +161,11 @@ def update_countdown(duration_in_seconds):
 # Blocking function to run for 4 hours
 def run_blocking_for_duration(duration_in_seconds):
     """Block websites for a specific duration, then unblock them."""
-    block_websites()  # Block the websites immediately
+    close_programs_if_open(program_name1=pr_name1, program_name2=pr_name2)()  # Block the websites immediately
     print(f"Blocking websites for {duration_in_seconds / 3600} hours...")
 
     time.sleep(duration_in_seconds)  # Wait for the specified duration (e.g., 4 hours)
-
-    unblock_websites()  # Unblock the websites after 4 hours
-    print("Websites have been unblocked after the specified duration.")
+    ex_close(window)
 
 # Set blocking duration (4 hours = 14400 seconds)
 blocking_duration = 4 * 60 * 60  # 4 hours

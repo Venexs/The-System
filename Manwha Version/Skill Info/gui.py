@@ -73,7 +73,7 @@ desc1=desc2=''
 segments = []
 segment_length = 60
 
-with open("Files/Skills/Skill.json", 'r') as fson:
+with open("Files/Player Data/Skill.json", 'r') as fson:
     data=ujson.load(fson)
     data_key=list(data.keys())
     for k in data_key:
@@ -213,12 +213,12 @@ def preview(nameob,quantity):
         subprocess.Popen(['python', 'Manwha Version/Preview Item/gui.py'])
 
 def delete():
-    with open("Files/Skills/Skill.json", 'r') as fols:
+    with open("Files/Player Data/Skill.json", 'r') as fols:
         skills=ujson.load(fols)
 
     del skills[name]
 
-    with open("Files/Skills/Skill.json", 'r') as fols:
+    with open("Files/Player Data/Skill.json", 'r') as fols:
         ujson.dump(skills, fols, indent=6)
 
     subprocess.Popen(['python', 'Manwha Version/Skills Tab/gui.py'])
@@ -236,7 +236,7 @@ def reward():
     for k in rol:
         if k=="LVLADD":
             for k in range(dicts[k]):
-                with open("Files/Status.json", 'r') as fson:
+                with open("Files/Player Data/Status.json", 'r') as fson:
                     data_status=ujson.load(fson)
                     
                     data_status["status"][0]['level']+=1
@@ -249,27 +249,27 @@ def reward():
                     data_status["status"][0]['mp']+=10
                     data_status["status"][0]['fatigue_max']+=40
                 
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(data_status, fson, indent=4)
 
         elif k=="STRav":
             for k in range(dicts[k]):
-                with open("Files/Status.json", 'r') as fson:
+                with open("Files/Player Data/Status.json", 'r') as fson:
                     data_status_2=ujson.load(fson)
                     
                     data_status_2["avail_eq"][0]['str_based']+=1
 
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(data_status_2, fson, indent=4)
 
         elif k=="INTav":
             for k in range(dicts[k]):
-                with open("Files/Status.json", 'r') as fson:
+                with open("Files/Player Data/Status.json", 'r') as fson:
                     data_status_3=ujson.load(fson)
                     
                     data_status_3["avail_eq"][0]['int_based']+=1
 
-                with open("Files/status.json", 'w') as fson:
+                with open("Files/Player Data/Status.json", 'w') as fson:
                     ujson.dump(data_status_3, fson, indent=4)
 
         else:
@@ -279,7 +279,7 @@ def reward():
                 item=data_inv[k]
                 name_of_item=k
             
-            with open("Files/Inventory.json", 'r') as fson:
+            with open("Files/Player Data/Inventory.json", 'r') as fson:
                 data_fininv=ujson.load(fson)
                 key_data=list(data_fininv.keys())
 
@@ -293,7 +293,7 @@ def reward():
             elif check==False:
                 data_fininv[name_of_item]=item
 
-            with open("Files/Inventory.json", 'w') as finaladdon:
+            with open("Files/Player Data/Inventory.json", 'w') as finaladdon:
                 ujson.dump(data_fininv, finaladdon, indent=6)
 
 if main_lvl==10:
@@ -301,10 +301,10 @@ if main_lvl==10:
     data[name][0]["lvl"]=new_lvl
 
     main_lvl=new_lvl
-    with open("Files/Skills/Skill.json", 'w') as fin_skill:
+    with open("Files/Player Data/Skill.json", 'w') as fin_skill:
         ujson.dump(data, fin_skill, indent=6)
 
-    with open("Files/status.json", 'r') as status:
+    with open("Files/Player Data/Status.json", 'r') as status:
         status_data=ujson.load(status)
 
     if base=='STR':
@@ -313,10 +313,16 @@ if main_lvl==10:
     elif base=='INT':
         status_data["avail_eq"][0]['int_based']=status_data["avail_eq"][0]['int_based']+pl_points
 
-    with open("Files/status.json", 'w') as fin_status:
+    with open("Files/Player Data/Status.json", 'w') as fin_status:
         ujson.dump(status_data, fin_status, indent=4)
 
     reward()
+
+def get_skill_img(name):
+    path = f"Files\\Mod\\default\\Skills\\{name}.png"
+    image = Image.open(path)
+    image = image.resize((105, 105), Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(image)
 
 canvas = Canvas(
     window,
@@ -358,8 +364,7 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
-image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
+image_image_4 = get_skill_img(name)
 image_4 = canvas.create_image(
     63.80047607421875,
     86.0,

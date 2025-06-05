@@ -27,7 +27,7 @@ window.wm_attributes("-topmost", True)
 window.attributes('-fullscreen', True)
 
 # Load the ujson file
-with open("Files\Checks\Cal_penalty.json", 'r') as file:
+with open("Files\Player Data\Cal_penalty.json", 'r') as file:
     data=ujson.load(file)
     y=data["Final"]
 
@@ -54,7 +54,7 @@ if today_str in cal_file_data:
     cal_val=cal_file_data[today_str] 
 
 # Write the updated data back to the ujson file
-with open("Files\Checks\Cal_penalty.json", 'w') as file:
+with open("Files\Player Data\Cal_penalty.json", 'w') as file:
     ujson.dump(data, file, indent=4)
 
 z=y-x

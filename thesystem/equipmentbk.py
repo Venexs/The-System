@@ -52,7 +52,7 @@ def get_equipment():
     equipment = {key: "-" for key in equip_keys}
     boosts = {key: ["", ""] for key in equip_keys}  # store up to two boosts per item
 
-    with open('Files/Equipment.json', 'r') as fin:
+    with open('Files/Player Data/Equipment.json', 'r') as fin:
         data = ujson.load(fin)
 
     for key in equip_keys:
@@ -90,7 +90,7 @@ def finish(qty, equipment_check):
     if cat not in equip_keys:
         return
 
-    with open('Files/Equipment.json', 'r') as eq_file:
+    with open('Files/Player Data/Equipment.json', 'r') as eq_file:
         eq_data = ujson.load(eq_file)
 
     if not eq_data.get(cat):
@@ -130,7 +130,7 @@ def finish(qty, equipment_check):
         debuff1_value = debuff2_value = 0
 
     # Update status.json accordingly
-    with open("Files/status.json", 'r') as status_file:
+    with open("Files/Player Data/Status.json", 'r') as status_file:
         status_data = ujson.load(status_file)
 
     try:
@@ -152,10 +152,10 @@ def finish(qty, equipment_check):
     # Remove the equipment item
     eq_data[cat] = {}
 
-    with open('Files/Equipment.json', 'w') as eq_file:
+    with open('Files/Player Data/Equipment.json', 'w') as eq_file:
         ujson.dump(eq_data, eq_file, indent=6)
 
-    with open('Files/status.json', 'w') as status_file:
+    with open('Files/Player Data/Status.json', 'w') as status_file:
         ujson.dump(status_data, status_file, indent=4)
 
 def find_item_slot(name, equipment):

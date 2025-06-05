@@ -29,10 +29,10 @@ subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
-with open("Files/Tabs.json",'r') as tab_son:
+with open("Files/Player Data/Tabs.json",'r') as tab_son:
     tab_son_data=ujson.load(tab_son)
 
-with open("Files/Tabs.json",'w') as fin_tab_son:
+with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
     tab_son_data["Shop"]='Open'
     ujson.dump(tab_son_data,fin_tab_son,indent=4)
 
@@ -91,16 +91,16 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Shop"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     win.quit()
 
-with open("Files/status.json", 'r') as fson:
+with open("Files/Player Data/Status.json", 'r') as fson:
     data=ujson.load(fson)
     lvl=data["status"][0]['level']
     coins=data["status"][0]['coins']

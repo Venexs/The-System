@@ -51,7 +51,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -68,7 +68,7 @@ bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1026, 
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
-window.configure(bg = "#0c679b")
+window.configure(bg = transp_clr)
 window.attributes('-alpha',0.8)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
@@ -113,7 +113,7 @@ def get_stuff_path(key):
 
 canvas = Canvas(
     window,
-    bg = "#FFFFFF",
+    bg = transp_clr,
     height = 555,
     width = 897,
     bd = 0,
@@ -167,13 +167,15 @@ image_5 = canvas.create_image(
     image=image_image_5
 )
 
-image_image_6 = PhotoImage(
-    file=get_stuff_path("image.png"))
-image_6 = canvas.create_image(
-    235.023681640625,
-    252.0,
-    image=image_image_6
-)
+def get_quest_img(rank):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data=ujson.load(themefile)
+        theme=theme_data["Theme"]
+    path = f"Files\\Mod\\default\\{theme}\\Quest img\\{rank}.png"
+    image = Image.open(path)
+    image = image.resize((105, 105), Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(image)
+
 
 if typeof == "Learn":    
         
@@ -183,7 +185,7 @@ if typeof == "Learn":
     other_seg=[]
     segment_length = 70
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -225,7 +227,7 @@ if typeof == "Learn":
 
                 rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -245,6 +247,13 @@ if typeof == "Learn":
         text=name,
         fill="#FFFFFF",
         font=("Montserrat Regular", 16 * -1)
+    )
+
+    image_image_6 = get_quest_img(rank)
+    image_6 = canvas.create_image(
+        235.023681640625,
+        252.0,
+        image=image_image_6
     )
 
     if check==True:
@@ -625,7 +634,7 @@ elif typeof == "Common":
         subprocess.Popen(['python', "Anime Version\Quest Reminder\gui.py"])
         ex_close(0)
     
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -662,7 +671,7 @@ elif typeof == "Common":
                 rewards=data[k][0]["Rewards"]
                 fatigue=thesystem.system.give_fatigue_from_rank(rank)
 
-    with open("Files/Status.json", 'r') as data_fson:
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
         data_status=ujson.load(data_fson)
         finaL_fatigue=data_status["status"][0]["fatigue_max"]
         pl_fatigue=data_status["status"][0]["fatigue"]
@@ -693,6 +702,13 @@ elif typeof == "Common":
         text=name,
         fill="#FFFFFF",
         font=("Montserrat Regular", 16 * -1)
+    )
+
+    image_image_6 = get_quest_img(rank)
+    image_6 = canvas.create_image(
+        235.023681640625,
+        252.0,
+        image=image_image_6
     )
 
     canvas.create_text(
@@ -1099,7 +1115,7 @@ elif typeof == "Unknown":
     segments = []
     segment_length = 77
 
-    with open("Files/Quests/Active_Quests.json", 'r') as fson:
+    with open("Files/Player Data/Active_Quests.json", 'r') as fson:
         data=ujson.load(fson)
         for k in data:
             if k==name:
@@ -1120,7 +1136,7 @@ elif typeof == "Unknown":
 
                     rewards=data[k][0]["Rewards"]
 
-    with open("Files/Status.json", "r") as f:
+    with open("Files/Player Data/Status.json", "r") as f:
         data2=ujson.load(f)
         level=data2["status"][0]["level"]
 
@@ -1131,6 +1147,13 @@ elif typeof == "Unknown":
         text=name,
         fill="#FFFFFF",
         font=("Montserrat Regular", 16 * -1)
+    )
+
+    image_image_6 = get_quest_img(rank)
+    image_6 = canvas.create_image(
+        235.023681640625,
+        252.0,
+        image=image_image_6
     )
 
     canvas.create_text(

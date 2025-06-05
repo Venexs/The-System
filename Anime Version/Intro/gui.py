@@ -73,7 +73,7 @@ thesystem.system.center_window(window,window_width,target_height)
 thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -103,10 +103,10 @@ def move_window(event):
 
 
 def ex_close(win):
-    with open("Files/Tabs.json",'r') as tab_son:
+    with open("Files/Player Data/Tabs.json",'r') as tab_son:
         tab_son_data=ujson.load(tab_son)
 
-    with open("Files/Tabs.json",'w') as fin_tab_son:
+    with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
         tab_son_data["Intro"]='Close'
         ujson.dump(tab_son_data,fin_tab_son,indent=4)
         
@@ -136,7 +136,7 @@ image_1 = canvas.create_image(
 )
 
 pres_file_data=misc.load_ujson("Files/Mod/presets.json")
-video_path=pres_file_data["Anime"]["Video"]
+video_path=pres_file_data["Anime"][video]
 
 player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0, pause_duration=1)
 
@@ -163,15 +163,6 @@ image_4 = canvas.create_image(
     94.0,
     image=image_image_4
 )
-
-canvas.create_rectangle(
-    0.0,
-    0.0,
-    696.0,
-    29.0,
-    fill="#333333",
-    outline="")
-
 
 button_image_2 = PhotoImage(
     file=get_stuff_path("close.png"))

@@ -55,7 +55,7 @@ if job!='None':
 
 thesystem.system.make_window_transparent(window,transp_clr)
 
-with open("Files/Settings.json", 'r') as settings_open:
+with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
 if setting_data["Settings"]["Performernce (ANIME):"] == "True":
@@ -132,7 +132,7 @@ equiipment_check = equipment.find_item_slot(name, eq_data)
 equiipment_check_bool=equiipment_check[1]
 
 if typs=='Item':
-    with open("Files/Inventory.json", 'r') as fson:
+    with open("Files/Player Data/Inventory.json", 'r') as fson:
         data=ujson.load(fson)
         dat_keys=list(data.keys())
 

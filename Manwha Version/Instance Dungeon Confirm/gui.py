@@ -70,7 +70,7 @@ def ex_close(win):
 
 
 item_name = thesystem.dungeon.get_item_name_from_csv()
-with open('Files/Inventory.json', 'r') as file:
+with open('Files/Player Data/Inventory.json', 'r') as file:
     data = ujson.load(file)
 
 # Find the item and update or remove it

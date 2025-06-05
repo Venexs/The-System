@@ -44,13 +44,13 @@ def get_record():
     cat=entry_4.get()
     desc=entry_5.get()
 
-    with open('Files/Inventory.json', 'r') as fin:
+    with open('Files/Player Data/Inventory.json', 'r') as fin:
         data=ujson.load(fin)
         data[name]["desc"]=desc
         data[name]["qty"]=qty   
         data[name]["cat"]=cat
         data[name]["rank"]=rank
-    with open('Files/Inventory.json', 'w') as fin:
+    with open('Files/Player Data/Inventory.json', 'w') as fin:
         ujson.dump(data, fin, indent=4)
     fin.close()
 
