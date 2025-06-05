@@ -319,7 +319,10 @@ if main_lvl==10:
     reward()
 
 def get_skill_img(name):
-    return PhotoImage(file=(f"Files\Mod\default\Skills\{name}.png"))
+    path = f"Files\\Mod\\default\\Skills\\{name}.png"
+    image = Image.open(path)
+    image = image.resize((105, 105), Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(image)
 
 canvas = Canvas(
     window,

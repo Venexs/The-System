@@ -165,7 +165,7 @@ def run_once_prog(stp_eve, thrd):
         # Wait for the thread to finish
         thrd.join()
     
-        subprocess.Popen(['python', 'First/Start/gui.py'])
+        subprocess.Popen(['python', 'First/Check/gui.py'])
 
         sys.exit()
     

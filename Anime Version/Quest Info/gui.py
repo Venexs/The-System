@@ -167,13 +167,15 @@ image_5 = canvas.create_image(
     image=image_image_5
 )
 
-image_image_6 = PhotoImage(
-    file=get_stuff_path("image.png"))
-image_6 = canvas.create_image(
-    235.023681640625,
-    252.0,
-    image=image_image_6
-)
+def get_quest_img(rank):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data=ujson.load(themefile)
+        theme=theme_data["Theme"]
+    path = f"Files\\Mod\\default\\{theme}\\Quest img\\{rank}.png"
+    image = Image.open(path)
+    image = image.resize((105, 105), Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(image)
+
 
 if typeof == "Learn":    
         
@@ -245,6 +247,13 @@ if typeof == "Learn":
         text=name,
         fill="#FFFFFF",
         font=("Montserrat Regular", 16 * -1)
+    )
+
+    image_image_6 = get_quest_img(rank)
+    image_6 = canvas.create_image(
+        235.023681640625,
+        252.0,
+        image=image_image_6
     )
 
     if check==True:
@@ -695,6 +704,13 @@ elif typeof == "Common":
         font=("Montserrat Regular", 16 * -1)
     )
 
+    image_image_6 = get_quest_img(rank)
+    image_6 = canvas.create_image(
+        235.023681640625,
+        252.0,
+        image=image_image_6
+    )
+
     canvas.create_text(
         330.023681640625,
         265.0,
@@ -1131,6 +1147,13 @@ elif typeof == "Unknown":
         text=name,
         fill="#FFFFFF",
         font=("Montserrat Regular", 16 * -1)
+    )
+
+    image_image_6 = get_quest_img(rank)
+    image_6 = canvas.create_image(
+        235.023681640625,
+        252.0,
+        image=image_image_6
     )
 
     canvas.create_text(

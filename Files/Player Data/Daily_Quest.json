@@ -1,0 +1,60 @@
+{
+    "Player": {
+        "Push": 0,
+        "Sit": 0,
+        "Squat": 0,
+        "Run": 0.0,
+        "Int_type": 0.0,
+        "Sleep": 0
+    },
+    "Final": {
+        "Push": 10,
+        "Sit": 10,
+        "Squat": 10,
+        "Run": 1.0,
+        "Int_type": 1.0,
+        "Sleep": 1
+    },
+    "Change": [
+        {
+            "1": [
+                "Push-ups"
+            ]
+        },
+        {
+            "2": [
+                "Sit-ups"
+            ]
+        },
+        {
+            "3": [
+                "Squats"
+            ]
+        },
+        {
+            "4": [
+                "Running"
+            ]
+        },
+        {
+            "5": [
+                "Chapter Reading"
+            ]
+        },
+        {
+            "6": [
+                "Proper Last Night Sleep"
+            ]
+        }
+    ],
+    "Steps": [
+        0.5,
+        5,
+        100,
+        10
+    ],
+    "Streak": {
+        "Value": 0,
+        "Greater_value": 0
+    }
+}

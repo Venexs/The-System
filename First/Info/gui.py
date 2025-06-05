@@ -113,7 +113,7 @@ def get():
         ex_close(window)
     
     else:
-        subprocess.Popen(['python', 'First/Main BMI/gui.py'])
+        subprocess.Popen(['python', 'First/Daily Quest Tweak/gui.py'])
         ex_close(window)
 
 window = Tk()

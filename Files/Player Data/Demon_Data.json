@@ -1,0 +1,170 @@
+{
+      "Demon Imp": {
+            "rank": "E",
+            "type": "Normal",
+            "swarm": "Yes",
+            "soul": 1,
+            "XP": 10
+      },
+      "Demon Wisp": {
+            "rank": "E",
+            "type": "Normal",
+            "swarm": "Yes",
+            "soul": 1,
+            "XP": 12
+      },
+      "Demon Vermin": {
+            "rank": "E",
+            "type": "Normal",
+            "swarm": "Yes",
+            "soul": 1,
+            "XP": 15
+      },
+      "Demon Grunt": {
+            "rank": "D",
+            "type": "Normal",
+            "swarm": "Yes",
+            "soul": 2,
+            "XP": 20
+      },
+      "Demon Scout": {
+            "rank": "D",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 2,
+            "XP": 25
+      },
+      "Demon Hound": {
+            "rank": "D",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 2,
+            "XP": 30
+      },
+      "Demon Soldier": {
+            "rank": "C",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 3,
+            "XP": 40
+      },
+      "Demon Mage": {
+            "rank": "C",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 3,
+            "XP": 45
+      },
+      "Demon Beast": {
+            "rank": "C",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 3,
+            "XP": 50
+      },
+      "Demon Knight": {
+            "rank": "B",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 60
+      },
+      "Demon Berserker": {
+            "rank": "B",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 65
+      },
+      "Demon Guardian": {
+            "rank": "B",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 70
+      },
+      "Demon Captain": {
+            "rank": "A",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 80
+      },
+      "Demon Assassin": {
+            "rank": "A",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 85
+      },
+      "Demon Warlock": {
+            "rank": "A",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 90
+      },
+      "Demon Noble": {
+            "rank": "S",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 100
+      },
+      "Demon Warlord": {
+            "rank": "S",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 110
+      },
+      "Demon Sorcerer": {
+            "rank": "S",
+            "type": "Normal",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 120
+      },
+      "Demon Lord": {
+            "rank": "SS",
+            "type": "Elite",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 150
+      },
+      "Demon Archmage": {
+            "rank": "SS",
+            "type": "Elite",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 160
+      },
+      "Demon Executioner": {
+            "rank": "SS",
+            "type": "Elite",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 170
+      },
+      "Demon Overlord": {
+            "rank": "SSS",
+            "type": "Elite",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 250
+      },
+      "Demon King": {
+            "rank": "SSS",
+            "type": "Elite",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 300
+      },
+      "Demon Tyrant": {
+            "rank": "SSS",
+            "type": "Elite",
+            "swarm": "No",
+            "soul": 4,
+            "XP": 350
+      }
+}

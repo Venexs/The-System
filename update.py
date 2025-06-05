@@ -52,6 +52,17 @@ def github_blob_to_raw(url):
     return url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
 
 def create_backup(source_dir, backup_dir="Update Backup"):
+    # Remove existing zip backups
+    if os.path.exists(backup_dir):
+        for file in os.listdir(backup_dir):
+            if file.endswith(".zip"):
+                try:
+                    os.remove(os.path.join(backup_dir, file))
+                    log(f"Deleted old backup: {file}")
+                except Exception as e:
+                    log(f"Failed to delete {file}: {e}")
+
+    # Create backup filename
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     os.makedirs(backup_dir, exist_ok=True)
     backup_path = os.path.join(backup_dir, f"backup_{timestamp}.zip")
@@ -59,10 +70,10 @@ def create_backup(source_dir, backup_dir="Update Backup"):
     log(f"Creating backup at: {backup_path}")
 
     def zipdir(path, ziph):
-        for root, dirs, files in os.walk(path):
+        for root_dir, dirs, files in os.walk(path):
             dirs[:] = [d for d in dirs if d not in ['__pycache__', '.git', 'venv', 'Update Backup']]
             for file in files:
-                full_path = os.path.join(root, file)
+                full_path = os.path.join(root_dir, file)
                 rel_path = os.path.relpath(full_path, path)
                 ziph.write(full_path, rel_path)
 

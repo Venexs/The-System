@@ -129,7 +129,7 @@ quest_data={
       "Rebirth of the Strong": [
             {
                   "ID": 0,
-                  "obj": "Defeat all 9 Monarchs",
+                  "obj": "Get Strong",
                   "rank": "?",
                   "type": "Unknown",
                   "desc": "Quest given by The Architect",
@@ -174,6 +174,6 @@ with open("Files/Player Data/First_open.csv", 'w', newline='') as info_open:
 
 with open("Files/Player Data/Prove_file.csv", 'w', newline='') as info_open2:
     fw1=csv.writer(info_open2)
-    fw1.writerow(["False"])
+    fw1.writerow(["True"])
 
 print("Done")

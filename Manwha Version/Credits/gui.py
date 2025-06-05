@@ -17,6 +17,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import webbrowser
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -72,6 +73,14 @@ def ex_close(win):
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
     thesystem.system.animate_window_close(window, initial_height, window_width, step=50, delay=1)
 
+def attri_show():
+    canvas.itemconfig("Credit", state="hidden")
+    canvas.itemconfig("Attribution", state="normal")
+
+def credit_show():
+    canvas.itemconfig("Attribution", state="hidden")
+    canvas.itemconfig("Credit", state="normal")
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -109,7 +118,8 @@ image_image_3 = PhotoImage(
 image_3 = canvas.create_image(
     111.0,
     44.0,
-    image=image_image_3
+    image=image_image_3,
+    tag="Credit"
 )
 
 image_image_4 = PhotoImage(
@@ -117,7 +127,8 @@ image_image_4 = PhotoImage(
 image_4 = canvas.create_image(
     139.0,
     100.0,
-    image=image_image_4
+    image=image_image_4,
+    tag="Credit"
 )
 
 image_image_5 = PhotoImage(
@@ -125,79 +136,31 @@ image_image_5 = PhotoImage(
 image_5 = canvas.create_image(
     223.0,
     185.0,
-    image=image_image_5
+    image=image_image_5,
+    tag="Credit"
 )
+button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
+button_1 = canvas.create_image(357.0, 131.0, image=button_image_1, anchor="nw",
+    tag="Credit",)
+canvas.tag_bind(button_1, "<ButtonPress-1>", lambda e: webbrowser.open("https://linktr.ee/Venexs"))
 
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
-    relief="flat"
-)
-button_1.place(
-    x=357.0,
-    y=131.0,
-    width=16.0,
-    height=16.0
-)
+button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
+button_2 = canvas.create_image(357.0, 150.0, image=button_image_2, anchor="nw",
+    tag="Credit",)
+canvas.tag_bind(button_2, "<ButtonPress-1>", lambda e: webbrowser.open("https://www.youtube.com/channel/UCsPAixZxeSYKlcSCoQ8RoYQ"))
 
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
-    relief="flat"
-)
-button_2.place(
-    x=357.0,
-    y=150.0,
-    width=16.0,
-    height=16.0
-)
-
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_3 clicked"),
-    relief="flat"
-)
-button_3.place(
-    x=357.0,
-    y=193.0,
-    width=16.0,
-    height=16.0
-)
-
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_4 clicked"),
-    relief="flat"
-)
-button_4.place(
-    x=357.0,
-    y=215.0,
-    width=16.0,
-    height=16.0
-)
+button_image_3 = PhotoImage(file=relative_to_assets("button_3.png"))
+button_3 = canvas.create_image(357.0, 193.0, image=button_image_3, anchor="nw",
+    tag="Credit",)
+canvas.tag_bind(button_3, "<ButtonPress-1>", lambda e: webbrowser.open("https://bio.link/hanakai"))
 
 image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
     119.0,
     273.0,
-    image=image_image_6
+    image=image_image_6,
+    tag="Credit"
 )
 
 image_image_7 = PhotoImage(
@@ -205,7 +168,8 @@ image_image_7 = PhotoImage(
 image_7 = canvas.create_image(
     226.0,
     310.0,
-    image=image_image_7
+    image=image_image_7,
+    tag="Credit"
 )
 
 image_image_8 = PhotoImage(
@@ -213,7 +177,8 @@ image_image_8 = PhotoImage(
 image_8 = canvas.create_image(
     119.0,
     346.0,
-    image=image_image_8
+    image=image_image_8,
+    tag="Credit"
 )
 
 image_image_9 = PhotoImage(
@@ -221,7 +186,8 @@ image_image_9 = PhotoImage(
 image_9 = canvas.create_image(
     226.0,
     390.0,
-    image=image_image_9
+    image=image_image_9,
+    tag="Credit"
 )
 
 image_image_10 = PhotoImage(
@@ -229,7 +195,8 @@ image_image_10 = PhotoImage(
 image_10 = canvas.create_image(
     119.0,
     428.0,
-    image=image_image_10
+    image=image_image_10,
+    tag="Credit"
 )
 
 image_image_11 = PhotoImage(
@@ -237,7 +204,8 @@ image_image_11 = PhotoImage(
 image_11 = canvas.create_image(
     226.0,
     461.0,
-    image=image_image_11
+    image=image_image_11,
+    tag="Credit"
 )
 
 image_image_12 = PhotoImage(
@@ -245,7 +213,8 @@ image_image_12 = PhotoImage(
 image_12 = canvas.create_image(
     467.0,
     47.0,
-    image=image_image_12
+    image=image_image_12,
+    tag="Credit"
 )
 
 image_image_13 = PhotoImage(
@@ -253,7 +222,8 @@ image_image_13 = PhotoImage(
 image_13 = canvas.create_image(
     574.0,
     80.0,
-    image=image_image_13
+    image=image_image_13,
+    tag="Credit"
 )
 
 image_image_14 = PhotoImage(
@@ -261,7 +231,8 @@ image_image_14 = PhotoImage(
 image_14 = canvas.create_image(
     466.0,
     109.0,
-    image=image_image_14
+    image=image_image_14,
+    tag="Credit"
 )
 
 image_image_15 = PhotoImage(
@@ -269,30 +240,60 @@ image_image_15 = PhotoImage(
 image_15 = canvas.create_image(
     574.0,
     305.0,
-    image=image_image_15
+    image=image_image_15,
+    tag="Credit"
 )
 
 image_image_16 = PhotoImage(
     file=relative_to_assets("image_16.png"))
 image_16 = canvas.create_image(
-    395.0,
-    10.0,
-    image=image_image_16
+    130.0,
+    41.0,
+    image=image_image_16,
+    tag="Attribution",
+    state="hidden"
 )
 
-canvas.tag_bind(image_16, "<ButtonPress-1>", start_move)
-canvas.tag_bind(image_16, "<B1-Motion>", move_window)
+image_image_17 = PhotoImage(
+    file=relative_to_assets("image_17.png"))
+image_17 = canvas.create_image(
+    394.0,
+    317.0,
+    image=image_image_17,
+    tag="Attribution",
+    state="hidden"
+)
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
-button_5 = Button(
-    image=button_image_5,
+button_image_5 = PhotoImage(file=relative_to_assets("button_5.png"))
+button_5 = canvas.create_image(69.0, 484.0, image=button_image_5, anchor="nw",tag="Attribution" ,state="hidden")
+canvas.tag_bind(button_5, "<Button-1>", lambda e: credit_show())
+
+button_image_6 = PhotoImage(file=relative_to_assets("button_6.png"))
+button_6 = canvas.create_image(70.0, 484.0, image=button_image_6, anchor="nw", tag="Credit")
+canvas.tag_bind(button_6, "<Button-1>", lambda e: attri_show())
+
+
+image_image_18 = PhotoImage(
+    file=relative_to_assets("image_18.png"))
+image_18= canvas.create_image(
+    395.0,
+    10.0,
+    image=image_image_18
+)
+
+canvas.tag_bind(image_18, "<ButtonPress-1>", start_move)
+canvas.tag_bind(image_18, "<B1-Motion>", move_window)
+
+button_image_7= PhotoImage(
+    file=relative_to_assets("button_7.png"))
+button_7 = Button(
+    image=button_image_7,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: ex_close(window),
     relief="flat"
 )
-button_5.place(
+button_7.place(
     x=745.0,
     y=16.0,
     width=30.0,

@@ -79,7 +79,7 @@ def name(eve,name):
         ex_close(window)
     
     else:
-        subprocess.Popen(['python', f'{theme} Version/Penalty Check/gui.py'])
+        subprocess.Popen(['python', 'gui.py'])
         ex_close(window)
 
 window = Tk()
@@ -315,23 +315,6 @@ canvas.tag_bind(top_image, "<B1-Motion>", move_window)
 
 # Bottom bar animation
 bottom_image = canvas.create_image(459.0, 562.0, image=bottom_preloaded_images[bot_image_index])
-
-
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
-    relief="flat"
-)
-button_4.place(
-    x=597.0,
-    y=498.0,
-    width=180.0,
-    height=26.0
-)
 
 # Function to update the image
 def update_images():

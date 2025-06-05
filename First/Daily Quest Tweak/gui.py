@@ -155,7 +155,7 @@ def entry_data():
             with open("Files/Player Data/Daily_Quest.json", 'w') as daily_quest_file:
                 ujson.dump(daily_quest_data, daily_quest_file, indent=4)
 
-            subprocess.Popen(['python', 'First/Theme Check/gui.py'])
+            subprocess.Popen(['python', 'First/Penalty Check/gui.py'])
             ex_close(window)
     except ValueError:
         print("Error, Retrying...")

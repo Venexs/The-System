@@ -73,6 +73,15 @@ def get_stuff_path(key):
     full_path=get_stuff_path_str+'/'+key
     return full_path
 
+def get_quest_img(rank):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data=ujson.load(themefile)
+        theme=theme_data["Theme"]
+    path = f"Files\\Mod\\default\\{theme}\\Quest img\\{rank}.png"
+    image = Image.open(path)
+    image = image.resize((105, 105), Image.Resampling.LANCZOS)
+    return ImageTk.PhotoImage(image)
+
 if typeof == "Learn":
         
     two_title=False
@@ -202,8 +211,7 @@ if typeof == "Learn":
         image=image_image_3
     )
 
-    image_image_4 = PhotoImage(
-        file=get_stuff_path("image.png"))
+    image_image_4 = get_quest_img(rank)
     image_4 = canvas.create_image(
         92.0,
         135.0,
@@ -770,8 +778,7 @@ elif typeof == "Common":
         image=image_image_3
     )
 
-    image_image_4 = PhotoImage(
-        file=get_stuff_path("image.png"))
+    image_image_4 = get_quest_img(rank)
     image_4 = canvas.create_image(
         92.0,
         130.0,
@@ -1267,8 +1274,7 @@ elif typeof == "Unknown":
         image=image_image_3
     )
 
-    image_image_4 = PhotoImage(
-        file=get_stuff_path("image.png"))
+    image_image_4 = get_quest_img(rank)
     image_4 = canvas.create_image(
         92.0,
         155.0,
