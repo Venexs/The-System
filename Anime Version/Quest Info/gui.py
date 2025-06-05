@@ -171,7 +171,10 @@ def get_quest_img(rank):
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
         theme_data=ujson.load(themefile)
         theme=theme_data["Theme"]
-    path = f"Files\\Mod\\default\\{theme}\\Quest img\\{rank}.png"
+    if rank == '?':
+        path = f"Files\\Mod\\default\\{theme}\\Quest img\\Unknown.png"
+    else:
+        path = f"Files\\Mod\\default\\{theme}\\Quest img\\{rank}.png"
     image = Image.open(path)
     image = image.resize((105, 105), Image.Resampling.LANCZOS)
     return ImageTk.PhotoImage(image)
