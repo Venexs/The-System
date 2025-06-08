@@ -1,6 +1,6 @@
 # Enhanced Dungeon System
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, Frame
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, Frame, Label, RIGHT, LEFT, X, Y, BOTTOM, TOP, END, NORMAL, HIDDEN, BOTH, VERTICAL, HORIZONTAL, SOLID, Scrollbar
 import ujson
 import csv
 import subprocess
@@ -13,6 +13,7 @@ import sys
 import os
 import time
 import math
+import json
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, '../../'))
@@ -30,6 +31,9 @@ def relative_to_assets(path: str) -> Path:
 
 stop_event=threading.Event()
 
+
+
+
 class DungeonSystem:
     def __init__(self, window):
         self.window = window
@@ -45,6 +49,7 @@ class DungeonSystem:
         # Dungeon state tracking
         self.waves = {}
         self.XP_val = 0
+        self.wave_completion_percentages = {}  # Track completion % for each wave
         self.mob = 1
         self.current_wave = 1
         self.total_waves = 0
@@ -64,31 +69,41 @@ class DungeonSystem:
         
         # Setup UI elements
         self.create_canvas()
-        self.load_images()
         self.setup_video_player()
+        self.load_images()
         self.create_ui_elements()
         self.setup_animation()
         self.start_dungeon()
         
         # Generate dungeon events and modifiers after rank is set
         self.roll_dungeon_modifiers()
+
             
     def setup_window_style(self):
-        self.top_val = 'dailyquest.py'
-        self.all_prev = ''
-        self.video = 'Video'
-        self.transp_clr = '#0C679B'
+        top_val='dailyquest.py'
+        self.all_prev=''
+        self.video='Video'
+        self.transp_clr='#0C679B'
 
-        if self.job != 'None':
-            self.top_val = ''
-            self.all_prev = 'alt_'
-            self.video = 'Alt Video'
-            self.transp_clr = '#652AA3'
+        if self.job!='None':
+            top_val=''
+            self.all_prev='alt_'
+            self.video='Alt Video'
+            self.transp_clr='#652AA3'
 
         thesystem.system.make_window_transparent(self.window, self.transp_clr)
 
-        self.top_images = [f"thesystem/{self.all_prev}top_bar/{self.top_val}{str(i).zfill(4)}.png" for i in range(1, 501)]
-        self.bottom_images = [f"thesystem/{self.all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(1, 501)]
+        with open("Files/Player Data/Settings.json", 'r') as settings_open:
+            setting_data=ujson.load(settings_open)
+
+        if setting_data["Settings"]["Performernce (ANIME):"] == "True":
+            self.top_images = [f"thesystem/{self.all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
+            self.bottom_images = [f"thesystem/{self.all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+
+        else:
+            self.top_images = [f"thesystem/{self.all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+            self.bottom_images = [f"thesystem/{self.all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
+
 
         thesystem.system.animate_window_open(self.window, self.target_height, self.window_width, step=30, delay=1)
 
@@ -111,15 +126,9 @@ class DungeonSystem:
         
     def load_images(self):
         # Preload top and bottom images
-        self.top_preloaded_images = thesystem.system.preload_images(self.top_images, (1167, 47))
-        self.bottom_preloaded_images = thesystem.system.preload_images(self.bottom_images, (1053, 43))
-        
-        # Load main images
-        self.image_image_1 = PhotoImage(file=relative_to_assets("image_1.png"))
-        self.image_1 = self.canvas.create_image(675.0, 375.0, image=self.image_image_1)
-        
-        self.image_image_2 = PhotoImage(file=relative_to_assets("image_2.png"))
-        self.image_2 = self.canvas.create_image(435.0, 180.52554321289062, image=self.image_image_2)
+        self.top_preloaded_images = thesystem.system.preload_images(self.top_images, (970, 40))
+        self.bottom_preloaded_images = thesystem.system.preload_images(self.bottom_images, (970, 40))
+
         
         self.image_image_3 = PhotoImage(file=relative_to_assets("image_3.png"))
         self.image_3 = self.canvas.create_image(199.99966430664062, 61.0, image=self.image_image_3)
@@ -151,16 +160,16 @@ class DungeonSystem:
             self.side = PhotoImage(file=relative_to_assets("purple.png"))
             
         self.canvas.create_image(4.0, 180.0, image=self.side)
-        self.canvas.create_image(850.0, 196.0, image=self.side)
+        self.canvas.create_image(862.0, 196.0, image=self.side)
         
         self.image_40 = thesystem.system.side_bar("left_bar.png", (75, 320))
-        self.canvas.create_image(12.0, 180.0, image=self.image_40)
+        self.canvas.create_image(4.0, 180.0, image=self.image_40)
         
         self.image_50 = thesystem.system.side_bar("right_bar.png", (80, 340))
-        self.canvas.create_image(833.0, 190.0, image=self.image_50)
+        self.canvas.create_image(865.0, 190.0, image=self.image_50)
         
     def setup_video_player(self):
-        with open("Files\Mod\presets.json", 'r') as pres_file:
+        with open("Files/Mod/presets.json", 'r') as pres_file:
             pres_file_data = ujson.load(pres_file)
             self.normal_font_col = pres_file_data["Anime"]["Normal Font Color"]
             video_path = pres_file_data["Anime"][self.video]
@@ -344,16 +353,15 @@ class DungeonSystem:
         self.bot_image_index = 0
         
         self.top_image = self.canvas.create_image(
-            510.0,
-            10.0,
+            480.0,
+            20.0,
             image=self.top_preloaded_images[self.image_index]
-        )
-        
+        )  
         self.canvas.tag_bind(self.top_image, "<ButtonPress-1>", self.start_move)
         self.canvas.tag_bind(self.top_image, "<B1-Motion>", self.move_window)
         
         self.bottom_image = self.canvas.create_image(
-            500.0,
+            480.0,
             353.0,
             image=self.bottom_preloaded_images[self.bot_image_index]
         )
@@ -415,7 +423,7 @@ class DungeonSystem:
         self.canvas.itemconfig(self.checkbox4, state="normal")
 
     def determine_dungeon_type(self):
-        with open("Files\Data\Dungeon_Rank.csv", 'r') as rank_file:
+        with open("Files/Data/Dungeon_Rank.csv", 'r') as rank_file:
             rank_file_reader = csv.reader(rank_file)
             for k in rank_file_reader:
                 self.rank = k[0]
@@ -448,17 +456,17 @@ class DungeonSystem:
             
         base_waves = 3
         if self.rank in ["D", "C"]:
-            base_waves = 4
-        elif self.rank in ["B", "A"]:
-            base_waves = 5
-        elif self.rank == "S":
             base_waves = 6
+        elif self.rank in ["B", "A"]:
+            base_waves = 8
+        elif self.rank == "S":
+            base_waves = 10
             
         wave_variation = random.choice([-1, 0, 0, 0, 1])
         total_waves = max(3, base_waves + wave_variation)
         self.total_waves = total_waves
         
-        with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
+        with open("Files/Data/Dungeon_Boss_List.json", 'r') as monster_file:
             monster_file_data = ujson.load(monster_file)
             monster_names = list(monster_file_data.keys())
             
@@ -538,12 +546,14 @@ class DungeonSystem:
         
         num_modifiers = 0
         if self.rank in ["E", "D"]:
-            num_modifiers = 1
-        elif self.rank in ["C", "B"]:
             num_modifiers = 2
-        elif self.rank in ["A", "S"]:
+        elif self.rank in ["C", "B"]:
             num_modifiers = 3
-            
+        elif self.rank in ["A"]:
+            num_modifiers = 4
+        elif self.rank in ["S"]:
+            num_modifiers = 6
+
         self.dungeon_modifiers = random.sample(all_modifiers, min(num_modifiers, len(all_modifiers)))
         
         event_chance = {
@@ -659,6 +669,18 @@ class DungeonSystem:
             state="normal"
         )
         
+        # Add skip notification
+        if hasattr(self, 'skip_notification_text'):
+            self.canvas.delete(self.skip_notification_text)
+        
+        self.skip_notification_text = self.canvas.create_text(
+            700.0, 246.0,  # Position above the button
+            anchor="center",
+            text="Partially complete activities to skip with reduced XP",
+            fill="#FFD700",  # Gold color
+            font=("Montserrat Regular", 10 * -1)
+        )
+        
         self.generate_activities(monster_type)
         self.show_activities_and_checkboxes()
         self.check_for_events()
@@ -695,6 +717,18 @@ class DungeonSystem:
             state="normal"
         )
         
+        # Add boss warning notification
+        if hasattr(self, 'skip_notification_text'):
+            self.canvas.delete(self.skip_notification_text)
+        
+        self.skip_notification_text = self.canvas.create_text(
+            721.0, 246.0,  # Position above the button
+            anchor="center",
+            text="BOSS FIGHT: All activities must be completed",
+            fill="#FF0000",  # Red color
+            font=("Montserrat Bold", 10 * -1)
+        )
+        
         if self.boss_max_phases > 1:
             self.canvas.itemconfig(self.boss_progress_bg, state="normal")
             self.canvas.itemconfig(self.boss_progress_fg, state="normal")
@@ -705,7 +739,7 @@ class DungeonSystem:
             
         self.generate_activities(boss_type, is_boss=True)
         self.show_activities_and_checkboxes()
-        
+
     def generate_activities(self, monster_type, is_boss=False):
         self.activity_completed = [False, False, False, False]
         self.canvas.itemconfig(self.checkbox1, image=self.checkbox_image_unchecked)
@@ -713,36 +747,39 @@ class DungeonSystem:
         self.canvas.itemconfig(self.checkbox3, image=self.checkbox_image_unchecked)
         self.canvas.itemconfig(self.checkbox4, image=self.checkbox_image_unchecked)
         
-        str_activities = [
-            "Do 10 push-ups",
-            "Perform 15 squats",
-            "Complete 20 jumping jacks",
-            "Hold a plank for 30 seconds",
-            "Do 12 lunges (each leg)",
-            "Complete 8 burpees",
-            "Do 15 mountain climbers",
-            "Perform 20 arm circles",
-            "Complete 12 tricep dips",
-            "Do 15 calf raises"
-        ]
+        # Load STR exercises
+        with open('Files/Workout/STR_based.json', 'r') as file:
+            str_data = ujson.load(file)
         
-        agi_activities = [
-            "Balance on one foot for 30 seconds",
-            "Do 20 high knees",
-            "Perform 10 side lunges (each side)",
-            "Complete a quick dance routine",
-            "Do 15 lateral jumps",
-            "Walk 30 steps heel-to-toe",
-            "Complete 10 agility ladder drills",
-            "Do 10 quick directional changes",
-            "Perform 15 toe touches",
-            "Complete 20 ankle rotations"
-        ]
+        # Load AGI exercises
+        with open('Files/Workout/AGI_based.json', 'r') as file:
+            agi_data = ujson.load(file)
         
+        # Format STR exercises
+        str_activities = []
+        for exercise_name, exercise_details in str_data.items():
+            for detail in exercise_details:
+                if "amt" in detail:
+                    str_activities.append(f"Do {detail['amt']} {exercise_name}")
+                elif "time" in detail:
+                    str_activities.append(f"Do {exercise_name} for {detail['time']} {detail['timeval']}")
+        
+        # Format AGI exercises
+        agi_activities = []
+        for exercise_name, exercise_details in agi_data.items():
+            for detail in exercise_details:
+                if "amt" in detail:
+                    agi_activities.append(f"Do {detail['amt']} {exercise_name}")
+                elif "time" in detail:
+                    agi_activities.append(f"Do {exercise_name} for {detail['time']} {detail['timeval']}")
+        
+        # Apply boss modifier if needed
         if is_boss:
             str_activities = [act.replace("10", "15").replace("15", "20").replace("20", "25").replace("30", "45") for act in str_activities]
             agi_activities = [act.replace("10", "15").replace("15", "20").replace("20", "25").replace("30", "45") for act in agi_activities]
         
+
+
         if monster_type == "STR":
             activities = random.sample(str_activities, 4)
         elif monster_type == "AGI":
@@ -770,14 +807,41 @@ class DungeonSystem:
                 break
     
     def next_wave(self):
-        if not all(self.activity_completed):
-            incomplete_indices = [i for i, completed in enumerate(self.activity_completed) if not completed]
-            activity_widgets = [self.activity1, self.activity2, self.activity3, self.activity4]
-            for idx in incomplete_indices:
-                self.canvas.itemconfig(activity_widgets[idx], fill="#FF0000")
-            self.window.after(500, lambda: [self.canvas.itemconfig(activity_widgets[idx], fill=self.normal_font_col) for idx in incomplete_indices])
-            return
+        is_boss_wave = self.mob > self.total_waves
         
+        # For boss waves, require all activities to be completed
+        if is_boss_wave:
+            if not all(self.activity_completed):
+                incomplete_indices = [i for i, completed in enumerate(self.activity_completed) if not completed]
+                activity_widgets = [self.activity1, self.activity2, self.activity3, self.activity4]
+                for idx in incomplete_indices:
+                    self.canvas.itemconfig(activity_widgets[idx], fill="#FF0000")
+                self.window.after(500, lambda: [self.canvas.itemconfig(activity_widgets[idx], fill=self.normal_font_col) for idx in incomplete_indices])
+                return
+        
+        # For non-boss waves, calculate completion percentage
+        else:
+            completed_count = sum(self.activity_completed)
+            total_activities = len(self.activity_completed)
+            completion_percentage = completed_count / total_activities
+            
+            # Store the completion percentage for this wave
+            self.wave_completion_percentages[self.mob] = completion_percentage
+            
+            # Show a warning if activities are incomplete
+            if completion_percentage < 1.0:
+                reduced_xp_percent = int(completion_percentage * 100)
+                warning_text = f"Skipping with {reduced_xp_percent}% completion. Reduced XP for this wave!"
+                temp_warning = self.canvas.create_text(
+                    400, 300,
+                    anchor="center",
+                    text=warning_text,
+                    fill="#FFA500",  # Orange color
+                    font=("Montserrat Bold", 14 * -1)
+                )
+                self.window.after(1500, lambda: self.canvas.delete(temp_warning))
+        
+        # Proceed to next wave
         if self.mob > self.total_waves:
             self.boss_phase += 1
             if self.boss_phase >= self.boss_max_phases:
@@ -797,7 +861,7 @@ class DungeonSystem:
             self.show_boss_wave()
         else:
             self.show_current_wave()
-    
+        
     def complete_dungeon(self):
         self.boss_defeated = True
         self.timer_active = False  # Stop the timer when dungeon is completed
@@ -806,11 +870,43 @@ class DungeonSystem:
         self.canvas.itemconfig(self.boss_progress_text, state="hidden")
         self.canvas.itemconfig(self.enemy, text="Victory! All enemies defeated!")
         self.canvas.itemconfig(self.instruction_text, state="hidden")
-        self.canvas.itemconfig(self.button_image_1, state="hidden")
-        self.canvas.itemconfig(self.button_image_2, state="hidden")
         self.hide_activities_and_checkboxes()
         
-        # Update XP and rewards in records
+        # Remove skip notification if it exists
+        if hasattr(self, 'skip_notification_text'):
+            self.canvas.delete(self.skip_notification_text)
+        
+        # Calculate average completion percentage across all waves
+        original_xp = self.XP_val
+        
+        # If no waves were skipped or partially completed, default to 100%
+        if not self.wave_completion_percentages:
+            avg_completion = 1.0
+        else:
+            # Calculate the average completion percentage
+            avg_completion = sum(self.wave_completion_percentages.values()) / len(self.wave_completion_percentages)
+        
+        # Calculate adjusted XP based on completion percentage
+        adjusted_xp = int(original_xp * avg_completion)
+        
+        # Display completion info
+        completion_text = self.canvas.create_text(
+            400, 250,
+            anchor="center",
+            text=f"Dungeon Completed with {int(avg_completion * 100)}% activity completion",
+            fill="#00FF00",
+            font=("Montserrat Bold", 14 * -1)
+        )
+        
+        xp_text = self.canvas.create_text(
+            400, 300,
+            anchor="center",
+            text=f"XP Earned: {adjusted_xp} ({int(avg_completion * 100)}% of {original_xp})",
+            fill="#00FF00",
+            font=("Montserrat Bold", 14 * -1)
+        )
+        
+        # Update XP and rewards in records with adjusted values
         try:
             with open("Files/Player Data/Status.json", 'r') as status_read_file:
                 status_read_data = ujson.load(status_read_file)
@@ -835,23 +931,27 @@ class DungeonSystem:
                 coin = 20000
                 avp = 6
 
+            # Apply completion percentage to rewards
+            adjusted_coin = int(coin * avg_completion)
+            adjusted_avp = max(1, int(avp * avg_completion))  # Ensure at least 1 avp
+
             # Apply rewards based on dungeon type
             if self.type_of_dun == 'Normal':
-                status_read_data["avail_eq"][0]['str_based'] += avp
-                status_read_data["avail_eq"][0]['int_based'] += avp
-                status_read_data["status"][0]['XP'] += self.XP_val
-                status_read_data["status"][0]['coins'] += coin
-                with open("Files/Player Data/Status.json", 'w') as fson:
+                status_read_data["avail_eq"][0]['str_based'] += adjusted_avp
+                status_read_data["avail_eq"][0]['int_based'] += adjusted_avp
+                status_read_data["status"][0]['XP'] += adjusted_xp
+                status_read_data["status"][0]['coins'] += adjusted_coin
+                with open("Files/Player Data/status.json", 'w') as fson:
                     ujson.dump(status_read_data, fson, indent=4)
                 with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                     check_fw = csv.writer(check_file)
                     check_fw.writerow(["Quest Completed"])
             elif self.type_of_dun == 'Instance':
-                status_read_data["status"][0]['XP'] += (self.XP_val * 2)
-                status_read_data["status"][0]['coins'] += (coin * 2)
-                status_read_data["avail_eq"][0]['str_based'] += (avp * 2)
-                status_read_data["avail_eq"][0]['int_based'] += (avp * 2)
-                with open("Files/Player Data/Status.json", 'w') as fson:
+                status_read_data["status"][0]['XP'] += (adjusted_xp * 2)
+                status_read_data["status"][0]['coins'] += (adjusted_coin * 2)
+                status_read_data["avail_eq"][0]['str_based'] += (adjusted_avp * 2)
+                status_read_data["avail_eq"][0]['int_based'] += (adjusted_avp * 2)
+                with open("Files/Player Data/status.json", 'w') as fson:
                     ujson.dump(status_read_data, fson, indent=4)
                 with open("Files/Checks/Message.csv", 'w', newline='') as check_file:
                     check_fw = csv.writer(check_file)
@@ -863,6 +963,7 @@ class DungeonSystem:
             print(f"Error updating records: {e}")
         
         self.button_2.destroy()
+        self.button_1.destroy()
         self.button_image_2 = PhotoImage(file=relative_to_assets("button_3.png"))
         self.button_2 = Button(
             image=self.button_image_2,
@@ -872,6 +973,730 @@ class DungeonSystem:
             relief="flat"
         )
         self.button_2.place(x=646.0, y=264.0, width=150.0, height=22.0)
+
+
+
+
+class SkillSystem:
+    def __init__(self, parent, canvas, normal_font_col):
+        self.parent = parent
+        self.canvas = canvas
+        self.normal_font_col = normal_font_col
+        self.active_skills = {}
+        self.passive_skills = {}
+        self.cooldowns = {}
+        self.skill_frame = None
+        self.skill_buttons = []
+        self.skill_icons = {}
+        self.skill_ui_elements = []
+        self.skill_panel_visible = False
+        
+        # Load skills from JSON
+        self.load_skills()
+        
+        # Create skill button in main UI
+        self.create_skill_button()
+    
+    def load_skills(self):
+        """Load player skills from Skill.json and all possible skills from Skill_List.json"""
+        try:
+            with open("Files/Player Data//Skill.json", 'r') as skill_file:
+                self.player_skills = json.load(skill_file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.player_skills = {}
+        
+        try:
+            with open("Files/Data/Skill_List.json", 'r') as skill_list_file:
+                self.all_skills = json.load(skill_list_file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            # Create default skill list if file doesn't exist
+            self.all_skills = {
+                "Rush": {
+                    "type": "Passive",
+                    "cooldown": "24h",
+                    "desc": "When your body health decreases and fatigue is high, the skill activates to push adrenaline allowing you to keep going on",
+                    "base": "STR"
+                },
+                "Dash": {
+                    "type": "Active",
+                    "cooldown": "1h",
+                    "desc": "Gives the user the ability to get a faster start in a sprint/run",
+                    "base": "STR"
+                },
+                "Negotiation": {
+                    "type": "Active",
+                    "cooldown": "12h",
+                    "desc": "Allows negotiation with dungeon creatures for better rewards or peaceful passage",
+                    "base": "INT"
+                },
+                "Tactical": {
+                    "type": "Active",
+                    "cooldown": "6h",
+                    "desc": "Analyzes enemy patterns to find weaknesses",
+                    "base": "INT"
+                },
+                "Iron Fist": {
+                    "type": "Passive",
+                    "cooldown": "24h",
+                    "desc": "Increases damage from strength-based activities by 10%",
+                    "base": "STR"
+                },
+                "Iron Warrior": {
+                    "type": "Passive",
+                    "cooldown": "24h",
+                    "desc": "Increases HP by 5% below 50% Max HP for every level upgrade",
+                    "base": "STR"
+                },
+                "Resourceful Adaptation": {
+                    "type": "Active",
+                    "cooldown": "1h",
+                    "desc": "Change workouts in dungeons if needed (random)",
+                    "base": "INT"
+                },
+                "Charismatic Aura": {
+                    "type": "Passive",
+                    "cooldown": "12h",
+                    "desc": "Increases rewards from dungeons by 5% per level",
+                    "base": "CHA"
+                },
+                "Fatal Strike": {
+                    "type": "Active",
+                    "cooldown": "1h",
+                    "desc": "Reduces workout values for oneself by 10% for each level upgrade",
+                    "base": "STR"
+                },
+                "Nimble Endurance": {
+                    "type": "Passive",
+                    "cooldown": "12h",
+                    "desc": "Increases time limit in dungeons by 5% per level",
+                    "base": "AGI"
+                },
+                "Mind Over Matter": {
+                    "type": "Active",
+                    "cooldown": "3h",
+                    "desc": "Convert INT to temporary STR/AGI for one workout wave",
+                    "base": "INT"
+                },
+                "Brute Force Mastery": {
+                    "type": "Active",
+                    "cooldown": "1h",
+                    "desc": "Higher STR stat and Lower AGI stat for a period of time",
+                    "base": "STR"
+                }
+            }
+        
+        # Sort skills into active and passive
+        for skill_name, skill_data in self.player_skills.items():
+            if skill_data[0]["type"] == "Active":
+                self.active_skills[skill_name] = skill_data
+            else:
+                self.passive_skills[skill_name] = skill_data
+    
+    def create_skill_button(self):
+        """Create the main skill button in the UI"""
+        try:
+            self.skill_icon = PhotoImage(file=relative_to_assets("skill_icon.png"))
+        except:
+            # Create a default skill icon if file not found
+            self.skill_icon = PhotoImage(file=relative_to_assets("button_4.png"))
+        
+        self.skill_button = Button(
+            self.parent.window,
+            image=self.skill_icon,
+            borderwidth=0,
+            highlightthickness=0,
+            command=self.toggle_skill_panel,
+            relief="flat"
+        )
+        self.skill_button.place(x=650.0, y=32+80.0, width=150.0, height=22.0)
+        
+        # Add skill count indicator
+        active_count = len(self.active_skills)
+        self.skill_count_text = self.canvas.create_text(
+            752.0, 40.0,
+            anchor="nw",
+            text=f"{active_count}",
+            fill="#FFFFFF",
+            font=("Montserrat Bold", 10 * -1)
+        )
+    
+    def toggle_skill_panel(self):
+        """Show or hide the skill panel"""
+        if self.skill_panel_visible:
+            self.hide_skill_panel()
+        else:
+            self.show_skill_panel()
+
+    def show_skill_panel(self):
+        """Display the skill panel with all player skills and scrollbar"""
+        self.skill_panel_visible = True
+        
+        # Create panel background
+        self.skill_panel_bg = self.canvas.create_rectangle(
+            500, 60, 800, 250,
+            fill="#1E1E1E",
+            outline="#333333",
+            width=2
+        )
+        
+        # Create panel title
+        self.skill_panel_title = self.canvas.create_text(
+            650, 70,
+            text="SKILLS",
+            fill="#FFFFFF",
+            font=("Montserrat Bold", 16 * -1),
+            anchor="center"
+        )
+        
+        # Create close button
+        self.close_panel_button = self.canvas.create_rectangle(
+            780, 60, 800, 80,
+            fill="#FF3333",
+            outline=""
+        )
+        self.close_panel_x = self.canvas.create_text(
+            790, 70,
+            text="X",
+            fill="#FFFFFF",
+            font=("Montserrat Bold", 12 * -1),
+            anchor="center"
+        )
+        self.canvas.tag_bind(self.close_panel_button, "<ButtonPress-1>", lambda e: self.hide_skill_panel())
+        self.canvas.tag_bind(self.close_panel_x, "<ButtonPress-1>", lambda e: self.hide_skill_panel())
+        
+        # Add these to UI elements list
+        self.skill_ui_elements.extend([
+            self.skill_panel_bg,
+            self.skill_panel_title,
+            self.close_panel_button,
+            self.close_panel_x
+        ])
+        
+        # Create a frame to hold the canvas and scrollbar
+        self.skill_frame = Frame(self.parent.window, bg="#1E1E1E")
+        self.skill_frame.place(x=510, y=90, width=280, height=150)
+        
+        # Create a canvas inside the frame
+        self.skill_canvas = Canvas(
+            self.skill_frame,
+            bg="#1E1E1E",
+            bd=0,
+            highlightthickness=0,
+            width=330,
+            height=150
+        )
+        self.skill_canvas.pack(side=LEFT, fill=BOTH, expand=True)
+        
+        # Create a scrollbar and connect it to the canvas
+        self.skill_scrollbar = Scrollbar(self.skill_frame, orient=VERTICAL, command=self.skill_canvas.yview)
+        self.skill_scrollbar.pack(side=RIGHT, fill=Y)
+        self.skill_canvas.configure(yscrollcommand=self.skill_scrollbar.set)
+        
+        # Create a frame inside the canvas to hold the skill elements
+        self.skills_container = Frame(self.skill_canvas, bg="#1E1E1E")
+        self.skill_canvas.create_window((0, 0), window=self.skills_container, anchor="nw")
+        
+        # Add section titles and skills to the container frame
+        Label(
+            self.skills_container,
+            text="ACTIVE SKILLS",
+            fg="#00AAFF",
+            bg="#1E1E1E",
+            font=("Montserrat Bold", 12),
+            anchor="w"
+        ).pack(fill=X, padx=5, pady=(5, 2))
+        
+        # Display active skills
+        for skill_name, skill_data in self.active_skills.items():
+            skill_info = skill_data[0]
+            skill_level = skill_info["lvl"]
+            
+            # Create skill frame
+            skill_frame = Frame(self.skills_container, bg="#2A2A2A", bd=1, relief=SOLID)
+            skill_frame.pack(fill=X, padx=5, pady=2)
+            
+            # Create skill name and level
+            Label(
+                skill_frame,
+                text=f"{skill_name} (Lvl {skill_level})",
+                fg="#FFFFFF",
+                bg="#2A2A2A",
+                font=("Montserrat Bold", 12),
+                anchor="w"
+            ).pack(fill=X, padx=5, pady=(5, 0))
+            
+            # Create skill description
+            Label(
+                skill_frame,
+                text=skill_info["desc"],
+                fg="#CCCCCC",
+                bg="#2A2A2A",
+                font=("Montserrat Regular", 10),
+                anchor="w",
+                wraplength=200,
+                justify=LEFT
+            ).pack(fill=X, padx=5, pady=(0, 5))
+            
+            # Create use button frame
+            btn_frame = Frame(skill_frame, bg="#2A2A2A")
+            btn_frame.pack(fill=X, padx=150, pady=(0, 5))
+            
+            # Create spacer to push button to the right
+            Label(btn_frame, bg="#2A2A2A").pack(side=LEFT, expand=True)
+            
+            # Create use button if not on cooldown
+            if skill_name in self.cooldowns and self.cooldowns[skill_name] > datetime.now():
+                cooldown_time = self.cooldowns[skill_name] - datetime.now()
+                minutes = int(cooldown_time.total_seconds() // 60)
+                seconds = int(cooldown_time.total_seconds() % 60)
+                cooldown_text = f"CD: {minutes}m {seconds}s"
+                
+                use_btn = Label(
+                    btn_frame,
+                    text=cooldown_text,
+                    fg="#AAAAAA",
+                    bg="#555555",
+                    font=("Montserrat Regular", 10),
+                    padx=10,
+                    pady=5
+                )
+                use_btn.pack(side=RIGHT)
+            else:
+                use_btn = Label(
+                    btn_frame,
+                    text="USE",
+                    fg="#FFFFFF",
+                    bg="#00AA44",
+                    font=("Montserrat Bold", 12),
+                    padx=10,
+                    pady=5
+                )
+                use_btn.pack(side=RIGHT)
+                
+                # Bind click event
+                use_btn.bind("<ButtonPress-1>", lambda e, s=skill_name: self.use_skill(s))
+        
+        # Display passive skills section
+        Label(
+            self.skills_container,
+            text="PASSIVE SKILLS",
+            fg="#FFAA00",
+            bg="#1E1E1E",
+            font=("Montserrat Bold", 12),
+            anchor="w"
+        ).pack(fill=X, padx=5, pady=(10, 2))
+        
+        # Display passive skills
+        for skill_name, skill_data in self.passive_skills.items():
+            skill_info = skill_data[0]
+            skill_level = skill_info["lvl"]
+            
+            # Create skill frame
+            skill_frame = Frame(self.skills_container, bg="#2A2A2A", bd=1, relief=SOLID)
+            skill_frame.pack(fill=X, padx=5, pady=2)
+            
+            # Create skill name and level
+            Label(
+                skill_frame,
+                text=f"{skill_name} (Lvl {skill_level}) - Always Active",
+                fg="#FFFFFF",
+                bg="#2A2A2A",
+                font=("Montserrat Bold", 11),
+                anchor="w"
+            ).pack(fill=X, padx=5, pady=(5, 0))
+            
+            # Create skill description
+            Label(
+                skill_frame,
+                text=skill_info["desc"],
+                fg="#CCCCCC",
+                bg="#2A2A2A",
+                font=("Montserrat Regular", 9),
+                anchor="w",
+                wraplength=250,
+                justify=LEFT
+            ).pack(fill=X, padx=5, pady=(0, 5))
+        
+        # Update the scrollable region
+        self.skills_container.update_idletasks()
+        self.skill_canvas.config(scrollregion=self.skill_canvas.bbox("all"))
+        
+        # Add mousewheel scrolling
+        self.skill_canvas.bind_all("<MouseWheel>", lambda event: self.skill_canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
+
+    def hide_skill_panel(self):
+        """Hide the skill panel"""
+        self.skill_panel_visible = False
+        
+        # Delete canvas elements
+        for element in self.skill_ui_elements:
+            self.canvas.delete(element)
+        self.skill_ui_elements = []
+        
+        # Destroy the skill frame with scrollbar
+        if hasattr(self, 'skill_frame') and self.skill_frame is not None:
+            self.skill_frame.destroy()
+            self.skill_frame = None
+        
+        # Unbind mousewheel
+        self.skill_canvas.unbind_all("<MouseWheel>")
+    
+    def use_skill(self, skill_name):
+        """Use an active skill"""
+        if skill_name not in self.active_skills:
+            return
+            
+        # Get cooldown from skill data
+        all_skill_data = self.all_skills.get(skill_name, {})
+        cooldown_str = self.all_skills.get("cooldown", "5m")
+        
+        # Parse cooldown time
+        minutes = 1
+        if "m" in cooldown_str:
+            minutes = int(cooldown_str.replace("m", ""))
+        
+        # Set cooldown
+        self.cooldowns[skill_name] = datetime.now() + timedelta(minutes=minutes)
+        
+        # Apply skill effect
+        self.apply_skill_effect(skill_name)
+        
+        # Hide and show panel to refresh
+        self.hide_skill_panel()
+        self.show_skill_panel()
+        
+    def apply_skill_effect(self, skill_name):
+        """Apply the effect of the selected skill"""
+        # Get the skill level for scaling effects
+        skill_level = self.player_skills[skill_name][0]["lvl"] if skill_name in self.player_skills else 1
+
+        if skill_name == "Resourceful Adaptation":
+            # Change workout activities randomly
+            if hasattr(self.parent, 'generate_activities'):
+                monster_type = random.choice(["STR", "AGI", "MIXED"])
+                self.parent.generate_activities(monster_type)
+                notification = self.parent.canvas.create_text(
+                    400, 320,
+                    anchor="center",
+                    text="Resourceful Adaptation: Activities changed randomly!",
+                    fill="#00FFFF",
+                    font=("Montserrat Bold", 14 * -1)
+                )
+                self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+                
+        elif skill_name == "Fatal Strike":
+            # Base reduction: 15% at level 1, +5% per level
+            reduction_percent = 15 + (5 * (skill_level - 1))
+            reduction_percent = min(50, reduction_percent)  # Cap at 50% reduction
+            reduction_factor = reduction_percent / 100.0
+            
+            # Apply to all activities (both STR and VIT)
+            modified_activities = []
+            
+            for activity_widget in [self.parent.activity1, self.parent.activity2, 
+                                self.parent.activity3, self.parent.activity4]:
+                activity_text = self.parent.canvas.itemcget(activity_widget, "text")
+                
+                # Skip empty activities
+                if not activity_text or activity_text.startswith("-Activity"):
+                    continue
+                    
+                # Find and reduce the numeric value
+                import re
+                numbers = re.findall(r'\d+', activity_text)
+                if numbers:
+                    for num_str in numbers:
+                        value = int(num_str)
+                        reduced = max(1, int(value * (1 - reduction_factor)))
+                        # Only replace the first occurrence of this number
+                        new_text = activity_text.replace(str(value), str(reduced), 1)
+                        self.parent.canvas.itemconfig(activity_widget, text=new_text, fill="#FF9900")
+                        modified_activities.append(activity_widget)
+                        break
+            
+            # After 3 seconds, reset color
+            if modified_activities:
+                self.parent.window.after(3000, lambda widgets=modified_activities: 
+                                    [self.parent.canvas.itemconfig(w, fill=self.parent.normal_font_col) 
+                                        for w in widgets])
+            
+            # Feedback notification
+            notification = self.parent.canvas.create_text(
+                400, 320,
+                anchor="center",
+                text=f"Fatal Strike Lvl {skill_level}: All activities reduced by {reduction_percent}%!",
+                fill="#FF9900",
+                font=("Montserrat Bold", 14 * -1)
+            )
+            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+            
+        elif skill_name == "Brute Force Mastery":
+            # Calculate STR buff and AGI debuff based on level
+            str_buff_percent = 20 + (10 * (skill_level - 1))  # 20% at lvl 1, +10% per level
+            agi_debuff_percent = 10 + (5 * (skill_level - 1))  # 10% at lvl 1, +5% per level
+            
+            str_buff_percent = min(70, str_buff_percent)  # Cap at 70% buff
+            agi_debuff_percent = min(35, agi_debuff_percent)  # Cap at 35% debuff
+            
+            str_factor = 1 - (str_buff_percent / 100.0)  # Reduction factor for STR (making activities easier)
+            agi_factor = 1 + (agi_debuff_percent / 100.0)  # Increase factor for AGI (making activities harder)
+            
+            modified_activities = []
+            
+            # Process all activities
+            for activity_widget in [self.parent.activity1, self.parent.activity2, 
+                                self.parent.activity3, self.parent.activity4]:
+                activity_text = self.parent.canvas.itemcget(activity_widget, "text")
+                
+                # Skip empty activities
+                if not activity_text or activity_text.startswith("-Activity"):
+                    continue
+                    
+                is_agi = "Seconds" in activity_text or "seconds" in activity_text
+                
+                # Apply appropriate factor based on activity type
+                import re
+                numbers = re.findall(r'\d+', activity_text)
+                if numbers:
+                    for num_str in numbers:
+                        value = int(num_str)
+                        
+                        if is_agi:
+                            # AGI activities get harder (values increase)
+                            modified = max(1, int(value * agi_factor))
+                            color = "#FF6666"  # Red for debuff
+                            self.parent.canvas.itemconfig(activity_widget, text=activity_text.replace(
+                                str(value), str(modified), 1), fill=color)
+                        else:
+                            # STR activities get easier (values decrease)
+                            modified = max(1, int(value * str_factor))
+                            color = "#66FF66"  # Green for buff
+                            self.parent.canvas.itemconfig(activity_widget, text=activity_text.replace(
+                                str(value), str(modified), 1), fill=color)
+                        
+                        modified_activities.append((activity_widget, color))
+                        break
+            
+            # After 3 seconds, reset color
+            if modified_activities:
+                self.parent.window.after(3000, lambda activities=modified_activities: 
+                                    [self.parent.canvas.itemconfig(w[0], fill=self.parent.normal_font_col) 
+                                        for w in activities])
+            
+            # Feedback notification
+            notification = self.parent.canvas.create_text(
+                400, 320,
+                anchor="center",
+                text=f"Brute Force Mastery Lvl {skill_level}: STR +{str_buff_percent}%, AGI -{agi_debuff_percent}%",
+                fill="#FFCC00",
+                font=("Montserrat Bold", 14 * -1)
+            )
+            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+            
+        elif skill_name == "Dash":
+            # Calculate reduction based on dungeon rank and skill level
+            base_reduction = 30 + (5 * (skill_level - 1))  # 30% at level 1, +5% per level
+            
+            # Rank penalty (higher ranks get less reduction)
+            rank_penalty = {
+                "E": 0,    # No penalty for E rank
+                "D": 5,    # 5% less reduction
+                "C": 10,   # 10% less reduction
+                "B": 15,   # 15% less reduction
+                "A": 20,   # 20% less reduction
+                "S": 25    # 25% less reduction (still usable on S rank in this implementation)
+            }
+            
+            # Get current dungeon rank
+            current_rank = self.parent.rank if hasattr(self.parent, 'rank') else "E"
+            
+            # Calculate final reduction (clamp between 25% and 75%)
+            reduction_percent = base_reduction - rank_penalty.get(current_rank, 0)
+            reduction_percent = max(25, min(75, reduction_percent))
+            reduction_factor = reduction_percent / 100.0
+            
+            # Find and modify all activities with "Seconds" in them
+            modified_activities = []
+            
+            for activity_widget in [self.parent.activity1, self.parent.activity2, 
+                                self.parent.activity3, self.parent.activity4]:
+                activity_text = self.parent.canvas.itemcget(activity_widget, "text")
+                
+                # Skip empty activities
+                if not activity_text or activity_text.startswith("-Activity"):
+                    continue
+                    
+                # Check if this is a time-based (AGI) activity
+                if "Seconds" in activity_text or "seconds" in activity_text:
+                    # Extract the time value
+                    import re
+                    numbers = re.findall(r'\d+', activity_text)
+                    if numbers:
+                        for num_str in numbers:
+                            value = int(num_str)
+                            reduced = max(1, int(value * (1 - reduction_factor)))
+                            # Replace just the first occurrence of this number
+                            new_text = activity_text.replace(str(value), str(reduced), 1)
+                            self.parent.canvas.itemconfig(activity_widget, text=new_text, fill="#FF00FF")
+                            modified_activities.append(activity_widget)
+                            break
+            
+            # After 3 seconds, reset color
+            if modified_activities:
+                self.parent.window.after(3000, lambda widgets=modified_activities: 
+                                    [self.parent.canvas.itemconfig(w, fill=self.parent.normal_font_col) 
+                                        for w in widgets])
+            
+            # Feedback notification
+            count = len(modified_activities)
+            if count > 0:
+                feedback = f"Dash Lvl {skill_level}: Reduced {count} time-based activities by {reduction_percent}%!"
+            else:
+                feedback = "No time-based activities found to reduce!"
+                
+            notification = self.parent.canvas.create_text(
+                400, 320,
+                anchor="center",
+                text=feedback,
+                fill="#FF00FF",
+                font=("Montserrat Bold", 14 * -1)
+            )
+            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+            
+        else:
+            # Generic skill effect message for other skills
+            notification = self.parent.canvas.create_text(
+                400, 320,
+                anchor="center",
+                text=f"Skill '{skill_name}' activated!",
+                fill="#FFFFFF",
+                font=("Montserrat Bold", 14 * -1)
+            )
+            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+    
+    def remove_brute_force_buff(self):
+        """Remove the Brute Force buff after duration expires"""
+        if hasattr(self.parent, 'str_buff_active'):
+            self.parent.str_buff_active = False
+            self.parent.agi_debuff_active = False
+            
+            # Remove buff text elements
+            for element in self.parent.skill_ui_elements:
+                self.parent.canvas.delete(element)
+            self.parent.skill_ui_elements = []
+
+
+
+
+
+def modify_dungeon_system1():
+    # Add skill system initialization to __init__ method
+    original_init = DungeonSystem.__init__
+    
+    def new_init(self, window):
+        original_init(self, window)
+        self.skill_system = SkillSystem(self, self.canvas, self.normal_font_col)
+        self.str_buff_active = False
+        self.agi_debuff_active = False
+        self.skill_ui_elements = []
+    
+    DungeonSystem.__init__ = new_init
+    
+    # Modify generate_activities to account for skills
+    original_generate_activities = DungeonSystem.generate_activities
+    
+    def new_generate_activities(self, monster_type, is_boss=False):
+        original_generate_activities(self, monster_type, is_boss)
+        
+        # Apply buffs/debuffs from active skills
+        if hasattr(self, 'str_buff_active') and self.str_buff_active and monster_type == "STR":
+            # Apply STR buff - make activities easier
+            activities = [self.activity1, self.activity2, self.activity3, self.activity4]
+            for activity in activities:
+                current_text = self.canvas.itemcget(activity, "text")
+                if "STR BUFF" not in current_text:
+                    import re
+                    numbers = re.findall(r'\d+', current_text)
+                    if numbers:
+                        num = int(numbers[0])
+                        reduced_num = max(1, int(num * 0.8))  # 20% reduction
+                        new_text = current_text.replace(str(num), str(reduced_num))
+                        new_text += " [STR BUFF]"
+                        self.canvas.itemconfig(activity, text=new_text)
+        
+        if hasattr(self, 'agi_debuff_active') and self.agi_debuff_active and monster_type == "AGI":
+            # Apply AGI debuff - make activities harder
+            activities = [self.activity1, self.activity2, self.activity3, self.activity4]
+            for activity in activities:
+                current_text = self.canvas.itemcget(activity, "text")
+                if "AGI DEBUFF" not in current_text:
+                    import re
+                    numbers = re.findall(r'\d+', current_text)
+                    if numbers:
+                        num = int(numbers[0])
+                        increased_num = int(num * 1.2)  # 20% increase
+                        new_text = current_text.replace(str(num), str(increased_num))
+                        new_text += " [AGI DEBUFF]"
+                        self.canvas.itemconfig(activity, text=new_text)
+    
+    DungeonSystem.generate_activities = new_generate_activities
+    
+    # Add passive skill effect application to start_dungeon
+    original_start_dungeon = DungeonSystem.start_dungeon
+    
+    def new_start_dungeon(self):
+        original_start_dungeon(self)
+        
+        # Apply passive skills effects
+        if hasattr(self, 'skill_system'):
+            for skill_name, skill_data in self.skill_system.passive_skills.items():
+                if skill_name == "Iron Warrior":
+                    # Apply Iron Warrior effect (will take effect below 50% HP)
+                    skill_level = skill_data[0]["lvl"]
+                    hp_bonus = 0.05 * skill_level  # 5% per level
+                    
+                    # Show passive skill indicator
+                    passive_text = self.canvas.create_text(
+                        690, 90.0,
+                        anchor="nw",
+                        text=f"IRON WARRIOR ACTIVE: +{int(hp_bonus*100)}% HP below 50%",
+                        fill="#FFAA00",
+                        font=("Montserrat Regular", 10 * -1)
+                    )
+                    self.skill_ui_elements.append(passive_text)
+    
+    DungeonSystem.start_dungeon = new_start_dungeon
+    
+    # Update setup_dungeon_timer to account for passive skills
+    original_setup_timer = DungeonSystem.setup_dungeon_timer
+    
+    def new_setup_dungeon_timer(self):
+        original_setup_timer(self)
+        
+        # Apply passive skills that affect time
+        if hasattr(self, 'skill_system'):
+            for skill_name, skill_data in self.skill_system.passive_skills.items():
+                if skill_name == "Nimble Endurance":
+                    skill_level = skill_data[0]["lvl"]
+                    time_bonus = 0.05 * skill_level  # 5% per level
+                    
+                    # Apply time bonus
+                    self.time_remaining = int(self.time_remaining * (1 + time_bonus))
+                    
+                    # Show passive skill effect
+                    passive_text = self.canvas.create_text(
+                        690, 80.0,
+                        anchor="nw",
+                        text=f"NIMBLE ENDURANCE: +{int(time_bonus*100)}% Time",
+                        fill="#FFAA00",
+                        font=("Montserrat Regular", 10 * -1)
+                    )
+                    self.skill_ui_elements.append(passive_text)
+    
+    DungeonSystem.setup_dungeon_timer = new_setup_dungeon_timer
+
+# Call the modification function at the bottom of the code
+modify_dungeon_system1()
 
 if __name__ == "__main__":
     window = Tk()

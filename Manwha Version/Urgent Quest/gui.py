@@ -48,10 +48,10 @@ window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 def complete():
-    with open("Files\Player Data\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Player Data/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
     
-    with open("Files\Player Data\Ability_Check.json", 'w') as fin_ability_check_file:
+    with open("Files/Player Data/Ability_Check.json", 'w') as fin_ability_check_file:
         ability_check_file_data["Check"][abi]=0
         ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
 

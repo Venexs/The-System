@@ -277,7 +277,7 @@ if re_check==True:
 
 # ? =====================================================================
 def update_stat(stat_name): 
-    with open("Files\Player Data\Ability_Check.json", 'r') as ability_check_file:
+    with open("Files/Player Data/Ability_Check.json", 'r') as ability_check_file:
         ability_check_file_data=ujson.load(ability_check_file)
         val=ability_check_file_data["Check"][stat_name.upper()]
     available_points = status_data["avail_eq"][0]["str_based"] if stat_name in ["str", "agi", "vit"] else status_data["avail_eq"][0]["int_based"]
@@ -292,7 +292,7 @@ def update_stat(stat_name):
                 status_data["status"][0]["fatigue_max"]+=20
             with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(status_data, fson, indent=6)
-            with open("Files\Player Data\Ability_Check.json", 'w') as fin_ability_check_file:
+            with open("Files/Player Data/Ability_Check.json", 'w') as fin_ability_check_file:
                 ability_check_file_data["Check"][stat_name.upper()]+=1
                 ujson.dump(ability_check_file_data, fin_ability_check_file, indent=4)
             #if stat_name=='vit':
@@ -593,7 +593,7 @@ canvas.tag_bind(image_18, "<ButtonPress-1>", title_chng)
 
 
 image_image_200 = PhotoImage(
-    file=relative_to_assets("image_18.png"))
+    file=relative_to_assets("image_18_1.png"))
 image_200 = canvas.create_image(
     300.0,
     208.0,

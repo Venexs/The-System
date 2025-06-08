@@ -141,7 +141,7 @@ def load_image_visibility(file_path, run_once_val, total_images=50, hidden_perce
         
         if run_once_val==False:
             run_once_val=True
-            load_image_visibility(file_path)
+            load_image_visibility(file_path, run_once_val)
         return [hidden_images,floor]
 
 def demon_fight(canvas_name,window):
