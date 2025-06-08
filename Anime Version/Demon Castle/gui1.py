@@ -229,7 +229,7 @@ def get():
     global mob
     global type_of_dun
 
-    with open("Files\Data\Dungeon_Rank.csv", 'r') as rank_file:
+    with open("Files/Data/Dungeon_Rank.csv", 'r') as rank_file:
         rank_file_reader=csv.reader(rank_file)
         for k in rank_file_reader:
             rank=k[0]
@@ -246,7 +246,7 @@ def get():
             elif rank=='A':rank='S'
         
         # Waves
-        with open("Files\Data\Dungeon_Boss_List.json", 'r') as monster_file:
+        with open("Files/Data/Dungeon_Boss_List.json", 'r') as monster_file:
             monster_file_data=ujson.load(monster_file)
             monster_names=list(monster_file_data.keys())
 

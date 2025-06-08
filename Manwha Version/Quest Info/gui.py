@@ -84,6 +84,7 @@ def get_quest_img(rank):
     image = Image.open(path)
     image = image.resize((105, 105), Image.Resampling.LANCZOS)
     return ImageTk.PhotoImage(image)
+
 if typeof == "Learn":
         
     two_title=False
