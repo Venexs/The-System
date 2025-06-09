@@ -1,11 +1,1 @@
-{
-    "Study":{
-        "rank":"E",
-        "desc":"Study for CIA's",
-        "type":"INT",
-        "time":"18:00",
-        "days":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-        "date":"12/03/2025",
-        "begun":false
-    }
-}
+{}
