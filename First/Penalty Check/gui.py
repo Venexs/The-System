@@ -125,8 +125,8 @@ def complete():
         hh=entry_1.get()
         mm=entry_2.get()
         try:
-            hh=int(hh)
-            mm=int(mm)
+            hh = entry_1.get("1.0", "end-1c")
+            mm = entry_2.get("1.0", "end-1c") 
         except:
             hh=0
             mm=0
