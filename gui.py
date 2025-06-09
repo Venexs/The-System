@@ -785,7 +785,8 @@ if vow==False:
         text="Job Change Quest",
         fill="#FFFFFF",
         font=("Exo Regular", 13 * -1),
-        tags="job"
+        tags="job",
+        state="hidden"
     )
 
     timer=canvas.create_text(
@@ -795,13 +796,16 @@ if vow==False:
         text="00 Days 00:00:00",
         fill="#FFFFFF",
         font=("Exo Bold", 15 * -1),
-        tags="job"
+        tags="job",
+        state="hidden"
     )
 
     stop_event = threading.Event()
     pause_event = threading.Event()
 
     thesystem.system.run_once_prog(stop_event0, thread0)
+
+    thesystem.system.run_once_misc_inv()
 
     thread1 = threading.Thread(target=check_for_job)
     thread1.start()
