@@ -34,7 +34,7 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / "assets/frame0"
 EQUIPMENT_TEMP_FILE = 'Files/Temp Files/Equipment Temp.csv'
 INVENTORY_FILE = 'Files/Player Data/Inventory.json'
-EQUIPMENT_FILE = 'Files/Equipment.json'
+EQUIPMENT_FILE = 'Files/Player Data/Equipment.json'
 STATUS_FILE = 'Files/Player Data/Status.json'
 PRESETS_FILE = "Files/Mod/presets.json"
 

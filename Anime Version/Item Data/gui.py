@@ -110,7 +110,7 @@ def ex_close(win):
         update_thread.join()
     threading.Thread(target=thesystem.system.fade_out, args=(window, 0.8)).start()
     subprocess.Popen(['python', 'Files/Mod/default/sfx_close.py'])
-    subprocess.Popen(['python', 'Anime Version\Inventory\gui.py'])
+    subprocess.Popen(['python', 'Anime Version/Inventory/gui.py'])
     thesystem.system.animate_window_close(window, 0, window_width, step=20, delay=1)
 
 typs='Item'
@@ -125,7 +125,7 @@ with open('Files/Temp Files/Inventory temp.csv', 'r') as fout:
         except:
             typs='Item'
 
-with open('Files/Equipment.json', 'r') as eq_fout:
+with open('Files/Player Data/Equipment.json', 'r') as eq_fout:
     eq_data=ujson.load(eq_fout)
 
 equiipment_check = equipment.find_item_slot(name, eq_data)
@@ -415,7 +415,7 @@ if typs=='Item':
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: (equipment.finish(qty=qty, equiipment_check=equiipment_check),thesystem.inventory.selling_item(name,window,val)),
+        command=lambda: (equipment.finish(qty=qty, equipment_check=equiipment_check),thesystem.inventory.selling_item(name,window,val)),
         relief="flat"
     )
     button_1.place(
