@@ -167,14 +167,15 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
-canvas.create_text(
-    156.0,
-    142.0,
-    anchor="nw",
-    text="[You cannot buy anything at your level]",
-    fill="#FF0000",
-    font=("Montserrat SemiBold", 12 * -1)
-)
+if lvl<5:
+    canvas.create_text(
+        156.0,
+        142.0,
+        anchor="nw",
+        text="[You cannot buy anything at your level]",
+        fill="#FF0000",
+        font=("Montserrat SemiBold", 12 * -1)
+    )
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))

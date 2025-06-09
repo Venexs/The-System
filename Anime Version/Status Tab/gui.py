@@ -167,7 +167,7 @@ def start_job(event):
     data = thesystem.misc.load_ujson("Files/Player Data/Job_info.json")
     data["status"][0]["job_active"] = 'True'
     date_format = "%Y-%m-%d"
-    future_date = (datetime.now() + timedelta(days=1)).strftime(date_format)
+    future_date = (datetime.now() + timedelta(days=2)).strftime(date_format)
     with open("Files/Temp Files/Job_Change Date.csv", 'w', newline='') as file:
         csv.writer(file).writerow([future_date])
     with open("Files/Player Data/Job_info.json", 'w') as fson:

@@ -631,10 +631,10 @@ elif typeof == "Common":
     def reminder():
         global ex_txt
         ex_tr_txt=canvas.itemcget(ex_txt, "text")
-        with open("Files\Temp Files\Quest Reminder.csv", 'w', newline='') as csv_open:
+        with open("Files/Temp Files/Quest Reminder.csv", 'w', newline='') as csv_open:
             writer=csv.writer(csv_open)
             writer.writerow([name, ex_tr_txt])
-        subprocess.Popen(['python', "Anime Version\Quest Reminder\gui.py"])
+        subprocess.Popen(['python', "Anime Version/Quest Reminder/gui.py"])
         ex_close(0)
     
     with open("Files/Player Data/Active_Quests.json", 'r') as fson:

@@ -779,25 +779,23 @@ if vow==False:
     canvas.tag_bind(image_16, "<ButtonPress-1>", update_open)
 
     canvas.create_text(
-        393.0,
+        407.0,
         594.0,
         anchor="nw",
         text="Job Change Quest",
         fill="#FFFFFF",
         font=("Exo Regular", 13 * -1),
-        tags="job",
-        state="hidden"
+        tags="job"
     )
 
     timer=canvas.create_text(
-        415.0,
+        396.0,
         610.0,
         anchor="nw",
-        text="00:00:00",
+        text="00 Days 00:00:00",
         fill="#FFFFFF",
         font=("Exo Bold", 15 * -1),
-        tags="job",
-        state="hidden"
+        tags="job"
     )
 
     stop_event = threading.Event()

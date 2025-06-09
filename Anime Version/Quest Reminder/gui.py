@@ -87,7 +87,7 @@ bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (400, 1
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
-with open("Files\Temp Files\Quest Reminder.csv", "r") as f:
+with open("Files/Temp Files/Quest Reminder.csv", "r") as f:
     reader = csv.reader(f)
     for row in reader:
         quest_name = row[0]

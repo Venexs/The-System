@@ -60,6 +60,16 @@ except:
         castle_data={"Souls":0,"XP":0,"Rewards":False,"Final":False}
         ujson.dump(castle_data,castle_file, indent=4)
 
+try:
+    with open("Files/Player Data/Demon_Castle.json", 'r') as castle_file:
+        castle_data = ujson.load(castle_file)
+except:
+    with open("Files/Data/Demon_Castle.json", 'r') as castle_file0:
+        castle_data0 = ujson.load(castle_file0)
+    with open("Files/Player Data/Demon_Castle.json", 'w') as castle_file:
+        castle_data=castle_data0
+        ujson.dump(castle_data,castle_file, indent=4)
+
 def relative_to_assets(path: str) -> Path:
     global file_num
 
