@@ -648,7 +648,7 @@ for i in range(4, 54):
         check=reading_data["hidden_images"][str(i)]["Completed"]
     
     if not check:
-        canvas.tag_bind(globals()[image_canvas_name], "<ButtonPress-1>", lambda img=image_canvas_name: thesystem.castle.demon_fight(img,window))
+        canvas.tag_bind(globals()[image_canvas_name], "<ButtonPress-1>", lambda event, img=image_canvas_name: thesystem.castle.demon_fight(img,window))
     
     hi = list(map(int, hidden_images))
 

@@ -179,6 +179,14 @@ def run_once_prog(stp_eve, thrd):
 
         sys.exit()
 
+def run_once_misc_inv():
+    with open("Files/Data/Inventory.json", 'r') as inv_file:
+        inv_data=ujson.load(inv_file)
+    if inv_data["Veg Maggi"]:
+        del inv_data["Veg Maggi"]
+        with open("Files/Data/Inventory.json", 'w') as inv_file:
+            ujson.dump(inv_data, inv_file, indent=6)
+
 def random_skill_check():
     # Load the primary status file and extract player's data.
     with open("Files/Player Data/Status.json", 'r') as f:
@@ -726,7 +734,7 @@ def set_preview_temp(o_name1,qt1):
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
-    subprocess.Popen(['python', f'{theme} Version/Manwha Version/Item Data/gui.py/gui.py'])
+    subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py/gui.py'])
 
 def center_window(root, width, height):
     # Get screen width and height

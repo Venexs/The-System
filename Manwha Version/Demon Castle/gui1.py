@@ -302,14 +302,14 @@ def next():
                 ujson.dump(data, f, indent=4)
 
         status_read_data["status"][0]['XP']+=XP_val
-        with open("Files/Data/Demon_Castle.json", 'r') as fson_fin:
+        with open("Files/Player Data/Demon_Castle.json"", 'r') as fson_fin:
             findata = ujson.load(fson_fin)
             findata['XP']+=XP_val
             findata['Souls']+=soul_count
             if final_boss==True:
                 findata['Final']=True
         
-        with open("Files/Data/Demon_Castle.json", 'w') as fson_fin:
+        with open("Files/Player Data/Demon_Castle.json"", 'w') as fson_fin:
             ujson.dump(findata, fson_fin, indent=6)
 
         with open("Files/Player Data/Status.json", 'w') as fson:

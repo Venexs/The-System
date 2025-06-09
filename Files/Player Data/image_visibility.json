@@ -1,7 +1,7 @@
 {
     "hidden_images": {
         "21": {
-            "Completed": false
+            "Completed": true
         },
         "22": {
             "Completed": false
@@ -61,7 +61,7 @@
             "Completed": true
         },
         "34": {
-            "Completed": false
+            "Completed": true
         },
         "17": {
             "Completed": false
