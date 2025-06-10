@@ -180,11 +180,18 @@ def run_once_prog(stp_eve, thrd):
         sys.exit()
 
 def run_once_misc_inv():
-    with open("Files/Data/Inventory.json", 'r') as inv_file:
+    with open("Files/Player Data/Inventory.json", 'r') as inv_file:
         inv_data=ujson.load(inv_file)
     if inv_data["Veg Maggi"]:
         del inv_data["Veg Maggi"]
-        with open("Files/Data/Inventory.json", 'w') as inv_file:
+        with open("Files/Player Data/Inventory.json", 'w') as inv_file:
+            ujson.dump(inv_data, inv_file, indent=6)
+
+    with open("Files/Data/Inventory_List.json", 'r') as inv_file:
+        inv_data=ujson.load(inv_file)
+    if inv_data["Veg Maggi"]:
+        del inv_data["Veg Maggi"]
+        with open("Files/Data/Inventory_List.json", 'w') as inv_file:
             ujson.dump(inv_data, inv_file, indent=6)
 
 def random_skill_check():
