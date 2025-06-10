@@ -182,17 +182,23 @@ def run_once_prog(stp_eve, thrd):
 def run_once_misc_inv():
     with open("Files/Player Data/Inventory.json", 'r') as inv_file:
         inv_data=ujson.load(inv_file)
-    if inv_data["Veg Maggi"]:
-        del inv_data["Veg Maggi"]
-        with open("Files/Player Data/Inventory.json", 'w') as inv_file:
-            ujson.dump(inv_data, inv_file, indent=6)
+    try:
+        if inv_data["Veg Maggi"]:
+            del inv_data["Veg Maggi"]
+            with open("Files/Player Data/Inventory.json", 'w') as inv_file:
+                ujson.dump(inv_data, inv_file, indent=6)
+    except:
+        pass
 
     with open("Files/Data/Inventory_List.json", 'r') as inv_file:
         inv_data=ujson.load(inv_file)
-    if inv_data["Veg Maggi"]:
-        del inv_data["Veg Maggi"]
-        with open("Files/Data/Inventory_List.json", 'w') as inv_file:
-            ujson.dump(inv_data, inv_file, indent=6)
+    try:
+        if inv_data["Veg Maggi"]:
+            del inv_data["Veg Maggi"]
+            with open("Files/Data/Inventory_List.json", 'w') as inv_file:
+                ujson.dump(inv_data, inv_file, indent=6)
+    except:
+        pass
 
 def random_skill_check():
     # Load the primary status file and extract player's data.
