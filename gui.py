@@ -21,6 +21,9 @@ import time
 import pandas as pd
 import sys
 import os
+import pandas as pd
+from packaging import version
+import requests
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,7 +32,6 @@ project_root = os.path.abspath(os.path.join(current_dir, '../../'))
 sys.path.insert(0, project_root)
 
 import thesystem.system
-
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -47,6 +49,7 @@ try:
 
 except:
     vow=False
+
 
 if vow==False:
     thing=txt='None'
@@ -249,7 +252,9 @@ if vow==False:
         subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
         home_items = [
             "home", "home1", "home2", "home3", "home4", "home5", 
-            "home6", "home7", "home8", "home9", "home10", "home11", "home12", "home13"
+            "home6", "home7", "home8", "home9", "home10", "home11", 
+            "home12", "home13", "home14", "home15", "home16", "home17",
+            "home18"
         ]
 
         def show_items(index=0):
@@ -396,7 +401,6 @@ if vow==False:
         subprocess.Popen(['python', 'update.py'])
         window.quit()
 
-
     def daily_open(event):
         with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=json.load(themefile)
@@ -541,6 +545,61 @@ if vow==False:
     def hide_job():
         canvas.itemconfig("job", state="hidden")
 
+    def check_for_update() -> bool:
+        github_csv_url = "https://raw.githubusercontent.com/Venexs/The-System/refs/heads/Update_RAW/version.csv"
+        local_csv_path = "version.csv"
+        """
+        Compares local and remote version numbers to determine if an update is available.
+
+        Args:
+            github_csv_url (str): The URL to the remote version CSV file on GitHub.
+            local_csv_path (str): The path to the local version CSV file.
+
+        Returns:
+            bool: True if a newer version exists, False otherwise.
+        """
+        def github_blob_to_raw(url):
+            return url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
+
+        def get_version(path_or_url, is_remote=False):
+            try:
+                if is_remote:
+                    response = requests.get(path_or_url)
+                    response.raise_for_status()
+                    df = pd.read_csv(requests.get(path_or_url).url, header=None)
+                else:
+                    df = pd.read_csv(path_or_url, header=None)
+
+                if df.empty:
+                    raise ValueError("CSV is empty.")
+                return str(df.iloc[0, 0]).strip()
+            except Exception as e:
+                print(f"Error reading {'remote' if is_remote else 'local'} CSV: {e}")
+                return False
+
+        raw_url = github_blob_to_raw(github_csv_url)
+        remote_ver = get_version(raw_url, is_remote=True)
+        local_ver = get_version(local_csv_path)
+
+        if remote_ver is None or local_ver is None:
+            return False  # Cannot compare if either version is missing
+
+        return version.parse(remote_ver) > version.parse(local_ver)
+
+    def hourly_update_check():
+        """
+        Function to be run in a separate thread for hourly update checks.
+        """
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+            theme_data=json.load(themefile)
+            theme=theme_data["Theme"]
+        while True:
+            if check_for_update():
+                print("An update is available! You might want to run the full updater.")
+            else:
+                print("You have the latest version.")
+            time.sleep(3600)
+
     # ? =====================================================================
     # ! The Every 5th Level Skil Checker
     thesystem.system.random_skill_check()
@@ -588,12 +647,13 @@ if vow==False:
         relief = "ridge"
     )
 
+
     canvas.place(x = 0, y = 0)
     image_image_1 = PhotoImage(
         file=relative_to_assets("image_1.png"))
     image_1 = canvas.create_image(
-        459.6004638671875,
-        459.2827453613281,
+        460.0,
+        460.0,
         image=image_image_1
     )
 
@@ -602,185 +662,232 @@ if vow==False:
     image_image_2 = PhotoImage(
         file=relative_to_assets("image_2.png"))
     image_2 = canvas.create_image(
-        493.0,
-        421.0,
-        image=image_image_2
+        460.0,
+        381.0,
+        image=image_image_2,
+        tag="home",
+        state="hidden"
     )
-
-    canvas.tag_bind(image_2, "<ButtonPress-1>", start_move)
-    canvas.tag_bind(image_2, "<B1-Motion>", move_window)
+    canvas.tag_bind(image_2, "<ButtonPress-1>", inv_open)
 
     image_image_3 = PhotoImage(
         file=relative_to_assets("image_3.png"))
     image_3 = canvas.create_image(
-        460.0911865234375,
-        555.478148578175,
+        533.0,
+        411.0,
         image=image_image_3,
-        tags="home1",
+        tag="home1",
         state="hidden"
     )
-
-    canvas.tag_bind(image_3, "<ButtonPress-1>", status_open)
+    
+    canvas.tag_bind(image_3, "<ButtonPress-1>", quest_open)
 
     image_image_4 = PhotoImage(
         file=relative_to_assets("image_4.png"))
     image_4 = canvas.create_image(
-        550.690038915669,
-        522.3607694785769,
+        387.0,
+        415.0,
         image=image_image_4,
-        tags="home2",
+        tag="home2",
         state="hidden"
     )
-
-    canvas.tag_bind(image_4, "<ButtonPress-1>", daily_open)
+    canvas.tag_bind(image_4, "<ButtonPress-1>", equip_open)
 
     image_image_5 = PhotoImage(
         file=relative_to_assets("image_5.png"))
     image_5 = canvas.create_image(
-        550.6188507080078,
-        397.16014099121094,
+        388.0,
+        504.0,
         image=image_image_5,
-        tags="home3",
+        tag="home3",
         state="hidden"
     )
-
-    canvas.tag_bind(image_5, "<ButtonPress-1>", quest_open)
+    canvas.tag_bind(image_5, "<ButtonPress-1>", open_dungeon)
 
     image_image_6 = PhotoImage(
         file=relative_to_assets("image_6.png"))
     image_6 = canvas.create_image(
-        460.0912364224905,
-        362.99999150587064,
+        533.0,
+        507.0,
         image=image_image_6,
-        tags="home4",
+        tag="home4",
         state="hidden"
     )
 
-    canvas.tag_bind(image_6, "<ButtonPress-1>", inv_open)
+    canvas.tag_bind(image_6, "<ButtonPress-1>", daily_open)
 
     image_image_7 = PhotoImage(
         file=relative_to_assets("image_7.png"))
     image_7 = canvas.create_image(
-        369.00001342479027,
-        395.1195373535156,
+        460.0,
+        538.0,
         image=image_image_7,
-        tags="home3",
+        tag="home5",
         state="hidden"
     )
 
-    canvas.tag_bind(image_7, "<ButtonPress-1>", equip_open)
+    canvas.tag_bind(image_7, "<ButtonPress-1>", status_open)
 
     image_image_8 = PhotoImage(
         file=relative_to_assets("image_8.png"))
     image_8 = canvas.create_image(
-        370.944091796875,
-        520.902587890625,
+        363.0,
+        405.0,
         image=image_image_8,
-        tags="home2",
+        tag="home6",
         state="hidden"
     )
-
-    canvas.tag_bind(image_8, "<ButtonPress-1>", open_dungeon)
 
     image_image_9 = PhotoImage(
         file=relative_to_assets("image_9.png"))
     image_9 = canvas.create_image(
-        332.99999197133,
-        611.0000135325972,
+        559.2101707458496,
+        405.0,
         image=image_image_9,
-        tags="home8",
+        tag="home7",
         state="hidden"
     )
-
-    canvas.tag_bind(image_9, "<ButtonPress-1>", settings_open)
 
     image_image_10 = PhotoImage(
         file=relative_to_assets("image_10.png"))
     image_10 = canvas.create_image(
-        268.99999338684756,
-        522.0000097590273,
+        459.99999455502984,
+        572.0000034206996,
         image=image_image_10,
-        tags="home9",
+        tag="home8",
         state="hidden"
     )
-
-    canvas.tag_bind(image_10, "<ButtonPress-1>", credit_open)
 
     image_image_11 = PhotoImage(
         file=relative_to_assets("image_11.png"))
     image_11 = canvas.create_image(
-        261.0,
-        390.99999589660365,
+        460.0,
+        332.0,
         image=image_image_11,
-        tags="home10",
+        tag="home9",
         state="hidden"
     )
 
-    canvas.tag_bind(image_11, "<ButtonPress-1>", castle_open)
+    canvas.tag_bind(image_11, "<ButtonPress-1>", update_open)
 
     image_image_12 = PhotoImage(
         file=relative_to_assets("image_12.png"))
     image_12 = canvas.create_image(
-        660.9999919213851,
-        390.9999928961788,
+        343.0,
+        530.0,
         image=image_image_12,
-        tags="home10",
+        tag="home10",
         state="hidden"
     )
 
-    canvas.tag_bind(image_12, "<ButtonPress-1>", shop_open)
+    canvas.tag_bind(image_12, "<ButtonPress-1>", intro)
 
     image_image_13 = PhotoImage(
         file=relative_to_assets("image_13.png"))
     image_13 = canvas.create_image(
-        654.999995438553,
-        521.9999966698451,
+        577.0,
+        530.0,
         image=image_image_13,
-        tags="home9",
+        tag="home11",
         state="hidden"
     )
 
-    canvas.tag_bind(image_13, "<ButtonPress-1>", skill_open)
+    canvas.tag_bind(image_13, "<ButtonPress-1>", credit_open)
 
     image_image_14 = PhotoImage(
         file=relative_to_assets("image_14.png"))
     image_14 = canvas.create_image(
-        592.0000123731879,
-        613.0000142702847,
+        325.0,
+        380.0,
         image=image_image_14,
-        tags="home8",
+        tag="home12",
         state="hidden"
     )
 
-    canvas.tag_bind(image_14, "<ButtonPress-1>", intro)
+    canvas.tag_bind(image_14, "<ButtonPress-1>", skill_open)
 
     image_image_15 = PhotoImage(
         file=relative_to_assets("image_15.png"))
     image_15 = canvas.create_image(
-        460.0,
-        655.999993913435,
+        597.0,
+        378.0,
         image=image_image_15,
-        tags="home6",
+        tag="home13",
         state="hidden"
     )
 
-    canvas.tag_bind(image_15, "<ButtonPress-1>", close_full)
+    canvas.tag_bind(image_15, "<ButtonPress-1>", shop_open)
 
     image_image_16 = PhotoImage(
         file=relative_to_assets("image_16.png"))
     image_16 = canvas.create_image(
-        459.99997567038827,
-        710.0000231237318,
+        459.0,
+        603.0,
         image=image_image_16,
-        tags="home7",
+        tag="home14",
         state="hidden"
     )
 
-    canvas.tag_bind(image_16, "<ButtonPress-1>", update_open)
+    canvas.tag_bind(image_16, "<ButtonPress-1>", castle_open)
+
+    image_image_17 = PhotoImage(
+        file=relative_to_assets("image_17.png"))
+    image_17 = canvas.create_image(
+        459.0,
+        272.0,
+        image=image_image_17,
+        tag="home15",
+        state="hidden"
+    )
+
+    image_image_18 = PhotoImage(
+        file=relative_to_assets("image_18.png"))
+    image_18 = canvas.create_image(
+        616.0,
+        298.0,
+        image=image_image_18,
+        tag="home16",
+        state="hidden"
+    )
+    
+    canvas.tag_bind(image_18, "<ButtonPress-1>", close_full)
+
+    image_image_19 = PhotoImage(
+        file=relative_to_assets("image_19.png"))
+    image_19 = canvas.create_image(
+        304.0,
+        298.0,
+        image=image_image_19,
+        tag="home17",
+        state="hidden"
+    )
+
+    canvas.tag_bind(image_19, "<ButtonPress-1>", settings_open)
+
+    image_image_20 = PhotoImage(
+        file=relative_to_assets("image_20.png"))
+    image_20 = canvas.create_image(
+        486.0,
+        437.0,
+        image=image_image_20
+    )
+
+    canvas.tag_bind(image_20, "<ButtonPress-1>", start_move)
+    canvas.tag_bind(image_20, "<B1-Motion>", move_window)
+
+    image_image_21 = PhotoImage(
+        file=relative_to_assets("image_21.png"))
+    image_21 = canvas.create_image(
+        460.0,
+        659.0,
+        image=image_image_21,
+        tags="job",
+        state="hidden"
+    )
 
     canvas.create_text(
         407.0,
-        594.0,
+        594.0+50-5,
         anchor="nw",
         text="Job Change Quest",
         fill="#FFFFFF",
@@ -791,7 +898,7 @@ if vow==False:
 
     timer=canvas.create_text(
         396.0,
-        610.0,
+        610.0+50-5,
         anchor="nw",
         text="00 Days 00:00:00",
         fill="#FFFFFF",
@@ -799,13 +906,14 @@ if vow==False:
         tags="job",
         state="hidden"
     )
-
+    
     stop_event = threading.Event()
     pause_event = threading.Event()
 
     thesystem.system.run_once_prog(stop_event0, thread0)
 
-    thesystem.system.run_once_misc_inv()
+    update_thread = threading.Thread(target=hourly_update_check, daemon=True)
+    update_thread.start()
 
     thread1 = threading.Thread(target=check_for_job)
     thread1.start()
