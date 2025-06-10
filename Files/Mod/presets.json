@@ -99,6 +99,11 @@
         [
             "Files/Mod/default/messages/Courage of the Weak.png"
         ]
+        ,
+        "Update":
+        [
+            "Files/Mod/default/messages/Update.png"
+        ]
     },
 
     "Help":{
