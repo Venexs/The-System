@@ -595,9 +595,7 @@ if vow==False:
             theme=theme_data["Theme"]
         while True:
             if check_for_update():
-                print("An update is available! You might want to run the full updater.")
-            else:
-                print("You have the latest version.")
+                thesystem.system.message_open("Update")
             time.sleep(3600)
 
     # ? =====================================================================
@@ -910,7 +908,7 @@ if vow==False:
     stop_event = threading.Event()
     pause_event = threading.Event()
 
-    thesystem.system.run_once_prog(stop_event0, thread0)
+    #thesystem.system.run_once_prog(stop_event0, thread0)
 
     update_thread = threading.Thread(target=hourly_update_check, daemon=True)
     update_thread.start()
