@@ -908,7 +908,7 @@ if vow==False:
     stop_event = threading.Event()
     pause_event = threading.Event()
 
-    #thesystem.system.run_once_prog(stop_event0, thread0)
+    thesystem.system.run_once_prog(stop_event0, thread0)
 
     update_thread = threading.Thread(target=hourly_update_check, daemon=True)
     update_thread.start()
