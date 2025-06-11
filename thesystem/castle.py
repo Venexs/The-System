@@ -74,13 +74,13 @@ def load_image_visibility(file_path, run_once_val, total_images=50, hidden_perce
             data={}
             for k in range(len(hidden_images)):
                 data[str(hidden_images[k])] = {}
-                if next_floor==50 or next_floor==25 or next_floor==75:
+                if next_floor in [25, 50, 75]:
+                    if str(53) not in data:
+                        data[str(53)] = {}
                     data[str(53)]['Completed'] = False
                 else:
-                    try:
-                        del data[str(53)]
-                    except:
-                        print()
+                    data.pop(str(53), None)  # delete safely if it exists
+
                 data[str(hidden_images[k])]['Completed'] = False
 
             with open(file_path, 'w') as f:
@@ -122,15 +122,15 @@ def load_image_visibility(file_path, run_once_val, total_images=50, hidden_perce
             for k in range(len(hidden_images)):
                 data[str(hidden_images[k])] = {}
                 try:
-                    if next_floor==50 or next_floor==25 or next_floor==75:
+                    if next_floor in [25, 50, 75]:
+                        if str(53) not in data:
+                            data[str(53)] = {}
                         data[str(53)]['Completed'] = False
                     else:
-                        try:
-                            del data[str(53)]
-                        except:
-                            pass
+                        data.pop(str(53), None)
                 except:
                     pass
+                
                 data[str(hidden_images[k])]['Completed'] = False
 
             with open(file_path, 'w') as f:
