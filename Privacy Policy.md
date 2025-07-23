@@ -51,7 +51,7 @@ If we ever introduce changes that affect how privacy is handled, the App will no
 ## 8. Contact
 
 For any questions or concerns about this privacy policy, you may reach out to us at:  
-📧 **[Insert Contact Email]**
+📧 **luminatristudios@gmail.com**
 
 ---
 
