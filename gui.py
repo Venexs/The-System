@@ -52,6 +52,7 @@ except:
 
 
 if vow==False:
+    thesystem.system.overwrite_python_file_with_text(update.py, update_new.txt)
     thing=txt='None'
     stop_thread = False  # Global flag to control the thread
 
