@@ -22,6 +22,20 @@ from functools import partial
 last_run = 0 
 tk_images = []
 
+def overwrite_python_file_with_text(py_file_path, txt_file_path):
+    try:
+        with open(txt_file_path, 'r', encoding='utf-8') as txt_file:
+            new_content = txt_file.read()
+
+        with open(py_file_path, 'w', encoding='utf-8') as py_file:
+            py_file.write(new_content)
+
+        print(f"✅ Successfully updated: {py_file_path}")
+        os.remove(txt_file_path)
+    except Exception as e:
+        print(f"❌ Failed to update {py_file_path}: {e}")
+
+
 def fin_pen():
     today = datetime.now().date()
 
