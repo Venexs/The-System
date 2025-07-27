@@ -1,1 +1,20 @@
-{}
+{
+      "Dash": [
+            {
+                  "lvl": 1,
+                  "type": "Active",
+                  "desc": "Decreases Time based activities by 5% for each level. (Mana Cost: 250)",
+                  "pl_point": 0,
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of Lightning": 1
+                  }
+            },
+            {
+                  "Condition": [
+                        "AGI"
+                  ]
+            }
+      ]
+}

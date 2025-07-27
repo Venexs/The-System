@@ -16,6 +16,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -90,24 +91,22 @@ thesystem.system.make_window_transparent(window,transp_clr)
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
-
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (580, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (580, 33), job, type_="bottom")
+
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -167,12 +166,6 @@ for k in rol:
             dat5 = {k: data[k]}
         c += 1
 
-with open("Files/Mod/presets.json", 'r') as pres_file:
-    pres_file_data=ujson.load(pres_file)
-    normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
-    video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 300.0)
-
 
 # ! ======================================================================
 # ! FILE INJECTION
@@ -203,7 +196,8 @@ with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 350.0, resize_factor=1, pause_duration=0.4)
+    preloaded_frames = np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 277.0, 350.0, resize_factor=1, pause_duration=0.4)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -221,14 +215,23 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
+image_image_13 = PhotoImage(
+    file=relative_to_assets("image_13.png"))
+image_13 = canvas.create_image(
+    279.0,
+    240.0,
+    image=image_image_13
+)
 
 # Load dynamic data
 inventory_data = thesystem.misc.load_ujson(INVENTORY_FILE)
 presets = thesystem.misc.load_ujson(PRESETS_FILE)
 
 # Populate Equipment List
-names = ["-", "-", "-", "-", "-"]
+names = ["", "", "", "", ""]
 ranks = ["X", "X", "X", "X", "X"]
+ac_ranks = ["", "", "", "", ""]
+state=["hidden", "hidden", "hidden", "hidden", "hidden"]
 
 match_count = 0
 for item in inventory_data.keys():
@@ -236,6 +239,8 @@ for item in inventory_data.keys():
         if match_count < 5:
             names[match_count] = item
             ranks[match_count] = inventory_data[item][0]["rank"]
+            ac_ranks[match_count] = str(inventory_data[item][0]["rank"])+" Rank"
+            state[match_count] = "normal"
             match_count += 1
 
 
@@ -245,22 +250,27 @@ button_image_1 = PhotoImage(
 images=[]
 image_image_4 = PhotoImage(file=relative_to_assets("image_4.png"))
 # Add Buttons and Labels Dynamically
-for i, (name, rank) in enumerate(zip(names, ranks)):
+for i, (name, rank) in enumerate(zip(names, ac_ranks)):
     y_offset = 164 + i * 32
 
     canvas.create_image(
         280.0,
         (y_offset+13),
-        image=image_image_4
+        image=image_image_4,
+        state=state[i]
     )
 
     canvas.create_text(68.0, y_offset, anchor="nw", text=name, fill=normal_font_col, font=("Montserrat Regular", 18 * -1))
-    canvas.create_text(391.0, y_offset, anchor="nw", text=f"{rank}-Rank", fill=normal_font_col, font=("Montserrat Medium", 18 * -1))
-    button = Button(
+    canvas.create_text(391.0, y_offset, anchor="nw", text=f"{rank}", fill=normal_font_col, font=("Montserrat Medium", 18 * -1))
+    
+    btn = canvas.create_image(
+        481.0,
+        y_offset+13,
         image=button_image_1,
-        borderwidth=0, highlightthickness=0, command=lambda i=i: thesystem.itemequip.handle_selection(i + 1, names[i], cat, window, dat1, dat2, dat3, dat4, dat5), relief="flat"
+        state=state[i]
     )
-    button.place(x=481.0, y=y_offset, width=24.0, height=24.0)
+
+    canvas.tag_bind(btn, "<ButtonPress-1>", lambda event, i=i: thesystem.itemequip.handle_selection(i + 1, names[i], cat, window, dat1, dat2, dat3, dat4, dat5))
 
 side = PhotoImage(file=relative_to_assets("blue.png"))
 if job.upper()!="NONE":
@@ -329,17 +339,17 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
-
 # Start the animation
 if setting_data["Settings"]["Performernce (ANIME):"] != "True":
     update_thread = threading.Thread(target=update_images)

@@ -1,6 +1,7 @@
 import ujson
 import os
 from PIL import Image, ImageTk
+import thesystem.system
 
 STAT_MAP = {
     "AGIbuff": "AGI",
@@ -27,7 +28,7 @@ def extract_boosts(item_data):
     if isinstance(buff_data, dict):
         for key in list(buff_data.keys())[:2]:  # get up to two buffs
             stat = STAT_MAP.get(key, key)
-            boosts.append(f"{stat} +{buff_data[key]}")
+            boosts.append(f"{stat} +{thesystem.system.equipment_value_plus(buff_data[key])}")
     return boosts
 
 def extract_deboosts(item_data):
@@ -135,9 +136,9 @@ def finish(qty, equipment_check):
 
     try:
         if boost1_stat:
-            status_data["equipment"][0][boost1_stat] = -(boost1_value / 2)
+            status_data["equipment"][0][boost1_stat] = -(boost1_value)
         if boost2_stat:
-            status_data["equipment"][0][boost2_stat] = -(boost2_value / 2)
+            status_data["equipment"][0][boost2_stat] = -(boost2_value)
     except Exception:
         pass
 

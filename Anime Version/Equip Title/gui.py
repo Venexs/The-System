@@ -15,6 +15,7 @@ import subprocess
 import ujson
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -55,7 +56,8 @@ def ex_close(win):
 
 
 name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name13=''
-rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13='X'
+rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13=''
+state1=state2=state3=state4=state5=state6=state7=state8=state9=state10=state11=state12=state13='hidden'
 c=0
 
 
@@ -67,54 +69,67 @@ with open("Files/Player Data/Titles.json", 'r') as fson:
             if c==0:
                 name1=k
                 rank1=data[k]["Rank"]
+                state1="normal"
                 c+=1
             elif c==1:
                 name2=k
                 rank2=data[k]["Rank"]
+                state2="normal"
                 c+=1
             elif c==2:
                 name3=k
                 rank3=data[k]["Rank"]
+                state3="normal"
                 c+=1
             elif c==3:
                 name4=k
                 rank4=data[k]["Rank"]
+                state4="normal"
                 c+=1
             elif c==4:
                 name5=k
                 rank5=data[k]["Rank"]
+                state5="normal"
                 c+=1
             elif c==5:
                 name6=k
                 rank6=data[k]["Rank"]
+                state6="normal"
                 c+=1
             elif c==6:
                 name7=k
                 rank7=data[k]["Rank"]
+                state7="normal"
                 c+=1
             elif c==7:
                 name8=k
                 rank8=data[k]["Rank"]
+                state8="normal"
                 c+=1
             elif c==8:
                 name9=k
                 rank9=data[k]["Rank"]
+                state9="normal"
                 c+=1
             elif c==9:
                 name10=k
                 rank10=data[k]["Rank"]
+                state10="normal"
                 c+=1
             elif c==10:
                 name11=k
                 rank11=data[k]["Rank"]
+                state11="normal"
                 c+=1
             elif c==11:
                 name12=k
                 rank12=data[k]["Rank"]
+                state12="normal"
                 c+=1
             elif c==12:
                 name13=k
                 rank13=data[k]["Rank"]
+                state13="normal"
                 c+=1
 
     except:
@@ -147,24 +162,21 @@ thesystem.system.make_window_transparent(window,transp_clr)
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
-
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (580, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (580, 33), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -191,7 +203,8 @@ with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 350.0, resize_factor=1, pause_duration=0.4)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 277.0, 350.0, resize_factor=1, pause_duration=0.4)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -199,6 +212,14 @@ image_2 = canvas.create_image(
     287.0,
     418.0,
     image=image_image_2
+)
+
+image_image_13 = PhotoImage(
+    file=relative_to_assets("image_13.png"))
+image_13 = canvas.create_image(
+    280.0,
+    282.0-60,
+    image=image_image_13
 )
 
 image_image_3 = PhotoImage(
@@ -214,7 +235,8 @@ image_image_4 = PhotoImage(
 image_4 = canvas.create_image(
     280.0,
     107.0,
-    image=image_image_4
+    image=image_image_4,
+    state=state1
 )
 
 canvas.create_text(
@@ -232,31 +254,27 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank1}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state1
 )
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
-button_1 = Button(
+
+button_1 = canvas.create_image(
+    481.0,
+    95.0+12,
     image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name1,window),
-    relief="flat"
-)
-button_1.place(
-    x=481.0,
-    y=95.0,
-    width=24.0,
-    height=24.0
+    state=state1
 )
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
+canvas.tag_bind(button_1, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name1,window))
+
 image_5 = canvas.create_image(
     280.0,
     139.0,
-    image=image_image_5
+    image=image_image_4,
+    state=state2
 )
 
 canvas.create_text(
@@ -274,31 +292,24 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank2}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state2
 )
 
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name2,window),
-    relief="flat"
-)
-button_2.place(
-    x=481.0,
-    y=127.0,
-    width=24.0,
-    height=24.0
+button_2=canvas.create_image(
+    481.0,
+    127.0+12,
+    image=button_image_1,
+    state=state2
 )
 
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
+canvas.tag_bind(button_2, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name2,window))
+
 image_6 = canvas.create_image(
     280.0,
     171.0,
-    image=image_image_6
+    image=image_image_4,
+    state=state3
 )
 
 canvas.create_text(
@@ -316,31 +327,24 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank3}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state3
 )
 
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name3,window),
-    relief="flat"
-)
-button_3.place(
-    x=481.0,
-    y=159.0,
-    width=24.0,
-    height=24.0
+button_3=canvas.create_image(
+    481.0,
+    159.0+12,
+    image=button_image_1,
+    state=state3
 )
 
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
+canvas.tag_bind(button_3, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name3,window))
+
 image_7 = canvas.create_image(
     280.0,
     203.0,
-    image=image_image_7
+    image=image_image_4,
+    state=state4
 )
 
 canvas.create_text(
@@ -358,31 +362,24 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank4}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state4
 )
 
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name4,window),
-    relief="flat"
-)
-button_4.place(
-    x=481.0,
-    y=191.0,
-    width=24.0,
-    height=24.0
+button_4=canvas.create_image(
+    481.0,
+    191.0+12,
+    image=button_image_1,
+    state=state4
 )
 
-image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
+canvas.tag_bind(button_4, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name4,window))
+
 image_8 = canvas.create_image(
     280.0,
     235.0,
-    image=image_image_8
+    image=image_image_4,
+    state=state5
 )
 
 canvas.create_text(
@@ -400,31 +397,24 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank5}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state5
 )
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
-button_5 = Button(
-    image=button_image_5,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name5,window),
-    relief="flat"
-)
-button_5.place(
-    x=481.0,
-    y=223.0,
-    width=24.0,
-    height=24.0
+button_5=canvas.create_image(
+    481.0,
+    223.0+12,
+    image=button_image_1,
+    state=state5
 )
 
-image_image_9 = PhotoImage(
-    file=relative_to_assets("image_9.png"))
+canvas.tag_bind(button_5, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name5,window))
+
 image_9 = canvas.create_image(
     280.0,
     267.0,
-    image=image_image_9
+    image=image_image_4,
+    state=state6
 )
 
 canvas.create_text(
@@ -442,31 +432,24 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank6}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state6
 )
 
-button_image_6 = PhotoImage(
-    file=relative_to_assets("button_6.png"))
-button_6 = Button(
-    image=button_image_6,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name6,window),
-    relief="flat"
-)
-button_6.place(
-    x=481.0,
-    y=255.0,
-    width=24.0,
-    height=24.0
+button_6=canvas.create_image(
+    481.0,
+    255.0+12,
+    image=button_image_1,
+    state=state6
 )
 
-image_image_10 = PhotoImage(
-    file=relative_to_assets("image_10.png"))
+canvas.tag_bind(button_6, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name6,window))
+
 image_10 = canvas.create_image(
     280.0,
     299.0,
-    image=image_image_10
+    image=image_image_4,
+    state=state7
 )
 
 canvas.create_text(
@@ -484,31 +467,24 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank7}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state7
 )
 
-button_image_7 = PhotoImage(
-    file=relative_to_assets("button_7.png"))
-button_7 = Button(
-    image=button_image_7,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name7,window),
-    relief="flat"
-)
-button_7.place(
-    x=481.0,
-    y=287.0,
-    width=24.0,
-    height=24.0
+button_7=canvas.create_image(
+    481.0,
+    287.0+12,
+    image=button_image_1,
+    state=state7
 )
 
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_11.png"))
+canvas.tag_bind(button_7, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name7,window))
+
 image_11 = canvas.create_image(
     280.0,
     331.0,
-    image=image_image_11
+    image=image_image_4,
+    state=state8
 )
 
 canvas.create_text(
@@ -526,25 +502,18 @@ canvas.create_text(
     anchor="nw",
     text=f"{rank8}-Rank",
     fill=normal_font_col,
-    font=("Montserrat Medium", 18 * -1)
+    font=("Montserrat Medium", 18 * -1),
+    state=state8
 )
 
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
-button_8 = Button(
-    image=button_image_8,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.titleequip.final(name8,window),
-    relief="flat"
-)
-button_8.place(
-    x=481.0,
-    y=319.0,
-    width=24.0,
-    height=24.0
+button_8=canvas.create_image(
+    481.0,
+    319.0+12,
+    image=button_image_1,
+    state=state8
 )
 
+canvas.tag_bind(button_8, "<ButtonPress-1>", lambda event: thesystem.titleequip.final(name8,window))
 
 side = PhotoImage(file=relative_to_assets("blue.png"))
 if job.upper()!="NONE":
@@ -605,15 +574,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation

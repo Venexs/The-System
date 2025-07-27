@@ -1,554 +1,554 @@
 {
-    "Red Ants":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":40
-    },
-    "White Ants":{
-        "rank":"S",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":50
-    },
-    "Small Goblin":{
-        "rank":"E",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":10
-    },
-    "Wolfmen":{
-        "rank":"D",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":20
-    },
-    "Desert Centipiede":{
-        "rank":"B",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":40
-    },
-    "Steel Fanged Lycan":{
-        "rank":"E",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":10
-    },
-    "Razor Claw Briga":{
-        "rank":"E",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":10
-    },
-    "Black Shadow Razor":{
-        "rank":"E",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":10
-    },
-    "Blue Venom-Fanged Kaska":{
-        "rank":"D",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":20
-    },
-    "Defense Golem":{
-        "rank":"D",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":20
-    },
-    "Carnivorous Ants":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":30
-    },
-    "Acid Breathing Spider":{
-        "rank":"C",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":30
-    },
-    "Hell's Gatekeeper Cerberus":{
-        "rank":"A",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":50
-    },
-    "Huge Goblins":{
-        "rank":"D",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":20
-    },
-    "Trained Goblins":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":30
-    },
-    "General Goblins":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":30
-    },
-    "Goblins Leader":{
-        "rank":"B",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":40
-    },
-    "Serpent of Blood Eyes":{
-        "rank":"B",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":40
-    },
-    "Scorpion King":{
-        "rank":"B",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":40
-    },
-    "Small Scorpion":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":30
-    },
-    "High Wolfmen":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":30
-    },
-    "Wolf-Lord":{
-        "rank":"B",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":40
-    },
-    "Ice Wraiths":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":50
-    },
-    "Ice Bears":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Sleuth Ice Bears":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Yetis":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Baruka - Ice Elf King":{
-        "rank":"S",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":60
-    },
-    "Stone Golems":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":30
-    },
-    "Vulcan Guards":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Vulcan":{
-        "rank":"S",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":60
-    },
-    "Skeletal Men":{
-        "rank":"B",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":40
-    },
-    "Trained Skeletal Men":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Metus - Soul Reaper":{
-        "rank":"S",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":60
-    },
-    "Stone Titans":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Dungeon Jackals":{
-        "rank":"C",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":30
-    },
-    "High Orcs":{
-        "rank":"S",
-        "type":"Normal",
-        "swarm":"Yes",
-        "XP":60
-    },
-    "Trained High Orcs":{
-        "rank":"S",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":60
-    },
-    "Leader of the High Orcs":{
-        "rank":"SS",
-        "type":"Boss",
-        "swarm":"No",
-        "XP":100
-    },
-    "Demon Knights":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Demon Noble":{
-        "rank":"A",
-        "type":"Normal",
-        "swarm":"No",
-        "XP":50
-    },
-    "Flame Djinn": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 70
-    },
-    "Necrotic Reapers": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Darkwood Dryad": {
-        "rank": "B",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Elder Manticore": {
-        "rank": "A",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 50
-    },
-    "Spectral Assassins": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Ancient Basilisk": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 60
-    },
-    "Forest Serpent": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Void Phantoms": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Crystal Elemental": {
-        "rank": "B",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Blight-Infused Treant": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 60
-    },
-    "Mire Hags": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Thunder Roc": {
-        "rank": "B",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Cave Drakes": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Lich King": {
-        "rank": "SS",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 100
-    },
-    "Frostbound Revenants": {
-        "rank": "D",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 20
-    },
-    "Shadow Prowlers": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Magma Leviathan": {
-        "rank": "SS",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 100
-    },
-    "Cursed Centurions": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Storm Elemental": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 50
-    },
-    "Bone Dragon": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 70
-    },
-    "Lunar Shade Wolves": {
-        "rank": "B",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 40
-    },
-    "Sand Revenant": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 30
-    },
-    "Ember Fiends": {
-        "rank": "B",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 40
-    },
-    "Undead Legionnaires": {
-        "rank": "D",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 20
-    },
-    "Ashen Phantoms": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Arcane Minotaur": {
-        "rank": "B",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Petrifying Gorgons": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 50
-    },
-    "Bloodthirsty Wraiths": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Savage Orc Berserkers": {
-        "rank": "B",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 40
-    },
-    "Dire Fang Bears": {
-        "rank": "D",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 20
-    },
-    "Ghastly Revenants": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Giant Ice Serpent": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 60
-    },
-    "Voidborne Behemoth": {
-        "rank": "SS",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 120
-    },
-    "Crimson Slimes": {
-        "rank": "D",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 20
-    },
-    "Spectral Archers": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Twilight Shapeshifters": {
-        "rank": "B",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Nightmare Riders": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 60
-    },
-    "Venomous Dire Bats": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 30
-    },
-    "Stone Elemental": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 30
-    },
-    "Enchanted Willow Wisps": {
-        "rank": "D",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 20
-    },
-    "Death Whisper Harpy": {
-        "rank": "B",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Cursed Souls": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Golem Constrictor": {
-        "rank": "A",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 50
-    },
-    "Obsidian Dragon": {
-        "rank": "SS",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 120
-    },
-    "Lava Serpent": {
-        "rank": "B",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Thunder Wyverns": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Fire Wraiths": {
-        "rank": "A",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 50
-    },
-    "Poisonous Widow Spider": {
-        "rank": "B",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 40
-    },
-    "Phantom Knights": {
-        "rank": "S",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 60
-    },
-    "Forest Troll": {
-        "rank": "C",
-        "type": "Normal",
-        "swarm": "No",
-        "XP": 30
-    },
-    "Swarm of Shadows": {
-        "rank": "S",
-        "type": "Normal",
-        "swarm": "Yes",
-        "XP": 60
-    },
-    "Crystal Golem": {
-        "rank": "S",
-        "type": "Boss",
-        "swarm": "No",
-        "XP": 60
-    }
+     "Red Ants": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 40
+     },
+     "White Ants": {
+          "rank": "S",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Small Goblin": {
+          "rank": "E",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 10
+     },
+     "Wolfmen": {
+          "rank": "D",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 20
+     },
+     "Desert Centipiede": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Steel Fanged Lycan": {
+          "rank": "E",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 10
+     },
+     "Razor Claw Briga": {
+          "rank": "E",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 10
+     },
+     "Black Shadow Razor": {
+          "rank": "E",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 10
+     },
+     "Blue Venom-Fanged Kaska": {
+          "rank": "D",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 20
+     },
+     "Defense Golem": {
+          "rank": "D",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 20
+     },
+     "Carnivorous Ants": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Acid Breathing Spider": {
+          "rank": "C",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 30
+     },
+     "Hell's Gatekeeper Cerberus": {
+          "rank": "A",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Huge Goblins": {
+          "rank": "D",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 20
+     },
+     "Trained Goblins": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 30
+     },
+     "General Goblins": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 30
+     },
+     "Goblins Leader": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Serpent of Blood Eyes": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Scorpion King": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Small Scorpion": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "High Wolfmen": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 30
+     },
+     "Wolf-Lord": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Ice Wraiths": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Ice Bears": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Sleuth Ice Bears": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Yetis": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Baruka - Ice Elf King": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Stone Golems": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Vulcan Guards": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Vulcan": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Skeletal Men": {
+          "rank": "B",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 40
+     },
+     "Trained Skeletal Men": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Metus - Soul Reaper": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Stone Titans": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Dungeon Jackals": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "High Orcs": {
+          "rank": "S",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 60
+     },
+     "Trained High Orcs": {
+          "rank": "S",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Leader of the High Orcs": {
+          "rank": "SS",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 100
+     },
+     "Demon Knights": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Demon Noble": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Flame Djinn": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 70
+     },
+     "Necrotic Reapers": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Darkwood Dryad": {
+          "rank": "B",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Elder Manticore": {
+          "rank": "A",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Spectral Assassins": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Ancient Basilisk": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Forest Serpent": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Void Phantoms": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Crystal Elemental": {
+          "rank": "B",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Blight-Infused Treant": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Mire Hags": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Thunder Roc": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Cave Drakes": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Lich King": {
+          "rank": "SS",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 100
+     },
+     "Frostbound Revenants": {
+          "rank": "D",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 20
+     },
+     "Shadow Prowlers": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Magma Leviathan": {
+          "rank": "SS",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 100
+     },
+     "Cursed Centurions": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Storm Elemental": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Bone Dragon": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 70
+     },
+     "Lunar Shade Wolves": {
+          "rank": "B",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 40
+     },
+     "Sand Revenant": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 30
+     },
+     "Ember Fiends": {
+          "rank": "B",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 40
+     },
+     "Undead Legionnaires": {
+          "rank": "D",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 20
+     },
+     "Ashen Phantoms": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Arcane Minotaur": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Petrifying Gorgons": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Bloodthirsty Wraiths": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Savage Orc Berserkers": {
+          "rank": "B",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 40
+     },
+     "Dire Fang Bears": {
+          "rank": "D",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 20
+     },
+     "Ghastly Revenants": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Giant Ice Serpent": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Voidborne Behemoth": {
+          "rank": "SS",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 120
+     },
+     "Crimson Slimes": {
+          "rank": "D",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 20
+     },
+     "Spectral Archers": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Twilight Shapeshifters": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Nightmare Riders": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     },
+     "Venomous Dire Bats": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 30
+     },
+     "Stone Elemental": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 30
+     },
+     "Enchanted Willow Wisps": {
+          "rank": "D",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 20
+     },
+     "Death Whisper Harpy": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Cursed Souls": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Golem Constrictor": {
+          "rank": "A",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 50
+     },
+     "Obsidian Dragon": {
+          "rank": "SS",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 120
+     },
+     "Lava Serpent": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Thunder Wyverns": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Fire Wraiths": {
+          "rank": "A",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 50
+     },
+     "Poisonous Widow Spider": {
+          "rank": "B",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 40
+     },
+     "Phantom Knights": {
+          "rank": "S",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 60
+     },
+     "Forest Troll": {
+          "rank": "C",
+          "type": "Normal",
+          "swarm": "No",
+          "XP": 30
+     },
+     "Swarm of Shadows": {
+          "rank": "S",
+          "type": "Normal",
+          "swarm": "Yes",
+          "XP": 60
+     },
+     "Crystal Golem": {
+          "rank": "S",
+          "type": "Boss",
+          "swarm": "No",
+          "XP": 60
+     }
 }

@@ -1,959 +1,1065 @@
 {
-    "Coin Bag 100": [
-        {
-            "desc":"A bag of 100-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"E",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":100
-        }
-    ],
-
-    "Coin Bag 300": [
-        {
-            "desc":"A bag of 300-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"D",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":300
-        }
-    ],
-
-    "Coin Bag 500": [
-        {
-            "desc":"A bag of 500-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"D",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":500
-        }
-    ],
-
-    "Coin Bag 1000": [
-        {
-            "desc":"A bag of 1000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"C",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":1000
-        }
-    ],
-
-    "Coin Bag 2000": [
-        {
-            "desc":"A bag of 2000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"C",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":2000
-        }
-    ],
-
-    "Coin Bag 5000": [
-        {
-            "desc":"A bag of 5000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"B",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":5000
-        }
-    ],
-
-    "Coin Bag 10000": [
-        {
-            "desc":"A bag of 10000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"A",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":10000
-        }
-    ],
-
-    "Coin Bag 50000": [
-        {
-            "desc":"A bag of 50000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"S",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":50000
-        }
-    ],
-
-    "Coin Bag 80000": [
-        {
-            "desc":"A bag of 80000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"S",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":80000
-        }
-    ],
-
-    "Coin Bag 130000": [
-        {
-            "desc":"A bag of 150000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"S",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":150000
-        }
-    ],
-
-    "Coin Bag 250000": [
-        {
-            "desc":"A bag of 250000-or-so coins",
-            "qty":1,
-            "cat":"MONEY",
-            "rank":"S",
-            "buff":"",
-            "debuff":"",
-            "quest":true,
-
-            "Value":250000
-        }
-    ],
-
-    "Gatekeepers Collar": [
-        {
-            "desc":"Collar worn by the Demon-Door Guardian, Cerberus",
-            "qty":1,
-            "cat":"COLLAR",
-            "rank":"A",
-            "buff":
-            {
-                "AGIbuff":7,
-                "PERbuff":4
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":20000
-        }
-    ],
-
-    "High Knights Chestplate": [
-        {
-            "desc":"Chestplate of a High-Ranking Knight",
-            "qty":1,
-            "cat":"CHESTPLATE",
-            "rank":"B",
-            "buff":
-            {
-                "STRbuff":4
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":5000
-        }
-    ],
-
-    "High Knights Gauntlet": [
-        {
-            "desc":"Gauntlet of a High-Ranking Knight",
-            "qty":1,
-            "cat":"FIRST GAUNTLET",
-            "rank":"B",
-            "buff":
-            {
-                "STRbuff":2
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":2000
-        }
-    ],
-
-    "Assassins Shoes": [
-        {
-            "desc":"Shoes of a Deadly Assassin",
-            "qty":1,
-            "cat":"BOOTS",
-            "rank":"C",
-            "buff":
-            {
-                "AGIbuff":2,
-                "PERbuff":1
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":300
-        }
-    ],
-
-    "Archers Gauntlet": [
-        {
-            "desc":"Gauntlet of a weak Archer",
-            "qty":1,
-            "cat":"SECOND GAUNTLET",
-            "rank":"C",
-            "buff":
-            {
-                "AGIbuff":1
-            },
-            "debuff":
-            {
-                "STRbuff":2
-            },
-            "quest":true,
-
-            "Value":200
-        }
-    ],
-
-    "Silver Ring": [
-        {
-            "desc":"An Enchanted ring from a Sorcerer",
-            "qty":1,
-            "cat":"RING",
-            "rank":"C",
-            "buff":
-            {
-                "MANbuff":2
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":500
-        }
-    ],
-
-    "Demon Monarch's Ring": [
-        {
-            "desc":"The ring worn by the Demon Monarch",
-            "qty":1,
-            "cat":"RING",
-            "rank":"S",
-            "buff":
-            {
-                "MANbuff":15
-            },  
-            "debuff":"",
-            "quest":true,
-
-            "Value":10000
-        }
-    ],
-
-    "Demon Monarch's Crown": [
-        {
-            "desc":"The Crown worn by the Demon Monarch",
-            "qty":1,
-            "cat":"HELM",
-            "rank":"S",
-            "buff":
-            {
-                "MANbuff":15,
-                "INTbuff":10
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":15000
-        }
-    ],
-
-    "Red Knights Helmet": [
-        {
-            "desc":"The Helmet of the Red Knight",
-            "qty":1,
-            "cat":"HELM",
-            "rank":"S",
-            "buff":
-            {
-                "STRbuff":20,
-                "AGIbuff":20
-            },
-            "debuff":"",
-            "quest":true,
-
-            "Value":100000
-        }
-    ],
-
-    "Archmage's Robes": [
-        {
-            "desc": "Robes worn by a legendary Archmage",
-            "qty": 1,
-            "cat": "CHESTPLATE",
-            "rank": "S",
-            "buff": {
-                "INTbuff": 25,
-                "MANbuff": 20
-            },
-            "debuff": {
-                "STRdebuff": 10,
-                "AGIdebuff": 10
-            },
-
-            "quest":true,
-            "Value": 100000
-        }
-      ],
-
-      "Golden Boots of Agility": [
-        {
-            "desc": "Boots made from pure gold, enhancing agility",
-            "qty": 1,
-            "cat": "BOOTS",
-            "rank": "A",
-            "buff": {
-                "AGIbuff": 15
-            },
-            "debuff": {
-                "VITdebuff": 5
-            },
-            
-            "quest":true,
-            "Value": 75000
-        }
-      ],
-
-      "Amulet of Vitality": [
-        {
-            "desc": "An enchanted amulet that boosts vitality",
-            "qty": 1,
-            "cat": "COLLAR",
-            "rank": "B",
-            "buff": {
-                "VITbuff": 15
-            },
-            "debuff": {
-                "INTdebuff": 5,
-                "MANdebuff": 5
-            },
-            
-            "quest":true,
-            "Value": 8000
-        }
-      ],
-
-      "Silver Helm of Perception": [
-        {
-            "desc": "A silver helmet that enhances perception",
-            "qty": 1,
-            "cat": "HELM",
-            "rank": "A",
-            "buff": {
-                "PERbuff": 20
-            },
-            "debuff": {
-                "AGIdebuff": 10
-            },
-            
-            "quest":true,
-            "Value": 20000
-        }
-      ],
-
-      "Dragonhide Armor": [
-        {
-            "desc": "Armor crafted from the hide of a dragon",
-            "qty": 1,
-            "cat": "CHESTPLATE",
-            "rank": "S",
-            "buff": {
-                "VITbuff": 20,
-                "STRbuff": 15
-            },
-            "debuff": {
-                "AGIdebuff": 10,
-                "MANdebuff": 10
-            },
-            
-            "quest":true,
-            "Value": 200000
-        }
-      ],
-
-      "Boots of the Swift": [
-        {
-            "desc": "Boots imbued with enchantments for swiftness",
-            "qty": 1,
-            "cat": "BOOTS",
-            "rank": "B",
-            "buff": {
-                "AGIbuff": 15
-            },
-            "debuff": {
-                "VITdebuff": 5
-            },
-            
-            "quest":true,
-            "Value": 5000
-        }
-      ],
-
-      "Ring of Endurance": [
-        {
-            "desc": "A ring that enhances endurance and resilience",
-            "qty": 1,
-            "cat": "RING",
-            "rank": "B",
-            "buff": {
-                "VITbuff": 15
-            },
-            "debuff": {
-                "STRdebuff": 5,
-                "AGIdebuff": 5
-            },
-            
-            "quest":true,
-            "Value": 4000
-        }
-      ],
-
-      "Hood of Mysteries": [
-        {
-            "desc": "A mysterious hood that enhances perception",
-            "qty": 1,
-            "cat": "HELM",
-            "rank": "B",
-            "buff": {
-                "PERbuff": 15
-            },
-            "debuff": {
-                "STRdebuff": 5,
-                "VITdebuff": 5
-            },
-            
-            "quest":true,
-            "Value": 5500
-        }
-      ],
-
-      "LVLADD": [
-        {
-            "desc": "An Extra point to you Level",
-            "qty": 1,
-            "cat": "???",
-            "rank": "?",
-            "buff": "",
-            "debuff":"",
-
-            "quest":true,
-            "Value": 0
-        }
-      ],
-
-      "STRav": [
-        {
-            "desc": "Adds an extra available point to use in STR,AGI or VIT",
-            "qty": 1,
-            "cat": "???",
-            "rank": "?",
-            "buff": "",
-            "debuff":"",
-            
-            "quest":true,
-            "Value": 0
-        }
-      ],
-
-      "INTav": [
-        {
-            "desc": "Adds an extra available point to use in INT,PER or MAN",
-            "qty": 1,
-            "cat": "???",
-            "rank": "?",
-            "buff": "",
-            "debuff":"",
-            
-            "quest":true,
-            "Value": 0
-        }
-      ],
-
-      "Gauntlet of Lightning": [
-        {
-            "desc": "A Red Gauntlet with Yellow Lines. Said to be worn by The Fastest Man Alive...",
-            "qty": 1,
-            "cat": "FIRST GAUNTLET",
-            "rank": "S",
-            "buff": {
-                "AGIbuff": 20
-            },
-            "debuff":"",
-            
-            "quest":true,
-            "Value": 50000
-        }
-      ],
-
-      "Mystic Hood": [
-        {
-          "desc": "A hood imbued with arcane energies, enhancing magical perception",
-          "qty": 1,
-          "cat": "HELM",
-          "rank": "A",
-          "buff": {
-            "INTbuff": 10,
-            "PERbuff": 10
-          },
-          "debuff": {
-            "AGIdebuff": 5,
-            "VITdebuff": 5
-          },
-          
-          "quest":true,
-          "Value": 15000
-        }
-      ],
-      "Guardians Plate": [
-        {
-          "desc": "Plate armor worn by the protectors of ancient kingdoms",
-          "qty": 1,
-          "cat": "CHESTPLATE",
-          "rank": "B",
-          "buff": {
-            "VITbuff": 10,
-            "STRbuff": 5
-          },
-          "debuff": {
-            "AGIdebuff": 5,
-            "MANdebuff": 5
-          },
-          
-          "quest":true,
-          "Value": 8000
-        }
-      ],
-      "Squire's Gauntlet": [
-        {
-          "desc": "Gauntlet worn by a loyal squire, providing basic protection",
-          "qty": 1,
-          "cat": "FIRST GAUNTLET",
-          "rank": "D",
-          "buff": {
-            "STRbuff": 2
-          },
-          "debuff": {
-            "AGIdebuff": 1
-          },
-          
-          "quest":true,
-          "Value": 1000
-        }
-      ],
-      "Swift Striders": [
-        {
-          "desc": "Boots designed for swift movement and agility",
-          "qty": 1,
-          "cat": "BOOTS",
-          "rank": "B",
-          "buff": {
-            "AGIbuff": 8,
-            "PERbuff": 4
-          },
-          "debuff": {
-            "VITdebuff": 3
-          },
-          
-          "quest":true,
-          "Value": 6000
-        }
-      ],
-      "Amulet of Protection": [
-        {
-          "desc": "An amulet that wards off harm and enhances resilience",
-          "qty": 1,
-          "cat": "COLLAR",
-          "rank": "A",
-          "buff": {
-            "VITbuff": 12,
-            "DEFbuff": 5
-          },
-          "debuff": {
-            "AGIdebuff": 5,
-            "MANdebuff": 3
-          },
-          
-          "quest":true,
-          "Value": 12000
-        }
-      ],
-      "Ring of Precision": [
-        {
-          "desc": "A ring that sharpens focus and improves accuracy",
-          "qty": 1,
-          "cat": "RING",
-          "rank": "B",
-          "buff": {
-            "PERbuff": 8
-          },
-          "debuff": {
-            "AGIdebuff": 4
-          },
-          
-          "quest":true,
-          "Value": 4500
-        }
-      ],
-
-      "Sovereign's Veil": [
-        {
-            "desc": "A hood worn only by the most powerful sorcerers and wizards, imbued with ancient magic.",
-            "qty": 1,
-            "cat": "HELM",
-            "rank": "S",
-            "buff": {
-                "INTbuff": 30,
-                "MANbuff": 25
-            },
-            "debuff": {
-                "STRdebuff": 15,
-                "AGIdebuff": 15
-            },
-            
-            "quest":true,
-            "Value": 200000
-        }
-    ],
-
-    "Aetherial Circlet": [
-        {
-            "desc": "A mystical circlet woven from pure aether, enhancing the wearer's intellect to unparalleled heights.",
-            "qty": 1,
-            "cat": "HELM",
-            "rank": "S",
-            "buff": {
-                "INTbuff": 30
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 300000
-        }
-    ],
-
-    "Blade Dancer's Boots": [
-        {
-            "desc": "Boots worn by the elite Blade Dancers, providing exceptional agility and speed in combat.",
-            "qty": 1,
-            "cat": "BOOTS",
-            "rank": "B",
-            "buff": {
-                "AGIbuff": 15
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 8000
-        }
-    ],
-
-    "Titanium Plate Armor": [
-        {
-            "desc": "Armor forged from titanium, granting immense strength and resilience to the wearer.",
-            "qty": 1,
-            "cat": "CHESTPLATE",
-            "rank": "A",
-            "buff": {
-                "STRbuff": 25,
-                "VITbuff": 20
-            },
-            "debuff": {
-                "AGIdebuff": 10
-            },
-            
-            "quest":true,
-            "Value": 25000
-        }
-    ],
-    
-    "Sapphire Band": [
-        {
-            "desc": "A ring embedded with a sapphire gem, enhancing the wearer's perception and intuition.",
-            "qty": 1,
-            "cat": "RING",
-            "rank": "C",
-            "buff": {
-                "PERbuff": 8
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 3500
-        }
-    ],
-    
-    "Ironclad Gauntlet": [
-        {
-            "desc": "A sturdy gauntlet crafted from iron, offering a modest boost to vitality and endurance.",
-            "qty": 1,
-            "cat": "FIRST GAUNTLET",
-            "rank": "D",
-            "buff": {
-                "VITbuff": 10
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 1500
-        }
-    ],
-
-    "Gauntlet of the Eternal Guardian": [
-        {
-            "desc": "Forged by the legendary smiths of the Eternal Forge, this gauntlet grants its wearer unparalleled strength and protection.",
-            "qty": 1,
-            "cat": "SECOND GAUNTLET",
-            "rank": "S",
-            "buff": {
-                "STRbuff": 50,
-                "VITbuff": 40
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 700000
-        }
-    ],
-
-    "Chameleon Cloak": [
-        {
-            "desc": "Clock made by the Mages of the Organization",
-            "qty": 1,
-            "cat": "CHESTPLATE",
-            "rank": "S",
-            "buff": {
-                "PERbuff": 30,
-                "AGIbuff":20
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 100000
-        }
-    ],
-
-    "High-Minister's Amulet": [
-        {
-            "desc": "An ancient relic said to hold the power to sway minds. Once used by a high ranking minister",
-            "qty": 1,
-            "cat": "COLLAR",
-            "rank": "S",
-            "buff": {
-                "MANbuff": 50
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 750000
-        }
-    ],
-
-    "Dragonscale Boots": [
-        {
-            "desc": "Crafted from the scales of ancient dragons and infused with the essence of resilience, these boots provide unparalleled protection and durability.",
-            "qty": 1,
-            "cat": "BOOTS",
-            "rank": "S",
-            "buff": {
-                "VITbuff": 40,
-                "AGIbuff": 30
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 800000
-        }
-    ],
-
-    "Ring of Arcane Mastery": [
-        {
-            "desc": "A legendary ring infused with arcane power, granting its wearer unparalleled intelligence.",
-            "qty": 1,
-            "cat": "RING",
-            "rank": "S",
-            "buff": {
-                "INTbuff": 50
-            },
-            "debuff": {
-                "VITdebuff":20
-            },
-            
-            "quest":true,
-            "Value": 1000000
-        }
-    ],
-
-    "First Glove of Colossus": [
-        {
-            "desc": "Once upon a time, there lived a warrior named Colossus. He died fighting armies alone to defend his nation. This is his glove",
-            "qty": 1,
-            "cat": "FIRST GAUNTLET",
-            "rank": "A",
-            "buff": {
-                "STRbuff": 20
-            },
-            "debuff": {
-                "AGIdebuff":10
-            },
-            
-            "quest":true,
-            "Value": 100000
-        }
-    ],
-
-    "Second Glove of Colossus": [
-        {
-            "desc": "Once upon a time, there lived a warrior named Colossus. He died fighting armies alone to defend his nation. This is his glove",
-            "qty": 1,
-            "cat": "SECOND GAUNTLET",
-            "rank": "A",
-            "buff": {
-                "STRbuff": 20
-            },
-            "debuff": {
-                "AGIdebuff":10
-            },
-            
-            "quest":true,
-            "Value": 100000
-        }
-    ],
-
-    "Glasses of God": [
-        {
-            "desc": "These glasses, rumored to be crafted by divine hands, grant their wearer unparalleled perception. their origins remain a mystery.",
-            "qty": 1,
-            "cat": "HELM",
-            "rank": "S",
-            "buff": {
-                "PERbuff": 60
-            },
-            "debuff": {},
-            
-            "quest":true,
-            "Value": 1500000
-        }
-    ],
-
-    "E Rank Instance Key": [
-        {
-            "desc":"Instance Key to a E Rank Dungeon",
-            "qty":1,
-            "cat":"Instance Keys",
-            "rank":"E",
-            "buff":"",
-            "debuff":"",
-
-            "quest":true,
-            "Value":10000
-        }
-    ],
-
-    "D Rank Instance Key": [
-        {
-            "desc":"Instance Key to a D Rank Dungeon",
-            "qty":1,
-            "cat":"Instance Keys",
-            "rank":"D",
-            "buff":"",
-            "debuff":"",
-
-            "quest":true,
-            "Value":15000
-        }
-    ],
-
-    "C Rank Instance Key": [
-        {
-            "desc":"Instance Key to a C Rank Dungeon",
-            "qty":1,
-            "cat":"Instance Keys",
-            "rank":"C",
-            "buff":"",
-            "debuff":"",
-
-            "quest":true,
-            "Value":20000
-        }
-    ],
-
-    "B Rank Instance Key": [
-        {
-            "desc":"Instance Key to a B Rank Dungeon",
-            "qty":1,
-            "cat":"Instance Keys",
-            "rank":"B",
-            "buff":"",
-            "debuff":"",
-
-            "quest":true,
-            "Value":25000
-        }
-    ],
-
-    "A Rank Instance Key": [
-        {
-            "desc":"Instance Key to a A Rank Dungeon",
-            "qty":1,
-            "cat":"Instance Keys",
-            "rank":"A",
-            "buff":"",
-            "debuff":"",
-
-            "quest":true,
-            "Value":30000
-        }
-    ],
-
-    "S Rank Instance Key": [
-        {
-            "desc":"Instance Key to a S Rank Dungeon",
-            "qty":1,
-            "cat":"Instance Keys",
-            "rank":"S",
-            "buff":"",
-            "debuff":"",
-
-            "quest":true,
-            "Value":35000
-        }
-    ]
-    
+  "Coin Bag 100": [
+    {
+      "desc": "A bag of 100-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "E",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Common",
+      "Value": 100
+    }
+  ],
+  "Coin Bag 300": [
+    {
+      "desc": "A bag of 300-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "D",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Common",
+      "Value": 300
+    }
+  ],
+  "Coin Bag 500": [
+    {
+      "desc": "A bag of 500-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "D",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Common",
+      "Value": 500
+    }
+  ],
+  "Coin Bag 1000": [
+    {
+      "desc": "A bag of 1000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "C",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Common",
+      "Value": 1000
+    }
+  ],
+  "Coin Bag 2000": [
+    {
+      "desc": "A bag of 2000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "C",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Common",
+      "Value": 2000
+    }
+  ],
+  "Coin Bag 5000": [
+    {
+      "desc": "A bag of 5000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "B",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Rare",
+      "Value": 5000
+    }
+  ],
+  "Coin Bag 10000": [
+    {
+      "desc": "A bag of 10000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "A",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Rare",
+      "Value": 10000
+    }
+  ],
+  "Coin Bag 50000": [
+    {
+      "desc": "A bag of 50000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "S",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Epic",
+      "Value": 50000
+    }
+  ],
+  "Coin Bag 80000": [
+    {
+      "desc": "A bag of 80000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "S",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Epic",
+      "Value": 80000
+    }
+  ],
+  "Coin Bag 130000": [
+    {
+      "desc": "A bag of 150000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "S",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Legendary",
+      "Value": 150000
+    }
+  ],
+  "Coin Bag 250000": [
+    {
+      "desc": "A bag of 250000-or-so coins",
+      "qty": 1,
+      "cat": "MONEY",
+      "rank": "S",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "rarity": "Legendary",
+      "Value": 250000
+    }
+  ],
+  "Gatekeepers Collar": [
+    {
+      "desc": "Collar worn by the Demon-Door Guardian, Cerberus",
+      "qty": 1,
+      "cat": "COLLAR",
+      "rank": "A",
+      "buff": {
+        "AGIbuff": 7,
+        "PERbuff": 4
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 20000,
+      "rarity": "Rare"
+    }
+  ],
+  "High Knights Chestplate": [
+    {
+      "desc": "Chestplate of a High-Ranking Knight",
+      "qty": 1,
+      "cat": "CHESTPLATE",
+      "rank": "B",
+      "buff": {
+        "STRbuff": 4
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 5000,
+      "rarity": "Rare"
+    }
+  ],
+  "High Knights Gauntlet": [
+    {
+      "desc": "Gauntlet of a High-Ranking Knight",
+      "qty": 1,
+      "cat": "FIRST GAUNTLET",
+      "rank": "B",
+      "buff": {
+        "STRbuff": 2
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 2000,
+      "rarity": "Common"
+    }
+  ],
+  "Assassins Shoes": [
+    {
+      "desc": "Shoes of a Deadly Assassin",
+      "qty": 1,
+      "cat": "BOOTS",
+      "rank": "C",
+      "buff": {
+        "AGIbuff": 2,
+        "PERbuff": 1
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 300,
+      "rarity": "Common"
+    }
+  ],
+  "Archers Gauntlet": [
+    {
+      "desc": "Gauntlet of a weak Archer",
+      "qty": 1,
+      "cat": "SECOND GAUNTLET",
+      "rank": "C",
+      "buff": {
+        "AGIbuff": 1
+      },
+      "debuff": {
+        "STRbuff": 2
+      },
+      "quest": true,
+      "Value": 200,
+      "rarity": "Common"
+    }
+  ],
+  "Silver Ring": [
+    {
+      "desc": "An Enchanted ring from a Sorcerer",
+      "qty": 1,
+      "cat": "RING",
+      "rank": "C",
+      "buff": {
+        "MANbuff": 2
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 500,
+      "rarity": "Common"
+    }
+  ],
+  "Demon Monarch's Ring": [
+    {
+      "desc": "The ring worn by the Demon Monarch",
+      "qty": 1,
+      "cat": "RING",
+      "rank": "S",
+      "buff": {
+        "MANbuff": 15
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 10000,
+      "rarity": "Rare"
+    }
+  ],
+  "Demon Monarch's Crown": [
+    {
+      "desc": "The Crown worn by the Demon Monarch",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "S",
+      "buff": {
+        "MANbuff": 15,
+        "INTbuff": 10
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 15000,
+      "rarity": "Epic"
+    }
+  ],
+  "Red Knights Helmet": [
+    {
+      "desc": "The Helmet of the Red Knight",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "S",
+      "buff": {
+        "STRbuff": 20,
+        "AGIbuff": 20
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 100000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Archmage's Robes": [
+    {
+      "desc": "Robes worn by a legendary Archmage",
+      "qty": 1,
+      "cat": "CHESTPLATE",
+      "rank": "S",
+      "buff": {
+        "INTbuff": 25,
+        "MANbuff": 20
+      },
+      "debuff": {
+        "STRdebuff": 10,
+        "AGIdebuff": 10
+      },
+      "quest": true,
+      "Value": 100000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Golden Boots of Agility": [
+    {
+      "desc": "Boots made from pure gold, enhancing agility",
+      "qty": 1,
+      "cat": "BOOTS",
+      "rank": "A",
+      "buff": {
+        "AGIbuff": 15
+      },
+      "debuff": {
+        "VITdebuff": 5
+      },
+      "quest": true,
+      "Value": 75000,
+      "rarity": "Epic"
+    }
+  ],
+  "Amulet of Vitality": [
+    {
+      "desc": "An enchanted amulet that boosts vitality",
+      "qty": 1,
+      "cat": "COLLAR",
+      "rank": "B",
+      "buff": {
+        "VITbuff": 15
+      },
+      "debuff": {
+        "INTdebuff": 5,
+        "MANdebuff": 5
+      },
+      "quest": true,
+      "Value": 8000,
+      "rarity": "Rare"
+    }
+  ],
+  "Silver Helm of Perception": [
+    {
+      "desc": "A silver helmet that enhances perception",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "A",
+      "buff": {
+        "PERbuff": 20
+      },
+      "debuff": {
+        "AGIdebuff": 10
+      },
+      "quest": true,
+      "Value": 20000,
+      "rarity": "Rare"
+    }
+  ],
+  "Dragonhide Armor": [
+    {
+      "desc": "Armor crafted from the hide of a dragon",
+      "qty": 1,
+      "cat": "CHESTPLATE",
+      "rank": "S",
+      "buff": {
+        "VITbuff": 20,
+        "STRbuff": 15
+      },
+      "debuff": {
+        "AGIdebuff": 10,
+        "MANdebuff": 10
+      },
+      "quest": true,
+      "Value": 200000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Boots of the Swift": [
+    {
+      "desc": "Boots imbued with enchantments for swiftness",
+      "qty": 1,
+      "cat": "BOOTS",
+      "rank": "B",
+      "buff": {
+        "AGIbuff": 15
+      },
+      "debuff": {
+        "VITdebuff": 5
+      },
+      "quest": true,
+      "Value": 5000,
+      "rarity": "Rare"
+    }
+  ],
+  "Ring of Endurance": [
+    {
+      "desc": "A ring that enhances endurance and resilience",
+      "qty": 1,
+      "cat": "RING",
+      "rank": "B",
+      "buff": {
+        "VITbuff": 15
+      },
+      "debuff": {
+        "STRdebuff": 5,
+        "AGIdebuff": 5
+      },
+      "quest": true,
+      "Value": 4000,
+      "rarity": "Rare"
+    }
+  ],
+  "Hood of Mysteries": [
+    {
+      "desc": "A mysterious hood that enhances perception",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "B",
+      "buff": {
+        "PERbuff": 15
+      },
+      "debuff": {
+        "STRdebuff": 5,
+        "VITdebuff": 5
+      },
+      "quest": true,
+      "Value": 5500,
+      "rarity": "Rare"
+    }
+  ],
+  "LVLADD": [
+    {
+      "desc": "An Extra point to you Level",
+      "qty": 1,
+      "cat": "???",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 0,
+      "rarity": "Common"
+    }
+  ],
+  "STRav": [
+    {
+      "desc": "Adds an extra available point to use in STR,AGI or VIT",
+      "qty": 1,
+      "cat": "???",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 0,
+      "rarity": "Common"
+    }
+  ],
+  "INTav": [
+    {
+      "desc": "Adds an extra available point to use in INT,PER or MAN",
+      "qty": 1,
+      "cat": "???",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 0,
+      "rarity": "Common"
+    }
+  ],
+  "Gauntlet of Lightning": [
+    {
+      "desc": "A Red Gauntlet with Yellow Lines. Said to be worn by The Fastest Man Alive...",
+      "qty": 1,
+      "cat": "FIRST GAUNTLET",
+      "rank": "S",
+      "buff": {
+        "AGIbuff": 20
+      },
+      "debuff": "",
+      "quest": true,
+      "Value": 50000,
+      "rarity": "Epic"
+    }
+  ],
+  "Mystic Hood": [
+    {
+      "desc": "A hood imbued with arcane energies, enhancing magical perception",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "A",
+      "buff": {
+        "INTbuff": 10,
+        "PERbuff": 10
+      },
+      "debuff": {
+        "AGIdebuff": 5,
+        "VITdebuff": 5
+      },
+      "quest": true,
+      "Value": 15000,
+      "rarity": "Rare"
+    }
+  ],
+  "Guardians Plate": [
+    {
+      "desc": "Plate armor worn by the protectors of ancient kingdoms",
+      "qty": 1,
+      "cat": "CHESTPLATE",
+      "rank": "B",
+      "buff": {
+        "VITbuff": 10,
+        "STRbuff": 5
+      },
+      "debuff": {
+        "AGIdebuff": 5,
+        "MANdebuff": 5
+      },
+      "quest": true,
+      "Value": 8000,
+      "rarity": "Rare"
+    }
+  ],
+  "Squire's Gauntlet": [
+    {
+      "desc": "Gauntlet worn by a loyal squire, providing basic protection",
+      "qty": 1,
+      "cat": "FIRST GAUNTLET",
+      "rank": "D",
+      "buff": {
+        "STRbuff": 2
+      },
+      "debuff": {
+        "AGIdebuff": 1
+      },
+      "quest": true,
+      "Value": 1000,
+      "rarity": "Common"
+    }
+  ],
+  "Swift Striders": [
+    {
+      "desc": "Boots designed for swift movement and agility",
+      "qty": 1,
+      "cat": "BOOTS",
+      "rank": "B",
+      "buff": {
+        "AGIbuff": 8,
+        "PERbuff": 4
+      },
+      "debuff": {
+        "VITdebuff": 3
+      },
+      "quest": true,
+      "Value": 6000,
+      "rarity": "Rare"
+    }
+  ],
+  "Amulet of Protection": [
+    {
+      "desc": "An amulet that wards off harm and enhances resilience",
+      "qty": 1,
+      "cat": "COLLAR",
+      "rank": "A",
+      "buff": {
+        "VITbuff": 12,
+        "DEFbuff": 5
+      },
+      "debuff": {
+        "AGIdebuff": 5,
+        "MANdebuff": 3
+      },
+      "quest": true,
+      "Value": 12000,
+      "rarity": "Rare"
+    }
+  ],
+  "Ring of Precision": [
+    {
+      "desc": "A ring that sharpens focus and improves accuracy",
+      "qty": 1,
+      "cat": "RING",
+      "rank": "B",
+      "buff": {
+        "PERbuff": 8
+      },
+      "debuff": {
+        "AGIdebuff": 4
+      },
+      "quest": true,
+      "Value": 4500,
+      "rarity": "Common"
+    }
+  ],
+  "Sovereign's Veil": [
+    {
+      "desc": "A hood worn only by the most powerful sorcerers and wizards, imbued with ancient magic.",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "S",
+      "buff": {
+        "INTbuff": 30,
+        "MANbuff": 25
+      },
+      "debuff": {
+        "STRdebuff": 15,
+        "AGIdebuff": 15
+      },
+      "quest": true,
+      "Value": 200000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Aetherial Circlet": [
+    {
+      "desc": "A mystical circlet woven from pure aether, enhancing the wearer's intellect to unparalleled heights.",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "S",
+      "buff": {
+        "INTbuff": 30
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 300000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Blade Dancer's Boots": [
+    {
+      "desc": "Boots worn by the elite Blade Dancers, providing exceptional agility and speed in combat.",
+      "qty": 1,
+      "cat": "BOOTS",
+      "rank": "B",
+      "buff": {
+        "AGIbuff": 15
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 8000,
+      "rarity": "Rare"
+    }
+  ],
+  "Titanium Plate Armor": [
+    {
+      "desc": "Armor forged from titanium, granting immense strength and resilience to the wearer.",
+      "qty": 1,
+      "cat": "CHESTPLATE",
+      "rank": "A",
+      "buff": {
+        "STRbuff": 25,
+        "VITbuff": 20
+      },
+      "debuff": {
+        "AGIdebuff": 10
+      },
+      "quest": true,
+      "Value": 25000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Sapphire Band": [
+    {
+      "desc": "A ring embedded with a sapphire gem, enhancing the wearer's perception and intuition.",
+      "qty": 1,
+      "cat": "RING",
+      "rank": "C",
+      "buff": {
+        "PERbuff": 8
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 3500,
+      "rarity": "Common"
+    }
+  ],
+  "Ironclad Gauntlet": [
+    {
+      "desc": "A sturdy gauntlet crafted from iron, offering a modest boost to vitality and endurance.",
+      "qty": 1,
+      "cat": "FIRST GAUNTLET",
+      "rank": "D",
+      "buff": {
+        "VITbuff": 10
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 1500,
+      "rarity": "Rare"
+    }
+  ],
+  "Gauntlet of the Eternal Guardian": [
+    {
+      "desc": "Forged by the legendary smiths of the Eternal Forge, this gauntlet grants its wearer unparalleled strength and protection.",
+      "qty": 1,
+      "cat": "SECOND GAUNTLET",
+      "rank": "S",
+      "buff": {
+        "STRbuff": 50,
+        "VITbuff": 40
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 700000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Chameleon Cloak": [
+    {
+      "desc": "Clock made by the Mages of the Organization",
+      "qty": 1,
+      "cat": "CHESTPLATE",
+      "rank": "S",
+      "buff": {
+        "PERbuff": 30,
+        "AGIbuff": 20
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 100000,
+      "rarity": "Legendary"
+    }
+  ],
+  "High-Minister's Amulet": [
+    {
+      "desc": "An ancient relic said to hold the power to sway minds. Once used by a high ranking minister",
+      "qty": 1,
+      "cat": "COLLAR",
+      "rank": "S",
+      "buff": {
+        "MANbuff": 50
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 750000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Dragonscale Boots": [
+    {
+      "desc": "Crafted from the scales of ancient dragons and infused with the essence of resilience, these boots provide unparalleled protection and durability.",
+      "qty": 1,
+      "cat": "BOOTS",
+      "rank": "S",
+      "buff": {
+        "VITbuff": 40,
+        "AGIbuff": 30
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 800000,
+      "rarity": "Legendary"
+    }
+  ],
+  "Ring of Arcane Mastery": [
+    {
+      "desc": "A legendary ring infused with arcane power, granting its wearer unparalleled intelligence.",
+      "qty": 1,
+      "cat": "RING",
+      "rank": "S",
+      "buff": {
+        "INTbuff": 50
+      },
+      "debuff": {
+        "VITdebuff": 20
+      },
+      "quest": true,
+      "Value": 1000000,
+      "rarity": "Legendary"
+    }
+  ],
+  "First Glove of Colossus": [
+    {
+      "desc": "Once upon a time, there lived a warrior named Colossus. He died fighting armies alone to defend his nation. This is his glove",
+      "qty": 1,
+      "cat": "FIRST GAUNTLET",
+      "rank": "A",
+      "buff": {
+        "STRbuff": 20
+      },
+      "debuff": {
+        "AGIdebuff": 10
+      },
+      "quest": true,
+      "Value": 100000,
+      "rarity": "Epic"
+    }
+  ],
+  "Second Glove of Colossus": [
+    {
+      "desc": "Once upon a time, there lived a warrior named Colossus. He died fighting armies alone to defend his nation. This is his glove",
+      "qty": 1,
+      "cat": "SECOND GAUNTLET",
+      "rank": "A",
+      "buff": {
+        "STRbuff": 20
+      },
+      "debuff": {
+        "AGIdebuff": 10
+      },
+      "quest": true,
+      "Value": 100000,
+      "rarity": "Epic"
+    }
+  ],
+  "Glasses of God": [
+    {
+      "desc": "These glasses, rumored to be crafted by divine hands, grant their wearer unparalleled perception. their origins remain a mystery.",
+      "qty": 1,
+      "cat": "HELM",
+      "rank": "S",
+      "buff": {
+        "PERbuff": 60
+      },
+      "debuff": {},
+      "quest": true,
+      "Value": 1500000,
+      "rarity": "Legendary"
+    }
+  ],
+  "E Rank Instance Key": [
+    {
+      "desc": "Instance Key to a E Rank Dungeon",
+      "qty": 1,
+      "cat": "Instance Keys",
+      "rank": "E",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 10000,
+      "rarity": "Rare"
+    }
+  ],
+  "D Rank Instance Key": [
+    {
+      "desc": "Instance Key to a D Rank Dungeon",
+      "qty": 1,
+      "cat": "Instance Keys",
+      "rank": "D",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 15000,
+      "rarity": "Rare"
+    }
+  ],
+  "C Rank Instance Key": [
+    {
+      "desc": "Instance Key to a C Rank Dungeon",
+      "qty": 1,
+      "cat": "Instance Keys",
+      "rank": "C",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 20000,
+      "rarity": "Rare"
+    }
+  ],
+  "B Rank Instance Key": [
+    {
+      "desc": "Instance Key to a B Rank Dungeon",
+      "qty": 1,
+      "cat": "Instance Keys",
+      "rank": "B",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 25000,
+      "rarity": "Rare"
+    }
+  ],
+  "A Rank Instance Key": [
+    {
+      "desc": "Instance Key to a A Rank Dungeon",
+      "qty": 1,
+      "cat": "Instance Keys",
+      "rank": "A",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 30000,
+      "rarity": "Epic"
+    }
+  ],
+  "S Rank Instance Key": [
+    {
+      "desc": "Instance Key to a S Rank Dungeon",
+      "qty": 1,
+      "cat": "Instance Keys",
+      "rank": "S",
+      "buff": "",
+      "debuff": "",
+      "quest": true,
+      "Value": 35000,
+      "rarity": "Epic"
+    }
+  ],
+  "Stealth": [
+    {
+      "desc": "Lowers fatigue by 2% for every level upgrade.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Rush": [
+    {
+      "desc": "Lowers fatigue by 2% for every level upgrade.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Dash": [
+    {
+      "desc": "Decreases Time based activities by 5% for each level.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Negotiation": [
+    {
+      "desc": "Get a 1.5% per level coin cashback on trades and buys. Also applies to selling items. Cannot be stopped.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Tacital": [
+    {
+      "desc": "X% chance to be chosen as raid leader if party members are at similar or lower levels. Cannot be stopped.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Mind Over Matter": [
+    {
+      "desc": "Increases stat values on equipped armor by 5%; scalable with level upgrades.  Applies to Debuffs as well",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Iron Warrior": [
+    {
+      "desc": "Increases HP by 2.5% when below 50% of max HP, for every level upgrade.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Charismatic Aura": [
+    {
+      "desc": "Slightly increases stat and level on leaderboards. **Does not affect dungeon workouts.**",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Nimble Endurance": [
+    {
+      "desc": "Reduces the Fatigue by 5% per Level when Fatigue was over 100%",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Iron Fist": [
+    {
+      "desc": "Same as Fatal Strike, but reduces 2% of HP as you level up.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Fatal Strike": [
+    {
+      "desc": "Reduces workout values by 2% for self per level upgrade.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Resourceful Adaptation": [
+    {
+      "desc": "Allows changing workouts in dungeons randomly.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ],
+  "Brute Force Mastery": [
+    {
+      "desc": "Reduces the difficulty of STR-based tasks by 7% per level, but increases the difficulty of AGI-based tasks by 5% per level. Lasts for 30 minutes.",
+      "qty": 1,
+      "cat": "Rune Stone",
+      "rank": "?",
+      "buff": "",
+      "debuff": "",
+      "quest": false,
+      "Value": 1000,
+      "rarity": "Rare"
+    }
+  ]
 }

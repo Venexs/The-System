@@ -2,6 +2,9 @@
     "Settings": {
         "Calorie_Penalty": "True",
         "Main_Penalty": "True",
-        "Performernce (ANIME):": "False"
+        "Performernce (ANIME):": "False",
+        "Transparency": 0.75,
+        "SFX Delay": 0,
+        "Microphone": "False"
     }
 }

@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -53,7 +54,10 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=4
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -155,7 +159,7 @@ def start_job(event):
     data["status"][1]["plPER"]=int(per)
     data["status"][1]["plMAN"]=int(man)
 
-    with open("Files\Temp Files\Job_Change Date.csv", 'w', newline='') as time_open_csv_file:
+    with open("Files/Temp Files/Job_Change Date.csv", 'w', newline='') as time_open_csv_file:
         fw=csv.writer(time_open_csv_file)
         current_date = datetime.now()
         # Add 10 days to the current date
@@ -168,6 +172,10 @@ def start_job(event):
 
     with open("Files/Player Data/Job_info.json", 'w') as fson:
         ujson.dump(data, fson, indent=4)
+
+def fatigue_window():
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
+    subprocess.Popen(['python', 'Manwha Version/Fatigue/gui.py'])
 
 canvas = Canvas(
     window,
@@ -191,7 +199,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 180.0, resize_factor=1.2)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 200.0, 180.0, resize_factor=1.2)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -280,22 +289,22 @@ with open("Files/Player Data/Status.json", 'r') as fson:
     av_int_based=thesystem.system.three_val(av_int_based)
     # ? =================================================
     str_buff=data["equipment"][0]["STR"]
-    str_buff=thesystem.system.sign(str_buff)+thesystem.system.pos_fix(str_buff)
+    str_buff=thesystem.system.sign(str_buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(str_buff))
 
     agi_buff=data["equipment"][0]["AGI"]
-    agi_buff=thesystem.system.sign(agi_buff)+thesystem.system.pos_fix(agi_buff)
+    agi_buff=thesystem.system.sign(agi_buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(agi_buff))
 
     vit_buff=data["equipment"][0]["VIT"]
-    vit_buff=thesystem.system.sign(vit_buff)+thesystem.system.pos_fix(vit_buff)
+    vit_buff=thesystem.system.sign(vit_buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(vit_buff))
 
     int_buff=data["equipment"][0]["INT"]
-    int_buff=thesystem.system.sign(int_buff)+thesystem.system.pos_fix(int_buff)
+    int_buff=thesystem.system.sign(int_buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(int_buff))
 
     per_buff=data["equipment"][0]["PER"]
-    per_buff=thesystem.system.sign(per_buff)+thesystem.system.pos_fix(per_buff)
+    per_buff=thesystem.system.sign(per_buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(per_buff))
 
     man_buff=data["equipment"][0]["MAN"]
-    man_buff=thesystem.system.sign(man_buff)+thesystem.system.pos_fix(man_buff)
+    man_buff=thesystem.system.sign(man_buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(man_buff))
     # ? =================================================
 
 # ? =====================================================================
@@ -328,6 +337,8 @@ def update_stat(stat_name):
             data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 data["status"][0]["fatigue_max"]+=20
+            elif stat_name=='int':
+                data["status"][0]["mp"]+=5
             with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(data, fson, indent=6)
             with open("Files/Player Data/Ability_Check.json", 'w') as fin_ability_check_file:
@@ -384,11 +395,11 @@ str_txt=canvas.create_text(
 
 canvas.create_text(
     92.0,
-    222.0,
+    222.0+2,
     anchor="nw",
     text=f"({str_buff})",
     fill="#FFE819",
-    font=("Exo Regular", 15 * -1)
+    font=("Exo Regular", 13 * -1)
 )
 
 int_txt=canvas.create_text(
@@ -402,11 +413,11 @@ int_txt=canvas.create_text(
 
 canvas.create_text(
     90.0,
-    276.0,
+    276.0+2,
     anchor="nw",
     text=f"({int_buff})",
     fill="#FFE819",
-    font=("Exo Regular", 15 * -1)
+    font=("Exo Regular", 13 * -1)
 )
 
 agi_txt=canvas.create_text(
@@ -420,11 +431,11 @@ agi_txt=canvas.create_text(
 
 canvas.create_text(
     90.0,
-    328.0,
+    328.0+2,
     anchor="nw",
     text=f"({agi_buff})",
     fill="#FFE819",
-    font=("Exo Regular", 15 * -1)
+    font=("Exo Regular", 13 * -1)
 )
 
 vit_txt=canvas.create_text(
@@ -438,11 +449,11 @@ vit_txt=canvas.create_text(
 
 canvas.create_text(
     268.0,
-    222.0,
+    222.0+2,
     anchor="nw",
     text=f"({vit_buff})",
     fill="#FFE819",
-    font=("Exo Regular", 15 * -1)
+    font=("Exo Regular", 13 * -1)
 )
 
 per_txt=canvas.create_text(
@@ -456,11 +467,11 @@ per_txt=canvas.create_text(
 
 canvas.create_text(
     275.0,
-    274.0,
+    274.0+2,
     anchor="nw",
     text=f"({per_buff})",
     fill="#FFE819",
-    font=("Exo Regular", 15 * -1)
+    font=("Exo Regular", 13 * -1)
 )
 
 man_txt=canvas.create_text(
@@ -474,11 +485,11 @@ man_txt=canvas.create_text(
 
 canvas.create_text(
     282.0,
-    329.0,
+    329.0+2 ,
     anchor="nw",
     text=f"({man_buff})",
     fill="#FFE819",
-    font=("Exo Regular", 15 * -1)
+    font=("Exo Regular", 13 * -1)
 )
 
 image_image_7 = PhotoImage(
@@ -604,16 +615,18 @@ canvas.tag_bind(image_88, "<ButtonPress-1>", lambda e: update_stat("man"))
 
 # // ====================================================================
 
+gap = 20
+
 image_image_13 = PhotoImage(
     file=relative_to_assets("image_13.png"))
 image_13 = canvas.create_image(
-    41.0,
+    41.0-gap,
     176.5,
     image=image_image_13
 )
 
 canvas.create_text(
-    60.0,
+    60.0-gap,
     163.0,
     anchor="nw",
     text=hp,
@@ -624,13 +637,13 @@ canvas.create_text(
 image_image_14 = PhotoImage(
     file=relative_to_assets("image_14.png"))
 image_14 = canvas.create_image(
-    136.0,
+    136.0-gap,
     176.5,
     image=image_image_14
 )
 
 canvas.create_text(
-    154.0,
+    154.0-gap,
     164.0,
     anchor="nw",
     text=mp,
@@ -641,14 +654,14 @@ canvas.create_text(
 image_image_15 = PhotoImage(
     file=relative_to_assets("image_15.png"))
 image_15 = canvas.create_image(
-    256.0,
+    256.0-gap,
     176.5,
     image=image_image_15
 )
 
 fat_val = load_fatigue_value()
 fatigue_val = canvas.create_text(
-    297.0,
+    297.0-gap,
     163.0,
     anchor="nw",
     text=f"{int(fat_val)}%",
@@ -832,6 +845,16 @@ image_23 = canvas.create_image(
 )
 
 canvas.tag_bind(image_23, "<ButtonPress-1>", lambda event: thesystem.system.info_open("ABI Points"))
+
+image_image_25 = PhotoImage(
+    file=relative_to_assets("image_25.png"))
+image_25 = canvas.create_image(
+    337.0,
+    174.0,
+    image=image_image_25
+)
+
+canvas.tag_bind(image_25, "<ButtonPress-1>", lambda event: fatigue_window())
 
 start_update_thread(canvas, fatigue_val)
 window.resizable(False, False)

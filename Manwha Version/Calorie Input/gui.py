@@ -16,6 +16,7 @@ from datetime import datetime
 import pandas as pd
 import sys
 import os
+import numpy as np
 import ujson
 import threading
 
@@ -48,7 +49,10 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=3
 thesystem.system.center_window(window,window_width,target_height)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -92,7 +96,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 163.0)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 200.0, 163.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

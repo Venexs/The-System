@@ -6,7 +6,7 @@ import thesystem.system
 def quests_add(rank, vals, read_status_file_data, window):
     ab_points = ["STR", "AGI", "VIT", "INT", "PER", "MAN"]
     random_ab = random.choice(ab_points)
-    
+
     try:
         with open("Files/Player Data/Active_Quests.json", 'r') as f:
             active_quests = ujson.load(f)
@@ -14,7 +14,7 @@ def quests_add(rank, vals, read_status_file_data, window):
         active_quests = {}
     active_count = len(active_quests)
     active_names = list(active_quests.keys())
-    
+
     if active_count < 13:
         # --- Quest Name Selection ---
         with open("Files/Data/Quest_Names.json", 'r') as f:
@@ -22,13 +22,12 @@ def quests_add(rank, vals, read_status_file_data, window):
         if random_ab in ["STR", "AGI", "VIT"]:
             names_list = quest_names.get("STR", [])
             rew3 = "STRav"
-        else:  # random_ab in ["INT", "PER", "MAN"]
+        else:
             names_list = quest_names.get("INT", [])
             rew3 = "INTav"
-        # Filter out quest names that are already active.
         available_names = [name for name in names_list if name not in active_names]
         quest_name = random.choice(available_names) if available_names else random.choice(names_list)
-        
+
         # --- Quest Description ---
         with open("Files/Data/Quest_Desc.json", 'r') as f:
             quest_desc = ujson.load(f)
@@ -39,18 +38,44 @@ def quests_add(rank, vals, read_status_file_data, window):
         elif rank in ["A", "S"]:
             desc_list = quest_desc.get("Hard", [])
         findesc = random.choice(desc_list) if desc_list else ""
-        
+
         # --- Rewards: Coin Bag and Inventory Reward ---
         amt = {"S": 250000, "A": 130000, "B": 80000, "C": 5000, "D": 500, "E": 300}
         coinval = amt.get(rank, 0)
         rew1 = f"Coin Bag {coinval}"
-        
+
         with open("Files/Data/Inventory_List.json", 'r') as f:
             reward_names = ujson.load(f)
-        # Get all inventory items whose rank matches.
-        final_rewards_list = [k for k, v in reward_names.items() if v[0].get("rank") == rank]
-        rew2 = random.choice(final_rewards_list) if final_rewards_list else ""
-        
+
+        # Define rarity weights
+        rarity_weights = {
+            "Common": 60,
+            "Rare": 25,
+            "Epic": 10,
+            "Legendary": 5
+        }
+
+        # Weighted selection for quest-only rewards
+        weighted_rewards = []
+        for name, data in reward_names.items():
+            item = data[0]
+            if item.get("rank") == rank and item.get("quest") == True:
+                rarity = item.get("rarity", "Common")
+                weight = rarity_weights.get(rarity, 1)
+                weighted_rewards.append((name, weight))
+
+
+        if weighted_rewards:
+            names, weights = zip(*weighted_rewards)
+            rew2 = random.choices(names, weights=weights, k=1)[0]
+        else:
+            # fallback: pick any matching rank reward
+            final_rewards_list = [
+                k for k, v in reward_names.items()
+                if v[0].get("rank") == rank and v[0].get("quest") == True
+            ]
+            rew2 = random.choice(final_rewards_list) if final_rewards_list else ""
+
         # --- Quest Info ---
         file_name = f"Files/Workout/{random_ab}_based.json"
         with open(file_name, 'r') as f:
@@ -58,9 +83,11 @@ def quests_add(rank, vals, read_status_file_data, window):
         quest_main_keys = list(quest_main_names.keys())
         final_quest_main_name = random.choice(quest_main_keys) if quest_main_keys else ""
         details = quest_main_names.get(final_quest_main_name, [{}])[0]
-        
+
         # --- Build Rewards Dictionary ---
-        rew_dict = {rew1: 1, rew2: 1}
+        rew_dict = {rew1: 1}
+        if rew2:
+            rew_dict[rew2] = 1
         if rank == "S":
             rew_dict["LVLADD"] = 1
             rew_dict[rew3] = 4
@@ -68,14 +95,14 @@ def quests_add(rank, vals, read_status_file_data, window):
             rew_dict[rew3] = 3
         elif rank == "B":
             rew_dict[rew3] = 2
-        
+
         # --- Update Quest Details ---
         if details.get("type") == 'Learn':
             details["obj_desc"] = details.get("desc")
         details["desc"] = findesc
         details["rank"] = rank
         details["ID"] = random.randrange(1, 999999)
-        
+
         adjustments = {
             "D": {"amt": {50: 10, 15: 5, 2: 1, 30: 15, 1: 1},
                   "time": {60: 60, 45: 15, 1: 1}},
@@ -88,9 +115,9 @@ def quests_add(rank, vals, read_status_file_data, window):
             "S": {"amt": {50: 150, 15: 85, 2: 8, 30: 90, 1: 5},
                   "time": {45: 75, 60: 540, 1: 9}},
         }
+
         if rank in adjustments:
             adj = adjustments[rank]
-            # Prefer adjusting "amt" if present; otherwise adjust "time".
             if "amt" in details:
                 orig_amt = details["amt"]
                 if orig_amt in adj["amt"]:
@@ -99,37 +126,48 @@ def quests_add(rank, vals, read_status_file_data, window):
                 orig_time = details["time"]
                 if orig_time in adj["time"]:
                     details["time"] += adj["time"][orig_time]
-        
+
         details["Rewards"] = rew_dict
         details["skill"] = final_quest_main_name
-        
+
         # --- Save the New Quest ---
         active_quests[quest_name] = [details]
         with open("Files/Player Data/Active_Quests.json", 'w') as f:
             ujson.dump(active_quests, f, indent=6)
-        
+
+        with open("Files/Player Data/Skill.json", 'r') as f:
+            skill_data = ujson.load(f)
+
+        addition = 0
+        if thesystem.system.skill_use("Negotiation", (0), False) and ("Negotiation" in skill_data):
+            lvl = skill_data["Negotiation"][0]["lvl"]
+            if isinstance(lvl, str):
+                lvl = 10
+
+            percentile = 0.015 * lvl
+            addition = abs(vals) * percentile
+
         # --- Update Status ---
-        # (Assumes read_status_file_data is a global variable)
+        read_status_file_data["status"][0]['coins'] -= int(vals-addition)
         with open("Files/Player Data/Status.json", 'w') as f:
-            read_status_file_data["status"][0]['coins'] -= int(vals)
             ujson.dump(read_status_file_data, f, indent=4)
+
     else:
         thesystem.system.message_open("Quest Slot Filled")
-    
+
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
-        theme_data=ujson.load(themefile)
-        theme=theme_data["Theme"]
+        theme_data = ujson.load(themefile)
+        theme = theme_data["Theme"]
 
-    with open("Files/Player Data/Tabs.json",'r') as tab_son:
-        tab_son_data=ujson.load(tab_son)
+    with open("Files/Player Data/Tabs.json", 'r') as tab_son:
+        tab_son_data = ujson.load(tab_son)
 
-    if tab_son_data["Shop"]=='Close':
+    if tab_son_data["Shop"] == 'Close':
+        with open("Files/Player Data/Tabs.json", 'w') as fin_tab_son:
+            tab_son_data["Shop"] = 'Open'
+            ujson.dump(tab_son_data, fin_tab_son, indent=4)
 
-        with open("Files/Player Data/Tabs.json",'w') as fin_tab_son:
-            tab_son_data["Shop"]='Open'
-            ujson.dump(tab_son_data,fin_tab_son,indent=4)
-
-        inv_name=f"{theme} Version/Shop/gui.py"
+        inv_name = f"{theme} Version/Shop/gui.py"
         subprocess.Popen(['python', inv_name])
 
     window.quit()

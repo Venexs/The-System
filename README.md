@@ -1,8 +1,6 @@
 # The System (Solo Levelling)
 This is just a fun project I made, trying to emulate and fulfil the function that The 'System' in Solo Levelling had. (THIS IS JUST A TESTING VERSION!)
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O4O71III0F)
-
 Context:
 
 In the Anime/Manga/Light Novel, Solo Levelling, The MC has a screen only he can see that allows him to 'Level Up' his Physical Attributes such as, Strength, Agility, Vitality, Perception and Intellect. 

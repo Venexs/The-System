@@ -7,7 +7,7 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Checkbutton, IntVar
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Checkbutton, IntVar, ttk, StringVar
 import ujson
 import csv
 import subprocess
@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -50,7 +51,10 @@ window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=35, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -74,26 +78,22 @@ thesystem.system.make_window_transparent(window,transp_clr)
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
 
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (490, 34))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (490, 34))
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (490, 34), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (490, 34), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 checkbox_var0 = IntVar(value=0)
 checkbox_var2 = IntVar(value=0)
+checkbox_var3 = IntVar(value=0)
 
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
+checkbox_var3 = IntVar(value=1 if setting_data["Settings"].get("Main_Penalty", "False") == "True" else 0)
 checkbox_var2 = IntVar(value=1 if setting_data["Settings"].get("Performernce (ANIME)", "False") == "True" else 0)
 checkbox_var0 = IntVar(value=1 if setting_data["Settings"].get("Main_Penalty", "False") == "True" else 0)
 
@@ -111,6 +111,29 @@ def move_window(event):
     window.geometry("+%s+%s" % (x, y))
     lastx = event.x_root
     lasty = event.y_root
+
+def is_valid_decimal(new_value):
+    if new_value == "":
+        return True  # allow clearing the field
+    try:
+        float(new_value)
+        return True
+    except ValueError:
+        return False
+
+def is_valid_decimal_non(new_value):
+    if new_value == "":
+        return True  # allow clearing the field
+    try:
+        if float(new_value)<0:
+            return False
+        if float(new_value)>1:
+            return False
+        float(new_value)
+        return True
+    except ValueError:
+        return False
+
 
 def ex_close(win):
     if setting_data["Settings"]["Performernce (ANIME):"] != "True":
@@ -142,8 +165,36 @@ def info_open():
     subprocess.Popen(['python', 'First/Info/gui.py'])
     ex_close(window)
 
+def dailys_open():
+    with open("Files/Checks/daily_open.csv", 'w', newline='') as info_open:
+        fw=csv.writer(info_open)
+        fw.writerow(["True"])
+
+    subprocess.Popen(['python', 'First/Daily Quest Tweak/gui.py'])
+    ex_close(window)
+
+def penalty_open():
+    with open("Files/Checks/penalty_open.csv", 'w', newline='') as info_open:
+        fw=csv.writer(info_open)
+        fw.writerow(["True"])
+
+    subprocess.Popen(['python', 'First/Penalty Tweak/gui.py'])
+    ex_close(window)
+
+def apply_changes():
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
+    with open("Files/Player Data/Settings.json", 'r') as settings_open:
+        setting_data=ujson.load(settings_open)
+    setting_data["Settings"]["Transparency"] = float(entry_3.get())
+    with open("Files/Player Data/Settings.json", 'w') as settings_open:
+        ujson.dump(setting_data, settings_open, indent=4)
+
 unchecked_image = PhotoImage(file="assets/frame0/Off.png")
 checked_image  = PhotoImage(file="assets/frame0/On.png")
+
+vcmd_dec_non = window.register(is_valid_decimal_non)
+
+vcmd_dec = window.register(is_valid_decimal)
 
 canvas = Canvas(
     window,
@@ -167,7 +218,8 @@ with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 330.0, resize_factor=0.8, pause_duration=0.3)
+    preloaded_frames = np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 478.0, 330.0, resize_factor=0.8, pause_duration=0.3)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -220,6 +272,38 @@ button_2 = Button(
 )
 button_2.place(
     x=73.0,
+    y=194.0,
+    width=156.0,
+    height=34.0
+)
+
+button_image_30 = PhotoImage(
+    file=relative_to_assets("dailys.png"))
+button_30 = Button(
+    image=button_image_30,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: dailys_open(),
+    relief="flat"
+)
+button_30.place(
+    x=246.0,
+    y=148.0,
+    width=156.0,
+    height=34.0
+)
+
+button_image_40 = PhotoImage(
+    file=relative_to_assets("penalty.png"))
+button_40 = Button(
+    image=button_image_40,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: penalty_open(),
+    relief="flat"
+)
+button_40.place(
+    x=246.0,
     y=194.0,
     width=156.0,
     height=34.0
@@ -284,15 +368,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation
@@ -330,7 +415,7 @@ canvas.create_text(
 checkbox = Checkbutton(
     window,
     variable=checkbox_var0,
-    command= lambda: settings.settings_ope(checkbox_var0, checkbox_var0, checkbox_var2),
+    command= lambda: settings.settings_ope(checkbox_var0, checkbox_var0, checkbox_var2, checkbox_var3),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -342,8 +427,33 @@ checkbox = Checkbutton(
 )
 
 # Position the checkbox using place
-checkbox.place(x=317, y=266, width=14, height=14)
+checkbox.place(x=317, y=266-5, width=14, height=14)
 # Position the checkbox using place
+
+canvas.create_text(
+    73.0,
+    334.0-34,
+    anchor="nw",
+    text="Transparency Value (0.1 t0 1.0) : ",
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 11 * -1)
+)
+
+entry_3 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd_dec_non, '%P')
+)
+entry_3.place(
+    x=317.0,
+    y=300.0,
+    width=50.0,
+    height=18.0
+)
+
 
 canvas.create_text(
     73.0,
@@ -357,7 +467,7 @@ canvas.create_text(
 checkbox2 = Checkbutton(
     window,
     variable=checkbox_var2,
-    command= lambda: settings.settings_ope(checkbox_var2, checkbox_var0, checkbox_var2),
+    command= lambda: settings.settings_ope(checkbox_var2, checkbox_var0, checkbox_var2, checkbox_var3),
     image=unchecked_image,
     selectimage=checked_image,
     compound="center",       # Place the image to the left of the text
@@ -369,7 +479,49 @@ checkbox2 = Checkbutton(
 )
 
 # Position the checkbox using place
-checkbox2.place(x=317, y=342, width=14, height=14)
+checkbox2.place(x=317, y=342-8, width=14, height=14)
+
+canvas.create_text(
+    73.0,
+    334.0+34,
+    anchor="nw",
+    text="Voice Control : ",
+    fill="#FFFFFF",
+    font=("Montserrat SemiBold", 11 * -1)
+)
+
+checkbox3 = Checkbutton(
+    window,
+    variable=checkbox_var3,
+    command= lambda: settings.settings_ope(checkbox_var2, checkbox_var0, checkbox_var2, checkbox_var3),
+    image=unchecked_image,
+    selectimage=checked_image,
+    compound="center",       # Place the image to the left of the text
+    indicatoron=False,       # Hide the default checkbox indicator
+    bd=0,
+    highlightthickness=0,    # Remove the focus highlight around the widget
+    padx=0,                  # Remove internal horizontal padding
+    pady=0
+)
+
+# Position the checkbox using place
+checkbox3.place(x=317, y=342-8+(73/2), width=14, height=14)
+
+button_image_6 = PhotoImage(
+    file=relative_to_assets("button_6.png"))
+button_6 = Button(
+    image=button_image_6,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: apply_changes(),
+    relief="flat"
+)
+button_6.place(
+    x=258.0,
+    y=581.0,
+    width=160.0,
+    height=27.0
+)
 
 window.resizable(False, False)
 window.mainloop()

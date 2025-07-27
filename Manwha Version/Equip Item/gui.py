@@ -15,6 +15,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,7 +69,10 @@ window.geometry(f"{window_width}x{initial_height}")
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -133,8 +137,9 @@ for k in rol:
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
+    preloaded_frames=np.load(video_path)
     normal_font_col=pres_file_data["Manwha"]["Normal Font Color"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 300.0, 190.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

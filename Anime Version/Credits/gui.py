@@ -18,6 +18,7 @@ from PIL import Image, ImageTk
 import sys
 import os
 import webbrowser
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -46,7 +47,10 @@ window_width = 974
 window.geometry(f"{window_width}x{initial_height}")
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -69,19 +73,13 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=3
 
 
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
-        setting_data=ujson.load(settings_open)
+    setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
 
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (974, 47))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (983, 52))
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (974, 47), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (983, 52), job, type_="bottom")
 
 def start_move(event):
     window.lastx, window.lasty = event.widget.winfo_pointerxy()
@@ -140,8 +138,8 @@ image_1 = canvas.create_image(
 
 pres_file_data=misc.load_ujson("Files/Mod/presets.json")
 video_path=pres_file_data["Anime"][video]
-
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0, pause_duration=1)
+preloaded_frames = np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 478.0, 313.0, pause_duration=1)
 
 image_image_16 = PhotoImage(
     file=relative_to_assets("image_16.png"))
@@ -392,15 +390,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 if setting_data["Settings"]["Performernce (ANIME):"] != "True":

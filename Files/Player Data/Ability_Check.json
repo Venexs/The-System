@@ -1,9 +1,9 @@
 {
     "Check": {
-        "STR": 2,
+        "STR": 1,
         "AGI": 1,
-        "VIT": 3,
-        "INT": 2,
+        "VIT": 1,
+        "INT": 1,
         "PER": 1,
         "MAN": 1
     }

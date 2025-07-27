@@ -7,7 +7,7 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, ttk
 import subprocess
 import threading
 import random
@@ -18,6 +18,7 @@ import ujson
 import csv
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -54,67 +55,91 @@ def ex_close(eve):
 def get():
     name=entry_1.get()
     age=entry_2.get()
-    gen=entry_2_5.get()
+    gen=gender_var.get()
     height=entry_3.get()
     weight=entry_4.get()
-    wrk_rate=entry_5.get()
-    result=entry_6.get()
+    wrk_rate=difficulty_var.get()
+    result=goal_var.get()
 
-    if (gen.strip()).upper()=='M':
-        bmr=(13.397*float(weight)) + (4.799*float(height)) - (5.677*int(age)) + 88.362
-    elif (gen.strip()).upper()=='F':
-        bmr=(9.247*float(weight)) + (3.098*float(height)) - (4.330*int(age)) + 447.593
+    if age=='':
+        age=18
+    if height=='':
+        height=170
+    if weight=='':
+        weight=60
+    if gen=='':
+        gen='M'
 
-    if (wrk_rate.strip()).upper()=='MODERATE': 
-        cc=round(bmr*1.56)
-    elif (wrk_rate.strip()).upper()=='EXTREME': 
-        cc=round(bmr*1.725)
-    elif (wrk_rate.strip()).upper()=='IMPOSSIBLE':
-        cc=round(bmr*1.9)
+    if name!='':
+        if (gen.strip()).upper()=='M':
+            bmr=(13.397*float(weight)) + (4.799*float(height)) - (5.677*int(age)) + 88.362
+        elif (gen.strip()).upper()=='F':
+            bmr=(9.247*float(weight)) + (3.098*float(height)) - (4.330*int(age)) + 447.593
 
-    if result.upper()=='MILD WEIGHT LOSS':
-        r1=round(cc*0.89)
+        if (wrk_rate.strip()).upper()=='MODERATE': 
+            cc=round(bmr*1.56)
+        elif (wrk_rate.strip()).upper()=='EXTREME': 
+            cc=round(bmr*1.725)
+        elif (wrk_rate.strip()).upper()=='IMPOSSIBLE':
+            cc=round(bmr*1.9)
 
-    elif result.upper()=='MILD WEIGHT GAIN':
-        r1=round(cc*1.11)
-    
-    bmi=round(float(weight)/((float(height)/100)**2))
+        if result.upper()=='MILD WEIGHT LOSS':
+            r1=round(cc*0.89)
 
-    with open("Files/Player Data/Status.json", 'r') as first_fson:
-        data=ujson.load(first_fson)
-        data["status"][0]['name']=name
+        elif result.upper()=='MILD WEIGHT GAIN':
+            r1=round(cc*1.11)
+        
+        bmi=round(float(weight)/((float(height)/100)**2))
 
-        data["cal_data"][0]["age"]=age
-        data["cal_data"][0]["gender"]=gen
-        data["cal_data"][0]["height"]=height
-        data["cal_data"][0]["weight"]=weight
-        data["cal_data"][0]["calorie calc"]=cc
-        data["cal_data"][0]["final calorie calc"]=r1
-        data["cal_data"][0]["result"]=(result.upper())
-        data["cal_data"][0]["BMI"]=bmi
-    
-    with open("Files/Player Data/Status.json", 'w') as fson:
-        ujson.dump(data, fson, indent=4)
+        with open("Files/Player Data/Status.json", 'r') as first_fson:
+            data=ujson.load(first_fson)
+            data["status"][0]['name']=name
 
-    with open("Files/Checks/info_open.csv", 'r') as info_open:
-        info_fr=csv.reader(info_open)
-        for k in info_fr:
-            istrue=k[0]
+            data["cal_data"][0]["age"]=age
+            data["cal_data"][0]["gender"]=gen
+            data["cal_data"][0]["height"]=height
+            data["cal_data"][0]["weight"]=weight
+            data["cal_data"][0]["calorie calc"]=cc
+            data["cal_data"][0]["final calorie calc"]=r1
+            data["cal_data"][0]["result"]=(result.upper())
+            data["cal_data"][0]["BMI"]=bmi
+        
+        with open("Files/Player Data/Status.json", 'w') as fson:
+            ujson.dump(data, fson, indent=4)
 
-    if istrue=='True':
-        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
-            theme_data=ujson.load(themefile)
-            theme=theme_data["Theme"]
+        with open("Files/Checks/info_open.csv", 'r') as info_open:
+            info_fr=csv.reader(info_open)
+            for k in info_fr:
+                istrue=k[0]
 
-        subprocess.Popen(['Python', f'{theme} Version/Settings/gui.py'])
-        with open("Files/Checks/info_open.csv", 'w', newline='') as info_open:
-            fw=csv.writer(info_open)
-            fw.writerow(["False"])
-        ex_close(window)
-    
-    else:
-        subprocess.Popen(['python', 'First/Daily Quest Tweak/gui.py'])
-        ex_close(window)
+        if istrue=='True':
+            with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+                theme_data=ujson.load(themefile)
+                theme=theme_data["Theme"]
+
+            subprocess.Popen(['Python', f'{theme} Version/Settings/gui.py'])
+            with open("Files/Checks/info_open.csv", 'w', newline='') as info_open:
+                fw=csv.writer(info_open)
+                fw.writerow(["False"])
+            ex_close(window)
+        
+        else:
+            subprocess.Popen(['python', 'First/Daily Quest Tweak/gui.py'])
+            ex_close(window)
+
+def only_numbers(char):
+    if char == "":
+        return True  # allow clearing the field
+    return char.isdigit()
+
+def is_valid_decimal(new_value):
+    if new_value == "":
+        return True  # allow clearing the field
+    try:
+        float(new_value)
+        return True
+    except ValueError:
+        return False
 
 window = Tk()
 
@@ -127,10 +152,18 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=4
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
+
 thesystem.system.make_window_transparent(window)
+
+vcmd = window.register(only_numbers)
+
+vcmd_dec = window.register(is_valid_decimal)
 
 canvas = Canvas(
     window,
@@ -154,7 +187,7 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0)
+player = thesystem.system.FastVideoPlayer(canvas, np.load(video_path), 430.0, 263.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -215,7 +248,9 @@ entry_2 = Entry(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd, '%S')
 )
 entry_2.place(
     x=321.0,
@@ -233,13 +268,16 @@ canvas.create_text(
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_2_5 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0
+gender_var = StringVar()
+
+# Create the dropdown (combobox)
+dropdown_2_5 = ttk.Combobox(
+    window,
+    textvariable=gender_var,
+    values=["M", "F"],
+    state="readonly"
 )
-entry_2_5.place(
+dropdown_2_5.place(
     x=456.0,
     y=208.0,
     width=121.0,
@@ -259,7 +297,9 @@ entry_3 = Entry(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd_dec, '%P')
 )
 entry_3.place(
     x=321.0,
@@ -281,7 +321,9 @@ entry_4 = Entry(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd_dec, '%P')
 )
 entry_4.place(
     x=456.0,
@@ -307,18 +349,24 @@ canvas.create_text(
     fill="#FFFFFF",
     font=("Montserrat Medium", 16 * -1)
 )
-entry_5 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0
+
+difficulty_var = StringVar()
+
+# Create the dropdown (combobox)
+dropdown_5 = ttk.Combobox(
+    window,
+    textvariable=difficulty_var,
+    values=["Moderate", "Extreme", "Impossible"],
+    state="readonly"  # Makes it non-editable, selection-only
 )
-entry_5.place(
+dropdown_5.place(
     x=321.0,
     y=338.0,
     width=276.0,
     height=21.0
 )
+
+difficulty_var.set("Moderate") 
 
 canvas.create_text(
     321.0,
@@ -329,19 +377,23 @@ canvas.create_text(
     font=("Montserrat Medium", 16 * -1)
 )
 
-entry_6 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0
+goal_var = StringVar()
+
+# Create the dropdown (combobox)
+dropdown_6 = ttk.Combobox(
+    window,
+    textvariable=goal_var,
+    values=["Mild Weight Gain", "Mild Weight Loss"],
+    state="readonly"
 )
-entry_6.place(
+dropdown_6.place(
     x=321.0,
     y=391.0,
     width=195.0,
     height=21.0
 )
 
+goal_var.set("Mild Weight Loss") 
 
 canvas.create_rectangle(
     0.0,

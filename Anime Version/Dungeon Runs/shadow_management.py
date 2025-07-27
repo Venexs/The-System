@@ -237,17 +237,17 @@ bottom_image = canvas.create_image(
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
-    if not stop_event.is_set():
-        window.after(1000 // 24, update_images)
+    window.after(1000 // 24, update_images)
 
 # Start animation if performance setting allows
 if setting_data["Settings"]["Performernce (ANIME):"] != "True":

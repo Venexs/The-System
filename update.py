@@ -140,54 +140,69 @@ def force_remove(path):
                 log(f"Retrying delete of file: {path}")
                 time.sleep(1)
 
+def download_zip_with_progress(url, output_path):
+    log("Starting download...")
+    response = requests.get(url, stream=True)
+    total = int(response.headers.get('content-length', 0))
+    downloaded = 0
+    chunk_size = 8192  # 8KB
+
+    with open(output_path, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            if chunk:
+                f.write(chunk)
+                downloaded += len(chunk)
+                percent = (downloaded / total) * 100 if total else 0
+                progress["value"] = percent
+                log(f"Downloading... {percent:.2f}%")
+    log("Download complete.")
+
 def download_and_replace(zip_url, destination):
-    log("Downloading new version...")
-    response = requests.get(zip_url)
-    if response.status_code == 200:
-        with zipfile.ZipFile(BytesIO(response.content)) as zip_ref:
-            temp_dir = "__temp_download__"
-            zip_ref.extractall(temp_dir)
+    temp_zip_path = "__temp_download__.zip"
+    temp_extract_dir = "__temp_extract__"
 
-            extracted_folder = os.path.join(temp_dir, os.listdir(temp_dir)[0])
-            total_files = sum([len(files) for r, d, files in os.walk(extracted_folder)])
-            moved_files = 0
+    download_zip_with_progress(zip_url, temp_zip_path)
 
-            for item in os.listdir(extracted_folder):
-                s = os.path.join(extracted_folder, item)
-                d = os.path.join(destination, item)
+    with zipfile.ZipFile(temp_zip_path, 'r') as zip_ref:
+        zip_ref.extractall(temp_extract_dir)
 
-                if os.path.exists(d):
-                    if os.path.isdir(s):
-                        for root_dir, dirs, files in os.walk(s):
-                            rel_path = os.path.relpath(root_dir, s)
-                            target_subdir = os.path.join(d, rel_path)
-                            os.makedirs(target_subdir, exist_ok=True)
+    extracted_folder = os.path.join(temp_extract_dir, os.listdir(temp_extract_dir)[0])
+    total_files = sum([len(files) for r, d, files in os.walk(extracted_folder)])
+    moved_files = 0
 
-                            for file in files:
-                                src_file = os.path.join(root_dir, file)
-                                dst_file = os.path.join(target_subdir, file)
-                                if os.path.exists(dst_file):
-                                    force_remove(dst_file)
-                                safe_move(src_file, dst_file)
-                                moved_files += 1
-                                progress["value"] = (moved_files / total_files) * 100
-                                log(f"Updating: {file}")
-                    else:
-                        force_remove(d)
-                        safe_move(s, d)
+    for item in os.listdir(extracted_folder):
+        s = os.path.join(extracted_folder, item)
+        d = os.path.join(destination, item)
+
+        if os.path.exists(d):
+            if os.path.isdir(s):
+                for root_dir, dirs, files in os.walk(s):
+                    rel_path = os.path.relpath(root_dir, s)
+                    target_subdir = os.path.join(d, rel_path)
+                    os.makedirs(target_subdir, exist_ok=True)
+                    for file in files:
+                        src_file = os.path.join(root_dir, file)
+                        dst_file = os.path.join(target_subdir, file)
+                        if os.path.exists(dst_file):
+                            force_remove(dst_file)
+                        safe_move(src_file, dst_file)
                         moved_files += 1
-                        progress["value"] = (moved_files / total_files) * 100
-                else:
-                    safe_move(s, d)
-                    moved_files += 1
-                    progress["value"] = (moved_files / total_files) * 100
+                        progress["value"] = 100 * moved_files / total_files
+                        log(f"Updating: {file}")
+            else:
+                force_remove(d)
+                safe_move(s, d)
+                moved_files += 1
+                progress["value"] = 100 * moved_files / total_files
+        else:
+            safe_move(s, d)
+            moved_files += 1
+            progress["value"] = 100 * moved_files / total_files
 
-            shutil.rmtree(temp_dir, ignore_errors=True)
-            log("Update process finished.")
-            finish_update()
-    else:
-        log(f"Failed to download zip: {response.status_code}")
-
+    os.remove(temp_zip_path)
+    shutil.rmtree(temp_extract_dir, ignore_errors=True)
+    log("Update process finished.")
+    finish_update()
 def run_update_thread():
     try:
         raw_url = github_blob_to_raw(github_csv_url)

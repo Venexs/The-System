@@ -19,6 +19,7 @@ import time
 import csv
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -96,7 +97,10 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=5
 
 thesystem.system.center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 thesystem.system.make_window_transparent(window)
@@ -104,36 +108,14 @@ thesystem.system.make_window_transparent(window)
 top_folder_path = "thesystem/top_bar"
 bottom_folder_path = "thesystem/bottom_bar"
 
-top_images = [f"{top_folder_path}/dailyquest.py{str(i).zfill(4)}.png" for i in range(1, 501)]
-bottom_images = [f"{bottom_folder_path}/{str(i).zfill(4)}.png" for i in range(1, 501)]
-
-def resize_image(image_path, size):
-    """Resize an image and return the processed PIL Image."""
-    if os.path.exists(image_path):
-        return Image.open(image_path).resize(size)
-    return None
-
-def preload_images(image_paths, size):
-    """Preload images by resizing them in parallel and converting them on the main thread."""
-    resized_images = []
-
-    # Resize images in parallel
-    with ThreadPoolExecutor() as executor:
-        resized_images = list(executor.map(lambda path: resize_image(path, size), image_paths))
-
-    # Create PhotoImage objects on the main thread
-    preloaded_images = [
-        ImageTk.PhotoImage(img) for img in resized_images if img is not None
-    ]
-    return preloaded_images
-
 # Define the size for each set of images
 top_size = (861, 43)
 bottom_size = (850, 47)
 
 # Preload top and bottom images
-top_preloaded_images = preload_images(top_images, top_size)
-bottom_preloaded_images = preload_images(bottom_images, bottom_size)
+top_preloaded_images = thesystem.system.load_or_cache_images(top_folder_path, top_size, job="NONE", type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_folder_path, bottom_size, job="NONE", type_="bottom")
+
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 canvas = Canvas(
@@ -155,11 +137,11 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0, pause_duration=0.6, resize_factor=-1)
+    preloaded_frames = np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 430.0, 263.0, pause_duration=0.6, resize_factor=-1)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -323,15 +305,16 @@ bottom_image = canvas.create_image(459.0, 562.0, image=bottom_preloaded_images[b
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation

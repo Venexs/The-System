@@ -17,6 +17,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -72,20 +73,21 @@ if job!='None':
     transp_clr='#652AA3'
 
 thesystem.system.make_window_transparent(window,transp_clr)
-
-top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 thesystem.system.animate_window_open(window, target_height, window_width, step=50, delay=1)
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (488, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (488, 33))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (488, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (488, 33), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -155,10 +157,46 @@ def entry_data():
             with open("Files/Player Data/Daily_Quest.json", 'w') as daily_quest_file:
                 ujson.dump(daily_quest_data, daily_quest_file, indent=4)
 
-            subprocess.Popen(['python', 'First/Penalty Check/gui.py'])
+            with open("Files/Checks/info_open.csv", 'r') as info_open:
+                info_fr=csv.reader(info_open)
+                for k in info_fr:
+                    istrue=k[0]
+
+            if istrue=='True':
+                with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+                    theme_data=ujson.load(themefile)
+                    theme=theme_data["Theme"]
+
+                subprocess.Popen(['Python', f'{theme} Version/Settings/gui.py'])
+                with open("Files/Checks/daily_open.csv", 'w', newline='') as info_open:
+                    fw=csv.writer(info_open)
+                    fw.writerow(["False"])
+            
+            else:
+                subprocess.Popen(['python', 'First/Penalty Check/gui.py'])
+            
             ex_close(window)
+
     except ValueError:
         print("Error, Retrying...")
+
+def only_numbers(char):
+    if char == "":
+        return True  # allow clearing the field
+    return char.isdigit()
+
+def is_valid_decimal(new_value):
+    if new_value == "":
+        return True  # allow clearing the field
+    try:
+        float(new_value)
+        return True
+    except ValueError:
+        return False
+    
+vcmd = window.register(only_numbers)
+
+vcmd_dec = window.register(is_valid_decimal)
 
 canvas = Canvas(
     window,
@@ -182,7 +220,7 @@ image_1 = canvas.create_image(
 pres_file_data=thesystem.misc.load_ujson("Files/Mod/presets.json")
 normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
 video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 400.0, 
+player = thesystem.system.FastVideoPlayer(canvas, np.load(video_path), 277.0, 400.0, 
                                       resize_factor=0.6, pause_duration=0.9, buffer_size=50)
 
 
@@ -428,7 +466,9 @@ entry_6 = Entry(
     bd=0,
     bg="#D9D9D9",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd, '%S')
 )
 entry_6.place(
     x=317.0,
@@ -457,7 +497,9 @@ entry_7 = Entry(
     bd=0,
     bg="#D9D9D9",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd, '%S')
 )
 entry_7.place(
     x=372.0,
@@ -519,7 +561,9 @@ entry_8 = Entry(
     bd=0,
     bg="#D9D9D9",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd_dec, '%P')
 )
 entry_8.place(
     x=314.0,
@@ -548,7 +592,9 @@ entry_9 = Entry(
     bd=0,
     bg="#D9D9D9",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd_dec, '%P')
 )
 entry_9.place(
     x=369.0,
@@ -633,15 +679,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation

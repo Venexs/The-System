@@ -9,6 +9,7 @@ import threading
 import ctypes
 import sys
 import psutil
+import numpy as np
 
 # Hosts modification-related imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,7 +39,7 @@ window.geometry("524x289")
 window.configure(bg="#FFFFFF")
 window.wm_attributes("-topmost", True)
 window.overrideredirect(True)
-window.attributes('-alpha', 0.7)
+window.attributes('-alpha', 0.8)
 
 with open("Files/Player Data/Penalty_Info.json", "r") as pen_info_file:
     pen_info_data = ujson.load(pen_info_file)
@@ -99,7 +100,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 300.0, 190.0)
 
 
 image_image_2 = PhotoImage(

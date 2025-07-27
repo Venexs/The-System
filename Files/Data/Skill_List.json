@@ -1,231 +1,237 @@
 {
-    "Rush":[
-        {
-            "lvl":1,
-            "type":"Passive",
-            "desc":"When Your body health decreases and fatigue is high, The Skill activates to push adrenaline and allowing you to keep going on",
-            
-            "base":"STR",
-            "rewards":{
-                "STRav":5,
-                "Gatekeepers Necklace":1
+      "Rush": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "Lowers fatigue by 2% for every level upgrade. (Mana Cost: 100)",
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Gatekeepers Necklace": 1
+                  },
+                  "cooldown": "24h",
+                  "mana": 100
+            },
+            {
+                  "Condition": [
+                        "VIT"
+                  ]
             }
-        },
-        {
-            "Condition":[
-                "VIT"
-            ]
-        }
-    ],
-
-    "Dash":[
-        {
-            "lvl":1,
-            "type":"Active",
-            "desc":"Gives the User the ability to get a faster start in a sprint / run",
-
-            "base":"STR",
-            "rewards":{
-                "STRav":5,
-                "Gauntlet of Lightning":1
+      ],
+      "Dash": [
+            {
+                  "lvl": 1,
+                  "type": "Active",
+                  "desc": "Decreases Time based activities by 5% for each level. (Mana Cost: 250)",
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of Lightning": 1
+                  },
+                  "cooldown": "1h",
+                  "mana": 250
+            },
+            {
+                  "Condition": [
+                        "AGI"
+                  ]
             }
-        },
-        {
-            "Condition":[
-                "AGI"
-            ]
-        }
-    ],
-    
-
-    "Negotiation":[
-        {
-            "lvl":1,
-            "type":"Active",
-            "desc":"Alows one to persuade others to agree to terms beneficial to oneself, whether in business, diplomacy, or personal interactions.",
-
-            "base":"INT",
-            "rewards":{
-                "INTav":5,
-                "Demon Monarch's Ring":1
+      ],
+      "Negotiation": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "Get a 1.5% per level coin cashback on trades and buys. Also applies to selling items. Cannot be stopped. (Mana Cost: 50)",
+                  "base": "INT",
+                  "rewards": {
+                        "INTav": 5,
+                        "Demon Monarch's Ring": 1
+                  },
+                  "cooldown": "None",
+                  "mana": 50
+            },
+            {
+                  "Condition": [
+                        "MAN"
+                  ]
             }
-        },
-        {
-            "Condition":[
-                "MAN"
-            ]
-        }
-    ],
-
-    "Tacital":[
-        {
-            "lvl":1,
-            "type":"Passive",
-            "desc":"It allows quickly assessing a situation and formulating effective plans or responses",
-
-            "base":"INT",
-            "rewards":{
-                "INTav":5,
-                "Aetherial Circlet":1
+      ],
+      "Tacital": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "X% chance to be chosen as raid leader if party members are at similar or lower levels. Cannot be stopped.",
+                  "base": "INT",
+                  "rewards": {
+                        "INTav": 5,
+                        "Aetherial Circlet": 1
+                  },
+                  "cooldown": "None",
+                  "mana": ""
+            },
+            {
+                  "Condition": [
+                        "INT"
+                  ]
             }
-        },
-        {
-            "Condition":[
-                "INT"
-            ]
-        }
-    ],
-
-    "Iron Fist":[
-        {
-            "lvl":1,
-            "type":"Active",
-            "desc":"Allows one to have an increased power in punching. Although It also deals in equal pain to oneself",
-
-            "base":"STR",
-            "rewards":{
-                "STRav":5,
-                "Gauntlet of the Eternal Guardian":1
+      ],
+      "Mind Over Matter": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "Increases stat values on equipped armor by 5%; scalable with level upgrades.  Applies to Debuffs as well (Mana Cost: 75)",
+                  "base": "INT",
+                  "rewards": {
+                        "INTav": 5,
+                        "Ring of Arcane Mastery": 1
+                  },
+                  "cooldown": "None",
+                  "mana": 75
+            },
+            {
+                  "Condition": [
+                        "INT",
+                        "MAN"
+                  ]
             }
-        },
-        {
-            "Condition":[
-                "STR",
-                "VIT"
-            ]
-        }
-    ],
-
-    "Iron Warrior":[
-        {
-            "lvl":1,
-            "type":"Passive",
-            "desc":"Allows one to become slightly less pained while health is low",
-
-            "base":"STR",
-            "rewards":{
-                "STRav":5,
-                "Titanium Plate Armor":1
+      ],
+      "Iron Warrior": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "Increases HP by 2.5% when below 50% of max HP, for every level upgrade. (Mana Cost: 100)",
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Titanium Plate Armor": 1
+                  },
+                  "cooldown": "24h",
+                  "mana": 100
+            },
+            {
+                  "Condition": [
+                        "STR",
+                        "VIT"
+                  ]
             }
-        },
-        {
-            "Condition":[
-                "STR",
-                "VIT"
-            ]
-        }
-    ],
-
-    "Resourceful Adaptation": [
-        {
-            "lvl": 1,
-            "type": "Active",
-            "desc": "Enables the user to adapt quickly to changing circumstances, finding creative solutions to problems on the fly.",
-            "base": "INT",
-            "rewards": {
-                "INTav": 5,
-                "Chameleon Cloak": 1
+      ],
+      "Charismatic Aura": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "Slightly increases stat and level on leaderboards. **Does not affect dungeon workouts.**",
+                  "base": "MAN",
+                  "rewards": {
+                        "INTav": 5,
+                        "High-Minister's Amulet": 1
+                  },
+                  "cooldown": "24h",
+                  "mana": ""
+            },
+            {
+                  "Condition": [
+                        "MAN",
+                        "PER"
+                  ]
             }
-        },
-        {
-            "Condition": [
-                "INT",
-                "PER"
-            ]
-        }
-    ],
-
-    "Charismatic Aura": [
-        {
-            "lvl": 1,
-            "type": "Passive",
-            "desc": "Radiates an aura of charm and charisma, making it easier to win people over and gain their trust or admiration.",
-            "base": "MAN",
-            "rewards": {
-                "INTav": 5,
-                "High-Minister's Amulet": 1
+      ],
+      "Nimble Endurance": [
+            {
+                  "lvl": 1,
+                  "type": "Passive",
+                  "desc": "Reduces the Fatigue by 5% per Level when Fatigue was over 100% (Mana Cost: 250)",
+                  "base": "AGI",
+                  "rewards": {
+                        "STRav": 5,
+                        "Dragonscale Boots": 1
+                  },
+                  "cooldown": "24h",
+                  "mana": 250
+            },
+            {
+                  "Condition": [
+                        "AGI",
+                        "VIT"
+                  ]
             }
-        },
-        {
-            "Condition": [
-                "MAN",
-                "PER"
-            ]
-        }
-    ],
-
-    "Fatal Strike": [
-        {
-            "lvl": 1,
-            "type": "Active",
-            "desc": "Allows the user to execute precise and accurate strikes, targeting specific weak points for maximum damage.",
-            "base": "STR",
-            "rewards": {
-                "STRav": 5,
-                "Blade of Precision": 1
+      ],
+      "Iron Fist": [
+            {
+                  "lvl": 1,
+                  "type": "Active",
+                  "desc": "Same as Fatal Strike, but reduces 2% of HP as you level up. (Mana Cost: 100)",
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of the Eternal Guardian": 1
+                  },
+                  "cooldown": "1h",
+                  "mana": 100
+            },
+            {
+                  "Condition": [
+                        "STR",
+                        "VIT"
+                  ]
             }
-        },
-        {
-            "Condition": [
-                "STR",
-                "AGI"
-            ]
-        }
-    ],
-
-    "Nimble Endurance": [
-        {
-            "lvl": 1,
-            "type": "Passive",
-            "desc": "Combines agility with endurance, allowing the user to maintain swift movements even in prolonged physical exertion.",
-            "base": "AGI",
-            "rewards": {
-                "STRav": 5,
-                "Dragonscale Boots": 1
+      ],
+      "Fatal Strike": [
+            {
+                  "lvl": 1,
+                  "type": "Active",
+                  "desc": "Reduces workout values by 2% for self per level upgrade. (Mana Cost: 200)",
+                  "base": "STR",
+                  "rewards": {
+                        "STRav": 5,
+                        "Blade of Precision": 1
+                  },
+                  "cooldown": "1h",
+                  "mana": 200
+            },
+            {
+                  "Condition": [
+                        "STR",
+                        "AGI"
+                  ]
             }
-        },
-        {
-            "Condition": [
-                "AGI",
-                "VIT"
-            ]
-        }
-    ],
-
-    "Mind Over Matter": [
-        {
-            "lvl": 1,
-            "type": "Active",
-            "desc": "Harnesses the one's intellect to influence the minds of others, compelling them to act in accordance with the user's desires.",
-            "base": "INT",
-            "rewards": {
-                "INTav": 5,
-                "Ring of Arcane Mastery": 1
+      ],
+      "Resourceful Adaptation": [
+            {
+                  "lvl": 1,
+                  "type": "Active",
+                  "desc": "Allows changing workouts in dungeons randomly. (Mana Cost: 150)",
+                  "base": "INT",
+                  "rewards": {
+                        "INTav": 5,
+                        "Chameleon Cloak": 1
+                  },
+                  "cooldown": "1h",
+                  "mana": 150
+            },
+            {
+                  "Condition": [
+                        "INT",
+                        "PER"
+                  ]
             }
-        },
-        {
-            "Condition": [
-                "INT",
-                "MAN"
-            ]
-        }
-    ],
-
-    "Brute Force Mastery": [
-        {
-            "lvl": 1,
-            "type": "Active",
-            "desc": "Empowers the user with unparalleled strength, enabling them to perform feats of raw power and destruction.",
-            "base": "STR",
-            "rewards": {
-                "First Glove of Colossus": 1,
-                "Second Glove of Colossus": 1
+      ],
+      "Brute Force Mastery": [
+            {
+                  "lvl": 1,
+                  "type": "Active",
+                  "desc": "Reduces the difficulty of STR-based tasks by 7% per level, but increases the difficulty of AGI-based tasks by 5% per level. Lasts for 30 minutes. (Mana Cost: 150)",
+                  "base": "STR",
+                  "rewards": {
+                        "First Glove of Colossus": 1,
+                        "Second Glove of Colossus": 1
+                  },
+                  "cooldown": "1h",
+                  "mana": 150
+            },
+            {
+                  "Condition": [
+                        "STR"
+                  ]
             }
-        },
-        {
-            "Condition": [
-                "STR"
-            ]
-        }
-    ]
+      ]
 }

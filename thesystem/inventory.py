@@ -89,6 +89,9 @@ def get_inventory_button_image(name):
         elif name.split()[-1]=='Key':
             file_loc = os.path.join(script_dir, "Images")
             files = os.path.join(file_loc, "Instance Keys" + ' Small.png')
+        elif name.split()[0]=='Rune' and name.split()[1]=='Stone':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Rune Stone" + ' Small.png')
         else:
             file_loc = os.path.join(script_dir, "Images")
             files = os.path.join(file_loc, name + ' Small.png')
@@ -109,16 +112,31 @@ def selling_item(name,window,val):
 
         fin_qt=fin_inv_data[name][0]["qty"]
         fin_inv_data[name][0]["qty"]=fin_qt-1
-        closing=False
+        closing=False   
         if fin_inv_data[name][0]["qty"]==0:
             del fin_inv_data[name]
             closing=True
+
+    
+    
+    with open("Files/Player Data/Skill.json", 'r') as f:
+        skill_data = ujson.load(f)
+
+    addition = 0
+    if thesystem.system.skill_use("Negotiation", (0), False) and ("Negotiation" in skill_data):
+        lvl = skill_data["Negotiation"][0]["lvl"]
+        if isinstance(lvl, str):
+            lvl = 10
+
+        percentile = 0.015 * lvl
+        addition = abs(val) * percentile
+
 
     with open("Files/Player Data/Inventory.json", 'w') as finaladdon_inv:
         ujson.dump(fin_inv_data, finaladdon_inv, indent=6)
 
     with open("Files/Player Data/Status.json", 'w') as write_status_file:
-        read_status_file_data["status"][0]['coins']+=int(val)
+        read_status_file_data["status"][0]['coins']+=int(val+addition)
         ujson.dump(read_status_file_data, write_status_file, indent=4)
 
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
@@ -146,6 +164,9 @@ def get_item_button_image(name, max_width, max_height):
         elif name.split()[-1]=='Key':
             file_loc = os.path.join(script_dir, "Images")
             files = os.path.join(file_loc, "Instance Keys" + ' Big.png')
+        elif name.split()[0]=='Rune' and name.split()[1]=='Stone':
+            file_loc = os.path.join(script_dir, "Images")
+            files = os.path.join(file_loc, "Rune Stone" + ' Big.png')
         else:
             file_loc = os.path.join(script_dir, "Images")
             files = os.path.join(file_loc, name + ' Big.png')

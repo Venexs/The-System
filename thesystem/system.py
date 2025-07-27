@@ -21,19 +21,7 @@ from functools import partial
 
 last_run = 0 
 tk_images = []
-
-def overwrite_python_file_with_text(py_file_path, txt_file_path):
-    try:
-        with open(txt_file_path, 'r', encoding='utf-8') as txt_file:
-            new_content = txt_file.read()
-
-        with open(py_file_path, 'w', encoding='utf-8') as py_file:
-            py_file.write(new_content)
-
-        print(f"✅ Successfully updated: {py_file_path}")
-        os.remove(txt_file_path)
-    except Exception as e:
-        print(f"❌ Failed to update {py_file_path}: {e}")
+POSITION_FILE = "Files/Player Data/window_positions.json"
 
 
 def fin_pen():
@@ -192,6 +180,21 @@ def run_once_prog(stp_eve, thrd):
         subprocess.Popen(['python', 'First/Check/gui.py'])
 
         sys.exit()
+
+def run_once_setting_chaneg():
+    new_file_data={
+    "Settings": {
+        "Calorie_Penalty": "True",
+        "Main_Penalty": "True",
+        "Performernce (ANIME):": "False",
+        "Transparency": 0.75,
+        "SFX Delay": 0,
+        "Microphone": "False"
+    }
+}
+
+    with open("Files/Player Data/Settings.json", 'w') as settings_file:
+        ujson.dump(new_file_data, settings_file, indent=4) 
 
 def run_once_misc_inv():
     with open("Files/Player Data/Inventory.json", 'r') as inv_file:
@@ -577,56 +580,83 @@ def random_quest():
 def make_window_transparent(window,color="#0C679B"):
     window.wm_attributes('-transparentcolor', color)
 
-def animate_window_open(window, target_height, width, step=2, delay=5, doners=False, cached_dims=None):
+def animate_window_open(window,target_height: int, width: int, step: int = 2, delay: int = 16, threshold_triggered: bool = False, cached_dims: tuple = None):
+    """
+    Animate the opening of a window by gradually increasing its height,
+    keeping it centered on the screen. Triggers an optional side effect
+    when reaching 20% of target height.
+
+    Args:
+        window: The Tkinter window to animate.
+        target_height (int): Final height to reach.
+        width (int): Fixed width of the window.
+        base_step (int, optional): Minimum step increment per frame. Defaults to 2.
+        delay (int, optional): Delay between frames in ms (aim for 16ms for ~60fps). Defaults to 16.
+        threshold_triggered (bool, optional): Whether the 20% height side effect has fired. Defaults to False.
+        cached_dims (tuple, optional): Screen dimensions (width, height). If None, they will be fetched.
+    """
     current_height = window.winfo_height()
+
     if current_height >= target_height:
         return
 
-    # Increase height by step.
-    new_height = min(current_height + step, target_height)
-    
-    # Cache screen dimensions if not already provided.
+    # --- Calculate dynamic step for smoother scaling ---
+    remaining = target_height - current_height
+    dynamic_step = max(step, int(remaining * 0.15))
+    new_height = min(current_height + dynamic_step, target_height)
+
+    # --- Get screen size only once ---
     if cached_dims is None:
-        cached_dims = (window.winfo_screenwidth(), window.winfo_screenheight())
-    screen_width, screen_height = cached_dims
-
-    # Compute new coordinates to keep the window centered.
-    new_x = (screen_width - width) // 2
-    new_y = (screen_height - new_height) // 2
-
-    # Update geometry.
-    window.geometry(f"{width}x{new_height}+{new_x}+{new_y}")
-    
-    # Trigger a one-time action when passing the 20% threshold.
-    if not doners:
-        threshold = 0.2 * target_height
-        if current_height < threshold <= new_height:
-            # Trigger side effect, e.g. play a sound:
-            # subprocess.Popen(['python', 'Files\\Mod\\default\\sfx.py'])
-            doners = True
-
-    # Schedule the next update using the cached screen dimensions.
-    window.after(max(1, delay // 2), animate_window_open, window, target_height, width, step, delay, doners, cached_dims)
-
-def animate_window_close(window, target_height, width, step=2, delay=5, cached_dims=None):
-    current_height = window.winfo_height()
-    new_height = max(current_height - step, target_height)
-    
-    if cached_dims is None:
-        cached_dims = (window.winfo_screenwidth(), window.winfo_screenheight())
-    screen_width, screen_height = cached_dims
-
-    # Compute new coordinates to keep the window centered.
-    new_x = (screen_width - width) // 2
-    new_y = (screen_height - new_height) // 2
-
-    # Update geometry.
-    window.geometry(f"{width}x{new_height}+{new_x}+{new_y}")
-
-    if new_height > target_height:
-        window.after(delay, animate_window_close, window, target_height, width, step, delay, cached_dims)
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        cached_dims = (screen_width, screen_height)
     else:
-        window.quit()
+        screen_width, screen_height = cached_dims
+
+    # --- Recenter window with new height ---
+    new_x = (screen_width - width) // 2
+    new_y = (screen_height - new_height) // 2
+    window.geometry(f"{width}x{new_height}+{new_x}+{new_y}")
+
+    # --- Trigger one-time effect at 20% progress ---
+    if not threshold_triggered and current_height < 0.2 * target_height <= new_height:
+        # Example trigger: subprocess.Popen(['python', 'Files\\Mod\\default\\sfx.py'])
+        threshold_triggered = True
+
+    # --- Schedule next frame ---
+    window.after(
+        delay,
+        animate_window_open,
+        window,
+        target_height,
+        width,
+        step,
+        delay,
+        threshold_triggered,
+        cached_dims
+    )
+
+def animate_window_close(window, target_height, width, step=5, delay=10):
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    def update_frame():
+        current_height = window.winfo_height()
+        new_height = max(current_height - step, target_height)
+
+        new_x = (screen_width - width) // 2
+        new_y = (screen_height - new_height) // 2
+
+        window.geometry(f"{width}x{new_height}+{new_x}+{new_y}")
+
+        if new_height > target_height:
+            window.after(delay, update_frame)
+        else:
+            # Optional cleanup or sound trigger
+            window.quit()
+
+    # Start animation safely
+    window.after(0, update_frame)
 
 class VideoPlayer:
     def __init__(self, canvas, video_path, del_x=0, del_y=0, resize_factor=0.7, buffer_size=4, pause_duration=0, fps=12):
@@ -753,6 +783,147 @@ class VideoPlayer:
         except Exception:
             pass
 
+class FastVideoPlayer:
+    def __init__(self, canvas, preloaded_frames=None, del_x=0, del_y=0, resize_factor=0.7, buffer_size=4, pause_duration=0, fps=12, video_path=None):
+        self.canvas = canvas
+        self.del_x = del_x
+        self.del_y = del_y
+        self.pause_duration = float(pause_duration)
+        self.fps = fps
+        self.frame_queue = queue.Queue(maxsize=buffer_size)
+        self.stop_event = threading.Event()
+        self.first_frame_displayed = False
+        self.rotate_video = False
+        self.preloaded_mode = preloaded_frames is not None
+        self.image_id = self.canvas.create_image(0, 0, anchor='nw')
+
+        # Wait for canvas dimensions to initialize
+        self.canvas.update_idletasks()
+        while self.canvas.winfo_width() <= 1 or self.canvas.winfo_height() <= 1:
+            self.canvas.update_idletasks()
+            time.sleep(0.01)
+
+        if self.preloaded_mode:
+            self.frames = preloaded_frames
+            first_frame = self.frames[0]
+        else:
+            self.video_path = video_path
+            self.cap = cv2.VideoCapture(video_path)
+            ret, first_frame = self.cap.read()
+            if not ret:
+                raise ValueError("Unable to read video file.")
+
+        # Auto-rotate if necessary
+        if self.canvas.winfo_height() > self.canvas.winfo_width():
+            self.rotate_video = True
+            first_frame = cv2.rotate(first_frame, cv2.ROTATE_90_CLOCKWISE)
+
+        self.original_width = first_frame.shape[1]
+        self.original_height = first_frame.shape[0]
+        self.last_canvas_width = None
+        self.last_canvas_height = None
+        self.last_new_width = None
+        self.last_new_height = None
+        self.new_dimensions = self._calculate_new_dimensions()
+
+        if self.preloaded_mode:
+            self.current_frame_index = 0
+            self.read_thread = threading.Thread(target=self._loop_preloaded_frames, daemon=True)
+        else:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            self.read_thread = threading.Thread(target=self._read_frames, daemon=True)
+        self.read_thread.start()
+
+        self.update_frame()
+    
+    def _loop_preloaded_frames(self):
+        while not self.stop_event.is_set():
+            frame_data = self.frames[self.current_frame_index]
+            self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
+
+            # Lazy load: Load frame only when needed
+            if isinstance(frame_data, str):  # Assume it's a file path
+                frame = cv2.imread(frame_data)
+                if frame is None:
+                    continue
+            else:
+                frame = frame_data  # Already-loaded frame
+
+            if self.rotate_video:
+                frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+            new_width, new_height = self.new_dimensions
+            interp = cv2.INTER_LINEAR if (new_width > self.original_width or new_height > self.original_height) else cv2.INTER_AREA
+            frame = cv2.resize(frame, (new_width, new_height), interpolation=interp)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            try:
+                self.frame_queue.put_nowait(frame)
+            except queue.Full:
+                pass
+
+            time.sleep(1 / self.fps)
+
+    def _calculate_new_dimensions(self):
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+
+        if self.last_canvas_width == canvas_width and self.last_canvas_height == canvas_height:
+            return self.last_new_width, self.last_new_height
+
+        scaling_factor = max(canvas_width / self.original_width, canvas_height / self.original_height)
+        new_width = int(self.original_width * scaling_factor)
+        new_height = int(self.original_height * scaling_factor)
+
+        self.last_canvas_width = canvas_width
+        self.last_canvas_height = canvas_height
+        self.last_new_width = new_width
+        self.last_new_height = new_height
+
+        return new_width, new_height
+
+    def update_frame(self):
+        self.new_dimensions = self._calculate_new_dimensions()
+        try:
+            frame = self.frame_queue.get_nowait()
+        except queue.Empty:
+            frame = None
+
+        if frame is not None:
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+            x_center = (canvas_width - frame.shape[1]) // 2
+            y_center = (canvas_height - frame.shape[0]) // 2
+            self.canvas.coords(self.image_id, x_center, y_center)
+            self.canvas.itemconfig(self.image_id, image=imgtk)
+            self.canvas.imgtk = imgtk  # Prevent garbage collection
+
+            if not self.first_frame_displayed:
+                self.first_frame_displayed = True
+                self.canvas.after(int(self.pause_duration * 1000), self.update_frame)
+                return
+
+        self.canvas.after(int(1000 / self.fps), self.update_frame)
+
+class LazyImageLoader:
+    def __init__(self, pil_data):
+        self.pil_data = pil_data
+        self.cache = {}
+
+    def __getitem__(self, index):
+        if index not in self.cache:
+            arr, mode = self.pil_data[index]
+            img = Image.fromarray(arr)
+            if img.mode != mode:
+                img = img.convert(mode)
+            self.cache[index] = ImageTk.PhotoImage(img)
+        return self.cache[index]
+
+    def __len__(self):
+        return len(self.pil_data)
+
 def set_preview_temp(o_name1,qt1):
     with open("Files/Temp Files/Inventory temp.csv", 'w', newline='') as new_csv_open:
         rec=[o_name1, qt1, "Preview"]
@@ -761,7 +932,7 @@ def set_preview_temp(o_name1,qt1):
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
             theme_data=ujson.load(themefile)
             theme=theme_data["Theme"]
-    subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py/gui.py'])
+    subprocess.Popen(['python', f'{theme} Version/Item Data/gui.py'])
 
 def center_window(root, width, height):
     # Get screen width and height
@@ -841,28 +1012,32 @@ def pos_fix(num):
     else:
         return str(num)
 
+def xp_formula(n):
+    if 1 <= n <= 20:
+        return 20 * n + 10
+    elif 21 <= n <= 100:
+        return 410 + 0.3444 * (n - 20) ** 3
+    elif 101 <= n <= 200:  # n > 100
+        return xp_formula(100) + 0.28 * (n - 80) ** 3
+    else:  # n > 100
+        return xp_formula(200) + 0.15 * (n - 180) ** 3
+
 def get_fin_xp():
     # Load the status file
     with open("Files/Player Data/Status.json", 'r') as fson:
         data = ujson.load(fson)
         lvl = int(data["status"][0]['level'])  # Current level
-        old_lvl=lvl
+        old_lvl = lvl
         xp = float(data["status"][0]['XP'])  # Current XP value
         last_lvl = int(data["status"][0]['last_level'])  # Last processed level
-
-    # Load level-up values
-    with open("Files/Data/Level_Up_Values.json", 'r') as fron2:
-        level_up_values = ujson.load(fron2)["XP Check"]
 
     leveled_up = False
     new_lvl = lvl
 
-    # Check for level-ups
-    for k, v in level_up_values.items():
-        level_threshold = int(k)
-        if xp >= float(v) and level_threshold > new_lvl:
-            new_lvl = level_threshold
-            leveled_up = True
+    # Dynamic level checking (no level cap)
+    while xp >= xp_formula(new_lvl + 1):
+        new_lvl += 1
+        leveled_up = True
 
     if leveled_up:
         level_difference = new_lvl - lvl
@@ -885,12 +1060,12 @@ def get_fin_xp():
             ujson.dump(data, up_fson, indent=4)
 
         rank_up(old_lvl, new_lvl)
-    fin_xp = None
-    if str(lvl + 1) in level_up_values:
-        next_level_xp = float(level_up_values[str(lvl + 1)])
-        fin_xp = next_level_xp - xp  # Difference between next level XP and current XP
 
-    return [leveled_up,fin_xp]
+    # XP needed for next level
+    next_level_xp = xp_formula(new_lvl + 1)
+    fin_xp = next_level_xp - xp
+
+    return [leveled_up, fin_xp]
 
 def rank_up(old_lvl, new_lvl):
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
@@ -906,6 +1081,16 @@ def rank_up(old_lvl, new_lvl):
             writer=csv.writer(f)
             writer.writerow([f"{old_lvl}"])
         subprocess.Popen(['python', f'{theme} Version/Rank up/gui.py'])
+
+def rank_up_skill(name_of_skill, old_level):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data = ujson.load(themefile)
+        theme = theme_data["Theme"]
+
+    with open("Files/Temp Files/Skill file.csv", "w", newline="") as f:
+        writer=csv.writer(f)
+        writer.writerow([f"{name_of_skill}", f"{old_level}"])
+    subprocess.Popen(['python', f'{theme} Version/Skill Level up/gui.py'])
 
 def return_back_to_tab(loc,window):
     with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
@@ -1044,6 +1229,77 @@ def preload_images(image_paths, size, max_workers=None):
     
     return preloaded_images
 
+def images_to_npy_with_mode(folder_path, output_path, resize=None, sort=True):
+    files = [f for f in os.listdir(folder_path) if f.lower().endswith((".png", ".jpg", ".jpeg"))]
+    if sort:
+        files.sort()
+
+    data_to_save = []
+
+    for filename in files:
+        path = os.path.join(folder_path, filename)
+        if not os.path.exists(path):
+            continue
+
+        img = Image.open(path)
+        mode = img.mode
+        img = img.convert("RGBA")
+
+        if resize:
+            img = img.resize(resize)
+
+        data_to_save.append((np.array(img), mode))
+
+    np.save(output_path, np.array(data_to_save, dtype=object), allow_pickle=True)
+    print(f"[Cached] {len(data_to_save)} frames → {output_path}")
+
+def load_or_cache_images(folder_path, resize, job, type_, profile=False):
+    width, height = resize
+    job = job.upper()
+    type_ = type_.lower()
+
+    if profile: start_total = time.perf_counter()
+
+    # Step 1: Build cache filename
+    if job == "NONE":
+        cache_name = f"{type_}_frame_stack {width} {height}.npy"
+    else:
+        cache_name = f"alt_{type_}_frame_stack {width} {height}.npy"
+
+    cache_path = os.path.join(folder_path, cache_name)
+
+    # Step 2: Check for cache
+    if profile: start_check = time.perf_counter()
+    if not os.path.exists(cache_path):
+        print(f"[CACHE MISS] Generating cache: {cache_path}")
+        images_to_npy_with_mode(folder_path, cache_path, resize=resize)
+    if profile: end_check = time.perf_counter()
+
+    # Step 3: Load raw data
+    if profile: start_load = time.perf_counter()
+    cached_data = np.load(cache_path, allow_pickle=True)
+    if isinstance(cached_data, np.ndarray):
+        cached_data = cached_data.tolist()
+    if profile: end_load = time.perf_counter()
+
+    # Step 4: Wrap in lazy loader
+    if profile: start_wrap = time.perf_counter()
+    loader = LazyImageLoader(cached_data)
+    if profile: end_wrap = time.perf_counter()
+
+    end_total = time.perf_counter()
+
+    if profile:
+        # Profile report
+        print(f"\n--- Load Profile for '{type_}' ({job}) ---")
+        print(f"Cache check/build  : {(end_check - start_check):.4f}s")
+        print(f"Cache load (NumPy) : {(end_load - start_load):.4f}s")
+        print(f"LazyLoader wrapping: {(end_wrap - start_wrap):.4f}s")
+        print(f"TOTAL LOAD TIME    : {(end_total - start_total):.4f}s")
+        print("----------------------------------------\n")
+
+    return loader
+
 def side_bar(image, size, alt=False):
     # Construct the path to the image
     s = 'thesystem/side_bars/' + image
@@ -1098,3 +1354,948 @@ def event_tracker():
                     if data[key]["begun"]==False:
                         print()
         time.sleep(3)
+
+def skill_message(skill_name):
+    with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+        theme_data = ujson.load(themefile)
+        theme = theme_data["Theme"]
+
+    with open("Files/Temp Files/Skill Use.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([skill_name])
+    
+    subprocess.Popen(['python', f'{theme} Version/Skill Use/gui.py'])
+
+def skill_use(skill_name,cooldown, mana=0, skill_open=True):
+    with open("Files/Player Data/Status.json", 'r') as f:
+        status_data = ujson.load(f)
+        mp = status_data["status"][0]["mp"]
+        if mp < mana:
+            return False
+    with open("Files/Player Data/Skill tracker.json", "r") as f:
+        skill_track_data = ujson.load(f)
+    
+    now = datetime.now()
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    with open("Files/Player Data/Skill.json", 'r') as f:
+        skill_data = ujson.load(f)
+    
+    if skill_name not in skill_data.keys():
+        return False
+
+    try:
+        skill_track_data[skill_name]["last_used"]
+        dt1 = datetime.strptime(skill_track_data[skill_name]["last_used"], "%Y-%m-%d %H:%M:%S")
+        dt2 = datetime.strptime(formatted, "%Y-%m-%d %H:%M:%S")
+
+        # Calculate time difference
+        diff_seconds = abs((dt2 - dt1).total_seconds())
+        if diff_seconds >= cooldown:
+            skill_track_data[skill_name]["last_used"] = formatted
+            with open("Files/Player Data/Skill tracker.json", "w") as f:
+                ujson.dump(skill_track_data, f, indent=6)
+
+                if skill_open: skill_message(skill_name)
+
+            return True
+        else:
+            return False
+    except:
+        skill_track_data[skill_name]={"last_used":formatted, "cooldown":cooldown}
+        skill_track_data[skill_name]["last_used"] = formatted
+        with open("Files/Player Data/Skill tracker.json", "w") as f:
+            ujson.dump(skill_track_data, f, indent=6)
+
+        if skill_open: skill_message(skill_name)
+
+        return True
+
+def skill_tracking_and_fatigue():
+    fatigue_open=False
+    while True:
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+            theme_data=ujson.load(themefile)
+            theme=theme_data["Theme"]
+        
+        if not os.path.exists("Files/Player Data/Skill tracker.json"):
+            with open("Files/Player Data/Skill tracker.json", "w") as f:
+                ujson.dump({}, f, indent=6)
+
+        #Status File
+        with open("Files/Player Data/Status.json", 'r') as f:
+            status_data = ujson.load(f)
+        
+        #Skill File
+        with open("Files/Player Data/Skill.json", 'r') as f:
+            skill_data = ujson.load(f)
+
+        fat_percent=(status_data["status"][0]["fatigue"]/status_data["status"][0]["fatigue_max"])*100
+
+
+        if fat_percent>=50:
+            if skill_use("Nimble Endurance", (24*60*60)) == True and ("Nimble Endurance"in skill_data) and fat_percent>=100:
+                with open("Files/Player Data/Status.json", 'r') as f:
+                    status_data = ujson.load(f)
+
+                status = status_data["status"][0]
+
+                fat_percent = (status["fatigue"] / status["fatigue_max"]) * 100
+                lvl=skill_data["Nimble Endurance"][0]["lvl"]
+                if type(lvl)==str: lvl=10
+                reduce_fatigue_value = (2*lvl / 100) * status["fatigue_max"]
+                status["fatigue"] -= reduce_fatigue_value
+
+                # Step 4: Update fatigue in Status.json
+                with open("Files/Player Data/Status.json", 'w') as f:
+                    ujson.dump(status_data, f, indent=6)
+            
+            elif skill_use("Rush", (24*60*60)) == True and ("Rush"in skill_data):
+
+                status = status_data["status"][0]
+
+                fat_percent = (status["fatigue"] / status["fatigue_max"]) * 100
+                lvl=skill_data["Rush"][0]["lvl"]
+                if type(lvl)==str: lvl=10
+                reduce_fatigue_value = (2*lvl / 100) * status["fatigue_max"]
+                status["fatigue"] -= reduce_fatigue_value
+
+                # Step 4: Update fatigue in Status.json
+                with open("Files/Player Data/Status.json", 'w') as f:
+                    ujson.dump(status_data, f, indent=6)
+
+            if fatigue_open==False:
+                subprocess.Popen(['python', f"{theme} Version/Fatigue/gui.py"])
+                fatigue_open=True
+
+        if fat_percent<50:
+            fatigue_open=False
+
+
+        time.sleep(3)
+        
+def equipment_value_plus(val):
+    with open("Files/Player Data/Skill.json", 'r') as f:
+        skill_data = ujson.load(f)
+
+    addition = 0
+    if skill_use("Mind Over Matter", (0)) and ("Mind Over Matter" in skill_data):
+        lvl = skill_data["Mind Over Matter"][0]["lvl"]
+        if isinstance(lvl, str):
+            lvl = 10
+
+        equipment_percent = 0.05 * lvl
+        addition = abs(val) * equipment_percent
+
+    if val == 0:
+        return 0
+
+    if val > 0:
+        final_value = int(val + addition)
+    else:
+        final_value = int(val - addition)
+
+    return final_value
+
+def fix_7x():
+    if os.path.exists("thesystem/temp 7x1.txt"):
+        with open("Files/Player Data/Settings.json", "w") as fson:
+            data={
+                    "Settings": {
+                        "Calorie_Penalty": "True",
+                        "Main_Penalty": "True",
+                        "Performernce (ANIME):": "False",
+                        "Transparency": 0.75,
+                        "SFX Delay": 0,
+                        "Microphone": "False"
+                    }
+                }
+            ujson.dump(data, fson, indent=3)
+
+        with open("Files/Data/Skill_List.json", "w") as skill_file:
+            skill_data={
+                "Rush": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "Lowers fatigue by 2% for every level upgrade. (Mana Cost: 100)",
+                    "base": "STR",
+                    "rewards": {
+                        "STRav": 5,
+                        "Gatekeepers Necklace": 1
+                    },
+                    "cooldown": "24h",
+                    "mana": 100
+                    },
+                    {
+                    "Condition": ["VIT"]
+                    }
+                ],
+                "Dash": [
+                    {
+                    "lvl": 1,
+                    "type": "Active",
+                    "desc": "Decreases Time based activities by 5% for each level. (Mana Cost: 250)",
+                    "base": "STR",
+                    "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of Lightning": 1
+                    },
+                    "cooldown": "1h",
+                    "mana": 250
+                    },
+                    {
+                    "Condition": ["AGI"]
+                    }
+                ],
+                "Negotiation": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "Get a 1.5% per level coin cashback on trades and buys. Also applies to selling items. Cannot be stopped. (Mana Cost: 50)",
+                    "base": "INT",
+                    "rewards": {
+                        "INTav": 5,
+                        "Demon Monarch's Ring": 1
+                    },
+                    "cooldown": "None",
+                    "mana": 50
+                    },
+                    {
+                    "Condition": ["MAN"]
+                    }
+                ],
+                "Tacital": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "X% chance to be chosen as raid leader if party members are at similar or lower levels. Cannot be stopped.",
+                    "base": "INT",
+                    "rewards": {
+                        "INTav": 5,
+                        "Aetherial Circlet": 1
+                    },
+                    "cooldown": "None",
+                    "mana": ""
+                    },
+                    {
+                    "Condition": ["INT"]
+                    }
+                ],
+                "Mind Over Matter": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "Increases stat values on equipped armor by 5%; scalable with level upgrades.  Applies to Debuffs as well (Mana Cost: 75)",
+                    "base": "INT",
+                    "rewards": {
+                        "INTav": 5,
+                        "Ring of Arcane Mastery": 1
+                    },
+                    "cooldown": "None",
+                    "mana": 75
+                    },
+                    {
+                    "Condition": ["INT", "MAN"]
+                    }
+                ],
+                "Iron Warrior": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "Increases HP by 2.5% when below 50% of max HP, for every level upgrade. (Mana Cost: 100)",
+                    "base": "STR",
+                    "rewards": {
+                        "STRav": 5,
+                        "Titanium Plate Armor": 1
+                    },
+                    "cooldown": "24h",
+                    "mana": 100
+                    },
+                    {
+                    "Condition": ["STR", "VIT"]
+                    }
+                ],
+                "Charismatic Aura": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "Slightly increases stat and level on leaderboards. **Does not affect dungeon workouts.**",
+                    "base": "MAN",
+                    "rewards": {
+                        "INTav": 5,
+                        "High-Minister's Amulet": 1
+                    },
+                    "cooldown": "24h",
+                    "mana": ""
+                    },
+                    {
+                    "Condition": ["MAN", "PER"]
+                    }
+                ],
+                "Nimble Endurance": [
+                    {
+                    "lvl": 1,
+                    "type": "Passive",
+                    "desc": "Reduces the Fatigue by 5% per Level when Fatigue was over 100% (Mana Cost: 250)",
+                    "base": "AGI",
+                    "rewards": {
+                        "STRav": 5,
+                        "Dragonscale Boots": 1
+                    },
+                    "cooldown": "24h",
+                    "mana": 250
+                    },
+                    {
+                    "Condition": ["AGI", "VIT"]
+                    }
+                ],
+                "Iron Fist": [
+                    {
+                    "lvl": 1,
+                    "type": "Active",
+                    "desc": "Same as Fatal Strike, but reduces 2% of HP as you level up. (Mana Cost: 100)",
+                    "base": "STR",
+                    "rewards": {
+                        "STRav": 5,
+                        "Gauntlet of the Eternal Guardian": 1
+                    },
+                    "cooldown": "1h",
+                    "mana": 100
+                    },
+                    {
+                    "Condition": ["STR", "VIT"]
+                    }
+                ],
+                "Fatal Strike": [
+                    {
+                    "lvl": 1,
+                    "type": "Active",
+                    "desc": "Reduces workout values by 2% for self per level upgrade. (Mana Cost: 200)",
+                    "base": "STR",
+                    "rewards": {
+                        "STRav": 5,
+                        "Blade of Precision": 1
+                    },
+                    "cooldown": "1h",
+                    "mana": 200
+                    },
+                    {
+                    "Condition": ["STR", "AGI"]
+                    }
+                ],
+                "Resourceful Adaptation": [
+                    {
+                    "lvl": 1,
+                    "type": "Active",
+                    "desc": "Allows changing workouts in dungeons randomly. (Mana Cost: 150)",
+                    "base": "INT",
+                    "rewards": {
+                        "INTav": 5,
+                        "Chameleon Cloak": 1
+                    },
+                    "cooldown": "1h",
+                    "mana": 150
+                    },
+                    {
+                    "Condition": ["INT", "PER"]
+                    }
+                ],
+                "Brute Force Mastery": [
+                    {
+                    "lvl": 1,
+                    "type": "Active",
+                    "desc": "Reduces the difficulty of STR-based tasks by 7% per level, but increases the difficulty of AGI-based tasks by 5% per level. Lasts for 30 minutes. (Mana Cost: 150)",
+                    "base": "STR",
+                    "rewards": {
+                        "First Glove of Colossus": 1,
+                        "Second Glove of Colossus": 1
+                    },
+                    "cooldown": "1h",
+                    "mana": 150
+                    },
+                    {
+                    "Condition": ["STR"]
+                    }
+                ]
+                }
+
+            ujson.dump(skill_data, skill_file, indent=6)
+
+        with open("Files/Data/Dungeon_Boss_List.json", "w") as data_dungeon_boss:
+            dunegon_boss_data={
+                    "Red Ants":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":40
+                    },
+                    "White Ants":{
+                        "rank":"S",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":50
+                    },
+                    "Small Goblin":{
+                        "rank":"E",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":10
+                    },
+                    "Wolfmen":{
+                        "rank":"D",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":20
+                    },
+                    "Desert Centipiede":{
+                        "rank":"B",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":40
+                    },
+                    "Steel Fanged Lycan":{
+                        "rank":"E",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":10
+                    },
+                    "Razor Claw Briga":{
+                        "rank":"E",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":10
+                    },
+                    "Black Shadow Razor":{
+                        "rank":"E",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":10
+                    },
+                    "Blue Venom-Fanged Kaska":{
+                        "rank":"D",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":20
+                    },
+                    "Defense Golem":{
+                        "rank":"D",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":20
+                    },
+                    "Carnivorous Ants":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":30
+                    },
+                    "Acid Breathing Spider":{
+                        "rank":"C",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":30
+                    },
+                    "Hell's Gatekeeper Cerberus":{
+                        "rank":"A",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Huge Goblins":{
+                        "rank":"D",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":20
+                    },
+                    "Trained Goblins":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":30
+                    },
+                    "General Goblins":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":30
+                    },
+                    "Goblins Leader":{
+                        "rank":"B",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":40
+                    },
+                    "Serpent of Blood Eyes":{
+                        "rank":"B",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":40
+                    },
+                    "Scorpion King":{
+                        "rank":"B",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":40
+                    },
+                    "Small Scorpion":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":30
+                    },
+                    "High Wolfmen":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":30
+                    },
+                    "Wolf-Lord":{
+                        "rank":"B",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":40
+                    },
+                    "Ice Wraiths":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":50
+                    },
+                    "Ice Bears":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Sleuth Ice Bears":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Yetis":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Baruka - Ice Elf King":{
+                        "rank":"S",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":60
+                    },
+                    "Stone Golems":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":30
+                    },
+                    "Vulcan Guards":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Vulcan":{
+                        "rank":"S",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":60
+                    },
+                    "Skeletal Men":{
+                        "rank":"B",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":40
+                    },
+                    "Trained Skeletal Men":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Metus - Soul Reaper":{
+                        "rank":"S",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":60
+                    },
+                    "Stone Titans":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Dungeon Jackals":{
+                        "rank":"C",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":30
+                    },
+                    "High Orcs":{
+                        "rank":"S",
+                        "type":"Normal",
+                        "swarm":"Yes",
+                        "XP":60
+                    },
+                    "Trained High Orcs":{
+                        "rank":"S",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":60
+                    },
+                    "Leader of the High Orcs":{
+                        "rank":"SS",
+                        "type":"Boss",
+                        "swarm":"No",
+                        "XP":100
+                    },
+                    "Demon Knights":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Demon Noble":{
+                        "rank":"A",
+                        "type":"Normal",
+                        "swarm":"No",
+                        "XP":50
+                    },
+                    "Flame Djinn": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 70
+                    },
+                    "Necrotic Reapers": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Darkwood Dryad": {
+                        "rank": "B",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Elder Manticore": {
+                        "rank": "A",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 50
+                    },
+                    "Spectral Assassins": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Ancient Basilisk": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 60
+                    },
+                    "Forest Serpent": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Void Phantoms": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Crystal Elemental": {
+                        "rank": "B",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Blight-Infused Treant": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 60
+                    },
+                    "Mire Hags": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Thunder Roc": {
+                        "rank": "B",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Cave Drakes": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Lich King": {
+                        "rank": "SS",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 100
+                    },
+                    "Frostbound Revenants": {
+                        "rank": "D",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 20
+                    },
+                    "Shadow Prowlers": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Magma Leviathan": {
+                        "rank": "SS",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 100
+                    },
+                    "Cursed Centurions": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Storm Elemental": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 50
+                    },
+                    "Bone Dragon": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 70
+                    },
+                    "Lunar Shade Wolves": {
+                        "rank": "B",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 40
+                    },
+                    "Sand Revenant": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 30
+                    },
+                    "Ember Fiends": {
+                        "rank": "B",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 40
+                    },
+                    "Undead Legionnaires": {
+                        "rank": "D",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 20
+                    },
+                    "Ashen Phantoms": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Arcane Minotaur": {
+                        "rank": "B",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Petrifying Gorgons": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 50
+                    },
+                    "Bloodthirsty Wraiths": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Savage Orc Berserkers": {
+                        "rank": "B",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 40
+                    },
+                    "Dire Fang Bears": {
+                        "rank": "D",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 20
+                    },
+                    "Ghastly Revenants": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Giant Ice Serpent": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 60
+                    },
+                    "Voidborne Behemoth": {
+                        "rank": "SS",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 120
+                    },
+                    "Crimson Slimes": {
+                        "rank": "D",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 20
+                    },
+                    "Spectral Archers": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Twilight Shapeshifters": {
+                        "rank": "B",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Nightmare Riders": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 60
+                    },
+                    "Venomous Dire Bats": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 30
+                    },
+                    "Stone Elemental": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 30
+                    },
+                    "Enchanted Willow Wisps": {
+                        "rank": "D",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 20
+                    },
+                    "Death Whisper Harpy": {
+                        "rank": "B",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Cursed Souls": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Golem Constrictor": {
+                        "rank": "A",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 50
+                    },
+                    "Obsidian Dragon": {
+                        "rank": "SS",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 120
+                    },
+                    "Lava Serpent": {
+                        "rank": "B",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Thunder Wyverns": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Fire Wraiths": {
+                        "rank": "A",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 50
+                    },
+                    "Poisonous Widow Spider": {
+                        "rank": "B",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 40
+                    },
+                    "Phantom Knights": {
+                        "rank": "S",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 60
+                    },
+                    "Forest Troll": {
+                        "rank": "C",
+                        "type": "Normal",
+                        "swarm": "No",
+                        "XP": 30
+                    },
+                    "Swarm of Shadows": {
+                        "rank": "S",
+                        "type": "Normal",
+                        "swarm": "Yes",
+                        "XP": 60
+                    },
+                    "Crystal Golem": {
+                        "rank": "S",
+                        "type": "Boss",
+                        "swarm": "No",
+                        "XP": 60
+                    }
+                }
+
+            ujson.dump(dunegon_boss_data, data_dungeon_boss, indent=5)
+
+        with open("Files/Player Data/Skill.json", "r") as pl_skill_file:
+            file_a=ujson.load(pl_skill_file)
+
+        with open("Files/Data/Skill_List.json", "r") as sys_skill_file:
+            file_b=ujson.load(sys_skill_file)
+
+        for skill, entries_a in file_a.items():
+            if skill in file_b and isinstance(entries_a, list) and isinstance(file_b[skill], list):
+                try:
+                    # Update description from file_b to file_a
+                    desc_b = file_b[skill][0].get("desc")
+                    if desc_b:
+                        entries_a[0]["desc"] = desc_b
+                except (IndexError, KeyError, TypeError):
+                    continue  # Skip malformed entries
+
+        with open("Files/Player Data/Skill.json", "w") as pl_skill_file_write:
+            ujson.dump(file_a, pl_skill_file_write, indent=6)
+
+        os.remove("thesystem/temp 7x1.txt")

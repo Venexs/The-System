@@ -14,6 +14,7 @@ import csv
 import random
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 

@@ -81,11 +81,12 @@ def handle_selection(val, name, cat, window, dat1, dat2, dat3, dat4, dat5):
 
     if name != '-':
         new_item_data = {1: dat1, 2: dat2, 3: dat3, 4: dat4, 5: dat5}.get(val)
-        equipment_data[cat] = new_item_data
-        save_ujson(EQUIPMENT_FILE, equipment_data)
+        if new_item_data is not None:
+            equipment_data[cat] = new_item_data
+            save_ujson(EQUIPMENT_FILE, equipment_data)
 
-        new_item_name = list(new_item_data.keys())[0]
-        process_item_buffs(new_item_data[new_item_name][0], status_data, sign=1)
+            new_item_name = list(new_item_data.keys())[0]
+            process_item_buffs(new_item_data[new_item_name][0], status_data, sign=1)
 
     save_ujson(STATUS_FILE, status_data)
     subprocess.Popen(['python', 'Anime Version/Equipment/gui.py'])
@@ -317,7 +318,76 @@ def equip_item(cat,item_full_data, window):
                 subprocess.Popen(['python', f'{theme} Version/Equipment/gui.py'])
             window.quit()
 
-    else:
+    elif cat.upper()=="RUNE STONE":
+
+        # Get the name of the Rune Stone from item_full_data
+        # item_full_data is a dict like {"Rune of Fire": [ ... ]}
+        rune_name = list(item_full_data.keys())[0]
+
+        # Load the full skill list
+        with open("Files/Data/Skill_List.json", "r") as skill_list_file:
+            skill_list_data = ujson.load(skill_list_file)
+
+        # Load the player's skills
+        skill_json_path = "Files/Player Data/Skill.json"
+        if os.path.exists(skill_json_path):
+            with open(skill_json_path, "r") as player_skill_file:
+                player_skill_data = ujson.load(player_skill_file)
+        else:
+            player_skill_data = {}
+
+        # Add or update the skill
+        if rune_name in player_skill_data:
+            # Skill already exists, increment level
+            current_lvl = player_skill_data[rune_name][0].get("lvl", 1)
+            if isinstance(current_lvl, str) and current_lvl == "MAX":
+                pass  # Already maxed, do nothing
+            else:
+                try:
+                    new_lvl = int(current_lvl) + 1
+                    if new_lvl >= 10:
+                        player_skill_data[rune_name][0]["lvl"] = "MAX"
+                    else:
+                        player_skill_data[rune_name][0]["lvl"] = new_lvl
+                except Exception:
+                    player_skill_data[rune_name][0]["lvl"] = 2  # fallback if something is wrong
+        else:
+            # Add the skill from the skill list, set lvl to 1
+            if rune_name in skill_list_data:
+                # Deep copy to avoid reference issues
+                import copy
+                skill_entry = copy.deepcopy(skill_list_data[rune_name])
+                if isinstance(skill_entry, list) and len(skill_entry) > 0:
+                    skill_entry[0]["lvl"] = 1
+                    skill_entry[0]["pl_point"] = 0
+                player_skill_data[rune_name] = skill_entry
+
+        # Save the updated skills
+        with open(skill_json_path, "w") as player_skill_file:
+            ujson.dump(player_skill_data, player_skill_file, indent=4)
+
+        # Remove or decrement the Rune Stone from inventory
+        with open("Files/Player Data/Inventory.json", "r") as inv_file:
+            inv_data = ujson.load(inv_file)
+
+        if rune_name in inv_data:
+            qty = inv_data[rune_name][0].get("qty", 1)
+            if qty > 1:
+                inv_data[rune_name][0]["qty"] = qty - 1
+            else:
+                del inv_data[rune_name]
+
+        with open("Files/Player Data/Inventory.json", "w") as inv_file:
+            ujson.dump(inv_data, inv_file, indent=6)
+
+        # Refresh the GUI
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+            theme_data = ujson.load(themefile)
+            theme = theme_data["Theme"]
+        subprocess.Popen(['python', f'{theme} Version/Inventory/gui.py'])
+        window.quit()
+
+    if cat=="ORDER":
         with open("Files/Player Data/Inventory.json", 'r') as fson:
             data_fininv=ujson.load(fson)
         del data_fininv["The Orb of Order"]

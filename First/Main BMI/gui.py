@@ -58,7 +58,10 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=3
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 thesystem.system.make_window_transparent(window)

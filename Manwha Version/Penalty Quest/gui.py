@@ -5,6 +5,7 @@ import time
 import subprocess
 import ujson
 import os
+import numpy as np
 import threading
 import ctypes
 import sys
@@ -123,7 +124,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 300.0, 190.0)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 300.0, 190.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

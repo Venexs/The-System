@@ -1,0 +1,74 @@
+{
+    "week_key": "2025-06-30",
+    "created_date": "2025-07-05 14:12:45",
+    "week_start": "2025-06-30",
+    "rank_items": {
+        "S": {
+            "Coin Bag 50000": {
+                "rarity": "Epic",
+                "data": {
+                    "desc": "A bag of 50000-or-so coins",
+                    "qty": 1,
+                    "cat": "MONEY",
+                    "rank": "S",
+                    "buff": "",
+                    "debuff": "",
+                    "quest": true,
+                    "rarity": "Epic",
+                    "Value": 50000
+                }
+            }
+        },
+        "B": {
+            "High Knights Gauntlet": {
+                "rarity": "Common",
+                "data": {
+                    "desc": "Gauntlet of a High-Ranking Knight",
+                    "qty": 1,
+                    "cat": "FIRST GAUNTLET",
+                    "rank": "B",
+                    "buff": {
+                        "STRbuff": 2
+                    },
+                    "debuff": "",
+                    "quest": true,
+                    "Value": 2000,
+                    "rarity": "Common"
+                }
+            }
+        },
+        "C": {
+            "Coin Bag 2000": {
+                "rarity": "Common",
+                "data": {
+                    "desc": "A bag of 2000-or-so coins",
+                    "qty": 1,
+                    "cat": "MONEY",
+                    "rank": "C",
+                    "buff": "",
+                    "debuff": "",
+                    "quest": true,
+                    "rarity": "Common",
+                    "Value": 2000
+                }
+            }
+        },
+        "D": {
+            "Coin Bag 500": {
+                "rarity": "Common",
+                "data": {
+                    "desc": "A bag of 500-or-so coins",
+                    "qty": 1,
+                    "cat": "MONEY",
+                    "rank": "D",
+                    "buff": "",
+                    "debuff": "",
+                    "quest": true,
+                    "rarity": "Common",
+                    "Value": 500
+                }
+            }
+        }
+    },
+    "last_updated": "2025-07-05 14:25:47"
+}

@@ -16,6 +16,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -63,24 +64,22 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=5
 thesystem.system.make_window_transparent(window, transp_clr)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
-
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 # Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (957, 43))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (1026, 47))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (957, 43), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (1026, 47), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -106,7 +105,7 @@ with open("Files/Temp Files/Skill Temp.csv", 'r') as csv_open:
     for k in fr:
         name=k[0]
 
-desc1=desc2=''
+desc1=desc2=desc3=desc4=''
 segments = []
 segment_length = 60
 
@@ -132,6 +131,10 @@ with open("Files/Player Data/Skill.json", 'r') as fson:
                 desc1 = segments[0]
             if len(segments) >= 2:
                 desc2 = segments[1]
+            if len(segments) >= 3:
+                desc3 = segments[2]
+            if len(segments) >= 4:
+                desc4 = segments[3]
 
 main_lvl=lvl
 
@@ -240,15 +243,6 @@ try:
 
 except:
     print()
-
-def preview(nameob,quantity):
-    
-    if nameob!='-' and quantity!=0:
-        with open("Files/Temp Files/Preview Item Temp.csv", 'w', newline='') as new_csv_open:
-            fw=csv.writer(new_csv_open)
-            rec=[nameob, quantity]
-            fw.writerow(rec)
-        subprocess.Popen(['python', 'Anime Version/Preview Item/gui.py'])
 
 def delete():
     with open("Files/Player Data/Skill.json", 'r') as fols:
@@ -384,7 +378,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]  # Replace with your video path
-player = thesystem.system.VideoPlayer(canvas, video_path, 450.0, 277.0, pause_duration=0.4)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 450.0, 277.0, pause_duration=0.4)
 
 image_image_2 = PhotoImage(
     file=get_stuff_path("frame.png"))
@@ -496,6 +491,24 @@ canvas.create_text(
     font=("Montserrat Regular", 12 * -1)
 )
 
+canvas.create_text(
+    326.0,
+    321.0+17,
+    anchor="nw",
+    text=desc3,
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 12 * -1)
+)
+
+canvas.create_text(
+    326.0,
+    321.0+34,
+    anchor="nw",
+    text=desc4,
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 12 * -1)
+)
+
 button_image_1 = PhotoImage(
     file=get_stuff_path("return.png"))
 button_1 = Button(
@@ -559,7 +572,7 @@ button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: preview(o_name1, qt1),
+    command=lambda: thesystem.system.set_preview_temp(o_name1, qt1),
     relief="flat"
 )
 button_4.place(
@@ -584,7 +597,7 @@ button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: preview(o_name2, qt2),
+    command=lambda: thesystem.system.set_preview_temp(o_name2, qt2),
     relief="flat"
 )
 button_5.place(
@@ -661,15 +674,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation

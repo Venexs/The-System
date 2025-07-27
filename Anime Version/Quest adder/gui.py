@@ -7,7 +7,7 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, ttk, StringVar
 import subprocess
 import ujson
 import csv
@@ -16,6 +16,7 @@ from PIL import Image, ImageTk
 import random
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -46,7 +47,10 @@ thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=45, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -90,7 +94,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 278.0)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 300.0, 190.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -154,19 +159,24 @@ canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 
-entry_3 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0,
-    font=('Montserrat', ft)
+attribute_var = StringVar()
+
+# Create the dropdown (combobox)
+dropdown_3 = ttk.Combobox(
+    window,
+    textvariable=attribute_var,
+    values=["STR", "INT"],
+    state="readonly",
+    font=('Montserrat', ft)  # Apply same font as original Entry
 )
-entry_3.place(
+dropdown_3.place(
     x=30.0,
     y=216.0,
     width=171.0,
     height=20.0
 )
+
+attribute_var.set("STR")  # Set the default value to "STR"
 
 canvas.create_text(
     30.0,
@@ -231,19 +241,24 @@ image_4 = canvas.create_image(
     image=image_image_4
 )
 
-entry_6 = Entry(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0,
+rank_var = StringVar()
+
+# Create the dropdown (combobox)
+dropdown_6 = ttk.Combobox(
+    window,
+    textvariable=rank_var,
+    values=["E", "D", "C", "B"],
+    state="readonly",
     font=('Montserrat', ft)
 )
-entry_6.place(
+dropdown_6.place(
     x=28.0,
     y=348.0,
     width=71.0,
     height=20.0
 )
+
+rank_var.set("E")
 
 canvas.create_text(
     28.0,
@@ -260,7 +275,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: thesystem.quests.quest_adding_func(entry_1,entry_2,entry_3,entry_4,entry_5,entry_6,window),
+    command=lambda: thesystem.quests.quest_adding_func(entry_1,entry_2,attribute_var,entry_4,entry_5,rank_var,window),
     relief="flat"
 )
 button_1.place(
