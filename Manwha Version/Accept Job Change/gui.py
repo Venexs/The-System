@@ -9,6 +9,8 @@ import subprocess
 import ujson
 import sys
 import os
+import numpy as np
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -32,7 +34,10 @@ target_height=316
 window_width=459
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -77,8 +82,9 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
+    preloaded_frames=np.load(video_path)
 
-player = thesystem.system.VideoPlayer(canvas, video_path, 200.0, 150.0)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 200.0, 150.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

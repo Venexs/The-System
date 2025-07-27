@@ -17,6 +17,7 @@ from PIL import Image, ImageTk
 import csv
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -66,7 +67,10 @@ thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -285,7 +289,8 @@ with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=json.load(pres_file)
     normal_font_col=pres_file_data["Anime"]["Normal Font Color"]
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 320.0, resize_factor=0.8, pause_duration=0.3)
+    preloaded_frames = np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 277.0, 320.0, resize_factor=0.8, pause_duration=0.3)
 
 image_image_2 = PhotoImage(
     file=get_stuff_path("image_2.png"))

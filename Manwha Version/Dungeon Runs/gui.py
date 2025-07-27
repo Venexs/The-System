@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import threading
 import sys
 import os
+import numpy as np
 import time
 import math
 import json
@@ -166,7 +167,8 @@ class DungeonSystem:
             pres_file_data=ujson.load(pres_file)
             self.normal_font_col = pres_file_data["Manwha"]["Normal Font Color"]
             video_path=pres_file_data["Manwha"]["Video"]
-        player = thesystem.system.VideoPlayer(self.canvas, video_path, 300.0, 240.0, resize_factor=1)
+            preloaded_frames=np.load(video_path)
+        player = thesystem.system.FastVideoPlayer(self.canvas, preloaded_frames, 300, 240, resize_factor=1)
         
     def create_ui_elements(self):
         # Create UI text elements
@@ -436,12 +438,14 @@ class DungeonSystem:
             return
             
         base_waves = 3
-        if self.rank in ["D", "C"]:
-            base_waves = 6
+        if self.rank in ["D"]:
+            base_waves = 3
+        elif self.rank in ["C"]:
+            base_waves = 4
         elif self.rank in ["B", "A"]:
-            base_waves = 8
+            base_waves = 5
         elif self.rank == "S":
-            base_waves = 10
+            base_waves = 6
             
         wave_variation = random.choice([-1, 0, 0, 0, 1])
         total_waves = max(3, base_waves + wave_variation)
@@ -741,18 +745,22 @@ class DungeonSystem:
         for exercise_name, exercise_details in str_data.items():
             for detail in exercise_details:
                 if "amt" in detail:
-                    str_activities.append(f"Do {detail['amt']} {exercise_name}")
+                    adjusted_amt = thesystem.dungeon.dungeon_rank_get(self.rank, detail['amt'], "amt", exercise_name)
+                    str_activities.append(f"Do {adjusted_amt} {exercise_name}")
                 elif "time" in detail:
-                    str_activities.append(f"Do {exercise_name} for {detail['time']} {detail['timeval']}")
+                    adjusted_time = thesystem.dungeon.dungeon_rank_get(self.rank, detail['time'], "time", exercise_name)
+                    str_activities.append(f"Do {exercise_name} for {adjusted_time} {detail['timeval']}")
         
         # Format AGI exercises
         agi_activities = []
         for exercise_name, exercise_details in agi_data.items():
             for detail in exercise_details:
                 if "amt" in detail:
-                    agi_activities.append(f"Do {detail['amt']} {exercise_name}")
+                    adjusted_amt = thesystem.dungeon.dungeon_rank_get(self.rank, detail['amt'], "amt", exercise_name)
+                    agi_activities.append(f"Do {adjusted_amt} {exercise_name}")
                 elif "time" in detail:
-                    agi_activities.append(f"Do {exercise_name} for {detail['time']} {detail['timeval']}")
+                    adjusted_time = thesystem.dungeon.dungeon_rank_get(self.rank, detail['time'], "time", exercise_name)
+                    agi_activities.append(f"Do {exercise_name} for {adjusted_time} {detail['timeval']}")
         
         # Apply boss modifier if needed
         if is_boss:
@@ -773,7 +781,7 @@ class DungeonSystem:
         self.canvas.itemconfig(self.activity2, text=f"- {activities[1]}")
         self.canvas.itemconfig(self.activity3, text=f"- {activities[2]}")
         self.canvas.itemconfig(self.activity4, text=f"- {activities[3]}")
-    
+       
     def check_for_events(self):
         self.current_event = None
         self.canvas.itemconfig(self.event_text, text="", state="hidden")
@@ -811,8 +819,16 @@ class DungeonSystem:
             
             # Show a warning if activities are incomplete
             if completion_percentage < 1.0:
+                deductable_percent=completion_percentage*4
+                enemies_ignored=int(4-deductable_percent)
+                with open("Files/Player Data/Status.json", 'r') as stat_file:
+                    status_data = ujson.load(stat_file)
+                    level=status_data["status"][0]["level"]
+                rank_of_player=thesystem.system.give_ranking(level)
+                rank_of_dungeon=self.rank   
+                thesystem.dungeon.calculate_hp_deduction(rank_of_player,rank_of_dungeon,enemies_ignored)
                 reduced_xp_percent = int(completion_percentage * 100)
-                warning_text = f"Skipping with {reduced_xp_percent}% completion. Reduced XP for this wave!"
+                warning_text = f"Skipping with {reduced_xp_percent}% completion. Reduced HP/XP for this wave!"
                 temp_warning = self.canvas.create_text(
                     400, 300,
                     anchor="center",
@@ -938,10 +954,45 @@ class DungeonSystem:
                     check_fw = csv.writer(check_file)
                     check_fw.writerow(["Instance Reward"])
 
+            # --- Skill Rune Stone Reward Logic ---
+            try:
+                rune_chance = 0
+                if self.rew_rank == 'S':
+                    rune_chance = 0.10
+                elif self.rew_rank == 'A':
+                    rune_chance = 0.01
+                if rune_chance > 0 and random.random() < rune_chance:
+                    with open("Files/Data/Inventory_List.json", 'r') as inv_list_file:
+                        inv_list = ujson.load(inv_list_file)
+                    # Get all rune stone keys
+                    rune_keys = [k for k, v in inv_list.items() if v[0].get('cat') == 'Rune Stone']
+                    if rune_keys:
+                        chosen_rune = random.choice(rune_keys)
+                        rune_data = inv_list[chosen_rune][0].copy()
+                        rune_data['qty'] = 1
+                        # Load player inventory
+                        try:
+                            with open("Files/Player Data/Inventory.json", 'r') as inv_file:
+                                player_inv = ujson.load(inv_file)
+                        except Exception:
+                            player_inv = {}
+                        # Add or increment rune
+                        if chosen_rune in player_inv:
+                            thesystem.system.rank_up_skill(chosen_rune, player_inv[chosen_rune][0]['lvl'])
+                            player_inv[chosen_rune][0]['qty'] += 1
+                        else:
+                            player_inv[chosen_rune] = [rune_data]
+                        with open("Files/Player Data/Inventory.json", 'w') as inv_file:
+                            ujson.dump(player_inv, inv_file, indent=4)
+            except Exception as e:
+                pass
+                #print(f"Error giving rune stone: {e}")
+
             thesystem.system.get_fin_xp()
 
         except Exception as e:
-            print(f"Error updating records: {e}")
+            pass
+            #print(f"Error updating records: {e}")
         
         self.button_2.destroy()
         self.button_1.destroy()
@@ -1350,210 +1401,213 @@ class SkillSystem:
         """Apply the effect of the selected skill"""
         # Get the skill level for scaling effects
         skill_level = self.player_skills[skill_name][0]["lvl"] if skill_name in self.player_skills else 1
+        if skill_level == "MAX":
+            skill_level = 10
 
-        if skill_name == "Resourceful Adaptation":
-            # Change workout activities randomly
-            if hasattr(self.parent, 'generate_activities'):
-                monster_type = random.choice(["STR", "AGI", "MIXED"])
-                self.parent.generate_activities(monster_type)
-                notification = self.parent.canvas.create_text(
-                    400, 320,
-                    anchor="center",
-                    text="Resourceful Adaptation: Activities changed randomly!",
-                    fill="#00FFFF",
-                    font=("Montserrat Bold", 14 * -1)
-                )
-                self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
-                
-        elif skill_name == "Fatal Strike":
-            # Base reduction: 15% at level 1, +5% per level
-            reduction_percent = 15 + (5 * (skill_level - 1))
-            reduction_percent = min(50, reduction_percent)  # Cap at 50% reduction
-            reduction_factor = reduction_percent / 100.0
-            
-            # Apply to all activities (both STR and VIT)
-            modified_activities = []
-            
-            for activity_widget in [self.parent.activity1, self.parent.activity2, 
-                                self.parent.activity3, self.parent.activity4]:
-                activity_text = self.parent.canvas.itemcget(activity_widget, "text")
-                
-                # Skip empty activities
-                if not activity_text or activity_text.startswith("-Activity"):
-                    continue
+        if thesystem.system.skill_use(f"{skill_name}", (60*60)) == True:
+            if skill_name == "Resourceful Adaptation":
+                # Change workout activities randomly
+                if hasattr(self.parent, 'generate_activities'):
+                    monster_type = random.choice(["STR", "AGI", "MIXED"])
+                    self.parent.generate_activities(monster_type)
+                    notification = self.parent.canvas.create_text(
+                        400, 320,
+                        anchor="center",
+                        text="Resourceful Adaptation: Activities changed randomly!",
+                        fill="#00FFFF",
+                        font=("Montserrat Bold", 14 * -1)
+                    )
+                    self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
                     
-                # Find and reduce the numeric value
-                import re
-                numbers = re.findall(r'\d+', activity_text)
-                if numbers:
-                    for num_str in numbers:
-                        value = int(num_str)
-                        reduced = max(1, int(value * (1 - reduction_factor)))
-                        # Only replace the first occurrence of this number
-                        new_text = activity_text.replace(str(value), str(reduced), 1)
-                        self.parent.canvas.itemconfig(activity_widget, text=new_text, fill="#FF9900")
-                        modified_activities.append(activity_widget)
-                        break
-            
-            # After 3 seconds, reset color
-            if modified_activities:
-                self.parent.window.after(3000, lambda widgets=modified_activities: 
-                                    [self.parent.canvas.itemconfig(w, fill=self.parent.normal_font_col) 
-                                        for w in widgets])
-            
-            # Feedback notification
-            notification = self.parent.canvas.create_text(
-                400, 320,
-                anchor="center",
-                text=f"Fatal Strike Lvl {skill_level}: All activities reduced by {reduction_percent}%!",
-                fill="#FF9900",
-                font=("Montserrat Bold", 14 * -1)
-            )
-            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
-            
-        elif skill_name == "Brute Force Mastery":
-            # Calculate STR buff and AGI debuff based on level
-            str_buff_percent = 20 + (10 * (skill_level - 1))  # 20% at lvl 1, +10% per level
-            agi_debuff_percent = 10 + (5 * (skill_level - 1))  # 10% at lvl 1, +5% per level
-            
-            str_buff_percent = min(70, str_buff_percent)  # Cap at 70% buff
-            agi_debuff_percent = min(35, agi_debuff_percent)  # Cap at 35% debuff
-            
-            str_factor = 1 - (str_buff_percent / 100.0)  # Reduction factor for STR (making activities easier)
-            agi_factor = 1 + (agi_debuff_percent / 100.0)  # Increase factor for AGI (making activities harder)
-            
-            modified_activities = []
-            
-            # Process all activities
-            for activity_widget in [self.parent.activity1, self.parent.activity2, 
-                                self.parent.activity3, self.parent.activity4]:
-                activity_text = self.parent.canvas.itemcget(activity_widget, "text")
+            elif skill_name == "Fatal Strike":
+                # Base reduction: 15% at level 1, +5% per level
+                reduction_percent = 15 + (5 * (skill_level - 1))
+                reduction_percent = min(50, reduction_percent)  # Cap at 50% reduction
+                reduction_factor = reduction_percent / 100.0
                 
-                # Skip empty activities
-                if not activity_text or activity_text.startswith("-Activity"):
-                    continue
+                # Apply to all activities (both STR and VIT)
+                modified_activities = []
+                
+                for activity_widget in [self.parent.activity1, self.parent.activity2, 
+                                    self.parent.activity3, self.parent.activity4]:
+                    activity_text = self.parent.canvas.itemcget(activity_widget, "text")
                     
-                is_agi = "Seconds" in activity_text or "seconds" in activity_text
-                
-                # Apply appropriate factor based on activity type
-                import re
-                numbers = re.findall(r'\d+', activity_text)
-                if numbers:
-                    for num_str in numbers:
-                        value = int(num_str)
+                    # Skip empty activities
+                    if not activity_text or activity_text.startswith("-Activity"):
+                        continue
                         
-                        if is_agi:
-                            # AGI activities get harder (values increase)
-                            modified = max(1, int(value * agi_factor))
-                            color = "#FF6666"  # Red for debuff
-                            self.parent.canvas.itemconfig(activity_widget, text=activity_text.replace(
-                                str(value), str(modified), 1), fill=color)
-                        else:
-                            # STR activities get easier (values decrease)
-                            modified = max(1, int(value * str_factor))
-                            color = "#66FF66"  # Green for buff
-                            self.parent.canvas.itemconfig(activity_widget, text=activity_text.replace(
-                                str(value), str(modified), 1), fill=color)
-                        
-                        modified_activities.append((activity_widget, color))
-                        break
-            
-            # After 3 seconds, reset color
-            if modified_activities:
-                self.parent.window.after(3000, lambda activities=modified_activities: 
-                                    [self.parent.canvas.itemconfig(w[0], fill=self.parent.normal_font_col) 
-                                        for w in activities])
-            
-            # Feedback notification
-            notification = self.parent.canvas.create_text(
-                400, 320,
-                anchor="center",
-                text=f"Brute Force Mastery Lvl {skill_level}: STR +{str_buff_percent}%, AGI -{agi_debuff_percent}%",
-                fill="#FFCC00",
-                font=("Montserrat Bold", 14 * -1)
-            )
-            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
-            
-        elif skill_name == "Dash":
-            # Calculate reduction based on dungeon rank and skill level
-            base_reduction = 30 + (5 * (skill_level - 1))  # 30% at level 1, +5% per level
-            
-            # Rank penalty (higher ranks get less reduction)
-            rank_penalty = {
-                "E": 0,    # No penalty for E rank
-                "D": 5,    # 5% less reduction
-                "C": 10,   # 10% less reduction
-                "B": 15,   # 15% less reduction
-                "A": 20,   # 20% less reduction
-                "S": 25    # 25% less reduction (still usable on S rank in this implementation)
-            }
-            
-            # Get current dungeon rank
-            current_rank = self.parent.rank if hasattr(self.parent, 'rank') else "E"
-            
-            # Calculate final reduction (clamp between 25% and 75%)
-            reduction_percent = base_reduction - rank_penalty.get(current_rank, 0)
-            reduction_percent = max(25, min(75, reduction_percent))
-            reduction_factor = reduction_percent / 100.0
-            
-            # Find and modify all activities with "Seconds" in them
-            modified_activities = []
-            
-            for activity_widget in [self.parent.activity1, self.parent.activity2, 
-                                self.parent.activity3, self.parent.activity4]:
-                activity_text = self.parent.canvas.itemcget(activity_widget, "text")
-                
-                # Skip empty activities
-                if not activity_text or activity_text.startswith("-Activity"):
-                    continue
-                    
-                # Check if this is a time-based (AGI) activity
-                if "Seconds" in activity_text or "seconds" in activity_text:
-                    # Extract the time value
+                    # Find and reduce the numeric value
                     import re
                     numbers = re.findall(r'\d+', activity_text)
                     if numbers:
                         for num_str in numbers:
                             value = int(num_str)
                             reduced = max(1, int(value * (1 - reduction_factor)))
-                            # Replace just the first occurrence of this number
+                            # Only replace the first occurrence of this number
                             new_text = activity_text.replace(str(value), str(reduced), 1)
-                            self.parent.canvas.itemconfig(activity_widget, text=new_text, fill="#FF00FF")
+                            self.parent.canvas.itemconfig(activity_widget, text=new_text, fill="#FF9900")
                             modified_activities.append(activity_widget)
                             break
-            
-            # After 3 seconds, reset color
-            if modified_activities:
-                self.parent.window.after(3000, lambda widgets=modified_activities: 
-                                    [self.parent.canvas.itemconfig(w, fill=self.parent.normal_font_col) 
-                                        for w in widgets])
-            
-            # Feedback notification
-            count = len(modified_activities)
-            if count > 0:
-                feedback = f"Dash Lvl {skill_level}: Reduced {count} time-based activities by {reduction_percent}%!"
-            else:
-                feedback = "No time-based activities found to reduce!"
                 
-            notification = self.parent.canvas.create_text(
-                400, 320,
-                anchor="center",
-                text=feedback,
-                fill="#FF00FF",
-                font=("Montserrat Bold", 14 * -1)
-            )
-            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
-            
-        else:
-            # Generic skill effect message for other skills
-            notification = self.parent.canvas.create_text(
-                400, 320,
-                anchor="center",
-                text=f"Skill '{skill_name}' activated!",
-                fill="#FFFFFF",
-                font=("Montserrat Bold", 14 * -1)
-            )
-            self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+                # After 3 seconds, reset color
+                if modified_activities:
+                    self.parent.window.after(3000, lambda widgets=modified_activities: 
+                                        [self.parent.canvas.itemconfig(w, fill=self.parent.normal_font_col) 
+                                            for w in widgets])
+                
+                # Feedback notification
+                notification = self.parent.canvas.create_text(
+                    400, 320,
+                    anchor="center",
+                    text=f"Fatal Strike Lvl {skill_level}: All activities reduced by {reduction_percent}%!",
+                    fill="#FF9900",
+                    font=("Montserrat Bold", 14 * -1)
+                )
+                self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+                
+            elif skill_name == "Brute Force Mastery":
+                # Calculate STR buff and AGI debuff based on level
+                str_buff_percent = 20 + (7 * (skill_level ))  # 20% at lvl 1, +10% per level
+                agi_debuff_percent = 10 + (5 * (skill_level))  # 10% at lvl 1, +5% per level
+                
+                str_buff_percent = min(70, str_buff_percent)  # Cap at 70% buff
+                agi_debuff_percent = min(50, agi_debuff_percent)  # Cap at 35% debuff
+                
+                str_factor = 1 - (str_buff_percent / 100.0)  # Reduction factor for STR (making activities easier)
+                agi_factor = 1 + (agi_debuff_percent / 100.0)  # Increase factor for AGI (making activities harder)
+                
+                modified_activities = []
+                
+                # Process all activities
+                for activity_widget in [self.parent.activity1, self.parent.activity2, 
+                                    self.parent.activity3, self.parent.activity4]:
+                    activity_text = self.parent.canvas.itemcget(activity_widget, "text")
+                    
+                    # Skip empty activities
+                    if not activity_text or activity_text.startswith("-Activity"):
+                        continue
+                        
+                    is_agi = "Seconds" in activity_text or "seconds" in activity_text
+                    
+                    # Apply appropriate factor based on activity type
+                    import re
+                    numbers = re.findall(r'\d+', activity_text)
+                    if numbers:
+                        for num_str in numbers:
+                            value = int(num_str)
+                            
+                            if is_agi:
+                                # AGI activities get harder (values increase)
+                                modified = max(1, int(value * agi_factor))
+                                color = "#FF6666"  # Red for debuff
+                                self.parent.canvas.itemconfig(activity_widget, text=activity_text.replace(
+                                    str(value), str(modified), 1), fill=color)
+                            else:
+                                # STR activities get easier (values decrease)
+                                modified = max(1, int(value * str_factor))
+                                color = "#66FF66"  # Green for buff
+                                self.parent.canvas.itemconfig(activity_widget, text=activity_text.replace(
+                                    str(value), str(modified), 1), fill=color)
+                            
+                            modified_activities.append((activity_widget, color))
+                            break
+                
+                # After 3 seconds, reset color
+                if modified_activities:
+                    self.parent.window.after(3000, lambda activities=modified_activities: 
+                                        [self.parent.canvas.itemconfig(w[0], fill=self.parent.normal_font_col) 
+                                            for w in activities])
+                
+                # Feedback notification
+                notification = self.parent.canvas.create_text(
+                    400, 320,
+                    anchor="center",
+                    text=f"Brute Force Mastery Lvl {skill_level}: STR +{str_buff_percent}%, AGI -{agi_debuff_percent}%",
+                    fill="#FFCC00",
+                    font=("Montserrat Bold", 14 * -1)
+                )
+                self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+                
+            elif skill_name == "Dash":
+                # Calculate reduction based on dungeon rank and skill level
+                base_reduction = 30 + (5 * (skill_level - 1))  # 30% at level 1, +5% per level
+                
+                # Rank penalty (higher ranks get less reduction)
+                rank_penalty = {
+                    "E": 0,    # No penalty for E rank
+                    "D": 5,    # 5% less reduction
+                    "C": 10,   # 10% less reduction
+                    "B": 15,   # 15% less reduction
+                    "A": 20,   # 20% less reduction
+                    "S": 25    # 25% less reduction (still usable on S rank in this implementation)
+                }
+                
+                # Get current dungeon rank
+                current_rank = self.parent.rank if hasattr(self.parent, 'rank') else "E"
+                
+                # Calculate final reduction (clamp between 25% and 75%)
+                reduction_percent = base_reduction - rank_penalty.get(current_rank, 0)
+                reduction_percent = max(25, min(75, reduction_percent))
+                reduction_factor = reduction_percent / 100.0
+                
+                # Find and modify all activities with "Seconds" in them
+                modified_activities = []
+                
+                for activity_widget in [self.parent.activity1, self.parent.activity2, 
+                                    self.parent.activity3, self.parent.activity4]:
+                    activity_text = self.parent.canvas.itemcget(activity_widget, "text")
+                    
+                    # Skip empty activities
+                    if not activity_text or activity_text.startswith("-Activity"):
+                        continue
+                        
+                    # Check if this is a time-based (AGI) activity
+                    if "Seconds" in activity_text or "seconds" in activity_text:
+                        # Extract the time value
+                        import re
+                        numbers = re.findall(r'\d+', activity_text)
+                        if numbers:
+                            for num_str in numbers:
+                                value = int(num_str)
+                                reduced = max(1, int(value * (1 - reduction_factor)))
+                                # Replace just the first occurrence of this number
+                                new_text = activity_text.replace(str(value), str(reduced), 1)
+                                self.parent.canvas.itemconfig(activity_widget, text=new_text, fill="#FF00FF")
+                                modified_activities.append(activity_widget)
+                                break
+                
+                # After 3 seconds, reset color
+                if modified_activities:
+                    self.parent.window.after(3000, lambda widgets=modified_activities: 
+                                        [self.parent.canvas.itemconfig(w, fill=self.parent.normal_font_col) 
+                                            for w in widgets])
+                
+                # Feedback notification
+                count = len(modified_activities)
+                if count > 0:
+                    feedback = f"Dash Lvl {skill_level}: Reduced {count} time-based activities by {reduction_percent}%!"
+                else:
+                    feedback = "No time-based activities found to reduce!"
+                    
+                notification = self.parent.canvas.create_text(
+                    400, 320,
+                    anchor="center",
+                    text=feedback,
+                    fill="#FF00FF",
+                    font=("Montserrat Bold", 14 * -1)
+                )
+                self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
+                
+            else:
+                # Generic skill effect message for other skills
+                notification = self.parent.canvas.create_text(
+                    400, 320,
+                    anchor="center",
+                    text=f"Skill '{skill_name}' activated!",
+                    fill="#FFFFFF",
+                    font=("Montserrat Bold", 14 * -1)
+                )
+                self.parent.window.after(3000, lambda: self.parent.canvas.delete(notification))
     
     def remove_brute_force_buff(self):
         """Remove the Brute Force buff after duration expires"""

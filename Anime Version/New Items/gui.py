@@ -19,6 +19,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -33,8 +34,6 @@ import thesystem.quests as quests
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
-
-
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -57,7 +56,10 @@ window_width = 696
 window.geometry(f"{window_width}x{initial_height}")
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -83,17 +85,11 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=5
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
         setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
 
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (695, 39))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (702, 36))
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (695, 39), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (702, 36), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -329,6 +325,15 @@ elif data["Type"]=="Quest":
     except:
         pass
 
+if rew1_name=='': state1='hidden' 
+else: state1='normal'
+if rew2_name=='': state2='hidden'
+else: state2='normal'
+if rew3_name=='': state3='hidden'
+else: state3='normal'
+if rew4_name=='': state4='hidden'
+else: state4='normal'
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -349,9 +354,9 @@ image_1 = canvas.create_image(
 )
 
 pres_file_data=misc.load_ujson("Files/Mod/presets.json")
-video_path=pres_file_data["Anime"]["Video"]
-
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0, pause_duration=1.0)
+video_path=pres_file_data["Anime"][video]
+preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 478.0, 313.0, pause_duration=1.0)
 
 image_image_2 = PhotoImage(
     file=get_stuff_path("frame.png"))
@@ -382,14 +387,15 @@ image_image_5 = PhotoImage(
 image_5 = canvas.create_image(
     348.0,
     162.0,
-    image=image_image_5
+    image=image_image_5,
 )
 
 image_image_6 = quests.get_item_image(rew1_name)
 image_6 = canvas.create_image(
     145.0-1,
     235.5-0.5,
-    image=image_image_6
+    image=image_image_6,
+    state=state1
 )
 
 canvas.create_text(
@@ -398,7 +404,8 @@ canvas.create_text(
     anchor="nw",
     text=f"[{rew1_name}]",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state1
 )
 
 canvas.create_text(
@@ -407,18 +414,19 @@ canvas.create_text(
     anchor="nw",
     text=f"{rew1}",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state1
 )
 
 if c>=1:
-
     canvas.create_text(
         295.0,
         245.0,
         anchor="nw",
         text="New!",
         fill="#FFFFFF",
-        font=("Montserrat Medium", 11 * -1)
+        font=("Montserrat Medium", 11 * -1),
+        state=state1
     )
 
 image_image_7 = PhotoImage(
@@ -426,14 +434,16 @@ image_image_7 = PhotoImage(
 image_7 = canvas.create_image(
     223.0,
     235.0,
-    image=image_image_7
+    image=image_image_7,
+    state=state1
 )
 
 image_image_8 =quests.get_item_image(rew3_name)
 image_8 = canvas.create_image(
     145.0-1,
     314.5-0.5,
-    image=image_image_8
+    image=image_image_8,
+    state=state3
 )
 
 canvas.create_text(
@@ -442,7 +452,8 @@ canvas.create_text(
     anchor="nw",
     text=f"[{rew3_name}]",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state3
 )
 
 canvas.create_text(
@@ -451,7 +462,8 @@ canvas.create_text(
     anchor="nw",
     text=f"{rew3}",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state3
 )
 
 if c>=3:
@@ -461,7 +473,8 @@ if c>=3:
         anchor="nw",
         text="New!",
         fill="#FFFFFF",
-        font=("Montserrat Medium", 11 * -1)
+        font=("Montserrat Medium", 11 * -1),
+        state=state3
     )
 
 image_image_9 = PhotoImage(
@@ -469,14 +482,16 @@ image_image_9 = PhotoImage(
 image_9 = canvas.create_image(
     223.0,
     314.0,
-    image=image_image_9
+    image=image_image_9,
+    state=state3
 )
 
 image_image_10 = quests.get_item_image(rew2_name)
 image_10 = canvas.create_image(
     393.0-1,
     235.5-0.5,
-    image=image_image_10
+    image=image_image_10,
+    state=state2
 )
 
 canvas.create_text(
@@ -485,7 +500,8 @@ canvas.create_text(
     anchor="nw",
     text=f"[{rew2_name}]",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state2
 )
 
 canvas.create_text(
@@ -494,7 +510,8 @@ canvas.create_text(
     anchor="nw",
     text=f"{rew2}",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state2
 )
 
 if c>=2:
@@ -504,7 +521,8 @@ if c>=2:
         anchor="nw",
         text="New!",
         fill="#FFFFFF",
-        font=("Montserrat Medium", 11 * -1)
+        font=("Montserrat Medium", 11 * -1),
+        state=state2
     )
 
 image_image_11 = PhotoImage(
@@ -512,14 +530,16 @@ image_image_11 = PhotoImage(
 image_11 = canvas.create_image(
     471.1288757324219,
     235.0,
-    image=image_image_11
+    image=image_image_11,
+    state=state2
 )
 
 image_image_12 =quests.get_item_image(rew4_name)
 image_12 = canvas.create_image(
     393.0-1,
     314.5-0.5,
-    image=image_image_12
+    image=image_image_12,
+    state=state4
 )
 
 canvas.create_text(
@@ -528,7 +548,8 @@ canvas.create_text(
     anchor="nw",
     text=f"[{rew4_name}]",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state4
 )
 
 canvas.create_text(
@@ -537,7 +558,8 @@ canvas.create_text(
     anchor="nw",
     text=f"{rew4}",
     fill="#FFFFFF",
-    font=("Montserrat Bold", 11 * -1)
+    font=("Montserrat Bold", 11 * -1),
+    state=state4
 )
 
 if c>=4:
@@ -547,7 +569,8 @@ if c>=4:
         anchor="nw",
         text="New!",
         fill="#FFFFFF",
-        font=("Montserrat Medium", 11 * -1) 
+        font=("Montserrat Medium", 11 * -1),
+        state=state4
     )
 
 image_image_13 = PhotoImage(
@@ -555,7 +578,8 @@ image_image_13 = PhotoImage(
 image_13 = canvas.create_image(
     471.1288757324219,
     314.49151611328125,
-    image=image_image_13
+    image=image_image_13,
+    state=state4
 )
 
 canvas.create_rectangle(
@@ -643,15 +667,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 update_thread = threading.Thread(target=update_images)

@@ -1,11 +1,12 @@
 import ujson
 import csv
+import thesystem.skills
 import thesystem.system as system
 import subprocess
 from datetime import datetime, timedelta
 import random
 import threading
-
+import thesystem.system
 
 with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
     theme_data = ujson.load(themefile)
@@ -343,8 +344,26 @@ def dun_check():
 def dungeon_rank_get(rank, amt1, amt1_check, act1):
     with open("Files/Player Data/Status.json", 'r') as fson:
         data = ujson.load(fson)
-        agi = data["status"][0]['agi']
-        stre = data["status"][0]['str']
+        agi1 = data["status"][0]['agi']
+        stre1 = data["status"][0]['str']
+        str_eqip = data["equipment"][0]['STR']
+        agi_eqip = data["equipment"][0]['AGI']
+
+        with open("Files/Player Data/Skill.json", 'r') as f:
+            skill_data = ujson.load(f)
+
+        equipment_percent=0
+        if thesystem.system.skill_use("Mind Over Matter", (0)) == True and ("Mind Over Matter"in skill_data):
+            lvl=skill_data["Mind Over Matter"][0]["lvl"]
+            if type(lvl)==str: lvl=10
+
+            equipment_percent=0.05*lvl
+
+        agi_eqip1=agi_eqip+(agi_eqip*equipment_percent)
+        str_eqip1=str_eqip+(str_eqip*equipment_percent)
+
+        agi=agi1+agi_eqip1
+        stre=stre1+str_eqip1
     
     rank_modifiers = {
         'D': {"amt": {50: 10, 15: 5, 2: 1, 30: 15, 1: 1}, "time": {45: 15, 60: 60, 1: 1}},
@@ -358,6 +377,7 @@ def dungeon_rank_get(rank, amt1, amt1_check, act1):
         amt1 += rank_modifiers[rank][amt1_check].get(amt1, 0)
     
     amt1 -= (reduction(amt1, stre, agi, amt1_check))
+    amt1 = max(1, int(round(amt1 * 0.25)))
     return amt1
 
 def reduction(val, stre, agi, types):
@@ -381,5 +401,56 @@ def reduction(val, stre, agi, types):
     
     return 0
 
+def calculate_hp_deduction(player_rank: str, quest_rank: str, enemies_ignored: int = 1) -> float:
+    hp_add=0
+    # Rank weights — linear scale
+    player_rank_scores = {'National': 7, 'S': 6, 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1}
+    quest_rank_scores = {'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5, 'S': 6}
 
+    # Clamp number of ignored enemies
+    enemies_ignored = max(0, min(enemies_ignored, 4))
 
+    # Convert ranks to numeric scale
+    player_score = player_rank_scores.get(player_rank, 1)
+    quest_score = quest_rank_scores.get(quest_rank, 1)
+
+    # Deduction per enemy is:
+    #   (quest_score / player_score) * (base per-enemy percent)
+    # We'll use base = 0.1 (10%), and total is capped at 100%
+
+    base_deduction_per_enemy = 0.1  # 10% base per enemy
+    deduction = (quest_score / player_score) * base_deduction_per_enemy * enemies_ignored
+
+    with open("Files/Player Data/Status.json", 'r') as data_fson:
+        data_status=ujson.load(data_fson)
+        current_hp=data_status["status"][0]["hp"]
+        level=data_status["status"][0]["level"]
+        max_hp=100+(100*level)
+
+        deductable=max_hp*deduction
+
+        if current_hp-deductable<=50:
+            #Skill File
+            with open("Files/Player Data/Skill.json", 'r') as f:
+                skill_data = ujson.load(f)
+
+            if thesystem.skills.skill_use("Iron Warrior", (24*60*60)) == True and ("Iron Warrior"in skill_data):
+                lvl=skill_data["Iron Warrior"][0]["lvl"]
+                if type(lvl)==str: lvl=10
+                hp_add=max_hp*(0.025*lvl)
+
+        if (current_hp+hp_add)-deductable<0:
+            data_status["status"][0]["hp"]=0
+            thesystem.system.message_open("Dead")
+        
+        else:
+            data_status["status"][0]["hp"]-=deductable
+            data_status["status"][0]["hp"]+=hp_add
+
+        with open("Files/Player Data/Status.json", 'w') as data_fson:
+            ujson.dump(data_status, data_fson)
+
+        if data_status["status"][0]["hp"]-(deductable/enemies_ignored)<0:
+            thesystem.system.message_open("Will die")
+
+        

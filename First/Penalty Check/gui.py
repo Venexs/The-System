@@ -17,6 +17,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -61,21 +62,33 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=5
 
 thesystem.system.center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 thesystem.system.make_window_transparent(window)
 
-top_folder_path = "thesystem/top_bar"
-bottom_folder_path = "thesystem/bottom_bar"
+job=thesystem.misc.return_status()["status"][1]["job"]
 
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
 
-top_images = [f"{top_folder_path}/dailyquest.py{str(i).zfill(4)}.png" for i in range(2, 501, 2)]
-bottom_images = [f"{bottom_folder_path}/{str(i).zfill(4)}.png" for i in range(2, 501, 2)]
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (727, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (737, 27))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (727, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (737, 27), job, type_="bottom")
+
 
 trimpath1 = trimpath2 = ""
 exe_name1 = exe_name2 = ""
@@ -133,8 +146,33 @@ def complete():
         pen_info_data["Penalty Time"] = f"{hh}:{mm}"
     with open("Files\Player Data\Penalty_Info.json" , 'w') as pen_info_file:
         ujson.dump(pen_info_data, pen_info_file, indent=4)
-    subprocess.Popen(['python', 'First/Theme Check/gui.py'])
-    ex_close(window)
+
+    with open("Files/Checks/penalty_open.csv", 'r') as info_open:
+        info_fr=csv.reader(info_open)
+        for k in info_fr:
+            istrue=k[0]
+
+    if istrue=='True':
+        with open('Files/Player Data/Theme_Check.json', 'r') as themefile:
+            theme_data=ujson.load(themefile)
+            theme=theme_data["Theme"]
+
+        subprocess.Popen(['Python', f'{theme} Version/Settings/gui.py'])
+        with open("Files/Checks/penalty_open.csv", 'w', newline='') as info_open:
+            fw=csv.writer(info_open)
+            fw.writerow(["False"])
+        ex_close(window)
+    
+    else:
+        subprocess.Popen(['python', 'First/Theme Check/gui.py'])
+        ex_close(window)
+
+def only_numbers(char):
+    if char == "":
+        return True  # allow clearing the field
+    return char.isdigit()
+    
+vcmd = window.register(only_numbers)
 
 canvas = Canvas(
     window,
@@ -157,8 +195,8 @@ image_1 = canvas.create_image(
 
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
-    video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 430.0, 263.0, pause_duration=0.6, resize_factor=-1)
+    video_path=pres_file_data["Anime"][video]
+player = thesystem.system.FastVideoPlayer(canvas, np.load(video_path), 430.0, 263.0, pause_duration=0.6, resize_factor=-1)
 
 
 image_image_2 = PhotoImage(
@@ -302,7 +340,9 @@ entry_1 = Text(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd, '%S')
 )
 entry_1.place(
     x=62.0,
@@ -329,12 +369,13 @@ canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 
-
 entry_2 = Text(
     bd=0,
     bg="#FFFFFF",
     fg="#000716",
-    highlightthickness=0
+    highlightthickness=0,
+    validate="key",
+    validatecommand=(vcmd, '%S')
 )
 entry_2.place(
     x=127.0,
@@ -466,15 +507,16 @@ bottom_image = canvas.create_image(376.0, 375.0, image=bottom_preloaded_images[b
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation

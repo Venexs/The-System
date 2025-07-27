@@ -17,6 +17,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -85,17 +86,13 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=5
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
-
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 # Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (488, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (609, 33))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (488, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (609, 33), job, type_="bottom")
+
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -132,7 +129,7 @@ image_1 = canvas.create_image(
 )
 
 canvas.create_image(430.0, 363.0, image=PhotoImage(file=relative_to_assets("image_1.png")))
-player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"][video], 430.0, 363.0, resize_factor=0.3, pause_duration=0.7)
+player = thesystem.system.FastVideoPlayer(canvas, np.load(presets_data["Anime"][video]), 430.0, 363.0, resize_factor=0.3, pause_duration=0.7)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -140,6 +137,30 @@ image_2 = canvas.create_image(
     237.0,
     367.0,
     image=image_image_2
+)
+
+image_image_24 = PhotoImage(
+    file=relative_to_assets("image_24.png"))
+image_24 = canvas.create_image(
+    233.0,
+    243.0+5,
+    image=image_image_24
+)
+
+image_image_25 = PhotoImage(
+    file=relative_to_assets("image_25.png"))
+image_25 = canvas.create_image(
+    233.0,
+    437.0+5,
+    image=image_image_25
+)
+
+image_image_26 = PhotoImage(
+    file=relative_to_assets("image_26.png"))
+image_26 = canvas.create_image(
+    233.0,
+    590.0+5,
+    image=image_image_26
 )
 
 image_image_3 = PhotoImage(
@@ -161,8 +182,9 @@ def open_prog(name):
 
         ex_close(window)
 
-aname1=aname2=aname3=aname4=aname5=aname6=aname7='-'
-lvl1=lvl2=lvl3=lvl4=lvl5=lvl6=lvl7='??'
+aname1=aname2=aname3=aname4=aname5=aname6=aname7=''
+lvl1=lvl2=lvl3=lvl4=lvl5=lvl6=lvl7=''
+astate1=astate2=astate3=astate4=astate5=astate6=astate7='hidden'
 
 with open("Files/Player Data/Skill.json", 'r') as fson:
     c=0
@@ -174,30 +196,37 @@ with open("Files/Player Data/Skill.json", 'r') as fson:
                 if c==0:
                     aname1=k
                     lvl1="Lvl."+str(data[k][0]["lvl"])
+                    astate1='normal'
                     c+=1
                 elif c==1:
                     aname2=k
                     lvl2="Lvl."+str(data[k][0]["lvl"])
+                    astate2='normal'
                     c+=1
                 elif c==2:
                     aname3=k
                     lvl3="Lvl."+str(data[k][0]["lvl"])
+                    astate3='normal'
                     c+=1
                 elif c==3:
                     aname4=k
                     lvl4="Lvl."+str(data[k][0]["lvl"])
+                    astate4='normal'
                     c+=1
                 elif c==4:
                     aname5=k
                     lvl5="Lvl."+str(data[k][0]["lvl"])
+                    astate5='normal'
                     c+=1
                 elif c==5:
                     aname6=k
                     lvl6="Lvl."+str(data[k][0]["lvl"])
+                    astate6='normal'
                     c+=1
                 elif c==6:
                     aname7=k
                     lvl7="Lvl."+str(data[k][0]["lvl"])
+                    astate7='normal'
                     c+=1
     except:
         print()
@@ -211,12 +240,12 @@ canvas.create_text(
     font=("Exo Bold", 20 * -1)
 )
 
-image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
+main_image = PhotoImage(file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
     234.0,
     162.0,
-    image=image_image_8
+    image=main_image,
+    state=astate1
 )
 
 canvas.create_text(
@@ -237,28 +266,22 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname1),
-    relief="flat"
-)
-button_2.place(
-    x=386.0,
-    y=152.0,
-    width=20.0,
-    height=20.0
+main_button = PhotoImage(file=relative_to_assets("button_2.png"))
+
+button_2 = canvas.create_image(
+    386.0,
+    152.0+10,
+    image=main_button,
+    state=astate1
 )
 
-image_image_9 = PhotoImage(
-    file=relative_to_assets("image_9.png"))
+canvas.tag_bind(button_2, "<ButtonPress-1>", lambda event: open_prog(aname1))
+
 image_9 = canvas.create_image(
     234.0,
     189.0,
-    image=image_image_9
+    image=main_image,
+    state=astate2
 )
 
 canvas.create_text(
@@ -279,28 +302,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname2),
-    relief="flat"
-)
-button_3.place(
-    x=386.0,
-    y=179.0,
-    width=20.0,
-    height=20.0
+button_3 = canvas.create_image(
+    386.0,
+    179.0+10,
+    image=main_button,
+    state=astate2
 )
 
-image_image_10 = PhotoImage(
-    file=relative_to_assets("image_10.png"))
+canvas.tag_bind(button_3, "<ButtonPress-1>", lambda event: open_prog(aname2))
+
 image_10 = canvas.create_image(
     234.0,
     216.0,
-    image=image_image_10
+    image=main_image,
+    state=astate3
 )
 
 canvas.create_text(
@@ -321,28 +336,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname3),
-    relief="flat"
-)
-button_4.place(
-    x=386.0,
-    y=206.0,
-    width=20.0,
-    height=20.0
+button_4 = canvas.create_image(
+    386.0,
+    206.0+10,
+    image=main_button,
+    state=astate3
 )
 
-image_image_11 = PhotoImage(
-    file=relative_to_assets("image_11.png"))
+canvas.tag_bind(button_4, "<ButtonPress-1>", lambda event: open_prog(aname3))
+
 image_11 = canvas.create_image(
     234.0,
     243.0,
-    image=image_image_11
+    image=main_image,
+    state=astate4
 )
 
 canvas.create_text(
@@ -363,28 +370,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
-button_5 = Button(
-    image=button_image_5,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname4),
-    relief="flat"
-)
-button_5.place(
-    x=386.0,
-    y=233.0,
-    width=20.0,
-    height=20.0
+button_5 = canvas.create_image(
+    386.0,
+    233.0+10,
+    image=main_button,
+    state=astate4
 )
 
-image_image_12 = PhotoImage(
-    file=relative_to_assets("image_12.png"))
+canvas.tag_bind(button_5, "<ButtonPress-1>", lambda event: open_prog(aname4))
+
 image_12 = canvas.create_image(
     234.0,
     270.0,
-    image=image_image_12
+    image=main_image,
+    state=astate5
 )
 
 canvas.create_text(
@@ -405,28 +404,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_6 = PhotoImage(
-    file=relative_to_assets("button_6.png"))
-button_6 = Button(
-    image=button_image_6,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname5),
-    relief="flat"
-)
-button_6.place(
-    x=386.0,
-    y=260.0,
-    width=20.0,
-    height=20.0
+button_6 = canvas.create_image(
+    386.0,
+    260.0+10,
+    image=main_button,
+    state=astate5
 )
 
-image_image_13 = PhotoImage(
-    file=relative_to_assets("image_13.png"))
+canvas.tag_bind(button_6, "<ButtonPress-1>", lambda event: open_prog(aname5))
+
 image_13 = canvas.create_image(
     234.0,
     297.0,
-    image=image_image_13
+    image=main_image,
+    state=astate5
 )
 
 canvas.create_text(
@@ -447,28 +438,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_7 = PhotoImage(
-    file=relative_to_assets("button_7.png"))
-button_7 = Button(
-    image=button_image_7,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname6),
-    relief="flat"
-)
-button_7.place(
-    x=386.0,
-    y=287.0,
-    width=20.0,
-    height=20.0
+button_7 = canvas.create_image(
+    386.0,
+    287.0+10,
+    image=main_button,
+    state=astate5
 )
 
-image_image_14 = PhotoImage(
-    file=relative_to_assets("image_14.png"))
+canvas.tag_bind(button_7, "<ButtonPress-1>", lambda event: open_prog(aname6))
+
 image_14 = canvas.create_image(
     234.0,
     324.0,
-    image=image_image_14
+    image=main_image,
+    state=astate7
 )
 
 canvas.create_text(
@@ -489,24 +472,18 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
-button_8 = Button(
-    image=button_image_8,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(aname7),
-    relief="flat"
-)
-button_8.place(
-    x=386.0,
-    y=314.0,
-    width=20.0,
-    height=20.0
+button_8 = canvas.create_image(
+    386.0,
+    314.0+10,
+    image=main_button,
+    state=astate7
 )
 
-pname1=pname2=pname3=pname4=pname5='-'
-plvl1=plvl2=plvl3=plvl4=plvl5='??'
+canvas.tag_bind(button_8, "<ButtonPress-1>", lambda event: open_prog(aname7))
+
+pname1=pname2=pname3=pname4=pname5=''
+plvl1=plvl2=plvl3=plvl4=plvl5=''
+pstate1=pstate2=pstate3=pstate4=pstate5='hidden'
 
 with open("Files/Player Data/Skill.json", 'r') as fson:
     c=0
@@ -518,41 +495,45 @@ with open("Files/Player Data/Skill.json", 'r') as fson:
                 if c==0:
                     pname1=k
                     plvl1="Lvl."+str(data[k][0]["lvl"])
+                    pstate1='normal'
                     c+=1
                 elif c==1:  
                     pname2=k
                     plvl2="Lvl."+str(data[k][0]["lvl"])
+                    pstate2='normal'
                     c+=1
                 elif c==2:
                     pname3=k
                     plvl3="Lvl."+str(data[k][0]["lvl"])
+                    pstate3='normal'
                     c+=1
                 elif c==3:
                     pname4=k
                     plvl4="Lvl."+str(data[k][0]["lvl"])
+                    pstate4='normal'
                     c+=1
                 elif c==4:
                     pname5=k
                     plvl5="Lvl."+str(data[k][0]["lvl"])
+                    pstate5='normal'
                     c+=1
     except:
         print()
 
 canvas.create_text(
     59.0,
-    346.0,
+    346.0-2,
     anchor="nw",
     text="PASSIVE SKILLS",
     fill="#FFFFFF",
     font=("Exo Bold", 20 * -1)
 )
 
-image_image_15 = PhotoImage(
-    file=relative_to_assets("image_15.png"))
 image_15 = canvas.create_image(
     234.0,
     382.0,
-    image=image_image_15
+    image=main_image,
+    state=pstate1
 )
 
 canvas.create_text(
@@ -573,28 +554,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_9 = PhotoImage(
-    file=relative_to_assets("button_9.png"))
-button_9 = Button(
-    image=button_image_9,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(pname1),
-    relief="flat"
-)
-button_9.place(
-    x=386.0,
-    y=372.0,
-    width=20.0,
-    height=20.0
+button_9 = canvas.create_image(
+    386.0,
+    372.0+10,
+    image=main_button,
+    state=pstate1
 )
 
-image_image_16 = PhotoImage(
-    file=relative_to_assets("image_16.png"))
+canvas.tag_bind(button_9, "<ButtonPress-1>", lambda event: open_prog(pname1))
+
 image_16 = canvas.create_image(
     234.0,
     409.0,
-    image=image_image_16
+    image=main_image,
+    state=pstate2
 )
 
 canvas.create_text(
@@ -615,28 +588,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_10 = PhotoImage(
-    file=relative_to_assets("button_10.png"))
-button_10 = Button(
-    image=button_image_10,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(pname2),
-    relief="flat"
-)
-button_10.place(
-    x=386.0,
-    y=399.0,
-    width=20.0,
-    height=20.0
+button_10 = canvas.create_image(
+    386.0,
+    399.0+10,
+    image=main_button,
+    state=pstate2
 )
 
-image_image_17 = PhotoImage(
-    file=relative_to_assets("image_17.png"))
+canvas.tag_bind(button_10, "<ButtonPress-1>", lambda event: open_prog(pname2))
+
 image_17 = canvas.create_image(
     234.0,
     436.0,
-    image=image_image_17
+    image=main_image,
+    state=pstate3
 )
 
 canvas.create_text(
@@ -657,28 +622,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_11 = PhotoImage(
-    file=relative_to_assets("button_11.png"))
-button_11 = Button(
-    image=button_image_11,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(pname3),
-    relief="flat"
-)
-button_11.place(
-    x=386.0,
-    y=426.0,
-    width=20.0,
-    height=20.0
+button_11 = canvas.create_image(
+    386.0,
+    426.0+10,
+    image=main_button,
+    state=pstate3
 )
 
-image_image_18 = PhotoImage(
-    file=relative_to_assets("image_18.png"))
+canvas.tag_bind(button_11, "<ButtonPress-1>", lambda event: open_prog(pname3))
+
 image_18 = canvas.create_image(
     234.0,
     463.0,
-    image=image_image_18
+    image=main_image,
+    state=pstate4
 )
 
 canvas.create_text(
@@ -699,28 +656,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_12 = PhotoImage(
-    file=relative_to_assets("button_12.png"))
-button_12 = Button(
-    image=button_image_12,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(pname4),
-    relief="flat"
-)
-button_12.place(
-    x=386.0,
-    y=453.0,
-    width=20.0,
-    height=20.0
+button_12 = canvas.create_image(
+    386.0,
+    453.0+10,
+    image=main_button,
+    state=pstate4
 )
 
-image_image_19 = PhotoImage(
-    file=relative_to_assets("image_19.png"))
+canvas.tag_bind(button_12, "<ButtonPress-1>", lambda event: open_prog(pname4))
+
 image_19 = canvas.create_image(
     234.0,
     490.0,
-    image=image_image_19
+    image=main_image,
+    state=pstate5
 )
 
 canvas.create_text(
@@ -741,24 +690,18 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_13 = PhotoImage(
-    file=relative_to_assets("button_13.png"))
-button_13 = Button(
-    image=button_image_13,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(pname5),
-    relief="flat"
-)
-button_13.place(
-    x=386.0,
-    y=480.0,
-    width=20.0,
-    height=20.0
+button_13 = canvas.create_image(
+    386.0,
+    480.0+10,
+    image=main_button,
+    state=pstate5
 )
 
-jname1=jname2=jname3=jname4='-'
-jlvl1=jlvl2=jlvl3=jlvl4='??'
+canvas.tag_bind(button_13, "<ButtonPress-1>", lambda event: open_prog(pname5))
+
+jname1=jname2=jname3=jname4=''
+jlvl1=jlvl2=jlvl3=jlvl4=''
+jstate1=jstate2=jstate3=jstate4='hidden'
 
 with open("Files/Player Data/Skill.json", 'r') as fson:
     c=0
@@ -770,18 +713,22 @@ with open("Files/Player Data/Skill.json", 'r') as fson:
                 if c==0:
                     jname1=k
                     jvl1="Lvl."+str(data[k][0]["lvl"])
+                    jstate1='normal'
                     c+=1
                 elif c==1:
                     jname2=k
                     jlvl2="Lvl."+str(data[k][0]["lvl"])
+                    jstate2='normal'
                     c+=1
                 elif c==2:
                     jname3=k
                     jlvl3="Lvl."+str(data[k][0]["lvl"])
+                    jstate3='normal'
                     c+=1
                 elif c==3:
                     jname4=k
                     jlvl4="Lvl."+str(data[k][0]["lvl"])
+                    jstate4='normal'
                     c+=1
     except:
         print()
@@ -795,12 +742,11 @@ canvas.create_text(
     font=("Exo Bold", 20 * -1)
 )
 
-image_image_20 = PhotoImage(
-    file=relative_to_assets("image_20.png"))
 image_20 = canvas.create_image(
     234.0,
     549.0,
-    image=image_image_20
+    image=main_image,
+    state=jstate1
 )
 
 canvas.create_text(
@@ -821,28 +767,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_14 = PhotoImage(
-    file=relative_to_assets("button_14.png"))
-button_14 = Button(
-    image=button_image_14,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(jname1),
-    relief="flat"
-)
-button_14.place(
-    x=386.0,
-    y=539.0,
-    width=20.0,
-    height=20.0
+button_14 = canvas.create_image(
+    386.0,
+    539.0+10,
+    image=main_button,
+    state=jstate1
 )
 
-image_image_21 = PhotoImage(
-    file=relative_to_assets("image_21.png"))
+canvas.tag_bind(button_14, "<ButtonPress-1>", lambda event: open_prog(jname1))
+
 image_21 = canvas.create_image(
     234.0,
     576.0,
-    image=image_image_21
+    image=main_image,
+    state=jstate2
 )
 
 canvas.create_text(
@@ -863,28 +801,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_15 = PhotoImage(
-    file=relative_to_assets("button_15.png"))
-button_15 = Button(
-    image=button_image_15,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(jname2),
-    relief="flat"
-)
-button_15.place(
-    x=386.0,
-    y=566.0,
-    width=20.0,
-    height=20.0
+button_15 = canvas.create_image(
+    386.0,
+    566.0+10,
+    image=main_button,
+    state=jstate2
 )
 
-image_image_22 = PhotoImage(
-    file=relative_to_assets("image_22.png"))
+canvas.tag_bind(button_15, "<ButtonPress-1>", lambda event: open_prog(jname2))
+
 image_22 = canvas.create_image(
     234.0,
     603.0,
-    image=image_image_22
+    image=main_image,
+    state=jstate3
 )
 
 canvas.create_text(
@@ -905,28 +835,20 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_16 = PhotoImage(
-    file=relative_to_assets("button_16.png"))
-button_16 = Button(
-    image=button_image_16,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(jname3),
-    relief="flat"
-)
-button_16.place(
-    x=386.0,
-    y=593.0,
-    width=20.0,
-    height=20.0
+button_16 = canvas.create_image(
+    386.0,
+    593.0+10,
+    image=main_button,
+    state=jstate3
 )
 
-image_image_23 = PhotoImage(
-    file=relative_to_assets("image_23.png"))
+canvas.tag_bind(button_16, "<ButtonPress-1>", lambda event: open_prog(jname3))
+
 image_23 = canvas.create_image(
     234.0,
     630.0,
-    image=image_image_23
+    image=main_image,
+    state=jstate4
 )
 
 canvas.create_text(
@@ -947,21 +869,14 @@ canvas.create_text(
     font=("Montserrat Bold", 18 * -1)
 )
 
-button_image_17 = PhotoImage(
-    file=relative_to_assets("button_17.png"))
-button_17 = Button(
-    image=button_image_17,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_prog(jname4),
-    relief="flat"
+button_17 = canvas.create_image(
+    386.0,
+    620.0+10,
+    image=main_button,
+    state=jstate4
 )
-button_17.place(
-    x=386.0,
-    y=620.0,
-    width=20.0,
-    height=20.0
-)
+
+canvas.tag_bind(button_17, "<ButtonPress-1>", lambda event: open_prog(jname4))
 
 side = PhotoImage(file=relative_to_assets("blue.png"))
 if job.upper()!="NONE":
@@ -1023,15 +938,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 if setting_data["Settings"]["Performernce (ANIME):"] != "True":

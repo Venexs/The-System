@@ -13,9 +13,22 @@ import ujson
 import subprocess
 import cv2
 from PIL import Image, ImageTk
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+project_root = os.path.abspath(os.path.join(current_dir, '../../'))
+
+sys.path.insert(0, project_root)
+
+import thesystem.system
+import thesystem.misc as misc
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame1")
+
+
 
 
 def relative_to_assets(path: str) -> Path:
@@ -80,6 +93,7 @@ def confirm():
 
     data_main[name][0]["pl_point"]=pl_points
     if level_up==True:
+        thesystem.system.rank_up_skill(name, lvl)
         data_main[name][0]["lvl"]=lvl+1
 
     with open("Files/Player Data/Skill.json", 'w') as fin_skill:
@@ -100,7 +114,10 @@ window = Tk()
 
 window.geometry("450x163")
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 #window.update()

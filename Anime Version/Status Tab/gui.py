@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, '../../'))
@@ -68,17 +69,13 @@ def animate_close():
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
-
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 # Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (488, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (609, 33))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (488, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (609, 33), job, type_="bottom")
+
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -182,6 +179,10 @@ def title_color(name):
 canvas = Canvas(window, bg="#FFFFFF", height=716, width=488, bd=0, highlightthickness=0, relief="ridge")
 canvas.place(x=0, y=0)
 
+def fatigue_window():
+    subprocess.Popen(['python', 'Files/Mod/default/sfx_button.py'])
+    subprocess.Popen(['python', 'Anime Version/Fatigue/gui.py'])
+
 def start_move(event):
     window.lastx, window.lasty = event.widget.winfo_pointerxy()
 
@@ -196,7 +197,7 @@ def move_window(event):
 
 # Background image and character attributes
 canvas.create_image(430.0, 363.0, image=PhotoImage(file=relative_to_assets("image_1.png")))
-player = thesystem.system.VideoPlayer(canvas, presets_data["Anime"][video], 430.0, 363.0, resize_factor=0.3, pause_duration=0.7)
+player = thesystem.system.FastVideoPlayer(canvas, np.load(presets_data["Anime"][video]), 430.0, 363.0, resize_factor=0.3, pause_duration=0.7)
 
 # Display Character Status
 name, hp, mp, lvl = status_data["status"][0]["name"].upper(), status_data["status"][0]["hp"], status_data["status"][0]["mp"], status_data["status"][0]["level"]
@@ -222,7 +223,7 @@ for i, stat in enumerate(stat_attributes):
     position = (104 if i < 3 else 282, 392 + (i % 3) * 55)
 
     stat_text_widgets[stat] = canvas.create_text(position, anchor="nw", text=f"{value:03d}", fill="#FFFFFF", font=("Montserrat SemiBold", 20 * -1))
-    canvas.create_text(position[0] + 40, position[1] + 5, anchor="nw", text=f"({thesystem.system.sign(buff)+thesystem.system.pos_fix(buff)})", fill="#34FF48", font=("Montserrat Regular", 13 * -1))
+    canvas.create_text(position[0] + 40, position[1] + 5, anchor="nw", text=f"({thesystem.system.sign(buff)+thesystem.system.pos_fix(thesystem.system.equipment_value_plus(buff))})", fill="#34FF48", font=("Montserrat Regular", 13 * -1))
 
 
 image_image_2 = PhotoImage(
@@ -290,6 +291,8 @@ def update_stat(stat_name):
             status_data["avail_eq"][0]["str_based" if stat_name in ["str", "agi", "vit"] else "int_based"] -= 1
             if stat_name=='vit':
                 status_data["status"][0]["fatigue_max"]+=20
+            elif stat_name=='int':
+                status_data["status"][0]["mp"]+=5
             with open("Files/Player Data/Status.json", 'w') as fson:
                 ujson.dump(status_data, fson, indent=6)
             with open("Files/Player Data/Ability_Check.json", 'w') as fin_ability_check_file:
@@ -397,16 +400,18 @@ image_11 = canvas.create_image(
     image=image_image_11
 )
 
+gap=20
+
 image_image_12 = PhotoImage(
     file=relative_to_assets("image_12.png"))
 image_12 = canvas.create_image(
-    94.0,
+    94.0-gap,
     315.0,
     image=image_image_12
 )
 
 canvas.create_text(
-    113.0,
+    113.0-gap,
     301.0,
     anchor="nw",
     text=hp,
@@ -417,13 +422,13 @@ canvas.create_text(
 image_image_13 = PhotoImage(
     file=relative_to_assets("image_13.png"))
 image_13 = canvas.create_image(
-    190.0,
+    190.0-gap,
     315.0,
     image=image_image_13
 )
 
 canvas.create_text(
-    205.0,
+    205.0-gap,
     301.0,
     anchor="nw",
     text=mp,
@@ -434,14 +439,14 @@ canvas.create_text(
 image_image_23 = PhotoImage(
     file=relative_to_assets("image_23.png"))
 image_23 = canvas.create_image(
-    302.0,
+    302.0-gap,
     315.0,
     image=image_image_23
 )
 
 fat_val = load_fatigue_value()
 fatigue_val=canvas.create_text(
-    347.0,
+    347.0-gap,
     301.0,
     anchor="nw",
     text=f"{int(fat_val)}%",
@@ -682,15 +687,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 if setting_data["Settings"]["Performernce (ANIME):"] != "True":
@@ -733,6 +739,16 @@ image_24 = canvas.create_image(
 )
 
 canvas.tag_bind(image_24, "<ButtonPress-1>", lambda event: thesystem.system.info_open("ABI Points"))
+
+image_image_25 = PhotoImage(
+    file=relative_to_assets("image_25.png")) 
+image_25 = canvas.create_image(
+    384.0,
+    313.9999694824219,
+    image=image_image_25
+)
+
+canvas.tag_bind(image_25, "<ButtonPress-1>", lambda event: fatigue_window())
 
 start_update_thread(canvas, fatigue_val)
 window.resizable(False, False)

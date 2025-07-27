@@ -1,14 +1,15 @@
 {
     "Active Theme":["Anime"],
     "Anime":{
-        "Video":"Files/Mod/default/Anime/0001-0200.mp4",
-        "Alt Video":"Files/Mod/default/Anime/alt1.mp4",
+        "Video":"Files/Mod/default/Anime/default.npy",
+        "Alt Video":"Files/Mod/default/Anime/alt1.npy",
         
         "Close SFX":"Files/Mod/default/Anime/Close.wav",
         "Open SFX":"Files/Mod/default/Anime/Open.wav",
         "Glitch SFX":"Files/Mod/default/Anime/Glitch.wav",
         "Point SFX":"Files/Mod/default/Anime/Point Add.wav",
         "Button SFX":"Files/Mod/default/Anime/Button Press.wav",
+        "Error SFX":"Files/Mod/default/Anime/Error.wav",
 
         "Mid Size Screen":"Files/Mod/default/Anime/Mid Size Screen",
         "Message Box":"Files/Mod/default/Anime/Message Box",
@@ -21,12 +22,13 @@
     },
 
     "Manwha":{
-        "Video":"Files/Mod/default/Manwha/0001-1000.mp4",
+        "Video":"Files/Mod/default/Manwha/0001-1000.npy",
         "Close SFX":"Files/Mod/default/Manwha/Close.wav",
         "Open SFX":"Files/Mod/default/Manwha/Open.wav",
         "Glitch SFX":"Files/Mod/default/Manwha/Glitch.wav",
         "Point SFX":"Files/Mod/default/Manwha/Point Add.wav",
         "Button SFX":"Files/Mod/default/Manwha/Button Press.wav",
+        "Error SFX":"Files/Mod/default/Anime/Error.wav",
 
         "Mid Size Screen":"Files/Mod/default/Manwha/Mid Size Screen",
 
@@ -103,14 +105,24 @@
         "Update":
         [
             "Files/Mod/default/messages/Update.png"
+        ],
+        "Dead":
+        [
+            "Files/Mod/default/messages/Dead.png"
+        ],
+        "Will Die":
+        [
+            "Files/Mod/default/messages/Will die.png"
         ]
+        
     },
 
     "Help":{
         "ABI Points":"Files/Mod/default/Help/Status0.png",
         "Dungeons":"Files/Mod/default/Help/Dungeons.png",
         "Equipment":"Files/Mod/default/Help/Equipment.png",
-        "Shadoow Realm":"Files/Mod/default/Help/Shadow Realm.png"
+        "Shadoow Realm":"Files/Mod/default/Help/Shadow Realm.png",
+        "Voice":"Files/Mod/default/Help/voice.png"
 
     }
 }

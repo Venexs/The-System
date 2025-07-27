@@ -16,6 +16,7 @@ import cv2
 from PIL import Image, ImageTk
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -72,22 +73,20 @@ thesystem.system.make_window_transparent(window,transp_clr)
 with open("Files/Player Data/Settings.json", 'r') as settings_open:
     setting_data=ujson.load(settings_open)
 
-if setting_data["Settings"]["Performernce (ANIME):"] == "True":
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(2).zfill(4)}.png"]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(2).zfill(4)}.png"]
-
-else:
-    top_images = [f"thesystem/{all_prev}top_bar/{top_val}{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-    bottom_images = [f"thesystem/{all_prev}bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 4)]
-
 # Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (580, 38))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (580, 33))
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (580, 38), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (580, 33), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -146,7 +145,8 @@ button_image_1 = PhotoImage(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"][video]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 360.0, resize_factor=0.9, pause_duration=1.2)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 277.0, 360.0, resize_factor=0.9, pause_duration=1.2)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -176,10 +176,11 @@ with open("Files/Player Data/Active_Quests.json", 'r') as fson:
     main_data=ujson.load(fson)
     main_keys=list(main_data.keys())
 
-name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name13='-'
-rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13='-'
-type1=type2=type3=type4=type5=type6=type7=type8=type9=type10=type11=type12=type13='-'
-id1=id2=id3=id4=id5=id6=id7=id8=id9=id10=id11=id12=id13='-'
+name1=name2=name3=name4=name5=name6=name7=name8=name9=name10=name11=name12=name13=''
+rank1=rank2=rank3=rank4=rank5=rank6=rank7=rank8=rank9=rank10=rank11=rank12=rank13=''
+type1=type2=type3=type4=type5=type6=type7=type8=type9=type10=type11=type12=type13=''
+id1=id2=id3=id4=id5=id6=id7=id8=id9=id10=id11=id12=id13=''
+state1=state2=state3=state4=state5=state6=state7=state8=state9=state10=state11=state12=state13='hidden'
 
 c=-1
 
@@ -189,14 +190,16 @@ try:
     rank1=main_data[main_keys[c+1]][0]["rank"]
     type1=main_data[main_keys[c+1]][0]["type"]
     id1=main_data[main_keys[c+1]][0]["ID"]
+    state1='normal'
 except:
-    name1=rank1=type1=id1='-'
+    name1=rank1=type1=id1=''
 
 image_image_5=thesystem.quests.get_quest_image(rank1,type1)
 image_5 = canvas.create_image(
     289.0,
     196.0,
-    image=image_image_5
+    image=image_image_5,
+    state=state1
 )
 
 canvas.create_text(
@@ -215,14 +218,16 @@ try:
     rank2=main_data[main_keys[c+1]][0]["rank"]
     type2=main_data[main_keys[c+1]][0]["type"]
     id2=main_data[main_keys[c+1]][0]["ID"]
+    state2='normal'
 except:
-    name2=rank2=type2=id2='-'
+    name2=rank2=type2=id2=''
 
 image_image_6=thesystem.quests.get_quest_image(rank2,type2)
 image_6 = canvas.create_image(
     289.0,
     235.0,
-    image=image_image_6
+    image=image_image_6,
+    state=state2
 )
 
 canvas.create_text(
@@ -241,14 +246,16 @@ try:
     rank3=main_data[main_keys[c+1]][0]["rank"]
     type3=main_data[main_keys[c+1]][0]["type"]
     id3=main_data[main_keys[c+1]][0]["ID"]
+    state3='normal'
 except:
-    name3=rank3=type3=id3='-'
+    name3=rank3=type3=id3=''
 
 image_image_7=thesystem.quests.get_quest_image(rank3,type3)
 image_7 = canvas.create_image(
     289.0,
     274.0,
-    image=image_image_7
+    image=image_image_7,
+    state=state3
 )
 
 canvas.create_text(
@@ -267,14 +274,16 @@ try:
     rank4=main_data[main_keys[c+1]][0]["rank"]
     type4=main_data[main_keys[c+1]][0]["type"]
     id4=main_data[main_keys[c+1]][0]["ID"]
+    state4='normal'
 except:
-    name4=rank4=type4=id4='-'
+    name4=rank4=type4=id4=''
 
 image_image_8=thesystem.quests.get_quest_image(rank4,type4)
 image_8 = canvas.create_image(
     289.0,
     313.0,
-    image=image_image_8
+    image=image_image_8,
+    state=state4
 )
 
 canvas.create_text(
@@ -293,14 +302,16 @@ try:
     rank5=main_data[main_keys[c+1]][0]["rank"]
     type5=main_data[main_keys[c+1]][0]["type"]
     id5=main_data[main_keys[c+1]][0]["ID"]
+    state5='normal'
 except:
-    name5=rank5=type5=id5='-'
+    name5=rank5=type5=id5=''
 
 image_image_9=thesystem.quests.get_quest_image(rank5,type5)
 image_9 = canvas.create_image(
     289.0,
     352.0,
-    image=image_image_9
+    image=image_image_9,
+    state=state5
 )
 
 canvas.create_text(
@@ -319,14 +330,16 @@ try:
     rank6=main_data[main_keys[c+1]][0]["rank"]
     type6=main_data[main_keys[c+1]][0]["type"]
     id6=main_data[main_keys[c+1]][0]["ID"]
+    state6='normal'
 except:
-    name6=rank6=type6=id6='-'
+    name6=rank6=type6=id6=''
 
 image_image_10=thesystem.quests.get_quest_image(rank6,type6)
 image_10 = canvas.create_image(
     289.0,
     391.0,
-    image=image_image_10
+    image=image_image_10,
+    state=state6
 )
 
 canvas.create_text(
@@ -345,14 +358,16 @@ try:
     rank7=main_data[main_keys[c+1]][0]["rank"]
     type7=main_data[main_keys[c+1]][0]["type"]
     id7=main_data[main_keys[c+1]][0]["ID"]
+    state7='normal'
 except:
-    name7=rank7=type7=id7='-'
+    name7=rank7=type7=id7=''
 
 image_image_11=thesystem.quests.get_quest_image(rank7,type7)
 image_11 = canvas.create_image(
     289.0,
     430.0,
-    image=image_image_11
+    image=image_image_11,
+    state=state7
 )
 
 canvas.create_text(
@@ -371,14 +386,16 @@ try:
     rank8=main_data[main_keys[c+1]][0]["rank"]
     type8=main_data[main_keys[c+1]][0]["type"]
     id8=main_data[main_keys[c+1]][0]["ID"]
+    state8='normal'
 except:
-    name8=rank8=type8=id8='-'
+    name8=rank8=type8=id8=''
 
 image_image_12=thesystem.quests.get_quest_image(rank8,type8)
 image_12 = canvas.create_image(
     289.0,
     469.0,
-    image=image_image_12
+    image=image_image_12,
+    state=state8
 )
 
 canvas.create_text(
@@ -397,14 +414,16 @@ try:
     rank9=main_data[main_keys[c+1]][0]["rank"]
     type9=main_data[main_keys[c+1]][0]["type"]
     id9=main_data[main_keys[c+1]][0]["ID"]
+    state9='normal'
 except:
-    name9=rank9=type9=id9='-'
+    name9=rank9=type9=id9=''
 
 image_image_13=thesystem.quests.get_quest_image(rank9,type9)
 image_13 = canvas.create_image(
     289.0,
     508.0,
-    image=image_image_13
+    image=image_image_13,
+    state=state9
 )
 
 canvas.create_text(
@@ -423,14 +442,16 @@ try:
     rank10=main_data[main_keys[c+1]][0]["rank"]
     type10=main_data[main_keys[c+1]][0]["type"]
     id10=main_data[main_keys[c+1]][0]["ID"]
+    state10='normal'
 except:
-    name10=rank10=type10=id10='-'
+    name10=rank10=type10=id10=''
 
 image_image_14=thesystem.quests.get_quest_image(rank10,type10)
 image_14 = canvas.create_image(
     289.0,
     547.0,
-    image=image_image_14
+    image=image_image_14,
+    state=state10
 )
 
 canvas.create_text(
@@ -449,14 +470,16 @@ try:
     rank11=main_data[main_keys[c+1]][0]["rank"]
     type11=main_data[main_keys[c+1]][0]["type"]
     id11=main_data[main_keys[c+1]][0]["ID"]
+    state11='normal'
 except:
-    name11=rank11=type11=id11='-'
+    name11=rank11=type11=id11=''
 
 image_image_15=thesystem.quests.get_quest_image(rank11,type11)
 image_15 = canvas.create_image(
     289.0,
     586.0,
-    image=image_image_15
+    image=image_image_15,
+    state=state11
 )
 
 canvas.create_text(
@@ -475,14 +498,16 @@ try:
     rank12=main_data[main_keys[c+1]][0]["rank"]
     type12=main_data[main_keys[c+1]][0]["type"]
     id12=main_data[main_keys[c+1]][0]["ID"]
+    state12='normal'
 except:
-    name12=rank12=type12=id12='-'
+    name12=rank12=type12=id12=''
 
 image_image_16=thesystem.quests.get_quest_image(rank12,type12)
 image_16 = canvas.create_image(
     289.0,
     625.0,
-    image=image_image_16
+    image=image_image_16,
+    state=state12
 )
 
 canvas.create_text(
@@ -501,14 +526,16 @@ try:
     rank13=main_data[main_keys[c+1]][0]["rank"]
     type13=main_data[main_keys[c+1]][0]["type"]
     id13=main_data[main_keys[c+1]][0]["ID"]
+    state13='normal'
 except:
-    name13=rank13=type13=id13='-'
+    name13=rank13=type13=id13=''
 
 image_image_17=thesystem.quests.get_quest_image(rank13,type13)
 image_17 = canvas.create_image(
     289.0,
     664.0,
-    image=image_image_17
+    image=image_image_17,
+    state=state13
 )
 
 canvas.create_text(
@@ -519,187 +546,37 @@ canvas.create_text(
     fill="#FFFFFF",
     font=("Montserrat", 18 * -1)
 )
+# List of names, ids, and types
+names = [name1, name2, name3, name4, name5, name6, name7, name8, name9, name10, name11, name12, name13]
+ids = [id1, id2, id3, id4, id5, id6, id7, id8, id9, id10, id11, id12, id13]
+types = [type1, type2, type3, type4, type5, type6, type7, type8, type9, type10, type11, type12, type13]
+states = [state1, state2, state3, state4, state5, state6, state7, state8, state9, state10, state11, state12, state13]
 
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name1, id1, type1, window),
-    relief="flat"
-)
-button_1.place(
-    x=465.0,
-    y=184.0,
-    width=24.0,
-    height=24.0
-)
-button_2 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name2, id2, type2, window),
-    relief="flat"
-)
-button_2.place(
-    x=465.0,
-    y=223.0,
-    width=24.0,
-    height=24.0
-)
+# Common placement values
+x_pos = 475.0
+y_start = 196.0
+height = 24.0
+spacing = 39.0  # Distance between buttons (184, 223, ..., 652)
 
-button_3 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name3, id3, type3, window),
-    relief="flat"
-)
-button_3.place(
-    x=465.0,
-    y=262.0,
-    width=24.0,
-    height=24.0
-)
+# Create and place buttons in a loop
+buttons = []
+for i in range(13):
+    y_pos = y_start + i * spacing
 
-button_4 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name4, id4, type4, window),
-    relief="flat"
-)
-button_4.place(
-    x=465.0,
-    y=301.0,
-    width=24.0,
-    height=24.0
-)
+    btn = canvas.create_image(
+        x_pos, y_pos,  # ✅ positional arguments only
+        image=button_image_1,
+        state=states[i]  # assumes states is a list like ["normal", "normal", ...]
+    )
 
-button_5 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name5, id5, type5, window),
-    relief="flat"
-)
-button_5.place(
-    x=465.0,
-    y=340.0,
-    width=24.0,
-    height=24.0
-)
+    # ✅ capture values properly in lambda using default arguments
+    canvas.tag_bind(
+        btn, "<ButtonPress-1>",
+        lambda event, n=names[i], id_=ids[i], t=types[i]: thesystem.quests.open_write_quest(n, id_, t, window)
+    )
 
-button_6 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name6, id6, type6, window),
-    relief="flat"
-)
-button_6.place(
-    x=465.0,
-    y=379.0,
-    width=24.0,
-    height=24.0
-)
+    buttons.append(btn)
 
-button_7 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name7, id7, type7, window),
-    relief="flat"
-)
-button_7.place(
-    x=465.0,
-    y=418.0,
-    width=24.0,
-    height=24.0
-)
-
-button_8 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name8, id8, type8, window),
-    relief="flat"
-)
-button_8.place(
-    x=465.0,
-    y=457.0,
-    width=24.0,
-    height=24.0
-)
-
-button_9 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name9, id9, type9, window),
-    relief="flat"
-)
-button_9.place(
-    x=465.0,
-    y=496.0,
-    width=24.0,
-    height=24.0
-)
-
-button_10 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name10, id10, type10, window),
-    relief="flat"
-)
-button_10.place(
-    x=465.0,
-    y=535.0,
-    width=24.0,
-    height=24.0
-)
-
-button_11 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name11, id11, type11, window),
-    relief="flat"
-)
-button_11.place(
-    x=465.0,
-    y=574.0,
-    width=24.0,
-    height=24.0
-)
-
-button_12 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name12, id12, type12, window),
-    relief="flat"
-)
-button_12.place(
-    x=465.0,
-    y=613.0,
-    width=24.0,
-    height=24.0
-)
-
-button_13 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: thesystem.quests.open_write_quest(name13, id13, type13, window),
-    relief="flat"
-)
-button_13.place(
-    x=465.0,
-    y=652.0,
-    width=24.0,
-    height=24.0
-)
 
 button_image_14 = PhotoImage(
     file=relative_to_assets("button_14.png"))
@@ -813,15 +690,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 # Start the animation

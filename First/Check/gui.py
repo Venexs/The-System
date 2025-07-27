@@ -16,6 +16,7 @@ from PIL import Image, ImageTk
 import time
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,12 +41,24 @@ initial_height = 0
 target_height = 449
 window_width = 696
 
-top_images = [f"thesystem/top_bar/dailyquest.py{str(i).zfill(4)}.png" for i in range(2, 501, 2)]
-bottom_images = [f"thesystem/bottom_bar/{str(i).zfill(4)}.png" for i in range(2, 501, 2)]
+job=thesystem.misc.return_status()["status"][1]["job"]
 
-# Preload top and bottom images
-top_preloaded_images = thesystem.system.preload_images(top_images, (695, 39))
-bottom_preloaded_images = thesystem.system.preload_images(bottom_images, (702, 36))
+top_val='dailyquest.py'
+all_prev=''
+video='Video'
+transp_clr='#0C679B'
+
+if job!='None':
+    top_val=''
+    all_prev='alt_'
+    video='Alt Video'
+    transp_clr='#652AA3'
+
+top_images = f"thesystem/{all_prev}top_bar"
+bottom_images = f"thesystem/{all_prev}bottom_bar"
+
+top_preloaded_images = thesystem.system.load_or_cache_images(top_images, (695, 39), job, type_="top")
+bottom_preloaded_images = thesystem.system.load_or_cache_images(bottom_images, (702, 36), job, type_="bottom")
 
 subprocess.Popen(['python', 'Files/Mod/default/sfx.py'])
 
@@ -54,7 +67,10 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=2
 thesystem.system.make_window_transparent(window, '#0C679B')
 thesystem.system.center_window(window,window_width,target_height)
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -121,7 +137,7 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Anime"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 478.0, 313.0)
+player = thesystem.system.FastVideoPlayer(canvas, np.load(video_path), 478.0, 313.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
@@ -310,15 +326,16 @@ step,delay=1,1
 def update_images():
     global image_index, bot_image_index
 
-    # Update top image
     image_index = (image_index + 1) % len(top_preloaded_images)
-    canvas.itemconfig(top_image, image=top_preloaded_images[image_index])
+    top_img = top_preloaded_images[image_index]
+    canvas.itemconfig(top_image, image=top_img)
+    canvas.top_img = top_img
 
-    # Update bottom image
     bot_image_index = (bot_image_index + 1) % len(bottom_preloaded_images)
-    canvas.itemconfig(bottom_image, image=bottom_preloaded_images[bot_image_index])
+    bot_img = bottom_preloaded_images[bot_image_index]
+    canvas.itemconfig(bottom_image, image=bot_img)
+    canvas.bot_img = bot_img
 
-    # Schedule next update (24 FPS)
     window.after(1000 // 24, update_images)
 
 update_images()

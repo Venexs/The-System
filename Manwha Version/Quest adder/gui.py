@@ -16,6 +16,7 @@ from PIL import Image, ImageTk
 import random
 import sys
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -45,7 +46,10 @@ thesystem.system.make_window_transparent(window)
 thesystem.system.animate_window_open(window, target_height, window_width, step=30, delay=1)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
@@ -87,7 +91,8 @@ image_1 = canvas.create_image(
 with open("Files/Mod/presets.json", 'r') as pres_file:
     pres_file_data=ujson.load(pres_file)
     video_path=pres_file_data["Manwha"]["Video"]
-player = thesystem.system.VideoPlayer(canvas, video_path, 277.0, 190.0)
+    preloaded_frames=np.load(video_path)
+player = thesystem.system.FastVideoPlayer(canvas, preloaded_frames, 277.0, 190.0)
 
 image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))

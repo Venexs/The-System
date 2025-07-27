@@ -45,7 +45,10 @@ thesystem.system.animate_window_open(window, target_height, window_width, step=2
 thesystem.system.center_window(window,window_width,target_height)
 
 window.configure(bg = "#FFFFFF")
-window.attributes('-alpha',0.8)
+set_data=thesystem.misc.return_settings()
+transp_value=set_data["Settings"]["Transparency"]
+
+window.attributes('-alpha',transp_value)
 window.overrideredirect(True)
 window.wm_attributes("-topmost", True)
 
