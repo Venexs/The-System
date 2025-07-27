@@ -1735,7 +1735,7 @@ def fix_7x():
             ujson.dump(skill_data, skill_file, indent=6)
 
         with open("Files/Data/Dungeon_Boss_List.json") as data_dungeon_boss:
-            dunegon_boss_data={{
+            dunegon_boss_data={
                     "Red Ants":{
                         "rank":"A",
                         "type":"Normal",
@@ -2288,7 +2288,6 @@ def fix_7x():
                         "swarm": "No",
                         "XP": 60
                     }
-                }
                 }
 
             ujson.dump(dunegon_boss_data, data_dungeon_boss, indent=5)
