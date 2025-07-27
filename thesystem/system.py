@@ -2309,7 +2309,7 @@ def fix_7x():
                     continue  # Skip malformed entries
 
         with open("Files/Player Data/Skill.json", "w") as pl_skill_file_write:
-            ujson.dump(pl_skill_file_write, file_a, indent=6)
+            ujson.dump(file_a, pl_skill_file_write, indent=6)
 
         os.remove("thesystem/temp 7x1.txt")
 
