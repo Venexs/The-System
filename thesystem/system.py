@@ -1522,7 +1522,7 @@ def fix_7x():
                         "Microphone": "False"
                     }
                 }
-            ujson.dump(fson, data, indent=3)
+            ujson.dump(data, fson, indent=3)
 
         with open("Files/Data/Skill_List.json", "w") as skill_file:
             skill_data={
