@@ -1734,7 +1734,7 @@ def fix_7x():
 
             ujson.dump(skill_data, skill_file, indent=6)
 
-        with open("Files/Data/Dungeon_Boss_List.json") as data_dungeon_boss:
+        with open("Files/Data/Dungeon_Boss_List.json", "w") as data_dungeon_boss:
             dunegon_boss_data={
                     "Red Ants":{
                         "rank":"A",
