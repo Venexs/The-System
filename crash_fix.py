@@ -73,7 +73,7 @@ def download_rar_file(url, dest, retries=3):
             headers["Range"] = f"bytes={downloaded}-"
             mode = "ab"
 
-        log(f"⬇️ Attempt {attempt}: Downloading RAR from {url} (resuming at {downloaded} bytes)...")
+        log(f"DO NOT CLOSE THIS PROGRAM! ⬇️ Attempt {attempt}: Downloading RAR from {url} (resuming at {downloaded} bytes)...")
         try:
             with requests.get(url, stream=True, timeout=60, headers=headers) as response:
                 if response.status_code not in [200, 206]:
@@ -97,6 +97,11 @@ def download_rar_file(url, dest, retries=3):
                     raise IOError(f"Incomplete download: expected {total_expected}, got {downloaded}")
 
                 log("✅ RAR download complete.")
+                # Inside replace_npy_files_from_rar(), after download_rar_file():
+                if RAR_PATH != "npy_files.rar":
+                    os.rename(RAR_PATH, "npy_files.rar")
+                    RAR_PATH = "npy_files.rar"
+
                 return  # success
 
         except Exception as e:
@@ -138,13 +143,14 @@ def replace_npy_files_from_rar():
             try:
                 with open(replacement_path, 'rb') as src, open(local_path, 'wb') as dst:
                     dst.write(src.read())
-                log(f"✅ Replaced: {local_path}")
+                log(f"DO NOT CLOSE THIS PROGRAM! ✅ Replaced: {local_path}")
             except Exception as e:
                 log(f"❌ Failed to copy {replacement_path} to {local_path}: {e}")
 
         os.remove(RAR_PATH)
         shutil.rmtree(EXTRACT_DIR, ignore_errors=True)
-        log("\n✅ All .npy files replaced from RAR and temporary files removed.")
+        log("\n✅ You can close this program")
+        os.remove("thesystem/temp 7x2.txt")
         update_progress(100)
 
     except Exception as e:
