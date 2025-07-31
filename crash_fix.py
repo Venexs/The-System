@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 import os
 import shutil
-import tempfile
 import subprocess
 import sys
 import time
@@ -23,7 +22,7 @@ def ensure_patool_installed():
 
 patoolib = ensure_patool_installed()
 
-CSV_PATH = "thesystem/update_with_paths.csv"  # Adjust path if needed
+CSV_PATH = "thesystem/update_with_paths.csv"
 RAR_URL = "https://github.com/Venexs/The-System/releases/download/files/npy.files.rar"
 RAR_PATH = "npy_files.rar"
 EXTRACT_DIR = "__npy_temp_extract__"
@@ -47,7 +46,6 @@ progress["value"] = 0
 log_display = scrolledtext.ScrolledText(canvas, font=("Consolas", 10), wrap=tk.WORD)
 log_display.place(rely=0.2, relwidth=1, relheight=0.8)
 
-# Thread-safe log
 log_lock = threading.Lock()
 def log(message):
     def safe_insert():
@@ -97,12 +95,14 @@ def download_rar_file(url, dest, retries=3):
                     raise IOError(f"Incomplete download: expected {total_expected}, got {downloaded}")
 
                 log("✅ RAR download complete.")
-                # Inside replace_npy_files_from_rar(), after download_rar_file():
-                if RAR_PATH != "npy_files.rar":
-                    os.rename(RAR_PATH, "npy_files.rar")
-                    RAR_PATH = "npy_files.rar"
 
-                return  # success
+                downloaded_rar_name = dest
+                final_rar_name = "npy_files.rar"
+                if downloaded_rar_name != final_rar_name:
+                    os.rename(downloaded_rar_name, final_rar_name)
+                    log(f"📦 Renamed {downloaded_rar_name} → {final_rar_name}")
+
+                return
 
         except Exception as e:
             log(f"❌ Download failed: {e}")
@@ -114,7 +114,7 @@ def download_rar_file(url, dest, retries=3):
 
 def replace_npy_files_from_rar():
     try:
-        download_rar_file(RAR_URL, RAR_PATH)
+        download_rar_file(RAR_URL, "npy.files.rar")
 
         os.makedirs(EXTRACT_DIR, exist_ok=True)
         patoolib.extract_archive(RAR_PATH, outdir=EXTRACT_DIR, verbosity=-1)
