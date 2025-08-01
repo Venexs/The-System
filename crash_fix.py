@@ -60,7 +60,7 @@ def update_progress(value):
         progress["value"] = value
     root.after(0, safe_update)
 
-def download_rar_file(url, dest, retries=3):
+def download_rar_file(url, dest, retries=10):
     headers = {"User-Agent": "Mozilla/5.0 (RAR Updater)"}
     for attempt in range(1, retries + 1):
         downloaded = 0
