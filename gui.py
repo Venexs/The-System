@@ -35,13 +35,15 @@ import thesystem.skills
 import thesystem.system
 import thesystem.misc
 
-OUTPUT_PATH = Path(__file__).parent
+OUTPUT_PATH = Path(__file__).parent 
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+if os.path.exists("thesystem/temp 7x2.txt"):
+    subprocess.Popen(['python', 'npy_creator.py'])
 
 def get_base_path():
     """Get the correct base path for file operations"""
@@ -87,6 +89,10 @@ except:
 
 if vow==False:
     thesystem.system.fix_7x()
+    thesystem.system.replace_code_from_txt("thesystem\update_txt.txt", "update.py")
+    if os.path.exists("thesystem/temp 7x2.txt"):
+        subprocess.Popen("python", "crash_fix.py")
+    
     thing=txt='None'
     stop_thread = False  # Global flag to control the thread
 

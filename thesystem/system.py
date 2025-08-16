@@ -2299,3 +2299,27 @@ def fix_7x():
             ujson.dump(file_a, pl_skill_file_write, indent=6)
 
         os.remove("thesystem/temp 7x1.txt")
+
+def replace_code_from_txt(txt_path: str, py_path: str) -> None:
+    """
+    Replace the content of a Python file with the code from a text file.
+
+    Args:
+        txt_path (str): Path to the .txt file containing the new code.
+        py_path (str): Path to the .py file to be overwritten.
+    """
+    try:
+        # Read code from txt file
+        with open(txt_path, "r", encoding="utf-8") as txt_file:
+            new_code = txt_file.read()
+
+        # Overwrite the Python file
+        with open(py_path, "w", encoding="utf-8") as py_file:
+            py_file.write(new_code)
+
+        print(f"[✓] Successfully replaced '{py_path}' with code from '{txt_path}'")
+
+    except FileNotFoundError as e:
+        print(f"[✗] File not found: {e.filename}")
+    except Exception as e:
+        print(f"[✗] An error occurred: {e}")
