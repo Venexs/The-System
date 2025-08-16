@@ -269,6 +269,12 @@ class NPYCreatorGUI:
             ("thesystem/bottom_bar", (1229, 47), "NONE", "bottom"),
             ("thesystem/alt_top_bar", (1229, 47), "JOB", "top"),
             ("thesystem/alt_bottom_bar", (1229, 47), "JOB", "bottom"),
+
+            ("thesystem/bottom_bar", (609, 33), "NONE", "bottom"),
+            ("thesystem/alt_bottom_bar", (609, 33), "JOB", "bottom"),
+
+            ("thesystem/bottom_bar", (1053, 43), "NONE", "bottom"),
+            ("thesystem/alt_bottom_bar", (1053, 43), "JOB", "bottom"),
             
             # Special configurations
             ("thesystem/top_bar", (332, 30), "NONE", "top"),
