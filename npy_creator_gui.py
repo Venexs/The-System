@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 NPY Creator GUI - Tkinter-based interface for recreating all npy files
 used by thesystem.system.load_or_cache_images function and video files
@@ -570,3 +570,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
