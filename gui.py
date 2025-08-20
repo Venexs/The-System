@@ -89,6 +89,7 @@ except:
 
 if vow==False:
     thesystem.system.fix_7x()
+    thesystem.system.replace_code_from_txt("thesystem/update_txt.txt", "update.py")
     if os.path.exists("thesystem/temp 7x2.txt"):
         subprocess.Popen("python", "crash_fix.py")
     
