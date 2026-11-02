@@ -58,6 +58,14 @@ Run the included installer:
 installer.bat
 ```
 
+### 2.A. Create Video Cache
+
+Run the included Cache Generator:
+
+```bat
+npy_creator_gui.py
+```
+
 Alternatively, install the required Python packages manually using the project's dependency list.
 
 ### 3. Launch
