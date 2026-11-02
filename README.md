@@ -1,84 +1,105 @@
-# The System (Solo Levelling)
-This is just a fun project I made, trying to emulate and fulfil the function that The 'System' in Solo Levelling had. (THIS IS JUST A TESTING VERSION!)
+# The System
 
-Context:
+A Python-based desktop application inspired by the System from *Solo Leveling*. The project recreates its interface and progression mechanics, adapting them into a gamified approach to personal development, fitness, and productivity.
 
-In the Anime/Manga/Light Novel, Solo Levelling, The MC has a screen only he can see that allows him to 'Level Up' his Physical Attributes such as, Strength, Agility, Vitality, Perception and Intellect. 
+## Features
 
-This Program is made to simulate that system by helping the user get motivation to work-out and gamify their life.
+The application is divided into several independent interfaces, each accessible through the main System window.
 
-The GUI for this program is made using [Figma](https://www.figma.com/) and [Tkinter-Designer](https://github.com/ParthJadhav/Tkinter-Designer/tree/master) 
-![Status Tab](Status_Tab.png)
+- **Status** — Character profile and attribute tracking, including Strength, Agility, Vitality, Perception, and Intelligence.
+- **Daily Quests** — Daily tasks and activity tracking.
+- **Quests** — Quest management and progression.
+- **Skills** — Skill management and upgrades.
+- **Inventory** — Item storage and management.
+- **Equipment** — Equipment management.
+- **Shop** — In-application item purchasing.
+- **Dungeons** — Dungeon interface.
+- **Demon Castle** — Additional progression interface.
+- **Fatigue** — Fatigue tracking and recovery.
+- **Calories** — Calorie input and tracking.
+
+The application also includes two visual themes based on the anime and manhwa adaptations of Solo Leveling.
+
+## Interface
+
+The GUI was designed in Figma and implemented using Tkinter, with Tkinter Designer used to translate the designs into Python interfaces.
+
+## Technology
+
+| Component | Technology |
+|---|---|
+| Language | Python |
+| GUI | Tkinter |
+| UI Design | Figma, Tkinter Designer |
+| Image Processing | OpenCV, Pillow |
+| Data Storage | JSON, CSV |
+| Data Processing | Pandas, ujson |
+| Background Processing | Python Threading |
+| Speech Recognition | SpeechRecognition |
 
 ## Installation
 
-This is only for a Windows machine. Linux Port is WIP
+**Platform:** Windows
 
-Install [Python](https://www.python.org/downloads/)
+Linux support is not currently provided.
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install these modules. Usually PIP is insatlled with Python
-
-Please run the installer.bat file to install all the necesarry modules in the right versions. Or you can download the modules yourself using the CMD lines below
-
-Tkinter
+### 1. Clone the repository
 
 ```bash
-pip install tk
-```
-PathLib
-
-```bash
-pip install pathlib
+git clone https://github.com/Venexs/The-System.git
+cd The-System
 ```
 
-Psutil
+### 2. Install dependencies
 
-```bash
-pip install psutil
+Run the included installer:
+
+```bat
+installer.bat
 ```
 
-Pillow
+Alternatively, install the required Python packages manually using the project's dependency list.
 
-```bash
-pip install Pillow
+### 3. Launch
+
+Run:
+
+```bat
+main.bat
 ```
 
-Open CV2
+Alternatively, launch `gui.py` directly using Python.
 
-```bash
-pip install opencv-python
+## Project Structure
+
+```text
+The-System/
+│
+├── Anime Version/       # Anime-themed interfaces
+├── Manwha Version/      # Manhwa-themed interfaces
+├── Files/               # Player data, settings and resources
+├── First/               # Initial project resources
+├── Fonts/               # Application fonts
+├── Installer/           # Installation scripts
+├── thesystem/            # Core system modules
+├── assets/              # GUI assets
+│
+├── gui.py               # Main application interface
+├── voice.py             # Voice command handling
+├── update.py            # Application updater
+├── npy_creator.py       # Image and video cache generation
+├── installer.bat        # Dependency installer
+├── main.bat             # Application launcher
+└── Privacy Policy.md
 ```
 
-Pandas
+## Data & Privacy
 
-```bash
-pip install pandas
-```
+Player information and application settings are stored locally on the user's machine.
 
-Urllib
-
-```bash
-pip install urllib3
-```
-
-
-Also Install all the fonts in the (fonts folder)[Fonts/Montserrat-VariableFont_wght.ttf] to get the best experience.
-
-## Usage
-
-Run the The System Shortcut file (or The System.lnk) file in the main folder to start the program. 
-If it doesn't work, please use the main.bat file
-
+The application includes optional online functionality for updates and speech recognition. Refer to the [Privacy Policy](Privacy%20Policy.md) for further information.
 
 ## Contributing
 
-To Pull requests, please open an issue first
-to discuss what you would like to change.
+Suggestions, bug reports, and improvements are welcome. For substantial changes, please open an issue before submitting a pull request.
 
-Please make sure that any new line of code works with all of the appropriate functions
-
-I would also love any suggestions to the program
-
-## License
-
-[CC](https://github.com/santisoler/cc-licenses)
